@@ -10,7 +10,7 @@ export default ({ open, onClose, updateEuiPair }) => {
     if (open) {
       html5QrcodeScanner.current = new Html5QrcodeScanner(
         "reader",
-        { fps: 10, qrbox: {width: 250, height: 250}, disableFlip: true },
+        { fps: 10, qrbox: {width: 250, height: 250} },
         false
       )
       html5QrcodeScanner.current.render(onScanSuccess, onScanFailure)

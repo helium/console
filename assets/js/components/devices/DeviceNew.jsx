@@ -278,13 +278,6 @@ class DeviceNew extends Component {
             </Text>
           }
         />
-        <Button
-          key="submit"
-          onClick={() => { this.setState({ showScanDeviceModal: true })}}
-          style={{ marginTop: 10 }}
-        >
-          Scan Device QR Code
-        </Button>
         <Text style={{ marginTop: 25, display: "block" }} strong>
           Profile (Optional)
         </Text>
@@ -357,6 +350,15 @@ class DeviceNew extends Component {
               }}
             >
               {this.renderHelpText(true)}
+              {false && (
+                <Button
+                  key="submit"
+                  onClick={() => { this.setState({ showScanDeviceModal: true })}}
+                  style={{ marginBottom: 20 }}
+                >
+                  Scan Device QR Code
+                </Button>
+              )}
               {this.renderDeviceDetails()}
               <div
                 style={{
@@ -442,11 +444,6 @@ class DeviceNew extends Component {
               importComplete={importComplete}
               importType={importType}
               import_status={this.state.import_status}
-            />
-            <ScanDeviceModal
-              open={this.state.showScanDeviceModal}
-              onClose={this.closeScanDeviceModal}
-              updateEuiPair={this.updateEuiPair}
             />
           </DeviceDashboardLayout>
         </DesktopDisplay>
