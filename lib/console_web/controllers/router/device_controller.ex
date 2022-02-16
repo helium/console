@@ -413,7 +413,7 @@ defmodule ConsoleWeb.Router.DeviceController do
         with {:ok, %{ event: event, organization: organization }} <- result do
           publish_created_event(event, event_device)
 
-          if event.sub_category in ["uplink_confirmed", "uplink_unconfirmed"] do
+          if event.sub_category in ["uplink_confirmed", "uplink_unconfirmed"] or event.category == "join_request" do
             check_org_dc_balance(organization, prev_dc_balance)
           end
 
