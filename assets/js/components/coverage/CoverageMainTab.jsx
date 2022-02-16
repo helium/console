@@ -142,12 +142,13 @@ export default (props) => {
 
       <UserCan>
         <div className="hotspot-claim">
-          {selectedRows.length === 0 ||
-          !selectedRows.find(
-            (r) =>
-              props.orgHotspotsMap[r.hotspot_address] &&
-              props.orgHotspotsMap[r.hotspot_address].claimed === true
-          ) ? (
+          {
+            selectedRows.length !== 0 &&
+            !selectedRows.find(
+              (r) =>
+                props.orgHotspotsMap[r.hotspot_address] &&
+                props.orgHotspotsMap[r.hotspot_address].claimed === true
+            ) &&
             <ClaimButton
               onClick={() => {
                 updateOrganizationHotspots(
@@ -156,7 +157,14 @@ export default (props) => {
                 );
               }}
             />
-          ) : (
+          }
+          {
+            selectedRows.length !== 0 &&
+            selectedRows.find(
+              (r) =>
+                props.orgHotspotsMap[r.hotspot_address] &&
+                props.orgHotspotsMap[r.hotspot_address].claimed === true
+            ) &&
             <UnclaimButton
               onClick={() => {
                 updateOrganizationHotspots(
@@ -165,7 +173,7 @@ export default (props) => {
                 );
               }}
             />
-          )}
+          }
         </div>
       </UserCan>
       {props.hotspotStats && (

@@ -216,30 +216,38 @@ export default ({ searchHotspots, data, error, loading, ...props }) => {
         <React.Fragment>
           <UserCan>
             <div className="hotspot-claim">
-              {selectedRows.length === 0 ||
+            {
+              selectedRows.length !== 0 &&
               !selectedRows.find(
                 (r) =>
                   props.orgHotspotsMap[r.hotspot_address] &&
                   props.orgHotspotsMap[r.hotspot_address].claimed === true
-              ) ? (
-                <ClaimButton
-                  onClick={() => {
-                    updateOrganizationHotspots(
-                      selectedRows.map((r) => r.hotspot_address),
-                      true
-                    );
-                  }}
-                />
-              ) : (
-                <UnclaimButton
-                  onClick={() => {
-                    updateOrganizationHotspots(
-                      selectedRows.map((r) => r.hotspot_address),
-                      false
-                    );
-                  }}
-                />
-              )}
+              ) &&
+              <ClaimButton
+                onClick={() => {
+                  updateOrganizationHotspots(
+                    selectedRows.map((r) => r.hotspot_address),
+                    true
+                  );
+                }}
+              />
+            }
+            {
+              selectedRows.length !== 0 &&
+              selectedRows.find(
+                (r) =>
+                  props.orgHotspotsMap[r.hotspot_address] &&
+                  props.orgHotspotsMap[r.hotspot_address].claimed === true
+              ) &&
+              <UnclaimButton
+                onClick={() => {
+                  updateOrganizationHotspots(
+                    selectedRows.map((r) => r.hotspot_address),
+                    false
+                  );
+                }}
+              />
+            }
             </div>
           </UserCan>
           <CoverageSearchTable

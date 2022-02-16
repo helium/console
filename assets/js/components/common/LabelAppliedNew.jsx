@@ -29,22 +29,42 @@ class LabelAppliedNew extends Component {
     }
   }
 
-  render() {
+  generateOptions = () => {
     const { searchLabels } = this.state
+    const { allLabels } = this.props
 
+    if (allLabels && searchLabels.length == 0) {
+      return allLabels.map(l => (
+        {
+          label: (
+            <LabelTag
+              text={l.name}
+            />
+          ),
+          value: l.name
+        }
+      ))
+    }
+    if (searchLabels.length > 0) {
+      return searchLabels.map(l => (
+        {
+          label: (
+            <LabelTag
+              text={l.name}
+            />
+          ),
+          value: l.name
+        }
+      ))
+    }
+    return searchLabels
+  }
+
+  render() {
     return(
       <AutoComplete
         style={{ width: 250, marginBottom: 10 }}
-        options={searchLabels.map(l => (
-          {
-            label: (
-              <LabelTag
-                text={l.name}
-              />
-            ),
-            value: l.name
-          }
-        ))}
+        options={this.generateOptions()}
         onSelect={label_name => {
           this.props.select(label_name)
         }}
