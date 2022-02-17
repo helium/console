@@ -1,13 +1,13 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { MobileDisplay, DesktopDisplay } from '../mobile/MediaQuery'
+import { MobileDisplay, DesktopDisplay } from "../mobile/MediaQuery";
 import FunctionDashboardLayout from "./FunctionDashboardLayout";
 import UserCan from "../common/UserCan";
 import FunctionValidator from "./FunctionValidator";
 import { createFunction } from "../../actions/function";
 import analyticsLogger from "../../util/analyticsLogger";
-import { minWidth } from '../../util/constants'
+import { minWidth } from "../../util/constants";
 import { Button, Input, Select, Card } from "antd";
 import SaveOutlined from "@ant-design/icons/SaveOutlined";
 const { Option } = Select;
@@ -39,7 +39,7 @@ export const customFunctionBody = `function Decoder(bytes, port, uplink_info) {
 
   return decoded;
 }
-`
+`;
 
 @connect(null, mapDispatchToProps)
 class FunctionNew extends Component {
@@ -81,7 +81,7 @@ class FunctionNew extends Component {
         <MobileDisplay />
         <DesktopDisplay>
           <FunctionDashboardLayout {...this.props}>
-            <div className="no-scroll-bar" style={{ overflowX: 'scroll'}}>
+            <div className="no-scroll-bar" style={{ overflowX: "scroll" }}>
               <div style={{ padding: "30px 30px 20px 30px", minWidth }}>
                 <Card title="Step 1 - Enter Function Details">
                   <div
@@ -126,7 +126,8 @@ class FunctionNew extends Component {
                       href="https://github.com/helium/console-decoders"
                       target="_blank"
                     >
-                      View list of Helium created functions
+                      View list of supported functions created by the Helium
+                      community
                     </a>
                   )}
                 </Card>
