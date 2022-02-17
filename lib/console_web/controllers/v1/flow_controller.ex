@@ -56,11 +56,53 @@ defmodule ConsoleWeb.V1.FlowController do
               organization_id: current_organization.id
             }
 
-            with {:ok, _} <- Flows.create_flow(flow_attrs) do
-              broadcast_router_update_devices([device.id])
+            result =
+              Ecto.Multi.new()
+              |> Ecto.Multi.run(:created_flow, fn _repo, _ ->
+                Flows.create_flow(flow_attrs)
+              end)
+              |> Ecto.Multi.run(:updated_org, fn _repo, _ ->
+                updated_flow =
+                  current_organization.flow
+                  |> Map.put("device-#{flow_attrs.device_id}", %{"position" => %{"x" => 100, "y" => :rand.uniform(400)} })
+                  |> Map.put("channel-#{flow_attrs.channel_id}", %{"position" => %{"x" => 600, "y" => :rand.uniform(400)} })
 
-              conn
-              |> send_resp(:ok, "Flow with integration created successfully")
+                updated_flow =
+                  if flow_attrs.function_id == nil do
+                    new_edge = %{ "source" => "device-#{flow_attrs.device_id}", "target" => "channel-#{flow_attrs.channel_id}"}
+                    updated_edges = Map.get(current_organization.flow, "edges", []) ++ [new_edge]
+                    updated_flow
+                    |> Map.put("edges", updated_edges)
+                  else
+                    copies = Map.get(current_organization.flow, "copies", [])
+                    [new_function_id, position]= generate_new_function(copies, flow_attrs)
+
+                    updated_copies = copies ++ [%{ "id" => new_function_id, "position" => position }]
+
+                    new_edges = [
+                      %{ "source" => "device-#{flow_attrs.device_id}", "target" => new_function_id},
+                      %{ "source" => new_function_id, "target" => "channel-#{flow_attrs.channel_id}"}
+                    ]
+                    updated_edges = Map.get(current_organization.flow, "edges", []) ++ new_edges
+
+                    updated_flow
+                    |> Map.put(new_function_id, %{ "position" => position })
+                    |> Map.put("copies", updated_copies)
+                    |> Map.put("edges", updated_edges)
+                  end
+
+                Organizations.update_organization(current_organization, %{ flow: updated_flow })
+              end)
+              |> Repo.transaction
+
+            case result do
+              {:error, :created_flow, changeset = %Ecto.Changeset{}, _} ->
+                {:error, changeset}
+              {:ok, _} ->
+                broadcast_router_update_devices([device.id])
+                conn
+                |> send_resp(:ok, "Flow with integration created successfully")
+              _ -> result
             end
           Map.has_key?(params, "label_id") ->
             label = Labels.get_label!(current_organization, Map.get(params, "label_id"))
@@ -78,15 +120,58 @@ defmodule ConsoleWeb.V1.FlowController do
               organization_id: current_organization.id
             }
 
-            with {:ok, _} <- Flows.create_flow(flow_attrs) do
-              device_ids =
-                Devices.get_devices_for_label(label.id)
-                |> Enum.map(fn d -> d.id end)
+            result =
+              Ecto.Multi.new()
+              |> Ecto.Multi.run(:created_flow, fn _repo, _ ->
+                Flows.create_flow(flow_attrs)
+              end)
+              |> Ecto.Multi.run(:updated_org, fn _repo, _ ->
+                updated_flow =
+                  current_organization.flow
+                  |> Map.put("label-#{flow_attrs.label_id}", %{"position" => %{"x" => 100, "y" => :rand.uniform(400)} })
+                  |> Map.put("channel-#{flow_attrs.channel_id}", %{"position" => %{"x" => 600, "y" => :rand.uniform(400)} })
 
-              broadcast_router_update_devices(device_ids)
+                updated_flow =
+                  if flow_attrs.function_id == nil do
+                    new_edge = %{ "source" => "label-#{flow_attrs.label_id}", "target" => "channel-#{flow_attrs.channel_id}"}
+                    updated_edges = Map.get(current_organization.flow, "edges", []) ++ [new_edge]
+                    updated_flow
+                    |> Map.put("edges", updated_edges)
+                  else
+                    copies = Map.get(current_organization.flow, "copies", [])
+                    [new_function_id, position]= generate_new_function(copies, flow_attrs)
 
-              conn
-              |> send_resp(:ok, "Flow with integration created successfully")
+                    updated_copies = copies ++ [%{ "id" => new_function_id, "position" => position }]
+
+                    new_edges = [
+                      %{ "source" => "label-#{flow_attrs.label_id}", "target" => new_function_id},
+                      %{ "source" => new_function_id, "target" => "channel-#{flow_attrs.channel_id}"}
+                    ]
+                    updated_edges = Map.get(current_organization.flow, "edges", []) ++ new_edges
+
+                    updated_flow
+                    |> Map.put(new_function_id, %{ "position" => position })
+                    |> Map.put("copies", updated_copies)
+                    |> Map.put("edges", updated_edges)
+                  end
+
+                Organizations.update_organization(current_organization, %{ flow: updated_flow })
+              end)
+              |> Repo.transaction
+
+            case result do
+              {:error, :created_flow, changeset = %Ecto.Changeset{}, _} ->
+                {:error, changeset}
+              {:ok, _} ->
+                device_ids =
+                  Devices.get_devices_for_label(label.id)
+                  |> Enum.map(fn d -> d.id end)
+
+                broadcast_router_update_devices(device_ids)
+
+                conn
+                |> send_resp(:ok, "Flow with integration created successfully")
+              _ -> result
             end
           true ->
             {:error, :bad_request, "Flow must contain either device_id or label_id"}
@@ -166,6 +251,25 @@ defmodule ConsoleWeb.V1.FlowController do
     Enum.reject(current_organization.flow["edges"], fn edge ->
       edge["source"] == edge_source and edge["target"] in function_keys_to_check
     end)
+  end
+
+  defp generate_new_function(copies, flow_attrs) do
+    copies_integers =
+      copies
+      |> Enum.filter(fn copy -> String.contains?(copy["id"], "function-#{flow_attrs.function_id}") end)
+      |> Enum.map(fn copy ->
+        String.replace_leading(copy["id"], "function-#{flow_attrs.function_id}_copy", "")
+        |> String.to_integer()
+      end)
+    new_copy_integer =
+      case length(copies_integers) do
+        0 -> 1
+        _ -> Enum.max(copies_integers) + 1
+      end
+    new_function_id = "function-#{flow_attrs.function_id}_copy#{new_copy_integer}"
+    position = %{"x" => 350, "y" => :rand.uniform(400)}
+
+    [new_function_id, position]
   end
 
   defp broadcast_router_update_devices(device_ids) do
