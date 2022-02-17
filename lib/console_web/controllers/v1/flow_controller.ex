@@ -12,10 +12,18 @@ defmodule ConsoleWeb.V1.FlowController do
 
   plug CORSPlug, origin: "*"
 
-  def show(conn, %{ "integration_id" => id }) do
+  def index(conn, %{ "integration_id" => id }) do
     current_organization = conn.assigns.current_organization
 
     flows = Flows.get_flows_with_channel_id(current_organization.id, id)
+
+    render(conn, "index.json", flows: flows)
+  end
+
+  def index(conn, _) do
+    current_organization = conn.assigns.current_organization
+
+    flows = Flows.get_flows(current_organization.id)
 
     render(conn, "index.json", flows: flows)
   end

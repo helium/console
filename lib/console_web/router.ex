@@ -151,8 +151,7 @@ defmodule ConsoleWeb.Router do
     post "/alerts/remove_from_node", AlertController, :remove_alert_from_node
     resources "/integrations", ChannelController, only: [:index, :show, :delete]
     post "/integrations/prebuilt", ChannelController, :create_prebuilt
-    get "/flows", FlowController, :show
-    resources "/flows", FlowController, only: [:create, :delete]
+    resources "/flows", FlowController, only: [:index, :create, :delete]
   end
 
   if Mix.env == :dev do
