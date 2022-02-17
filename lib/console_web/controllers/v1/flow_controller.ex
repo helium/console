@@ -2,7 +2,9 @@ defmodule ConsoleWeb.V1.FlowController do
   use ConsoleWeb, :controller
   import Ecto.Query, warn: false
 
+  alias Console.Repo
   alias Console.Flows
+  alias Console.Organizations
   alias Console.Devices
   alias Console.Functions
   alias Console.Labels
@@ -98,22 +100,72 @@ defmodule ConsoleWeb.V1.FlowController do
       nil ->
         {:error, :not_found, "Flow not found"}
       flow ->
-        with {:ok, _} <- Flows.delete_flow(flow) do
-          if Map.get(flow, :device_id) != nil do
-            broadcast_router_update_devices([Map.get(flow, :device_id)])
-          end
-          if Map.get(flow, :label_id) != nil do
-            device_ids =
-              Devices.get_devices_for_label(Map.get(flow, :label_id))
-              |> Enum.map(fn d -> d.id end)
+        result =
+          Ecto.Multi.new()
+          |> Ecto.Multi.run(:deleted_flow, fn _repo, _ ->
+            Flows.delete_flow(flow)
+          end)
+          |> Ecto.Multi.run(:updated_org, fn _repo, _ ->
+            if flow.function_id == nil do
+              updated_edges =
+                Enum.reject(current_organization.flow["edges"], fn edge ->
+                  edge["source"] == "device-#{flow.device_id}" and edge["target"] == "channel-#{flow.channel_id}" or
+                  edge["source"] == "label-#{flow.label_id}" and edge["target"] == "channel-#{flow.channel_id}"
+                end)
+              updated_flow = Map.put(current_organization.flow, "edges", updated_edges)
+              Organizations.update_organization(current_organization, %{ flow: updated_flow })
+            else
+              updated_edges = get_updated_edges(current_organization, flow)
+              updated_flow = Map.put(current_organization.flow, "edges", updated_edges)
+              Organizations.update_organization(current_organization, %{ flow: updated_flow })
+            end
+          end)
+          |> Repo.transaction
 
-            broadcast_router_update_devices(device_ids)
-          end
-
-          conn
-          |> send_resp(:ok, "Flow deleted successfully")
+      with {:ok, _} <- result do
+        if Map.get(flow, :device_id) != nil do
+          broadcast_router_update_devices([flow.device_id])
         end
+        if Map.get(flow, :label_id) != nil do
+          device_ids =
+            Devices.get_devices_for_label(flow.label_id)
+            |> Enum.map(fn d -> d.id end)
+
+          broadcast_router_update_devices(device_ids)
+        end
+
+        conn
+        |> send_resp(:ok, "Flow deleted successfully")
+      end
     end
+  end
+
+  defp get_updated_edges(current_organization, flow) do
+    all_function_keys_and_copies =
+      current_organization.flow
+      |> Map.keys()
+      |> Enum.filter(fn key -> String.contains?(key, flow.function_id) end)
+
+    edge_source =
+      case flow.device_id do
+        nil -> "label-#{flow.label_id}"
+        _ -> "device-#{flow.device_id}"
+      end
+
+    function_keys_to_check =
+      all_function_keys_and_copies
+      |> Enum.filter(fn key ->
+        Enum.find(current_organization.flow["edges"], fn edge ->
+          edge["source"] == edge_source and edge["target"] == key
+        end) != nil and
+        Enum.find(current_organization.flow["edges"], fn edge ->
+          edge["source"] == key and edge["target"] == "channel-#{flow.channel_id}"
+        end) != nil
+      end)
+
+    Enum.reject(current_organization.flow["edges"], fn edge ->
+      edge["source"] == edge_source and edge["target"] in function_keys_to_check
+    end)
   end
 
   defp broadcast_router_update_devices(device_ids) do
