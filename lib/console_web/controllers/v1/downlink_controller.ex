@@ -37,17 +37,27 @@ defmodule ConsoleWeb.V1.DownlinkController do
 
           cond do
             length(devices) == 0 ->
-              {:error, :unprocessable_entity, "Devices not found on integration"}
+              {:error, :bad_request, "Devices not found on integration"}
             device_id != nil and !Enum.member?(devices, device_id) ->
-              {:error, :unprocessable_entity, "Device not found on integration"}
+              {:error, :bad_request, "Device not found on integration"}
             device_id != nil and Enum.member?(devices, device_id) ->
-              ConsoleWeb.Endpoint.broadcast("device:all", "device:all:downlink:devices", %{ "channel_name" => channel.name, "devices" => [device_id], "payload" => conn.body_params })
-              conn
-              |> send_resp(:ok, "Downlink scheduled")
+              case Map.get(conn.body_params, :aspect) do # body_params errors out with %Plug.Conn.Unfetched{aspect: :body_params}
+                nil ->
+                  ConsoleWeb.Endpoint.broadcast("device:all", "device:all:downlink:devices", %{ "channel_name" => channel.name, "devices" => [device_id], "payload" => conn.body_params })
+                  conn
+                  |> send_resp(:ok, "Downlink scheduled")
+                _ ->
+                  {:error, :bad_request, "Invalid Content-Type header or payload"}
+              end
             device_id == nil ->
-              ConsoleWeb.Endpoint.broadcast("device:all", "device:all:downlink:devices", %{ "channel_name" => channel.name, "devices" => devices, "payload" => conn.body_params })
-              conn
-              |> send_resp(:ok, "Downlink scheduled")
+              case Map.get(conn.body_params, :aspect) do # body_params errors out with %Plug.Conn.Unfetched{aspect: :body_params}
+                nil ->
+                  ConsoleWeb.Endpoint.broadcast("device:all", "device:all:downlink:devices", %{ "channel_name" => channel.name, "devices" => devices, "payload" => conn.body_params })
+                  conn
+                  |> send_resp(:ok, "Downlink scheduled")
+                _ ->
+                  {:error, :bad_request, "Invalid Content-Type header or payload"}
+              end
           end
         else
           {:error, :bad_request, "Downlink token invalid for integration"}
