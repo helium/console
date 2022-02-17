@@ -50,8 +50,8 @@ defmodule Console.EtlErrorWorker do
               }
 
               device_updates = cond do
-                is_integer(parsed_event.frame_up) -> device_updates |> Map.put("frame_up", parsed_event.frame_up)
-                is_integer(parsed_event.frame_down) -> device_updates |> Map.put("frame_down", parsed_event.frame_down)
+                is_integer(Map.get(parsed_event, :frame_up)) -> device_updates |> Map.put("frame_up", parsed_event.frame_up)
+                is_integer(Map.get(parsed_event, :frame_down)) -> device_updates |> Map.put("frame_down", parsed_event.frame_down)
                 true -> device_updates
               end
 
