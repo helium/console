@@ -13,6 +13,12 @@ defmodule Console.Jobs do
   alias Console.BlockchainApi
   alias Console.Hotspots
 
+  def refresh_materialized_views do
+    Task.Supervisor.async_nolink(ConsoleWeb.TaskSupervisor, fn ->
+      Ecto.Adapters.SQL.query!(Repo, "REFRESH MATERIALIZED VIEW device_stats_view", [], timeout: :infinity)
+    end)
+  end
+
   def send_alerts do
     # to avoid spamming customers with multiple notifications for the same event, get notifications in 5-min batches
     now = Timex.now
