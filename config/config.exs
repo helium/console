@@ -63,6 +63,10 @@ config :console,
 
 config :console, Console.Scheduler,
   jobs: [
+    refresh_materialized_views: [
+      schedule: "0 * * * *", # every hour @ 0 mins
+      task: {Console.Jobs, :refresh_materialized_views, []}
+    ],
     trigger_device_stops_transmitting: [
       schedule: "*/15 * * * *", # every 15th min
       task: {Console.Jobs, :trigger_device_stops_transmitting, []}

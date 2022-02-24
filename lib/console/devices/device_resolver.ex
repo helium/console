@@ -1,6 +1,7 @@
 defmodule Console.Devices.DeviceResolver do
   alias Console.Repo
   alias Console.Devices.Device
+  alias Console.DeviceStats
   alias Console.Helpers
   alias Console.Devices.DeviceImports
   alias Console.Events.Event
@@ -58,16 +59,25 @@ defmodule Console.Devices.DeviceResolver do
   def get_device_stats(%{id: id}, %{context: %{current_organization: current_organization}}) do
     device = Ecto.assoc(current_organization, :devices) |> Repo.get!(id)
 
+    stats_view =
+      case DeviceStats.get_stats_view_for_device(device.id) do
+        nil ->
+          %{}
+        result ->
+          result
+          |> Map.from_struct
+          |> Enum.filter(fn {_, v} -> v != nil end)
+          |> Enum.into(%{})
+      end
+
     current_unix = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
     unix1d = current_unix - 86400000
-    unix7d = current_unix - 86400000 * 7
-    unix30d = current_unix - 86400000 * 30
 
     {:ok, device_id} = Ecto.UUID.dump(device.id)
     result = Ecto.Adapters.SQL.query!(
       Console.Repo,
-      "(SELECT count(*) FROM device_stats where device_id = $1 and reported_at_epoch > $2) UNION ALL (SELECT count(*) FROM device_stats where device_id = $1 and reported_at_epoch > $3) UNION ALL (SELECT count(*) FROM device_stats where device_id = $1 and reported_at_epoch > $4)",
-      [device_id, unix1d, unix7d, unix30d]
+      "SELECT count(*) FROM device_stats where device_id = $1 and reported_at_epoch > $2",
+      [device_id, unix1d]
     )
     counts = List.flatten(result.rows)
 
@@ -75,8 +85,8 @@ defmodule Console.Devices.DeviceResolver do
       :ok,
       %{
         packets_last_1d: Enum.at(counts, 0),
-        packets_last_7d: Enum.at(counts, 1),
-        packets_last_30d: Enum.at(counts, 2),
+        packets_last_7d: Enum.at(counts, 0) + Map.get(stats_view, :packets_7d, 0),
+        packets_last_30d: Enum.at(counts, 0) + Map.get(stats_view, :packets_30d, 0),
       }
     }
   end
@@ -84,25 +94,35 @@ defmodule Console.Devices.DeviceResolver do
   def get_device_dc_stats(%{id: id}, %{context: %{current_organization: current_organization}}) do
     device = Ecto.assoc(current_organization, :devices) |> Repo.get!(id)
 
+    stats_view =
+      case DeviceStats.get_stats_view_for_device(device.id) do
+        nil ->
+          %{}
+        result ->
+          result
+          |> Map.from_struct
+          |> Enum.filter(fn {_, v} -> v != nil end)
+          |> Enum.into(%{})
+      end
+
     current_unix = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
     unix1d = current_unix - 86400000
-    unix7d = current_unix - 86400000 * 7
-    unix30d = current_unix - 86400000 * 30
 
     {:ok, device_id} = Ecto.UUID.dump(device.id)
     result = Ecto.Adapters.SQL.query!(
       Console.Repo,
-      "(SELECT sum(dc_used) FROM device_stats where device_id = $1 and reported_at_epoch > $2) UNION ALL (SELECT sum(dc_used) FROM device_stats where device_id = $1 and reported_at_epoch > $3) UNION ALL (SELECT sum(dc_used) FROM device_stats where device_id = $1 and reported_at_epoch > $4)",
-      [device_id, unix1d, unix7d, unix30d]
+      "SELECT sum(dc_used) FROM device_stats where device_id = $1 and reported_at_epoch > $2",
+      [device_id, unix1d]
     )
-    counts = List.flatten(result.rows)
+    sums = List.flatten(result.rows)
+    dc_last_1d = Enum.at(sums, 0) || 0
 
     {
       :ok,
       %{
-        dc_last_1d: Enum.at(counts, 0) || 0,
-        dc_last_7d: Enum.at(counts, 1) || 0,
-        dc_last_30d: Enum.at(counts, 2) || 0,
+        dc_last_1d: dc_last_1d,
+        dc_last_7d: dc_last_1d + Map.get(stats_view, :dc_7d, 0),
+        dc_last_30d: dc_last_1d + Map.get(stats_view, :dc_30d, 0),
       }
     }
   end
