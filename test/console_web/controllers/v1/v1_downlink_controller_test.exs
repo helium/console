@@ -15,7 +15,7 @@ defmodule ConsoleWeb.V1DownlinkControllerTest do
       assert response(resp_conn, 400) # wrong token cannot downlink
 
       resp_conn = build_conn() |> post("/api/v1/down/#{channel.id}/#{channel.downlink_token}")
-      assert response(resp_conn, 422) # no devices linked to channel cannot downlink
+      assert response(resp_conn, 400) # no devices linked to channel cannot downlink
 
       label = insert(:label)
       device_1 = insert(:device, %{ organization_id: organization.id, dev_eui: "1111111111111111", app_eui: "1111111111111111", app_key: "11111111111111111111111111111111" })
@@ -32,7 +32,7 @@ defmodule ConsoleWeb.V1DownlinkControllerTest do
       assert response(resp_conn, 200) # device linked downlink works
 
       resp_conn = build_conn() |> post("/api/v1/down/#{channel.id}/#{channel.downlink_token}/#{device_3.id}")
-      assert response(resp_conn, 422) # device not linked downlink does not work
+      assert response(resp_conn, 400) # device not linked downlink does not work
     end
   end
 end

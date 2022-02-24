@@ -49,23 +49,8 @@ defmodule ConsoleWeb.V1FlowControllerTest do
         organization_id: organization.id
       })
 
-      flow1 = insert(:flow, %{ device_id: device.id, channel_id: channel.id, organization_id: organization.id })
-      flow2 = insert(:flow, %{ label_id: label.id, channel_id: channel.id, organization_id: organization.id })
-
       resp_conn = build_conn() |> put_req_header("key", key) |> get("/api/v1/flows/#{channel.id}")
       assert response(resp_conn, 404) # cannot find flows wrong path
-
-      resp_conn = build_conn() |> put_req_header("key", key) |> get("/api/v1/flows?integration_id=#{channel.id}")
-      assert json_response(resp_conn, 200) |> length() == 2 # found 2 flows
-
-      resp_conn = build_conn() |> put_req_header("key", key) |> delete("/api/v1/flows/#{flow1.id}")
-      assert response(resp_conn, 200) # delete flow 1
-
-      resp_conn = build_conn() |> put_req_header("key", key) |> delete("/api/v1/flows/#{flow2.id}")
-      assert response(resp_conn, 200) # delete flow 2
-
-      resp_conn = build_conn() |> put_req_header("key", key) |> get("/api/v1/flows?integration_id=#{channel.id}")
-      assert json_response(resp_conn, 200) |> length() == 0 # found 0 flows after delete
 
       resp_conn = build_conn()
         |> put_req_header("key", key)
@@ -103,6 +88,19 @@ defmodule ConsoleWeb.V1FlowControllerTest do
           device_id: device.id
         })
       assert response(resp_conn, 422) # cannot create flow that exists
+
+      resp_conn = build_conn() |> put_req_header("key", key) |> get("/api/v1/flows?integration_id=#{channel.id}")
+      assert json_response(resp_conn, 200) |> length() == 2 # found 2 flows
+      flows = json_response(resp_conn, 200)
+
+      resp_conn = build_conn() |> put_req_header("key", key) |> delete("/api/v1/flows/#{List.first(flows)["id"]}")
+      assert response(resp_conn, 200) # delete flow 1
+
+      resp_conn = build_conn() |> put_req_header("key", key) |> delete("/api/v1/flows/#{List.last(flows)["id"]}")
+      assert response(resp_conn, 200) # delete flow 2
+
+      resp_conn = build_conn() |> put_req_header("key", key) |> get("/api/v1/flows?integration_id=#{channel.id}")
+      assert json_response(resp_conn, 200) |> length() == 0 # found 0 flows after delete
     end
   end
 end
