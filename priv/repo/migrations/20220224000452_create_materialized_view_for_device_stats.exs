@@ -1,4 +1,4 @@
-defmodule Console.Repo.Migrations.CreateDeviceStatsMaterializedViews do
+defmodule Console.Repo.Migrations.CreateMaterializedViewForDeviceStats do
   use Ecto.Migration
 
   def up do
@@ -20,6 +20,6 @@ defmodule Console.Repo.Migrations.CreateDeviceStatsMaterializedViews do
   end
 
   def down do
-    execute "DROP VIEW device_stats_view;"
+    execute "DROP MATERIALIZED VIEW device_stats_view;"
   end
 end
