@@ -373,7 +373,10 @@ defmodule Console.Organizations do
     memberships = from(m in Membership, where: m.user_id == ^user_id, limit: 1)
     |> Repo.all()
 
-    List.first(memberships).email
+    case List.first(memberships) do
+      nil -> "Someone"
+      inviter -> inviter.email
+    end
   end
 
   def get_latest_invitation(email) do
@@ -383,7 +386,7 @@ defmodule Console.Organizations do
       order_by: [desc: :inserted_at],
       limit: 1)
       |> Repo.all()
-    
+
     List.first(invitations)
   end
 end
