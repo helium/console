@@ -26,37 +26,98 @@ class AzureForm extends Component {
     }
   }
 
+  validateCredentials() {
+    const { policyName, hubName, primaryKey } = this.state;
+    const validCredentials =
+      policyName.length > 0 && hubName.length > 0 && primaryKey.length > 0;
+    // check validation, if pass
+    this.props.onValidInput(
+      {
+        azure_policy_name: policyName,
+        azure_hub_name: hubName,
+        azure_policy_key: primaryKey,
+      },
+      validCredentials
+    );
+  }
+
   handleInputUpdate = (e) => {
-    this.setState({ [e.target.name]: e.target.value }, () => {
-      const { policyName, hubName, primaryKey } = this.state;
-      const validCredentials =
-        policyName.length > 0 && hubName.length > 0 && primaryKey.length > 0;
-      // check validation, if pass
-      this.props.onValidInput(
+    if (e.target.value === "") {
+      this.setState(
         {
-          azure_policy_name: policyName,
-          azure_hub_name: hubName,
-          azure_policy_key: primaryKey,
+          hubName: "",
+          policyName: "",
+          primaryKey: "",
         },
-        validCredentials
+        () => {
+          this.validateCredentials();
+        }
       );
-    });
+    } else {
+      const credentials = {};
+      e.target.value.split(";").forEach((x) => {
+        const [key, value] = x.split("=");
+        if (
+          ["HostName", "SharedAccessKeyName", "SharedAccessKey"].indexOf(key) >
+            -1 &&
+          value
+        ) {
+          credentials[key] = value;
+        }
+      });
+
+      this.setState(
+        {
+          hubName:
+            credentials["HostName"] &&
+            credentials["HostName"].substring(
+              0,
+              credentials["HostName"].indexOf(".")
+            )
+              ? credentials["HostName"].substring(
+                  0,
+                  credentials["HostName"].indexOf(".")
+                )
+              : "",
+          policyName: credentials["SharedAccessKeyName"]
+            ? credentials["SharedAccessKeyName"]
+            : "",
+          primaryKey: credentials["SharedAccessKey"]
+            ? credentials["SharedAccessKey"]
+            : "",
+        },
+        () => {
+          this.validateCredentials();
+        }
+      );
+    }
   };
 
   render() {
     return (
-      <React.Fragment>
-        <Text>Hub Name</Text>
-        <Tooltip title="For example: {Hub Name}.azure-devices.net">
+      <>
+        <Text>Primary Connection String</Text>
+        <Tooltip
+          title={
+            "This can be found by clicking Device Explorer on the Azure IoT Hub and then clicking on your device name."
+          }
+        >
           <QuestionCircleFilled
             style={{ fontSize: 20, color: "grey", marginLeft: 5 }}
           />
         </Tooltip>
         <Input
-          placeholder="Hub Name"
+          placeholder="Connection String"
+          onChange={this.handleInputUpdate}
+        />
+        <br />
+        <br />
+        <Text>Hub Name</Text>
+        <Input
           name="hubName"
           value={this.state.hubName}
           onChange={this.handleInputUpdate}
+          disabled={true}
         />
         <br />
         <br />
@@ -67,10 +128,10 @@ class AzureForm extends Component {
           />
         </Tooltip>
         <Input
-          placeholder="Policy Name"
           name="policyName"
           value={this.state.policyName}
           onChange={this.handleInputUpdate}
+          disabled={true}
         />
         <br />
         <br />
@@ -89,10 +150,10 @@ class AzureForm extends Component {
         )}
         {!this.props.channel || (this.props.channel && this.state.showKey) ? (
           <Input
-            placeholder="Primary Key"
             name="primaryKey"
             value={this.state.primaryKey}
             onChange={this.handleInputUpdate}
+            disabled={true}
           />
         ) : (
           <>
@@ -110,7 +171,7 @@ class AzureForm extends Component {
             connect to client IDs.
           </Text>
         </div>
-      </React.Fragment>
+      </>
     );
   }
 }
