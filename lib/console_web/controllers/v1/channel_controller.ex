@@ -125,7 +125,10 @@ defmodule ConsoleWeb.V1.ChannelController do
         {:error, :bad_gateway, error }
       _ ->
         with {:ok, %Channel{} = channel} <- Channels.create_channel(current_organization, channel_params) do
-          channel = attach_devices_and_labels(current_organization, channel)
+          channel =
+            channel
+            |> Map.put(:devices, [])
+            |> Map.put(:labels, [])
 
           conn
           |> put_status(:created)
@@ -151,7 +154,10 @@ defmodule ConsoleWeb.V1.ChannelController do
       }
 
     with {:ok, %Channel{} = channel} <- Channels.create_channel(current_organization, channel_params) do
-      channel = attach_devices_and_labels(current_organization, channel)
+      channel =
+        channel
+        |> Map.put(:devices, [])
+        |> Map.put(:labels, [])
 
       conn
       |> put_status(:created)
@@ -175,7 +181,10 @@ defmodule ConsoleWeb.V1.ChannelController do
       }
 
     with {:ok, %Channel{} = channel} <- Channels.create_channel(current_organization, channel_params) do
-      channel = attach_devices_and_labels(current_organization, channel)
+      channel =
+        channel
+        |> Map.put(:devices, [])
+        |> Map.put(:labels, [])
 
       conn
       |> put_status(:created)
@@ -203,7 +212,10 @@ defmodule ConsoleWeb.V1.ChannelController do
       }
 
     with {:ok, %Channel{} = channel} <- Channels.create_channel(current_organization, channel_params) do
-      channel = attach_devices_and_labels(current_organization, channel)
+      channel =
+        channel
+        |> Map.put(:devices, [])
+        |> Map.put(:labels, [])
 
       conn
       |> put_status(:created)
@@ -228,7 +240,10 @@ defmodule ConsoleWeb.V1.ChannelController do
         }
 
       with {:ok, %Channel{} = channel} <- Channels.create_channel(current_organization, channel_params) do
-        channel = attach_devices_and_labels(current_organization, channel)
+        channel =
+          channel
+          |> Map.put(:devices, [])
+          |> Map.put(:labels, [])
 
         conn
         |> put_status(:created)
