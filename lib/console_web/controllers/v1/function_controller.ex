@@ -33,7 +33,9 @@ defmodule ConsoleWeb.V1.FunctionController do
     function_params = Map.merge(function_params, %{"organization_id" => current_organization.id, "type" => "decoder", "active" => true})
 
     with {:ok, %Function{} = function} <- Functions.create_function(function_params, current_organization) do
-      render(conn, "show.json", function: function)
+      conn
+      |> put_status(:created)
+      |> render("show.json", function: function)
     end
   end
 

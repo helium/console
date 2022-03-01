@@ -110,40 +110,45 @@ defmodule Console.Channels.Channel do
 
   defp check_http_creds(changeset, creds) do
     cond do
-      String.contains?(creds["endpoint"], " ") ->
-        add_error(changeset, :message, "Endpoint URL cannot have spaces")
-      true ->
-        uri = URI.parse(creds["endpoint"])
-        case uri do
-          %URI{scheme: scheme} when scheme != "http" and scheme != "https" -> add_error(changeset, :message, "URL scheme is invalid (ex: http/https)")
-          %URI{host: nil} -> add_error(changeset, :message, "URL host is invalid (ex: helium.com)")
-          %URI{host: host} ->
-            case host |> String.to_charlist() |> :inet.parse_address() do
-              {:ok, {127,_,_,_}} -> add_error(changeset, :message, "Must not provide private or link local addresses")
-              {:ok, {10,_,_,_}} -> add_error(changeset, :message, "Must not provide private or link local addresses")
-              {:ok, {192,168,_,_}} -> add_error(changeset, :message, "Must not provide private or link local addresses")
-              {:ok, {169,254,_,_}} -> add_error(changeset, :message, "Must not provide private or link local addresses")
-              {:ok, {172,byte2,_,_}} ->
-                if Enum.member?(16..31, byte2) do
-                  add_error(changeset, :message, "Must not provide private or link local addresses")
-                else
-                  put_change(changeset, :credentials, Map.merge(creds, %{"inbound_token" => Helpers.generate_token(16)}))
-                end
-              {:ok, ipv6_addr = {_,_,_,_,_,_,_,_}} ->
-                cond do
-                  InetCidr.contains?(InetCidr.parse("::1/128"), ipv6_addr) ->
-                    add_error(changeset, :message, "Must not provide private or link local addresses")
-                  InetCidr.contains?(InetCidr.parse("fe80::/10"), ipv6_addr) ->
-                    add_error(changeset, :message, "Must not provide private or link local addresses")
-                  InetCidr.contains?(InetCidr.parse("fc00::/7"), ipv6_addr) ->
-                    add_error(changeset, :message, "Must not provide private or link local addresses")
-                  true ->
+      creds["method"] in ["post", "get", "put", "patch"] ->
+        cond do
+          String.contains?(creds["endpoint"], " ") ->
+            add_error(changeset, :message, "Endpoint URL cannot have spaces")
+          true ->
+            uri = URI.parse(creds["endpoint"])
+            case uri do
+              %URI{scheme: scheme} when scheme != "http" and scheme != "https" -> add_error(changeset, :message, "URL scheme is invalid (ex: http/https)")
+              %URI{host: nil} -> add_error(changeset, :message, "URL host is invalid (ex: helium.com)")
+              %URI{host: host} ->
+                case host |> String.to_charlist() |> :inet.parse_address() do
+                  {:ok, {127,_,_,_}} -> add_error(changeset, :message, "Must not provide private or link local addresses")
+                  {:ok, {10,_,_,_}} -> add_error(changeset, :message, "Must not provide private or link local addresses")
+                  {:ok, {192,168,_,_}} -> add_error(changeset, :message, "Must not provide private or link local addresses")
+                  {:ok, {169,254,_,_}} -> add_error(changeset, :message, "Must not provide private or link local addresses")
+                  {:ok, {172,byte2,_,_}} ->
+                    if Enum.member?(16..31, byte2) do
+                      add_error(changeset, :message, "Must not provide private or link local addresses")
+                    else
+                      put_change(changeset, :credentials, Map.merge(creds, %{"inbound_token" => Helpers.generate_token(16)}))
+                    end
+                  {:ok, ipv6_addr = {_,_,_,_,_,_,_,_}} ->
+                    cond do
+                      InetCidr.contains?(InetCidr.parse("::1/128"), ipv6_addr) ->
+                        add_error(changeset, :message, "Must not provide private or link local addresses")
+                      InetCidr.contains?(InetCidr.parse("fe80::/10"), ipv6_addr) ->
+                        add_error(changeset, :message, "Must not provide private or link local addresses")
+                      InetCidr.contains?(InetCidr.parse("fc00::/7"), ipv6_addr) ->
+                        add_error(changeset, :message, "Must not provide private or link local addresses")
+                      true ->
+                        put_change(changeset, :credentials, Map.merge(creds, %{"inbound_token" => Helpers.generate_token(16)}))
+                    end
+                  _ ->
                     put_change(changeset, :credentials, Map.merge(creds, %{"inbound_token" => Helpers.generate_token(16)}))
                 end
-              _ ->
-                put_change(changeset, :credentials, Map.merge(creds, %{"inbound_token" => Helpers.generate_token(16)}))
             end
         end
+      true ->
+        add_error(changeset, :message, "Method must be get/post/put/patch")
     end
   end
 
