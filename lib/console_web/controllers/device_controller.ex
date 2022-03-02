@@ -53,12 +53,12 @@ defmodule ConsoleWeb.DeviceController do
     current_organization = conn.assigns.current_organization
     device = Devices.get_device!(current_organization, id)
 
-    # device_params = cond do
-    #   Map.has_key?(device_params, "dev_eui") or Map.has_key?(device_params, "app_eui") or Map.has_key?(device_params, "app_key") ->
-    #     device_params |> Map.put("in_xor_filter", false)
-    #   true ->
-    #     device_params
-    # end
+    device_params = cond do
+      Map.has_key?(device_params, "dev_eui") or Map.has_key?(device_params, "app_eui") ->
+        device_params |> Map.put("in_xor_filter", false)
+      true ->
+        device_params
+    end
 
     with {:ok, %Device{} = device} <- Devices.update_device(device, device_params) do
       ConsoleWeb.Endpoint.broadcast("graphql:device_show", "graphql:device_show:#{device.id}:device_update", %{})
