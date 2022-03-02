@@ -228,9 +228,9 @@ defmodule ConsoleWeb.V1.ChannelController do
 
     credentials =
       %{ "endpoint" => endpoint, "method" => method }
-      |> Map.merge(Map.take(http_params, ["headers"]))
+      |> Map.merge(Map.take(http_params, ["headers", "url_params"]))
 
-    if validate_http_headers(credentials["headers"]) do
+    if validate_http_headers(credentials["headers"]) and validate_http_url_params(credentials["url_params"]) do
       channel_params =
         %{
           "credentials" => credentials,
@@ -250,7 +250,11 @@ defmodule ConsoleWeb.V1.ChannelController do
         |> render("show.json", channel: channel)
       end
     else
-      {:error, :bad_request, "Integration headers must be in a format of a valid map"}
+      if not validate_http_headers(credentials["headers"]) do
+        {:error, :bad_request, "Integration headers must be in a format of a valid map"}
+      else
+        {:error, :bad_request, "Integration template params must use {{ or {{{ and must be closed properly"}
+      end
     end
   end
 
@@ -323,6 +327,58 @@ defmodule ConsoleWeb.V1.ChannelController do
       true
     else
       is_map(headers)
+    end
+  end
+
+  defp validate_http_url_params(params) do
+    if params == nil do
+      true
+    else
+      if is_map(params) do
+        Map.keys(params)
+        |> Enum.concat(Map.values(params))
+        |> Enum.map(fn text ->
+          check_bracket_close(text, "{{", "}}") and check_bracket_close(text, "{{{", "}}}") and check_no_single_bracket(text)
+        end)
+        |> Enum.all?()
+      else
+        false
+      end
+    end
+  end
+
+  defp check_bracket_close(text, open_bracket, close_bracket) do
+    if String.contains?(text, open_bracket) do
+      split_string_open = String.split(text, open_bracket)
+      if length(split_string_open) == 2 do
+        closing_text = Enum.at(split_string_open, 1)
+        if String.contains?(closing_text, close_bracket) do
+          split_string_open = String.split(text, close_bracket)
+          if length(split_string_open) == 2 do
+            true
+          else
+            false
+          end
+        else
+          false
+        end
+      else
+        false
+      end
+    else
+      if String.contains?(text, close_bracket) do
+        false
+      else
+        true
+      end
+    end
+  end
+
+  defp check_no_single_bracket(text) do
+    cond do
+      String.contains?(text, "{") and not String.contains?(text, "{{") -> false
+      String.contains?(text, "}") and not String.contains?(text, "}}") -> false
+      true -> true
     end
   end
 
