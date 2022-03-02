@@ -365,7 +365,7 @@ defmodule Console.Organizations do
   end
 
   def get_invitations(email) do
-    from(i in Invitation, where: i.email == ^email)
+    from(i in Invitation, where: i.email == ^email and i.pending == true)
     |> Repo.all()
   end
 
