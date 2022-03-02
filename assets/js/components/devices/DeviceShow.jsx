@@ -53,6 +53,7 @@ import DeviceNotInFilterTableBadge from "../common/DeviceNotInFilterTableBadge";
 import ProfileDropdown from "../common/ProfileDropdown";
 import ErrorMessage from "../common/ErrorMessage";
 import { isMobile } from "../../util/constants";
+import DeviceUpdateAppKeyConfirmModal from "./DeviceUpdateAppKeyConfirmModal";
 
 export default (props) => {
   const deviceId = props.match.params.id;
@@ -82,6 +83,7 @@ export default (props) => {
   const [deviceToDelete, setDeviceToDelete] = useState(null);
   const [showAppKey, setShowAppKey] = useState(false);
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
+  const [showAppKeyConfirmModal, setShowAppKeyConfirmModal] = useState(false);
 
   const socket = useSelector((state) => state.apollo.socket);
   const channel = socket.channel("graphql:device_show", {});
@@ -177,18 +179,9 @@ export default (props) => {
     }
   };
 
-  const handleAppKeyUpdate = (id) => {
+  const handleAppKeyUpdate = () => {
     if (appKey.length === 32) {
-      dispatch(
-        updateDevice(id, {
-          app_key: appKey.toUpperCase(),
-        })
-      );
-      analyticsLogger.logEvent("ACTION_UPDATE_DEVICE", {
-        id: id,
-        app_key: appKey,
-      });
-      setShowAppKeyInput(false);
+      setShowAppKeyConfirmModal(true);
     } else {
       displayError(`App Key must be exactly 16 bytes long`);
     }
@@ -240,8 +233,10 @@ export default (props) => {
   };
 
   const toggleAppKeyInput = () => {
-    setAppKey(device.app_key);
-    setShowAppKeyInput(!showAppKeyInput);
+    if (!showAppKeyConfirmModal) {
+      setAppKey(device.app_key);
+      setShowAppKeyInput(!showAppKeyInput);
+    }
   };
 
   const toggleProfileDropdown = () => {
@@ -757,6 +752,26 @@ export default (props) => {
             devicesToDelete={deviceToDelete}
             totalDevices={1}
             from="deviceShow"
+          />
+
+          <DeviceUpdateAppKeyConfirmModal
+            open={showAppKeyConfirmModal}
+            close={() => {
+              setShowAppKeyConfirmModal(false);
+            }}
+            handleSubmit={() => {
+              dispatch(
+                updateDevice(deviceId, {
+                  app_key: appKey.toUpperCase(),
+                })
+              );
+              analyticsLogger.logEvent("ACTION_UPDATE_DEVICE", {
+                id: deviceId,
+                app_key: appKey,
+              });
+              setShowAppKeyInput(false);
+              setShowAppKeyConfirmModal(false);
+            }}
           />
 
           <Sidebar
