@@ -350,15 +350,13 @@ class DeviceNew extends Component {
               }}
             >
               {this.renderHelpText(true)}
-              {false && (
-                <Button
-                  key="submit"
-                  onClick={() => { this.setState({ showScanDeviceModal: true })}}
-                  style={{ marginBottom: 20 }}
-                >
-                  Scan Device QR Code
-                </Button>
-              )}
+              <Button
+                key="submit"
+                onClick={() => { this.setState({ showScanDeviceModal: true })}}
+                style={{ marginBottom: 20 }}
+              >
+                Scan Device QR Code
+              </Button>
               {this.renderDeviceDetails()}
               <div
                 style={{

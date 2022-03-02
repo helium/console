@@ -28,7 +28,7 @@ end
 # function created in psql
 # CREATE OR REPLACE FUNCTION prune_hotspot_stats() RETURNS void AS $$
 # BEGIN
-#   EXECUTE format($f$delete from hotspot_stats where inserted_at < NOW() - INTERVAL '7 days'$f$);
+#   EXECUTE format($f$delete from hotspot_stats where inserted_at < NOW() - INTERVAL '25 hours'$f$);
 #   RAISE NOTICE 'Pruned hotspot stats table';
 # END;
 # $$ LANGUAGE plpgsql;
