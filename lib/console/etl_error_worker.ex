@@ -151,7 +151,7 @@ defmodule Console.EtlErrorWorker do
       rescue
         error ->
           ConsoleWeb.Monitor.remove_from_events_error_state()
-          Appsignal.send_error(error, "Failed to process in ETL Error Worker", ["etl_error_worker"])
+          Appsignal.send_error(error, "Failed to process in ETL Error Worker", __STACKTRACE__)
       end
     end)
     |> Task.await(:infinity)

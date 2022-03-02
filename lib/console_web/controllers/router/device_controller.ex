@@ -248,7 +248,7 @@ defmodule ConsoleWeb.Router.DeviceController do
             end
           rescue
             error ->
-              Appsignal.send_error(error, "Failed to create event", ["add_device_event"])
+              Appsignal.send_error(error, "Failed to create event", __STACKTRACE__)
           end
       end
     else

@@ -113,7 +113,7 @@ defmodule Console.EtlWorker do
         error ->
           ConsoleWeb.MessageQueueConsumer.reject(delivery_tags)
           ConsoleWeb.Monitor.remove_from_events_state(length(events))
-          Appsignal.send_error(error, "Failed to process in ETL Worker", ["etl_worker"])
+          Appsignal.send_error(error, "Failed to process in ETL Worker", __STACKTRACE__)
       end
     end)
     |> Task.await(:infinity)
