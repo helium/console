@@ -69,6 +69,7 @@ defmodule ConsoleWeb.ChannelController do
             current_organization.id,
             conn.assigns.current_user.email,
             "channel_controller_create",
+            channel.id,
             attrs
           )
 
@@ -90,6 +91,7 @@ defmodule ConsoleWeb.ChannelController do
         current_organization.id,
         conn.assigns.current_user.email,
         "channel_controller_create",
+        channel.id,
         attrs
       )
 
@@ -133,6 +135,7 @@ defmodule ConsoleWeb.ChannelController do
         current_organization.id,
         conn.assigns.current_user.email,
         "channel_controller_update",
+        channel.id,
         attrs
       )
 
@@ -178,6 +181,7 @@ defmodule ConsoleWeb.ChannelController do
         current_organization.id,
         conn.assigns.current_user.email,
         "channel_controller_delete",
+        id,
         attrs
       )
 

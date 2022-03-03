@@ -22,6 +22,7 @@ defmodule ConsoleWeb.FunctionController do
         current_organization.id,
         conn.assigns.current_user.email,
         "function_controller_create",
+        function.id,
         attrs
       )
 
@@ -50,6 +51,7 @@ defmodule ConsoleWeb.FunctionController do
         current_organization.id,
         conn.assigns.current_user.email,
         "function_controller_update",
+        function.id,
         attrs
       )
 
@@ -77,6 +79,7 @@ defmodule ConsoleWeb.FunctionController do
         current_organization.id,
         conn.assigns.current_user.email,
         "function_controller_delete",
+        id,
         attrs
       )
 

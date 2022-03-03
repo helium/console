@@ -89,6 +89,7 @@ defmodule ConsoleWeb.V1.LabelController do
             current_organization.id,
             "v1_api",
             "label_controller_create",
+            label.id,
             attrs
           )
 
@@ -147,6 +148,7 @@ defmodule ConsoleWeb.V1.LabelController do
             current_organization.id,
             "v1_api",
             "label_controller_delete",
+            id,
             attrs
           )
 

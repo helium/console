@@ -47,6 +47,7 @@ defmodule ConsoleWeb.DeviceController do
         current_organization.id,
         conn.assigns.current_user.email,
         "device_controller_create",
+        device.id,
         attrs
       )
 
@@ -86,6 +87,7 @@ defmodule ConsoleWeb.DeviceController do
         current_organization.id,
         conn.assigns.current_user.email,
         "device_controller_update",
+        device.id,
         attrs
       )
 
@@ -124,6 +126,7 @@ defmodule ConsoleWeb.DeviceController do
         current_organization.id,
         conn.assigns.current_user.email,
         "device_controller_delete",
+        deleted_device.device_id,
         attrs
       )
 
@@ -172,6 +175,7 @@ defmodule ConsoleWeb.DeviceController do
         current_organization.id,
         conn.assigns.current_user.email,
         "device_controller_delete",
+        Map.get(List.first(deleted_devices), :device_id),
         attrs
       )
 
@@ -215,6 +219,7 @@ defmodule ConsoleWeb.DeviceController do
       organization_id,
       conn.assigns.current_user.email,
       "device_controller_delete",
+      "all_devices",
       attrs
     )
 

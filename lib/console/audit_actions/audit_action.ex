@@ -8,6 +8,7 @@ defmodule Console.AuditActions.AuditAction do
     field :organization_id, :string
     field :user_email, :string
     field :action, :string
+    field :resource_id, :string
     field :data, :map
 
     timestamps()
@@ -15,7 +16,7 @@ defmodule Console.AuditActions.AuditAction do
 
   def changeset(audit_action, attrs \\ %{}) do
     audit_action
-    |> cast(attrs, [:user_email, :action, :organization_id, :data])
+    |> cast(attrs, [:user_email, :action, :organization_id, :data, :resource_id])
   end
 
   def create_changeset(audit_action, attrs \\ %{}) do

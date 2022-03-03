@@ -89,6 +89,7 @@ defmodule ConsoleWeb.OrganizationController do
         organization.id,
         conn.assigns.current_user.email,
         "org_controller_update",
+        organization.id,
         attrs
       )
 
@@ -130,6 +131,7 @@ defmodule ConsoleWeb.OrganizationController do
               organization.id,
               conn.assigns.current_user.email,
               "org_controller_update",
+              organization.id,
               attrs
             )
 
@@ -202,6 +204,7 @@ defmodule ConsoleWeb.OrganizationController do
             organization.id,
             conn.assigns.current_user.email,
             "org_controller_delete",
+            organization.id,
             attrs
           )
 

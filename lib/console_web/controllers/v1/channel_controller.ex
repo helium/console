@@ -136,6 +136,7 @@ defmodule ConsoleWeb.V1.ChannelController do
             current_organization.id,
             "v1_api",
             "channel_controller_create",
+            channel.id,
             attrs
           )
 
@@ -172,6 +173,7 @@ defmodule ConsoleWeb.V1.ChannelController do
         current_organization.id,
         "v1_api",
         "channel_controller_create",
+        channel.id,
         attrs
       )
 
@@ -206,6 +208,7 @@ defmodule ConsoleWeb.V1.ChannelController do
         current_organization.id,
         "v1_api",
         "channel_controller_create",
+        channel.id,
         attrs
       )
 
@@ -244,6 +247,7 @@ defmodule ConsoleWeb.V1.ChannelController do
         current_organization.id,
         "v1_api",
         "channel_controller_create",
+        channel.id,
         attrs
       )
 
@@ -279,6 +283,7 @@ defmodule ConsoleWeb.V1.ChannelController do
           current_organization.id,
           "v1_api",
           "channel_controller_create",
+          channel.id,
           attrs
         )
 
@@ -330,6 +335,7 @@ defmodule ConsoleWeb.V1.ChannelController do
             current_organization.id,
             "v1_api",
             "channel_controller_delete",
+            channel.id,
             attrs
           )
 

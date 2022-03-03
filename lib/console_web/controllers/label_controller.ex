@@ -28,6 +28,7 @@ defmodule ConsoleWeb.LabelController do
         current_organization.id,
         current_user.email,
         "label_controller_create",
+        label.id,
         attrs
       )
 
@@ -59,6 +60,7 @@ defmodule ConsoleWeb.LabelController do
         current_organization.id,
         conn.assigns.current_user.email,
         "label_controller_update",
+        label.id,
         attrs
       )
 
@@ -87,6 +89,7 @@ defmodule ConsoleWeb.LabelController do
         current_organization.id,
         conn.assigns.current_user.email,
         "label_controller_delete",
+        id,
         attrs
       )
 

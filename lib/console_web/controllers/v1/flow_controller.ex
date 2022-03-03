@@ -174,6 +174,7 @@ defmodule ConsoleWeb.V1.FlowController do
                   current_organization.id,
                   "v1_api",
                   "flow_controller_create",
+                  current_organization.id,
                   attrs
                 )
 
@@ -231,6 +232,7 @@ defmodule ConsoleWeb.V1.FlowController do
           current_organization.id,
           "v1_api",
           "flow_controller_delete",
+          current_organization.id,
           attrs
         )
 

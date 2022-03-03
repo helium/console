@@ -4,12 +4,13 @@ defmodule Console.AuditActions do
 
   alias Console.AuditActions.AuditAction
 
-  def create_audit_action(organization_id, user_email, action, data) do
+  def create_audit_action(organization_id, user_email, action, resource_id, data) do
     attrs =
       %{
         "organization_id" => organization_id,
         "user_email" => user_email,
         "action" => action,
+        "resource_id" => resource_id,
         "data" => data
       }
 

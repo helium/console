@@ -42,6 +42,7 @@ defmodule ConsoleWeb.V1.FunctionController do
             current_organization.id,
             "v1_api",
             "function_controller_create",
+            function.id,
             attrs
           )
 
@@ -73,6 +74,7 @@ defmodule ConsoleWeb.V1.FunctionController do
               current_organization.id,
               "v1_api",
               "function_controller_update",
+              function.id,
               attrs
             )
 
@@ -98,6 +100,7 @@ defmodule ConsoleWeb.V1.FunctionController do
             current_organization.id,
             "v1_api",
             "function_controller_delete",
+            function.id,
             attrs
           )
 

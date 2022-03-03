@@ -163,6 +163,7 @@ defmodule ConsoleWeb.V1.DeviceController do
             current_organization.id,
             "v1_api",
             "device_controller_delete",
+            deleted_device.device_id,
             attrs
           )
 
@@ -247,6 +248,7 @@ defmodule ConsoleWeb.V1.DeviceController do
           current_organization.id,
           "v1_api",
           "device_controller_create",
+          device.id,
           attrs
         )
 

@@ -128,6 +128,7 @@ defmodule ConsoleWeb.FlowsController do
           current_organization.id,
           conn.assigns.current_user.email,
           "flow_controller_update",
+          current_organization.id,
           flows_changes
         )
 
