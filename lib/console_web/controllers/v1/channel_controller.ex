@@ -125,12 +125,136 @@ defmodule ConsoleWeb.V1.ChannelController do
         {:error, :bad_gateway, error }
       _ ->
         with {:ok, %Channel{} = channel} <- Channels.create_channel(current_organization, channel_params) do
-          channel = attach_devices_and_labels(current_organization, channel)
+          channel =
+            channel
+            |> Map.put(:devices, [])
+            |> Map.put(:labels, [])
 
           conn
           |> put_status(:created)
           |> render("show.json", channel: channel)
         end
+    end
+  end
+
+  def create(conn, %{ "name" => name, "type" => "aws", "topic" => topic, "aws_access_key" => pk, "aws_secret_key" => sk, "aws_region" => region }) do
+    current_organization = conn.assigns.current_organization
+
+    channel_params =
+      %{
+        "credentials" => %{
+          "topic" => topic,
+          "aws_access_key" => pk,
+          "aws_secret_key" => sk,
+          "aws_region" => region
+        },
+        "name" => name,
+        "type" => "aws",
+        "organization_id" => current_organization.id
+      }
+
+    with {:ok, %Channel{} = channel} <- Channels.create_channel(current_organization, channel_params) do
+      channel =
+        channel
+        |> Map.put(:devices, [])
+        |> Map.put(:labels, [])
+
+      conn
+      |> put_status(:created)
+      |> render("show.json", channel: channel)
+    end
+  end
+
+  def create(conn, %{ "name" => name, "type" => "azure", "azure_policy_name" => policy_name, "azure_hub_name" => hub_name, "azure_policy_key" => key }) do
+    current_organization = conn.assigns.current_organization
+
+    channel_params =
+      %{
+        "credentials" => %{
+          "azure_policy_name" => policy_name,
+          "azure_hub_name" => hub_name,
+          "azure_policy_key" => key
+        },
+        "name" => name,
+        "type" => "azure",
+        "organization_id" => current_organization.id
+      }
+
+    with {:ok, %Channel{} = channel} <- Channels.create_channel(current_organization, channel_params) do
+      channel =
+        channel
+        |> Map.put(:devices, [])
+        |> Map.put(:labels, [])
+
+      conn
+      |> put_status(:created)
+      |> render("show.json", channel: channel)
+    end
+  end
+
+  def create(conn, %{ "name" => name, "type" => "mqtt", "endpoint" => endpoint, "uplink_topic" => uplink_topic, "downlink_topic" => downlink_topic }) do
+    current_organization = conn.assigns.current_organization
+
+    channel_params =
+      %{
+        "credentials" => %{
+          "endpoint" => endpoint,
+          "uplink" => %{
+            "topic" => uplink_topic
+          },
+          "downlink" => %{
+            "topic" => downlink_topic
+          },
+        },
+        "name" => name,
+        "type" => "mqtt",
+        "organization_id" => current_organization.id
+      }
+
+    with {:ok, %Channel{} = channel} <- Channels.create_channel(current_organization, channel_params) do
+      channel =
+        channel
+        |> Map.put(:devices, [])
+        |> Map.put(:labels, [])
+
+      conn
+      |> put_status(:created)
+      |> render("show.json", channel: channel)
+    end
+  end
+
+  def create(conn, %{ "name" => name, "type" => "http", "endpoint" => endpoint, "method" => method } = http_params) do
+    current_organization = conn.assigns.current_organization
+
+    credentials =
+      %{ "endpoint" => endpoint, "method" => method }
+      |> Map.merge(Map.take(http_params, ["headers", "url_params"]))
+
+    if validate_http_headers(credentials["headers"]) and validate_http_url_params(credentials["url_params"]) do
+      channel_params =
+        %{
+          "credentials" => credentials,
+          "name" => name,
+          "type" => "http",
+          "organization_id" => current_organization.id
+        }
+
+      with {:ok, %Channel{} = channel} <- Channels.create_channel(current_organization, channel_params) do
+        channel =
+          channel
+          |> Map.put(:devices, [])
+          |> Map.put(:labels, [])
+
+        conn
+        |> put_status(:created)
+        |> render("show.json", channel: channel)
+      end
+    else
+      if not validate_http_headers(credentials["headers"]) do
+        {:error, :bad_request, "Integration headers must be in a format of a valid map"}
+      else
+        {:error, :bad_request, "Integration template params must use {{ or {{{ and must be closed properly"}
+      end
     end
   end
 
@@ -196,6 +320,66 @@ defmodule ConsoleWeb.V1.ChannelController do
     channel
     |> Map.put(:devices, linked_devices)
     |> Map.put(:labels, linked_labels)
+  end
+
+  defp validate_http_headers(headers) do
+    if headers == nil do
+      true
+    else
+      is_map(headers)
+    end
+  end
+
+  defp validate_http_url_params(params) do
+    if params == nil do
+      true
+    else
+      if is_map(params) do
+        Map.keys(params)
+        |> Enum.concat(Map.values(params))
+        |> Enum.map(fn text ->
+          check_bracket_close(text, "{{", "}}") and check_bracket_close(text, "{{{", "}}}") and check_no_single_bracket(text)
+        end)
+        |> Enum.all?()
+      else
+        false
+      end
+    end
+  end
+
+  defp check_bracket_close(text, open_bracket, close_bracket) do
+    if String.contains?(text, open_bracket) do
+      split_string_open = String.split(text, open_bracket)
+      if length(split_string_open) == 2 do
+        closing_text = Enum.at(split_string_open, 1)
+        if String.contains?(closing_text, close_bracket) do
+          split_string_open = String.split(text, close_bracket)
+          if length(split_string_open) == 2 do
+            true
+          else
+            false
+          end
+        else
+          false
+        end
+      else
+        false
+      end
+    else
+      if String.contains?(text, close_bracket) do
+        false
+      else
+        true
+      end
+    end
+  end
+
+  defp check_no_single_bracket(text) do
+    cond do
+      String.contains?(text, "{") and not String.contains?(text, "{{") -> false
+      String.contains?(text, "}") and not String.contains?(text, "}}") -> false
+      true -> true
+    end
   end
 
   defp broadcast_router_update_devices(device_ids) do

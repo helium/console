@@ -16,6 +16,8 @@ defmodule ConsoleWeb.V1.ChannelView do
     channel_attrs = %{
       id: channel.id,
       name: channel.name,
+      type: channel.type,
+      credentials: channel.credentials
     }
 
     if Map.has_key?(channel, :devices) do

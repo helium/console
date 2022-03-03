@@ -9,6 +9,10 @@ defmodule Console.Functions do
      Repo.get_by!(Function, [id: id, organization_id: organization.id])
   end
 
+  def get_function(organization, id) do
+     Repo.get_by(Function, [id: id, organization_id: organization.id])
+  end
+
   def get_function!(id), do: Repo.get!(Function, id)
 
   def get_function(id), do: Repo.get(Function, id)

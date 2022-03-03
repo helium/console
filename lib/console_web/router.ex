@@ -146,10 +146,11 @@ defmodule ConsoleWeb.Router do
     post "/devices/:device_id/labels", LabelController, :add_device_to_label
     delete "/devices/:device_id/labels/:label_id", LabelController, :delete_device_from_label
     post "/devices/discover", DeviceController, :discover_device
+    resources "/functions", FunctionController, only: [:index, :show, :create, :delete, :update]
     resources "/alerts", AlertController, only: [:create, :update, :delete]
     post "/alerts/add_to_node", AlertController, :add_alert_to_node
     post "/alerts/remove_from_node", AlertController, :remove_alert_from_node
-    resources "/integrations", ChannelController, only: [:index, :show, :delete]
+    resources "/integrations", ChannelController, only: [:index, :create, :show, :delete]
     post "/integrations/prebuilt", ChannelController, :create_prebuilt
     resources "/flows", FlowController, only: [:index, :create, :delete]
   end
