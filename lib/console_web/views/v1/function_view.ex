@@ -11,7 +11,7 @@ defmodule ConsoleWeb.V1.FunctionView do
   end
 
   def render("function.json", %{function: function}) do
-    function_attrs = %{
+    %{
       id: function.id,
       name: function.name,
       body: function.body,

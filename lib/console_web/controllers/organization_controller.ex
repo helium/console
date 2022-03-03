@@ -8,6 +8,7 @@ defmodule ConsoleWeb.OrganizationController do
   alias Console.DcPurchases
   alias Console.Email
   alias Console.Mailer
+  alias Console.AuditActions
 
   plug ConsoleWeb.Plug.AuthorizeAction when action in [:delete]
 
@@ -55,7 +56,7 @@ defmodule ConsoleWeb.OrganizationController do
     end
   end
 
-  def update(conn, %{"id" => id, "active" => active}) do
+  def update(conn, %{"id" => id, "active" => active} = attrs) do
     organization = Organizations.get_organization!(conn.assigns.current_user, id) |> Organizations.fetch_assoc([:devices])
     membership = Organizations.get_membership!(conn.assigns.current_user, organization)
     device_ids = organization.devices |> Enum.map(fn d -> d.id end)
@@ -84,6 +85,14 @@ defmodule ConsoleWeb.OrganizationController do
         ConsoleWeb.Endpoint.broadcast("device:all", "device:all:inactive:devices", %{ "devices" => device_ids })
       end
 
+      AuditActions.create_audit_action(
+        organization.id,
+        conn.assigns.current_user.email,
+        "org_controller_update",
+        organization.id,
+        attrs
+      )
+
       render_org = %{id: organization.id, name: organization.name, role: membership.role}
       conn
       |> put_resp_header("message", "Organization #{organization.name} updated successfully")
@@ -101,7 +110,7 @@ defmodule ConsoleWeb.OrganizationController do
     end
   end
 
-  def update(conn, %{"id" => id, "name" => name}) do
+  def update(conn, %{"id" => id, "name" => name} = attrs) do
     organization = Organizations.get_organization!(conn.assigns.current_user, id)
     membership = Organizations.get_membership!(conn.assigns.current_user, organization)
 
@@ -118,6 +127,14 @@ defmodule ConsoleWeb.OrganizationController do
             ConsoleWeb.Endpoint.broadcast("graphql:topbar_org", "graphql:topbar_org:#{organization.id}:current_organization_renamed", %{})
             ConsoleWeb.Endpoint.broadcast("graphql:orgs_index_table", "graphql:orgs_index_table:#{conn.assigns.current_user.id}:organization_list_update", %{})
 
+            AuditActions.create_audit_action(
+              organization.id,
+              conn.assigns.current_user.email,
+              "org_controller_update",
+              organization.id,
+              attrs
+            )
+
             membership_info = %{id: organization.id, name: organization.name, role: membership.role}
             conn
             |> put_status(:ok)
@@ -127,7 +144,7 @@ defmodule ConsoleWeb.OrganizationController do
     end
   end
 
-  def delete(conn, %{"id" => id, "destination_org_id" => destination_org_id}) do
+  def delete(conn, %{"id" => id, "destination_org_id" => destination_org_id} = attrs) do
     organization = Organizations.get_organization!(conn.assigns.current_user, id)
     membership = Organizations.get_membership!(conn.assigns.current_user, organization)
     balance_left = organization.dc_balance
@@ -158,7 +175,7 @@ defmodule ConsoleWeb.OrganizationController do
           ConsoleWeb.DataCreditController.broadcast_router_refill_dc_balance(from_org_updated)
           ConsoleWeb.DataCreditController.broadcast_router_refill_dc_balance(to_org_updated)
 
-          attrs = %{
+          dc_purchase_attrs = %{
             "dc_purchased" => balance_to_transfer,
             "cost" => 0,
             "card_type" => "transfer",
@@ -168,7 +185,7 @@ defmodule ConsoleWeb.OrganizationController do
             "organization_id" => destination_org.id
           }
 
-          {:ok, _destination_org_dc_purchase} = DcPurchases.create_dc_purchase(attrs)
+          {:ok, _destination_org_dc_purchase} = DcPurchases.create_dc_purchase(dc_purchase_attrs)
           ConsoleWeb.Endpoint.broadcast("graphql:dc_purchases_table", "graphql:dc_purchases_table:#{destination_org.id}:update_dc_table", %{})
         end
 
@@ -182,6 +199,14 @@ defmodule ConsoleWeb.OrganizationController do
 
           ConsoleWeb.Endpoint.broadcast("graphql:topbar_orgs", "graphql:topbar_orgs:#{conn.assigns.current_user.id}:organization_list_update", %{})
           ConsoleWeb.Endpoint.broadcast("graphql:orgs_index_table", "graphql:orgs_index_table:#{conn.assigns.current_user.id}:organization_list_update", %{})
+
+          AuditActions.create_audit_action(
+            organization.id,
+            conn.assigns.current_user.email,
+            "org_controller_delete",
+            organization.id,
+            attrs
+          )
 
           render_org = %{id: organization.id, name: organization.name, role: membership.role}
           conn

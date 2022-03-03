@@ -8,6 +8,7 @@ defmodule ConsoleWeb.ChannelController do
   alias Console.Functions
   alias Console.Alerts
   alias Console.AlertEvents
+  alias Console.AuditActions
   alias Console.Flows
 
   plug ConsoleWeb.Plug.AuthorizeAction
@@ -15,7 +16,7 @@ defmodule ConsoleWeb.ChannelController do
   action_fallback ConsoleWeb.FallbackController
 
   # For create adafruit / google sheets channel
-  def create(conn, %{"channel" => channel_params, "func" => function_params }) do
+  def create(conn, %{"channel" => channel_params, "func" => function_params } = attrs) do
     current_organization = conn.assigns.current_organization
     channel_params = Map.merge(channel_params, %{"organization_id" => current_organization.id})
 
@@ -64,6 +65,14 @@ defmodule ConsoleWeb.ChannelController do
         {:ok, %{ channel: channel, function: _function}} ->
           ConsoleWeb.Endpoint.broadcast("graphql:channel_index_bar", "graphql:channel_index_bar:#{current_organization.id}:channel_list_update", %{})
 
+          AuditActions.create_audit_action(
+            current_organization.id,
+            conn.assigns.current_user.email,
+            "channel_controller_create",
+            channel.id,
+            attrs
+          )
+
           conn
           |> put_status(:created)
           |> render("show.json", channel: channel)
@@ -71,12 +80,20 @@ defmodule ConsoleWeb.ChannelController do
       end
   end
 
-  def create(conn, %{"channel" => channel_params}) do
+  def create(conn, %{"channel" => channel_params} = attrs) do
     current_organization = conn.assigns.current_organization
     channel_params = Map.merge(channel_params, %{"organization_id" => current_organization.id})
 
     with {:ok, %Channel{} = channel} <- Channels.create_channel(current_organization, channel_params) do
       ConsoleWeb.Endpoint.broadcast("graphql:channel_index_bar", "graphql:channel_index_bar:#{current_organization.id}:channel_list_update", %{})
+
+      AuditActions.create_audit_action(
+        current_organization.id,
+        conn.assigns.current_user.email,
+        "channel_controller_create",
+        channel.id,
+        attrs
+      )
 
       conn
       |> put_status(:created)
@@ -84,7 +101,7 @@ defmodule ConsoleWeb.ChannelController do
     end
   end
 
-  def update(conn, %{"id" => id, "channel" => channel_params}) do
+  def update(conn, %{"id" => id, "channel" => channel_params} = attrs) do
     current_organization = conn.assigns.current_organization
     channel = Channels.get_channel!(current_organization, id)
 
@@ -114,13 +131,21 @@ defmodule ConsoleWeb.ChannelController do
         AlertEvents.notify_alert_event(channel.id, "integration", "integration_with_devices_updated", details)
       end
 
+      AuditActions.create_audit_action(
+        current_organization.id,
+        conn.assigns.current_user.email,
+        "channel_controller_update",
+        channel.id,
+        attrs
+      )
+
       conn
       |> put_resp_header("message", "Integration #{channel.name} updated successfully")
       |> render("show.json", channel: channel)
     end
   end
 
-  def delete(conn, %{"id" => id}) do
+  def delete(conn, %{"id" => id} = attrs) do
     current_organization = conn.assigns.current_organization
     channel = Channels.get_channel!(current_organization, id)
 
@@ -151,6 +176,14 @@ defmodule ConsoleWeb.ChannelController do
       end
 
       broadcast_router_update_devices(all_device_ids)
+
+      AuditActions.create_audit_action(
+        current_organization.id,
+        conn.assigns.current_user.email,
+        "channel_controller_delete",
+        id,
+        attrs
+      )
 
       conn
       |> put_resp_header("message", "The Integration #{channel.name} has been deleted")

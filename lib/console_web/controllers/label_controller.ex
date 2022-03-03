@@ -6,12 +6,13 @@ defmodule ConsoleWeb.LabelController do
   alias Console.Devices
   alias Console.Labels.Label
   alias Console.Alerts
+  alias Console.AuditActions
 
   plug ConsoleWeb.Plug.AuthorizeAction
 
   action_fallback(ConsoleWeb.FallbackController)
 
-  def create(conn, %{"label" => label_params}) do
+  def create(conn, %{"label" => label_params} = attrs) do
     current_organization = conn.assigns.current_organization
     current_user = conn.assigns.current_user
     label_params =
@@ -23,6 +24,14 @@ defmodule ConsoleWeb.LabelController do
     with {:ok, %Label{} = label} <- Labels.create_label(current_organization, label_params) do
       ConsoleWeb.Endpoint.broadcast("graphql:device_index_labels_bar", "graphql:device_index_labels_bar:#{current_organization.id}:label_list_update", %{})
 
+      AuditActions.create_audit_action(
+        current_organization.id,
+        current_user.email,
+        "label_controller_create",
+        label.id,
+        attrs
+      )
+
       conn
       |> put_status(:created)
       |> put_resp_header("message",  "Label #{label.name} added successfully")
@@ -30,7 +39,7 @@ defmodule ConsoleWeb.LabelController do
     end
   end
 
-  def update(conn, %{"id" => id, "label" => label_params}) do
+  def update(conn, %{"id" => id, "label" => label_params} = attrs) do
     current_organization = conn.assigns.current_organization
     label = Labels.get_label!(current_organization, id) |> Labels.fetch_assoc([:devices])
     device_ids = label.devices |> Enum.map(fn d -> d.id end)
@@ -47,13 +56,21 @@ defmodule ConsoleWeb.LabelController do
           true -> "The label #{name} was successfully updated to #{label.name}"
         end
 
+      AuditActions.create_audit_action(
+        current_organization.id,
+        conn.assigns.current_user.email,
+        "label_controller_update",
+        label.id,
+        attrs
+      )
+
       conn
       |> put_resp_header("message", msg)
       |> render("show.json", label: label)
     end
   end
 
-  def delete(conn, %{"id" => id}) do
+  def delete(conn, %{"id" => id} = attrs) do
     current_organization = conn.assigns.current_organization
     label = Labels.get_label!(current_organization, id) |> Labels.fetch_assoc([:devices])
     device_ids = label.devices |> Enum.map(fn d -> d.id end)
@@ -67,6 +84,14 @@ defmodule ConsoleWeb.LabelController do
         ConsoleWeb.Endpoint.broadcast("graphql:device_show_labels_table", "graphql:device_show_labels_table:#{device}:device_update", %{})
       end)
       broadcast_router_update_devices(device_ids)
+
+      AuditActions.create_audit_action(
+        current_organization.id,
+        conn.assigns.current_user.email,
+        "label_controller_delete",
+        id,
+        attrs
+      )
 
       conn
       |> put_resp_header("message", "#{label.name} deleted successfully")

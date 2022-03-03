@@ -5,17 +5,26 @@ defmodule ConsoleWeb.FunctionController do
   alias Console.Functions.Function
   alias Console.Alerts
   alias Console.Flows
+  alias Console.AuditActions
 
   plug ConsoleWeb.Plug.AuthorizeAction
   action_fallback(ConsoleWeb.FallbackController)
 
-  def create(conn, %{"function" => function_params}) do
+  def create(conn, %{"function" => function_params} = attrs) do
     current_organization = conn.assigns.current_organization
     function_params = Map.merge(function_params, %{"organization_id" => current_organization.id})
 
     with {:ok, %Function{} = function} <- Functions.create_function(function_params, current_organization) do
       ConsoleWeb.Endpoint.broadcast("graphql:function_index_table", "graphql:function_index_table:#{current_organization.id}:function_list_update", %{})
       ConsoleWeb.Endpoint.broadcast("graphql:function_index_bar", "graphql:function_index_bar:#{current_organization.id}:function_list_update", %{})
+
+      AuditActions.create_audit_action(
+        current_organization.id,
+        conn.assigns.current_user.email,
+        "function_controller_create",
+        function.id,
+        attrs
+      )
 
       conn
         |> put_status(:created)
@@ -24,7 +33,7 @@ defmodule ConsoleWeb.FunctionController do
     end
   end
 
-  def update(conn, %{"id" => id, "function" => function_params}) do
+  def update(conn, %{"id" => id, "function" => function_params} = attrs) do
     current_organization = conn.assigns.current_organization
     function = Functions.get_function!(current_organization, id)
 
@@ -38,13 +47,21 @@ defmodule ConsoleWeb.FunctionController do
       ConsoleWeb.Endpoint.broadcast("graphql:resources_update", "graphql:resources_update:#{current_organization.id}:organization_resources_update", %{})
       broadcast_router_update_devices(all_device_ids)
 
+      AuditActions.create_audit_action(
+        current_organization.id,
+        conn.assigns.current_user.email,
+        "function_controller_update",
+        function.id,
+        attrs
+      )
+
       conn
       |> put_resp_header("message", "Function #{function.name} updated successfully")
       |> render("show.json", function: function)
     end
   end
 
-  def delete(conn, %{"id" => id}) do
+  def delete(conn, %{"id" => id} = attrs) do
     current_organization = conn.assigns.current_organization
     function = Functions.get_function!(current_organization, id)
 
@@ -57,6 +74,14 @@ defmodule ConsoleWeb.FunctionController do
       ConsoleWeb.Endpoint.broadcast("graphql:flows_nodes_menu", "graphql:flows_nodes_menu:#{current_organization.id}:all_resources_update", %{})
       Alerts.delete_alert_nodes(id, "function")
       broadcast_router_update_devices(all_device_ids)
+
+      AuditActions.create_audit_action(
+        current_organization.id,
+        conn.assigns.current_user.email,
+        "function_controller_delete",
+        id,
+        attrs
+      )
 
       conn
       |> put_resp_header("message", "#{function.name} deleted successfully")

@@ -9,6 +9,7 @@ defmodule ConsoleWeb.FlowsController do
   alias Console.Labels
   alias Console.Functions
   alias Console.Channels
+  alias Console.AuditActions
 
   plug ConsoleWeb.Plug.AuthorizeAction
   action_fallback(ConsoleWeb.FallbackController)
@@ -122,6 +123,14 @@ defmodule ConsoleWeb.FlowsController do
         if length(all_device_ids) > 0 do
           ConsoleWeb.Endpoint.broadcast("device:all", "device:all:refetch:devices", %{ "devices" => all_device_ids })
         end
+
+        AuditActions.create_audit_action(
+          current_organization.id,
+          conn.assigns.current_user.email,
+          "flow_controller_update",
+          current_organization.id,
+          flows_changes
+        )
 
         conn
         |> put_resp_header("message", "Flows changes have been successfully saved")
