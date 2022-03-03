@@ -8,6 +8,7 @@ defmodule ConsoleWeb.DeviceController do
   alias Console.Labels
   alias Console.AlertEvents
   alias Console.Alerts
+  alias Console.AuditActions
 
   plug ConsoleWeb.Plug.AuthorizeAction
 
@@ -15,7 +16,7 @@ defmodule ConsoleWeb.DeviceController do
 
   @ttn_url "https://ttn-service.herokuapp.com"
 
-  def create(conn, %{"device" => device_params, "label" => label}) do
+  def create(conn, %{"device" => device_params, "label" => label} = attrs) do
     current_organization = conn.assigns.current_organization
     user = conn.assigns.current_user
     device_params =
@@ -42,6 +43,13 @@ defmodule ConsoleWeb.DeviceController do
       ConsoleWeb.Endpoint.broadcast("graphql:devices_header_count", "graphql:devices_header_count:#{current_organization.id}:device_list_update", %{})
       broadcast_router_update_devices([device.id])
 
+      AuditActions.create_audit_action(
+        current_organization.id,
+        conn.assigns.current_user.email,
+        "device_controller_create",
+        attrs
+      )
+
       conn
       |> put_status(:created)
       |> put_resp_header("message",  "Device #{device.name} added successfully")
@@ -49,7 +57,7 @@ defmodule ConsoleWeb.DeviceController do
     end
   end
 
-  def update(conn, %{"id" => id, "device" => device_params}) do
+  def update(conn, %{"id" => id, "device" => device_params} = attrs) do
     current_organization = conn.assigns.current_organization
     device = Devices.get_device!(current_organization, id)
 
@@ -74,13 +82,20 @@ defmodule ConsoleWeb.DeviceController do
         end)
       end
 
+      AuditActions.create_audit_action(
+        current_organization.id,
+        conn.assigns.current_user.email,
+        "device_controller_update",
+        attrs
+      )
+
       conn
       |> put_resp_header("message", "Device #{device.name} updated successfully")
       |> render("show.json", device: device)
     end
   end
 
-  def delete(conn, %{"id" => id}) do
+  def delete(conn, %{"id" => id} = attrs) do
     current_organization = conn.assigns.current_organization
     device = Devices.get_device!(current_organization, id) |> Repo.preload([:labels])
 
@@ -105,13 +120,20 @@ defmodule ConsoleWeb.DeviceController do
       AlertEvents.notify_alert_event(deleted_device.device_id, "device", "device_deleted", details, deleted_device.labels)
       Alerts.delete_alert_nodes(deleted_device.device_id, "device")
 
+      AuditActions.create_audit_action(
+        current_organization.id,
+        conn.assigns.current_user.email,
+        "device_controller_delete",
+        attrs
+      )
+
       conn
       |> put_resp_header("message", "#{device.name} deleted successfully")
       |> send_resp(:no_content, "")
     end
   end
 
-  def delete(conn, %{"devices" => devices, "label_id" => label_id}) do
+  def delete(conn, %{"devices" => devices, "label_id" => label_id} = attrs) do
     current_organization = conn.assigns.current_organization
     list_devices = Devices.get_devices(current_organization, devices) |> Repo.preload([:labels])
 
@@ -146,13 +168,20 @@ defmodule ConsoleWeb.DeviceController do
         Alerts.delete_alert_nodes(d.device_id, "device")
       end)
 
+      AuditActions.create_audit_action(
+        current_organization.id,
+        conn.assigns.current_user.email,
+        "device_controller_delete",
+        attrs
+      )
+
       conn
       |> put_resp_header("message", "Devices deleted successfully")
       |> send_resp(:no_content, "")
     end
   end
 
-  def delete(conn, _params) do
+  def delete(conn, attrs) do
     organization_id = conn.assigns.current_organization.id
 
     # grab info for notifications before device(s) deletion
@@ -181,6 +210,13 @@ defmodule ConsoleWeb.DeviceController do
       AlertEvents.notify_alert_event(d.device_id, "device", "device_deleted", details, d.labels)
       Alerts.delete_alert_nodes(d.device_id, "device")
     end)
+
+    AuditActions.create_audit_action(
+      organization_id,
+      conn.assigns.current_user.email,
+      "device_controller_delete",
+      attrs
+    )
 
     conn
     |> put_resp_header("message", "Deleted all devices successfully")
