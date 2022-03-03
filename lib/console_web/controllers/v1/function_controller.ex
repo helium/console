@@ -30,12 +30,17 @@ defmodule ConsoleWeb.V1.FunctionController do
 
   def create(conn, function_params = %{ "name" => _name }) do
     current_organization = conn.assigns.current_organization
-    function_params = Map.merge(function_params, %{"organization_id" => current_organization.id, "type" => "decoder", "active" => true})
+    cond do
+      Map.get(function_params, "format") not in ["cayenne", "browan_object_locator"] ->
+        {:error, :bad_request, "Invalid function format, please check allowed function formats in Helium documentation"}
+      true ->
+        function_params = Map.merge(function_params, %{"organization_id" => current_organization.id, "type" => "decoder", "active" => true})
 
-    with {:ok, %Function{} = function} <- Functions.create_function(function_params, current_organization) do
-      conn
-      |> put_status(:created)
-      |> render("show.json", function: function)
+        with {:ok, %Function{} = function} <- Functions.create_function(function_params, current_organization) do
+          conn
+          |> put_status(:created)
+          |> render("show.json", function: function)
+        end
     end
   end
 
@@ -46,10 +51,10 @@ defmodule ConsoleWeb.V1.FunctionController do
       nil ->
         {:error, :not_found, "Function not found"}
       %Function{} = function ->
-        function_attrs = Map.take(attrs, ["name", "active", "body"])
+        function_attrs = Map.take(attrs, ["name", "active"])
 
         if length(Map.keys(function_attrs)) == 0 do
-          {:error, :bad_request, "Function update attributes must contain name, active, or body"}
+          {:error, :bad_request, "Only function name or active status can be updated"}
         else
           with {:ok, function} <- Functions.update_function(function, function_attrs) do
             affected_flows = Flows.get_flows_with_function_id(current_organization.id, function.id)
