@@ -62,6 +62,9 @@ config :console,
   use_amqp_events: if System.get_env("USE_AMQP_EVENTS") == "true", do: true, else: false
 
 config :console,
+  impose_hard_cap: if System.get_env("IMPOSE_HARD_CAP") == "true", do: true, else: false
+
+config :console,
   amqp_url: System.get_env("AMQP_URL")
 
 config :console,

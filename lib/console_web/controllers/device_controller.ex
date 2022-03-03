@@ -25,36 +25,39 @@ defmodule ConsoleWeb.DeviceController do
       })
       |> Map.drop(["hotspot_address"])
 
-    with {:ok, %Device{} = device} <- Devices.create_device(device_params, current_organization) do
-      case label["labelApplied"] do
-        nil -> nil
-        label_id ->
-          label = Ecto.assoc(current_organization, :labels) |> Repo.get!(label_id)
-          Labels.add_devices_to_label([device.id], label.id, current_organization)
-      end
+    case Devices.create_device(device_params, current_organization) do
+      {:ok, %Device{} = device} ->
+        case label["labelApplied"] do
+          nil -> nil
+          label_id ->
+            label = Ecto.assoc(current_organization, :labels) |> Repo.get!(label_id)
+            Labels.add_devices_to_label([device.id], label.id, current_organization)
+        end
 
-      case label["newLabel"] do
-        nil -> nil
-        label_name ->
-          Labels.create_labels_add_device(device, [label_name], current_organization, user)
-      end
+        case label["newLabel"] do
+          nil -> nil
+          label_name ->
+            Labels.create_labels_add_device(device, [label_name], current_organization, user)
+        end
 
-      ConsoleWeb.Endpoint.broadcast("graphql:devices_index_table", "graphql:devices_index_table:#{current_organization.id}:device_list_update", %{})
-      ConsoleWeb.Endpoint.broadcast("graphql:devices_header_count", "graphql:devices_header_count:#{current_organization.id}:device_list_update", %{})
-      broadcast_router_update_devices([device.id])
+        ConsoleWeb.Endpoint.broadcast("graphql:devices_index_table", "graphql:devices_index_table:#{current_organization.id}:device_list_update", %{})
+        ConsoleWeb.Endpoint.broadcast("graphql:devices_header_count", "graphql:devices_header_count:#{current_organization.id}:device_list_update", %{})
+        broadcast_router_update_devices([device.id])
 
-      AuditActions.create_audit_action(
-        current_organization.id,
-        conn.assigns.current_user.email,
-        "device_controller_create",
-        device.id,
-        attrs
-      )
+        AuditActions.create_audit_action(
+          current_organization.id,
+          conn.assigns.current_user.email,
+          "device_controller_create",
+          device.id,
+          attrs
+        )
 
-      conn
-      |> put_status(:created)
-      |> put_resp_header("message",  "Device #{device.name} added successfully")
-      |> render("show.json", device: device)
+        conn
+        |> put_status(:created)
+        |> put_resp_header("message",  "Device #{device.name} added successfully")
+        |> render("show.json", device: device)
+      {:error, "Device limit reached"} ->
+        {:error, :forbidden, "The device/organization cap has been met. To add devices or organizations for commercial use cases, reach out to sales@nova.xyz."}
     end
   end
 

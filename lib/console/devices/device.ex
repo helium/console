@@ -51,24 +51,6 @@ defmodule Console.Devices.Device do
       |> unique_constraint(:hotspot_address, name: :devices_hotspot_address_index, message: "This hotspot address is already used")
   end
 
-  def create_discovery_changeset(device, device_params = %{ "name" => _name, "hotspot_address" => _hotspot_address, "organization_id" => _organization_id }) do
-    alphabet = '0123456789ABCDEF'
-    device_params =
-      Map.merge(device_params, %{
-        "dev_eui" => Helpers.generate_string(16, alphabet),
-        "app_eui" => Helpers.generate_string(16, alphabet),
-        "app_key" => Helpers.generate_string(32, alphabet),
-      })
-
-    device
-      |> cast(device_params, [:name, :dev_eui, :app_eui, :app_key, :hotspot_address, :organization_id])
-      |> put_change(:oui, Application.fetch_env!(:console, :oui))
-      |> check_attrs_format()
-      |> validate_required([:name, :dev_eui, :app_eui, :app_key, :oui, :organization_id])
-      |> unique_constraint(:dev_eui, name: :devices_dev_eui_app_eui_app_key_index, message: "Values for DevEUI, AppEUI, and AppKey must be unique, please try again")
-      |> unique_constraint(:hotspot_address, name: :devices_hotspot_address_index, message: "This hotspot address is already used")
-  end
-
   def update_changeset(device, attrs) do
     attrs = Helpers.sanitize_attrs(attrs, ["name", "dev_eui", "app_eui", "app_key"])
     attrs = Helpers.upcase_attrs(attrs, ["dev_eui", "app_eui", "app_key"])
@@ -85,6 +67,24 @@ defmodule Console.Devices.Device do
   def router_update_changeset(device, attrs) do
     device
       |> cast(attrs, [:frame_up, :frame_down, :last_connected, :total_packets, :dc_usage, :in_xor_filter])
+  end
+
+  def create_discovery_changeset(device, device_params = %{ "name" => _name, "hotspot_address" => _hotspot_address, "organization_id" => _organization_id }) do
+    alphabet = '0123456789ABCDEF'
+    device_params =
+      Map.merge(device_params, %{
+        "dev_eui" => Helpers.generate_string(16, alphabet),
+        "app_eui" => Helpers.generate_string(16, alphabet),
+        "app_key" => Helpers.generate_string(32, alphabet),
+      })
+
+    device
+      |> cast(device_params, [:name, :dev_eui, :app_eui, :app_key, :hotspot_address, :organization_id])
+      |> put_change(:oui, Application.fetch_env!(:console, :oui))
+      |> check_attrs_format()
+      |> validate_required([:name, :dev_eui, :app_eui, :app_key, :oui, :organization_id])
+      |> unique_constraint(:dev_eui, name: :devices_dev_eui_app_eui_app_key_index, message: "Values for DevEUI, AppEUI, and AppKey must be unique, please try again")
+      |> unique_constraint(:hotspot_address, name: :devices_hotspot_address_index, message: "This hotspot address is already used")
   end
 
   defp check_attrs_format(changeset) do
