@@ -8,10 +8,12 @@ defmodule Console.Repo.Migrations.CreateAuditActionsTable do
       add :user_email, :string
       add :action, :string
       add :data, :map
+      add :resource_id, :string
 
       timestamps()
     end
 
     create index(:audit_actions, [:action])
+    create index(:audit_actions, [:resource_id])
   end
 end
