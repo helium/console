@@ -10,6 +10,8 @@ defmodule ConsoleWeb.V1.ChannelController do
   alias Console.Channels.Channel
   alias Console.Alerts
   alias Console.AlertEvents
+  alias Console.AuditActions
+
   action_fallback(ConsoleWeb.FallbackController)
 
   plug CORSPlug, origin: "*"
@@ -49,7 +51,7 @@ defmodule ConsoleWeb.V1.ChannelController do
     end
   end
 
-  def create_prebuilt(conn, %{ "name" => name, "token" => token, "type" => type}) do
+  def create_prebuilt(conn, %{ "name" => name, "token" => token, "type" => type} = attrs) do
     current_organization = conn.assigns.current_organization
 
     channel_params =
@@ -130,6 +132,13 @@ defmodule ConsoleWeb.V1.ChannelController do
             |> Map.put(:devices, [])
             |> Map.put(:labels, [])
 
+          AuditActions.create_audit_action(
+            current_organization.id,
+            "v1_api",
+            "channel_controller_create",
+            attrs
+          )
+
           conn
           |> put_status(:created)
           |> render("show.json", channel: channel)
@@ -137,7 +146,7 @@ defmodule ConsoleWeb.V1.ChannelController do
     end
   end
 
-  def create(conn, %{ "name" => name, "type" => "aws", "topic" => topic, "aws_access_key" => pk, "aws_secret_key" => sk, "aws_region" => region }) do
+  def create(conn, %{ "name" => name, "type" => "aws", "topic" => topic, "aws_access_key" => pk, "aws_secret_key" => sk, "aws_region" => region } = attrs) do
     current_organization = conn.assigns.current_organization
 
     channel_params =
@@ -159,13 +168,20 @@ defmodule ConsoleWeb.V1.ChannelController do
         |> Map.put(:devices, [])
         |> Map.put(:labels, [])
 
+      AuditActions.create_audit_action(
+        current_organization.id,
+        "v1_api",
+        "channel_controller_create",
+        attrs
+      )
+
       conn
       |> put_status(:created)
       |> render("show.json", channel: channel)
     end
   end
 
-  def create(conn, %{ "name" => name, "type" => "azure", "azure_policy_name" => policy_name, "azure_hub_name" => hub_name, "azure_policy_key" => key }) do
+  def create(conn, %{ "name" => name, "type" => "azure", "azure_policy_name" => policy_name, "azure_hub_name" => hub_name, "azure_policy_key" => key } = attrs) do
     current_organization = conn.assigns.current_organization
 
     channel_params =
@@ -186,13 +202,20 @@ defmodule ConsoleWeb.V1.ChannelController do
         |> Map.put(:devices, [])
         |> Map.put(:labels, [])
 
+      AuditActions.create_audit_action(
+        current_organization.id,
+        "v1_api",
+        "channel_controller_create",
+        attrs
+      )
+
       conn
       |> put_status(:created)
       |> render("show.json", channel: channel)
     end
   end
 
-  def create(conn, %{ "name" => name, "type" => "mqtt", "endpoint" => endpoint, "uplink_topic" => uplink_topic, "downlink_topic" => downlink_topic }) do
+  def create(conn, %{ "name" => name, "type" => "mqtt", "endpoint" => endpoint, "uplink_topic" => uplink_topic, "downlink_topic" => downlink_topic } = attrs) do
     current_organization = conn.assigns.current_organization
 
     channel_params =
@@ -217,18 +240,25 @@ defmodule ConsoleWeb.V1.ChannelController do
         |> Map.put(:devices, [])
         |> Map.put(:labels, [])
 
+      AuditActions.create_audit_action(
+        current_organization.id,
+        "v1_api",
+        "channel_controller_create",
+        attrs
+      )
+
       conn
       |> put_status(:created)
       |> render("show.json", channel: channel)
     end
   end
 
-  def create(conn, %{ "name" => name, "type" => "http", "endpoint" => endpoint, "method" => method } = http_params) do
+  def create(conn, %{ "name" => name, "type" => "http", "endpoint" => endpoint, "method" => method } = attrs) do
     current_organization = conn.assigns.current_organization
 
     credentials =
       %{ "endpoint" => endpoint, "method" => method }
-      |> Map.merge(Map.take(http_params, ["headers", "url_params"]))
+      |> Map.merge(Map.take(attrs, ["headers", "url_params"]))
 
     if validate_http_headers(credentials["headers"]) and validate_http_url_params(credentials["url_params"]) do
       channel_params =
@@ -245,6 +275,13 @@ defmodule ConsoleWeb.V1.ChannelController do
           |> Map.put(:devices, [])
           |> Map.put(:labels, [])
 
+        AuditActions.create_audit_action(
+          current_organization.id,
+          "v1_api",
+          "channel_controller_create",
+          attrs
+        )
+
         conn
         |> put_status(:created)
         |> render("show.json", channel: channel)
@@ -258,7 +295,7 @@ defmodule ConsoleWeb.V1.ChannelController do
     end
   end
 
-  def delete(conn, %{ "id" => id }) do
+  def delete(conn, %{ "id" => id } = attrs) do
     current_organization = conn.assigns.current_organization
 
     case Channels.get_channel(current_organization, id) do
@@ -288,6 +325,13 @@ defmodule ConsoleWeb.V1.ChannelController do
 
             broadcast_router_update_devices(all_device_ids)
           end
+
+          AuditActions.create_audit_action(
+            current_organization.id,
+            "v1_api",
+            "channel_controller_delete",
+            attrs
+          )
 
           conn
           |> put_status(:ok)

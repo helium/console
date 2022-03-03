@@ -10,6 +10,7 @@ defmodule ConsoleWeb.V1.FlowController do
   alias Console.Labels
   alias Console.Channels
   alias Console.Channels.Channel
+  alias Console.AuditActions
   action_fallback(ConsoleWeb.FallbackController)
 
   plug CORSPlug, origin: "*"
@@ -30,7 +31,7 @@ defmodule ConsoleWeb.V1.FlowController do
     render(conn, "index.json", flows: flows)
   end
 
-  def create(conn, params = %{ "integration_id" => id }) do
+  def create(conn, params = %{ "integration_id" => id } = attrs) do
     current_organization = conn.assigns.current_organization
 
     case Channels.get_channel(current_organization, id) do
@@ -169,6 +170,13 @@ defmodule ConsoleWeb.V1.FlowController do
 
                 broadcast_router_update_devices(device_ids)
 
+                AuditActions.create_audit_action(
+                  current_organization.id,
+                  "v1_api",
+                  "flow_controller_create",
+                  attrs
+                )
+
                 conn
                 |> send_resp(:ok, "Flow with integration created successfully")
               _ -> result
@@ -179,7 +187,7 @@ defmodule ConsoleWeb.V1.FlowController do
     end
   end
 
-  def delete(conn, %{ "id" => id }) do
+  def delete(conn, %{ "id" => id } = attrs) do
     current_organization = conn.assigns.current_organization
     case Flows.get_flow(current_organization.id, id) do
       nil ->
@@ -218,6 +226,13 @@ defmodule ConsoleWeb.V1.FlowController do
 
           broadcast_router_update_devices(device_ids)
         end
+
+        AuditActions.create_audit_action(
+          current_organization.id,
+          "v1_api",
+          "flow_controller_delete",
+          attrs
+        )
 
         conn
         |> send_resp(:ok, "Flow deleted successfully")

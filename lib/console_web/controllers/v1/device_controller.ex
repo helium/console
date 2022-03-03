@@ -12,6 +12,8 @@ defmodule ConsoleWeb.V1.DeviceController do
   alias Console.Repo
   alias Console.AlertEvents
   alias Console.Alerts
+  alias Console.AuditActions
+
   action_fallback(ConsoleWeb.FallbackController)
 
   plug CORSPlug, origin: "*"
@@ -133,7 +135,7 @@ defmodule ConsoleWeb.V1.DeviceController do
     end
   end
 
-  def delete(conn, %{ "id" => id }) do
+  def delete(conn, %{ "id" => id } = attrs) do
     current_organization = conn.assigns.current_organization
 
     case Devices.get_device(current_organization, id) |> Repo.preload([:labels]) do
@@ -157,13 +159,20 @@ defmodule ConsoleWeb.V1.DeviceController do
           AlertEvents.notify_alert_event(deleted_device.device_id, "device", "device_deleted", details, deleted_device.labels)
           Alerts.delete_alert_nodes(deleted_device.device_id, "device")
 
+          AuditActions.create_audit_action(
+            current_organization.id,
+            "v1_api",
+            "device_controller_delete",
+            attrs
+          )
+
           conn
           |> send_resp(:ok, "Device deleted")
         end
     end
   end
 
-  def create(conn, device_params = %{ "name" => _name, "dev_eui" => _dev_eui, "app_eui" => _app_eui, "app_key" => _app_key }) do
+  def create(conn, device_params = %{ "name" => _name, "dev_eui" => _dev_eui, "app_eui" => _app_eui, "app_key" => _app_key } = attrs) do
     current_organization = conn.assigns.current_organization
     device_params =
       Map.merge(device_params, %{
@@ -233,6 +242,13 @@ defmodule ConsoleWeb.V1.DeviceController do
         device =
           Devices.get_device!(current_organization, device.id)
           |> Repo.preload([[labels: :config_profile], :config_profile])
+
+        AuditActions.create_audit_action(
+          current_organization.id,
+          "v1_api",
+          "device_controller_create",
+          attrs
+        )
 
         conn
         |> put_status(:created)

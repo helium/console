@@ -6,6 +6,7 @@ defmodule ConsoleWeb.V1.FunctionController do
   alias Console.Flows
   alias Console.Functions
   alias Console.Functions.Function
+  alias Console.AuditActions
   action_fallback(ConsoleWeb.FallbackController)
 
   plug CORSPlug, origin: "*"
@@ -28,7 +29,7 @@ defmodule ConsoleWeb.V1.FunctionController do
     end
   end
 
-  def create(conn, function_params = %{ "name" => _name }) do
+  def create(conn, function_params = %{ "name" => _name } = attrs) do
     current_organization = conn.assigns.current_organization
     cond do
       Map.get(function_params, "format") not in ["cayenne", "browan_object_locator"] ->
@@ -37,6 +38,13 @@ defmodule ConsoleWeb.V1.FunctionController do
         function_params = Map.merge(function_params, %{"organization_id" => current_organization.id, "type" => "decoder", "active" => true})
 
         with {:ok, %Function{} = function} <- Functions.create_function(function_params, current_organization) do
+          AuditActions.create_audit_action(
+            current_organization.id,
+            "v1_api",
+            "function_controller_create",
+            attrs
+          )
+
           conn
           |> put_status(:created)
           |> render("show.json", function: function)
@@ -61,13 +69,20 @@ defmodule ConsoleWeb.V1.FunctionController do
             all_device_ids = Flows.get_all_flows_associated_device_ids(affected_flows)
             broadcast_router_update_devices(all_device_ids)
 
+            AuditActions.create_audit_action(
+              current_organization.id,
+              "v1_api",
+              "function_controller_update",
+              attrs
+            )
+
             render(conn, "show.json", function: function)
           end
         end
     end
   end
 
-  def delete(conn, %{ "id" => id }) do
+  def delete(conn, %{ "id" => id } = attrs) do
     current_organization = conn.assigns.current_organization
 
     case Functions.get_function(current_organization, id) do
@@ -78,6 +93,13 @@ defmodule ConsoleWeb.V1.FunctionController do
           affected_flows = Flows.get_flows_with_function_id(current_organization.id, function.id)
           all_device_ids = Flows.get_all_flows_associated_device_ids(affected_flows)
           broadcast_router_update_devices(all_device_ids)
+
+          AuditActions.create_audit_action(
+            current_organization.id,
+            "v1_api",
+            "function_controller_delete",
+            attrs
+          )
 
           conn
           |> send_resp(:ok, "Function deleted")

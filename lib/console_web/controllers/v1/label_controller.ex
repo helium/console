@@ -7,6 +7,7 @@ defmodule ConsoleWeb.V1.LabelController do
   alias Console.ConfigProfiles
   alias Console.Labels
   alias Console.Labels.Label
+  alias Console.AuditActions
   action_fallback(ConsoleWeb.FallbackController)
 
   plug CORSPlug, origin: "*"
@@ -45,7 +46,7 @@ defmodule ConsoleWeb.V1.LabelController do
     end
   end
 
-  def create(conn, label_params = %{ "name" => _name }) do
+  def create(conn, label_params = %{ "name" => _name } = attrs) do
     current_organization = conn.assigns.current_organization
 
     label_params =
@@ -83,6 +84,13 @@ defmodule ConsoleWeb.V1.LabelController do
       case result do
         {:ok, %{ label: label }} ->
           label = label |> Repo.preload([:config_profile])
+
+          AuditActions.create_audit_action(
+            current_organization.id,
+            "v1_api",
+            "label_controller_create",
+            attrs
+          )
 
           conn
           |> put_status(:created)
@@ -125,7 +133,7 @@ defmodule ConsoleWeb.V1.LabelController do
     end
   end
 
-  def delete(conn, %{"id" => id}) do
+  def delete(conn, %{"id" => id} = attrs) do
     current_organization = conn.assigns.current_organization
 
     case Labels.get_label(current_organization, id) do
@@ -134,6 +142,13 @@ defmodule ConsoleWeb.V1.LabelController do
       %Label{} = label ->
         with {:ok, _} <- Labels.delete_label(label) do
           broadcast_router_update_devices(label)
+
+          AuditActions.create_audit_action(
+            current_organization.id,
+            "v1_api",
+            "label_controller_delete",
+            attrs
+          )
 
           conn
           |> send_resp(:ok, "Label deleted")
