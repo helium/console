@@ -184,7 +184,7 @@ class DevicesAddLabelModal extends Component {
                   Add Label
                 </Button>,
               ]}
-              bodyStyle={{ padding: mobile ? "0px 15px" : "20px 50px", display: 'flex', flexDirection: 'row', justifyContent: 'center' }}
+              bodyStyle={{ padding: mobile ? "0px 15px" : "20px 50px", display: 'flex', flexDirection: 'column', alignItems: 'center' }}
             >
               <LabelAppliedNew
                 allLabels={allLabels}
