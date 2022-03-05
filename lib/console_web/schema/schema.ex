@@ -85,6 +85,7 @@ defmodule ConsoleWeb.Schema do
   object :organization_hotspot do
     field :hotspot_address, :string
     field :claimed, :boolean
+    field :preferred, :boolean
     field :alias, :string
     field :organization_id, :id
   end

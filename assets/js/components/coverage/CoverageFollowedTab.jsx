@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Typography, Row, Col, Table, Pagination } from "antd";
 const { Text } = Typography;
-import { updateOrganizationHotspot } from "../../actions/coverage";
+import { followHotspot, preferHotspot } from "../../actions/coverage";
 import { getColumns } from "./Constants";
 import HeaderFlag from "../../../img/coverage/followed-tab-header-flag.svg";
 
@@ -13,7 +13,8 @@ export default (props) => {
 
   const columns = getColumns(
     props,
-    updateOrganizationHotspot,
+    followHotspot,
+    preferHotspot,
     props.selectHotspotAddress,
     props.tab
   );
@@ -64,7 +65,7 @@ export default (props) => {
           src={HeaderFlag}
           style={{
             height: 32,
-            width: 32,
+            width: 50,
             marginBottom: 6,
           }}
         />
@@ -74,7 +75,8 @@ export default (props) => {
         <Row gutter={24}>
           <Col sm={12}>
             <Text style={{ fontSize: 15 }}>
-              Followed Hotspots appear in the list below.
+              Hotspots that have been 'followed' or 'preferred' appear in the
+              list below.
             </Text>
           </Col>
         </Row>

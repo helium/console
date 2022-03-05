@@ -6,6 +6,7 @@ import InfoCircleOutlined from "@ant-design/icons/InfoCircleOutlined";
 import startCase from "lodash/startCase";
 import SelectedFlag from "../../../img/coverage/selected-flag.svg";
 import UnselectedFlag from "../../../img/coverage/unselected-flag.svg";
+import PreferredFlag from "../../../img/coverage/preferred-flag.svg";
 import SignalIcon from "./SignalIcon";
 import GroupColumnDropdown from "./GroupColumnDropdown";
 
@@ -59,7 +60,8 @@ export const renderStatusLabel = (status) => {
 
 export const getColumns = (
   props,
-  updateOrganizationHotspot,
+  followHotspot,
+  preferHotspot,
   selectHotspotAddress,
   tab
 ) => {
@@ -72,20 +74,31 @@ export const getColumns = (
           props.orgHotspotsMap[record.hotspot_address] &&
           props.orgHotspotsMap[record.hotspot_address].claimed;
 
+        const hotspot_preferred =
+          hotspot_claimed &&
+          props.orgHotspotsMap[record.hotspot_address].preferred;
+
         return (
           <Link
             to="#"
             onClick={(e) => {
               e.preventDefault();
-              updateOrganizationHotspot(
-                record.hotspot_address,
-                !hotspot_claimed
-              );
+              if (hotspot_claimed && !hotspot_preferred) {
+                preferHotspot(record.hotspot_address, true);
+              } else {
+                followHotspot(record.hotspot_address, !hotspot_claimed);
+              }
             }}
           >
             <img
               draggable="false"
-              src={hotspot_claimed ? SelectedFlag : UnselectedFlag}
+              src={
+                hotspot_claimed
+                  ? hotspot_preferred
+                    ? PreferredFlag
+                    : SelectedFlag
+                  : UnselectedFlag
+              }
               style={{
                 height: 14,
               }}
@@ -241,7 +254,10 @@ export const getColumns = (
   switch (tab) {
     case "search":
       return columns.filter(
-        (c) => c.dataIndex !== "alias" && c.dataIndex !== "group_ids" && c.dataIndex !== "avg_rssi"
+        (c) =>
+          c.dataIndex !== "alias" &&
+          c.dataIndex !== "group_ids" &&
+          c.dataIndex !== "avg_rssi"
       );
     case "main":
       return columns.filter((c) => c.dataIndex !== "group_ids");

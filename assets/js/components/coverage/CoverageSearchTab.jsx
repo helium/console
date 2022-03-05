@@ -3,15 +3,18 @@ import { Typography, Row, Col, Button } from "antd";
 const { Text } = Typography;
 import SearchOutlined from "@ant-design/icons/SearchOutlined";
 import SelectedFlag from "../../../img/coverage/selected-flag.svg";
+import PreferredFlag from "../../../img/coverage/preferred-flag.svg";
 import { ClaimButton, UnclaimButton, getColumns } from "./Constants";
 import {
-  updateOrganizationHotspot,
-  updateOrganizationHotspots,
+  followHotspot,
+  preferHotspot,
+  followHotspots,
 } from "../../actions/coverage";
 import CoverageSearchTable from "./CoverageSearchTable";
 import debounce from "lodash/debounce";
 import UserCan from "../common/UserCan";
 import ErrorMessage from "../common/ErrorMessage";
+import PreferralModesCycleInfo from "./PreferralModesCycleInfo";
 
 const PAGE_SIZE_KEY = "hotspotSearchPageSize";
 let startPageSize = parseInt(localStorage.getItem(PAGE_SIZE_KEY)) || 10;
@@ -37,7 +40,8 @@ export default ({ searchHotspots, data, error, loading, ...props }) => {
 
   const columns = getColumns(
     props,
-    updateOrganizationHotspot,
+    followHotspot,
+    preferHotspot,
     props.selectHotspotAddress,
     props.tab
   );
@@ -192,21 +196,42 @@ export default ({ searchHotspots, data, error, loading, ...props }) => {
               )}
             </Col>
             <Col sm={12}>
-              <div style={{ marginBottom: 4 }}>
-                <img
-                  draggable="false"
-                  src={SelectedFlag}
-                  style={{
-                    height: 16,
-                    marginRight: 10,
-                  }}
-                />
-                <Text style={{ fontSize: 16, fontWeight: 600 }}>Follow</Text>
+              <>
+                <div style={{ margin: 4 }}>
+                  <img
+                    draggable="false"
+                    src={SelectedFlag}
+                    style={{
+                      height: 16,
+                      marginRight: 10,
+                    }}
+                  />
+                  <Text style={{ fontSize: 16, fontWeight: 600 }}>Follow</Text>
+                </div>
+                <Text>
+                  Any Hotspot in the network can be followed, which adds it to
+                  your Organization's 'My Hotspots' tab.
+                </Text>
+              </>
+              <div style={{ marginTop: 20 }}>
+                <div style={{ marginBottom: 4 }}>
+                  <img
+                    draggable="false"
+                    src={PreferredFlag}
+                    style={{
+                      height: 16,
+                      marginRight: 10,
+                    }}
+                  />
+                  <Text style={{ fontSize: 16, fontWeight: 600 }}>Prefer</Text>
+                </div>
+                <Text>
+                  Flagging a Hotspot a second time will make it a ‘Preferred
+                  Hotspot’. Packets, if heard, will always relay through a
+                  Prioty Hotspot.
+                </Text>
               </div>
-              <Text>
-                Any Hotspot in the network can be followed, which adds it to
-                your Organization's 'My Hotspots' tab.
-              </Text>
+              <PreferralModesCycleInfo />
             </Col>
           </Row>
         )}
@@ -216,38 +241,36 @@ export default ({ searchHotspots, data, error, loading, ...props }) => {
         <React.Fragment>
           <UserCan>
             <div className="hotspot-claim">
-            {
-              selectedRows.length !== 0 &&
-              !selectedRows.find(
-                (r) =>
-                  props.orgHotspotsMap[r.hotspot_address] &&
-                  props.orgHotspotsMap[r.hotspot_address].claimed === true
-              ) &&
-              <ClaimButton
-                onClick={() => {
-                  updateOrganizationHotspots(
-                    selectedRows.map((r) => r.hotspot_address),
-                    true
-                  );
-                }}
-              />
-            }
-            {
-              selectedRows.length !== 0 &&
-              selectedRows.find(
-                (r) =>
-                  props.orgHotspotsMap[r.hotspot_address] &&
-                  props.orgHotspotsMap[r.hotspot_address].claimed === true
-              ) &&
-              <UnclaimButton
-                onClick={() => {
-                  updateOrganizationHotspots(
-                    selectedRows.map((r) => r.hotspot_address),
-                    false
-                  );
-                }}
-              />
-            }
+              {selectedRows.length !== 0 &&
+                !selectedRows.find(
+                  (r) =>
+                    props.orgHotspotsMap[r.hotspot_address] &&
+                    props.orgHotspotsMap[r.hotspot_address].claimed === true
+                ) && (
+                  <ClaimButton
+                    onClick={() => {
+                      followHotspots(
+                        selectedRows.map((r) => r.hotspot_address),
+                        true
+                      );
+                    }}
+                  />
+                )}
+              {selectedRows.length !== 0 &&
+                selectedRows.find(
+                  (r) =>
+                    props.orgHotspotsMap[r.hotspot_address] &&
+                    props.orgHotspotsMap[r.hotspot_address].claimed === true
+                ) && (
+                  <UnclaimButton
+                    onClick={() => {
+                      followHotspots(
+                        selectedRows.map((r) => r.hotspot_address),
+                        false
+                      );
+                    }}
+                  />
+                )}
             </div>
           </UserCan>
           <CoverageSearchTable

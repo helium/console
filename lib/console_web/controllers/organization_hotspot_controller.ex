@@ -44,6 +44,25 @@ defmodule ConsoleWeb.OrganizationHotspotController do
         end
     end
   end
+  
+  def update_organization_hotspot(conn, %{"hotspot_address" => hotspot_address, "preferred" => preferred}) do
+    current_organization = conn.assigns.current_organization
+
+    org_hotspot = OrganizationHotspots.get_org_hotspot(hotspot_address, current_organization)
+
+    case org_hotspot do
+      nil ->
+        {:error, :bad_request, "Hotspot must be followed before you can prefer it"}
+      _ ->
+        with {:ok, _} <- OrganizationHotspots.update_org_hotspot(org_hotspot, %{ "preferred" => preferred }) do
+          ConsoleWeb.Endpoint.broadcast("graphql:coverage_index_org_hotspots", "graphql:coverage_index_org_hotspots:#{current_organization.id}:org_hotspots_update", %{})
+
+          conn
+          |> put_resp_header("message", "Hotspot preferred successfully")
+          |> send_resp(:ok, "")
+        end
+    end
+  end
 
   def update_organization_hotspot(conn, params = %{"hotspot_address" => hotspot_address, "alias" => alias}) do
     current_organization = conn.assigns.current_organization

@@ -74,6 +74,7 @@ export const ALL_ORGANIZATION_HOTSPOTS = gql`
       hotspot_address
       organization_id
       claimed
+      preferred
       alias
     }
   }
