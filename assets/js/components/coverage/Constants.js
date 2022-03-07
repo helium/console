@@ -9,7 +9,7 @@ import UnselectedFlag from "../../../img/coverage/unselected-flag.svg";
 import PreferredFlag from "../../../img/coverage/preferred-flag.svg";
 import SignalIcon from "./SignalIcon";
 import GroupColumnDropdown from "./GroupColumnDropdown";
-import { DownOutlined } from "@ant-design/icons";
+import DownOutlined from "@ant-design/icons/DownOutlined";
 import { followHotspots, preferHotspots } from "../../actions/coverage";
 
 const RedStatusSvg = () => (

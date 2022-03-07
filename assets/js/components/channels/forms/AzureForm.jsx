@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Typography, Input, Tooltip, Space } from "antd";
 import QuestionCircleFilled from "@ant-design/icons/QuestionCircleFilled";
 const { Text } = Typography;
-import { WarningTwoTone } from "@ant-design/icons";
+import WarningTwoTone from "@ant-design/icons/WarningTwoTone";
 import EyeOutlined from "@ant-design/icons/EyeOutlined";
 import EyeInvisibleOutlined from "@ant-design/icons/EyeInvisibleOutlined";
 
