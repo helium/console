@@ -1,12 +1,8 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Table, Typography, Row, Col, Pagination } from "antd";
-import {
-  followHotspot,
-  preferHotspot,
-  followHotspots,
-} from "../../actions/coverage";
-import { ClaimButton, UnclaimButton, getColumns } from "./Constants";
+import { followHotspot, preferHotspot } from "../../actions/coverage";
+import { getColumns, ActionButton } from "./Constants";
 const { Text } = Typography;
 import SelectedFlag from "../../../img/coverage/selected-flag.svg";
 import PreferredFlag from "../../../img/coverage/preferred-flag.svg";
@@ -74,7 +70,7 @@ export default (props) => {
 
   return (
     <div>
-      <div style={{ padding: 25 }}>
+      <div style={{ padding: "25px 25px 40px 25px" }}>
         <div style={{ marginBottom: 12 }}>
           <Text style={{ fontSize: 22, fontWeight: 600 }}>Device Coverage</Text>
         </div>
@@ -107,6 +103,17 @@ export default (props) => {
                 Learn More about Coverage
               </a>
             </div>
+            <UserCan>
+              <div style={{ marginTop: 18 }}>
+                {selectedRows.length !== 0 && (
+                  <ActionButton
+                    selectedAddresses={selectedRows.map(
+                      (r) => r.hotspot_address
+                    )}
+                  />
+                )}
+              </div>
+            </UserCan>
           </Col>
           <Col sm={14}>
             <div
@@ -114,6 +121,7 @@ export default (props) => {
                 backgroundColor: "#F5F7F9",
                 borderRadius: 10,
                 padding: 16,
+                height: "100%",
               }}
             >
               <Row gutter={16}>
@@ -172,41 +180,6 @@ export default (props) => {
           </Col>
         </Row>
       </div>
-
-      <UserCan>
-        <div className="hotspot-claim">
-          {selectedRows.length !== 0 &&
-            !selectedRows.find(
-              (r) =>
-                props.orgHotspotsMap[r.hotspot_address] &&
-                props.orgHotspotsMap[r.hotspot_address].claimed === true
-            ) && (
-              <ClaimButton // TODO change this for dropdown to mark as followed / preferred, waiting for designs
-                onClick={() => {
-                  followHotspots(
-                    selectedRows.map((r) => r.hotspot_address),
-                    true
-                  );
-                }}
-              />
-            )}
-          {selectedRows.length !== 0 &&
-            selectedRows.find(
-              (r) =>
-                props.orgHotspotsMap[r.hotspot_address] &&
-                props.orgHotspotsMap[r.hotspot_address].claimed === true
-            ) && (
-              <UnclaimButton
-                onClick={() => {
-                  followHotspots(
-                    selectedRows.map((r) => r.hotspot_address),
-                    false
-                  );
-                }}
-              />
-            )}
-        </div>
-      </UserCan>
       {props.hotspotStats && (
         <div
           style={{ overflowX: "scroll", overflowY: "hidden" }}

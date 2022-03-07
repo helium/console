@@ -9,10 +9,28 @@ export const followHotspot = (hotspot_address, followed) => {
     .then((res) => res.status);
 };
 
+export const followHotspots = (hotspot_addresses, followed) => {
+  return rest
+    .post(`/api/organization_hotspots`, {
+      hotspot_addresses,
+      claimed: followed,
+    })
+    .then((res) => res.status);
+};
+
 export const preferHotspot = (hotspot_address, preferred) => {
   return rest
     .post(`/api/organization_hotspot`, {
       hotspot_address,
+      preferred,
+    })
+    .then((res) => res.status);
+};
+
+export const preferHotspots = (hotspot_addresses, preferred) => {
+  return rest
+    .post(`/api/organization_hotspots`, {
+      hotspot_addresses,
       preferred,
     })
     .then((res) => res.status);
@@ -23,15 +41,6 @@ export const updateHotspotAlias = (hotspot_address, alias) => {
     .post(`/api/organization_hotspot`, {
       hotspot_address,
       alias,
-    })
-    .then((res) => res.status);
-};
-
-export const claimHotspots = (hotspot_addresses, claimed) => {
-  return rest
-    .post(`/api/organization_hotspots`, {
-      hotspot_addresses,
-      claimed,
     })
     .then((res) => res.status);
 };

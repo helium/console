@@ -4,7 +4,7 @@ const { Text } = Typography;
 import SearchOutlined from "@ant-design/icons/SearchOutlined";
 import SelectedFlag from "../../../img/coverage/selected-flag.svg";
 import PreferredFlag from "../../../img/coverage/preferred-flag.svg";
-import { ClaimButton, UnclaimButton, getColumns } from "./Constants";
+import { ActionButton, getColumns } from "./Constants";
 import {
   followHotspot,
   preferHotspot,
@@ -241,36 +241,11 @@ export default ({ searchHotspots, data, error, loading, ...props }) => {
         <React.Fragment>
           <UserCan>
             <div className="hotspot-claim">
-              {selectedRows.length !== 0 &&
-                !selectedRows.find(
-                  (r) =>
-                    props.orgHotspotsMap[r.hotspot_address] &&
-                    props.orgHotspotsMap[r.hotspot_address].claimed === true
-                ) && (
-                  <ClaimButton
-                    onClick={() => {
-                      followHotspots(
-                        selectedRows.map((r) => r.hotspot_address),
-                        true
-                      );
-                    }}
-                  />
-                )}
-              {selectedRows.length !== 0 &&
-                selectedRows.find(
-                  (r) =>
-                    props.orgHotspotsMap[r.hotspot_address] &&
-                    props.orgHotspotsMap[r.hotspot_address].claimed === true
-                ) && (
-                  <UnclaimButton
-                    onClick={() => {
-                      followHotspots(
-                        selectedRows.map((r) => r.hotspot_address),
-                        false
-                      );
-                    }}
-                  />
-                )}
+              {selectedRows.length !== 0 && (
+                <ActionButton
+                  selectedAddresses={selectedRows.map((r) => r.hotspot_address)}
+                />
+              )}
             </div>
           </UserCan>
           <CoverageSearchTable
