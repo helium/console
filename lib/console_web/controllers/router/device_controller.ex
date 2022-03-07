@@ -571,12 +571,7 @@ defmodule ConsoleWeb.Router.DeviceController do
     end
   end
 
-  def update_devices_in_xor_filter(conn, %{"added" => added_device_ids, "removed" => removed_device_ids}) do
-    removed_devices = Devices.get_devices_in_list(removed_device_ids)
-    if length(removed_devices) > 0 do
-      ids_to_report = removed_devices |> Enum.map(fn d -> d.id end)
-    end
-
+  def update_devices_in_xor_filter(conn, %{"added" => added_device_ids, "removed" => _removed_device_ids}) do
     if length(added_device_ids) > 0 do
       with {:ok, devices} <- Devices.update_in_xor_filter(added_device_ids) do
         Enum.map(devices,fn (d) -> d.organization_id end)

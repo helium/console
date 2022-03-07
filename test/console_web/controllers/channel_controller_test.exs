@@ -45,7 +45,7 @@ defmodule ConsoleWeb.ChannelControllerTest do
 
       assert_error_sent 500, fn ->
         post conn, channel_path(conn, :create), %{
-          "channel" => %{ "credentials" => %{}, "name" => "http_channel", "type" => "http" }
+          "channel" => %{ "credentials" => %{ "method" => "post" }, "name" => "http_channel", "type" => "http" }
         }
       end # invalid http credentials
 
@@ -55,7 +55,7 @@ defmodule ConsoleWeb.ChannelControllerTest do
       assert json_response(resp_conn, 422) # invalid http credentials
 
       resp_conn = post conn, channel_path(conn, :create), %{
-        "channel" => %{ "credentials" => %{ "endpoint" => "http://google.com" }, "name" => "http_channel", "type" => "http" }
+        "channel" => %{ "credentials" => %{ "endpoint" => "http://google.com", "method" => "post" }, "name" => "http_channel", "type" => "http" }
       }
       channel = json_response(resp_conn, 201)
       channel = Channels.get_channel!(channel["id"])
@@ -132,7 +132,7 @@ defmodule ConsoleWeb.ChannelControllerTest do
       end # does not update channel not in own org
 
       resp_conn = post conn, channel_path(conn, :create), %{
-        "channel" => %{ "credentials" => %{ "endpoint" => "http://google.com" }, "name" => "channel", "type" => "http" }
+        "channel" => %{ "credentials" => %{ "method" => "post", "endpoint" => "http://google.com" }, "name" => "channel", "type" => "http" }
       }
       channel = json_response(resp_conn, 201)
       assert channel["name"] == "channel"
@@ -161,7 +161,7 @@ defmodule ConsoleWeb.ChannelControllerTest do
       end # does not delete channel not in own org
 
       resp_conn = post conn, channel_path(conn, :create), %{
-        "channel" => %{ "credentials" => %{ "endpoint" => "http://google.com" }, "name" => "channel", "type" => "http" }
+        "channel" => %{ "credentials" => %{ "endpoint" => "http://google.com", "method" => "post" }, "name" => "channel", "type" => "http" }
       }
       channel = json_response(resp_conn, 201)
 

@@ -175,7 +175,7 @@ defmodule ConsoleWeb.DeviceController do
         current_organization.id,
         conn.assigns.current_user.email,
         "device_controller_delete",
-        Map.get(List.first(deleted_devices), :device_id),
+        "multiple_devices",
         attrs
       )
 

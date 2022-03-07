@@ -6,7 +6,7 @@ defmodule ConsoleWeb.V1.FunctionController do
   alias Console.Flows
   alias Console.Functions
   alias Console.Functions.Function
-  alias Console.AuditActions
+  
   action_fallback(ConsoleWeb.FallbackController)
 
   plug CORSPlug, origin: "*"
@@ -28,7 +28,7 @@ defmodule ConsoleWeb.V1.FunctionController do
         render(conn, "show.json", function: function)
     end
   end
-  
+
   # def create(conn, function_params = %{ "name" => _name }) do
   #   current_organization = conn.assigns.current_organization
   #   cond do
