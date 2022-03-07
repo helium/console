@@ -84,4 +84,71 @@ defmodule ConsoleWeb.Router.OrganizationController do
       conn |> send_resp(:no_content, "")
     end
   end
+
+  def export(conn, %{"organization_id" => organization_id}) do
+    organization =
+      Organizations.get_organization!(organization_id)
+      |> Map.take([:id, :name, :flow])
+    alerts =
+      Console.Alerts.get_all_organization_alerts(organization_id)
+      |> Enum.map(&(Map.take(&1, [:id, :name, :node_type, :config, :organization_id])))
+    multi_buys =
+      Console.MultiBuys.get_all_organization_multi_buys(organization_id)
+      |> Enum.map(&(Map.take(&1, [:id, :name, :value, :organization_id])))
+    config_profiles =
+      Console.ConfigProfiles.get_all_organization_config_profiles(organization_id)
+      |> Enum.map(&(Map.take(&1, [:id, :name, :adr_allowed, :cf_list_enabled, :rx_delay, :organization_id])))
+    devices =
+      Console.Devices.get_devices(organization_id)
+      |> Enum.map(&(Map.take(&1, [:id, :name, :oui, :dev_eui, :app_eui, :app_key, :multi_buy_id, :config_profile_id, :organization_id])))
+    functions = Console.Functions.get_all_organization_functions(organization_id)
+      |> Enum.map(&(Map.take(&1, [:id, :name, :body, :type, :format, :organization_id])))
+    channels = Console.Channels.get_all_organization_channels(organization_id)
+      |> Enum.map(&(Map.take(&1, [:id, :name, :type, :type_name, :payload_template, :receive_joins, :credentials, :organization_id])))
+    labels = Console.Labels.get_all_organization_labels(organization_id)
+      |> Enum.map(&(Map.take(&1, [:id, :name, :creator, :multi_buy_id, :config_profile_id, :organization_id])))
+    groups = Console.Groups.get_all_organization_groups(organization_id)
+      |> Enum.map(&(Map.take(&1, [:id, :name, :organization_id])))
+    alert_nodes =
+      alerts
+      |> Enum.map(&(&1.id))
+      |> Console.Alerts.get_all_organization_alert_nodes()
+      |> Enum.map(&(Map.take(&1, [:id, :alert_id, :node_id, :node_type])))
+    devices_labels =
+      labels
+      |> Enum.map(&(&1.id))
+      |> Console.Labels.get_all_organization_devices_labels()
+      |> Enum.map(&(Map.take(&1, [:id, :device_id, :label_id])))
+    flows =
+      Console.Flows.get_flows(organization_id)
+      |> Enum.map(&(Map.take(&1, [:id, :organization_id, :device_id, :label_id, :function_id, :channel_id])))
+    hotspots_groups =
+      groups
+      |> Enum.map(&(&1.id))
+      |> Console.Groups.get_all_organization_hotspots_groups()
+      |> Enum.map(&(Map.take(&1, [:id, :group_id, :hotspot_id])))
+    organization_hotspots =
+      Console.OrganizationHotspots.all(organization)
+      |> Enum.map(&(Map.take(&1, [:id, :hotspot_address, :organization_id, :claimed, :alias])))
+
+    result = %{
+      organization: organization,
+      alerts: alerts,
+      multi_buys: multi_buys,
+      config_profiles: config_profiles,
+      devices: devices,
+      functions: functions,
+      channels: channels,
+      labels: labels,
+      groups: groups,
+      alert_nodes: alert_nodes,
+      devices_labels: devices_labels,
+      flows: flows,
+      hotspots_groups: hotspots_groups,
+      organization_hotspots: organization_hotspots
+    }
+
+    conn
+    |> send_resp(:ok, Jason.encode!(result))
+  end
 end
