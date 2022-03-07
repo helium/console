@@ -171,8 +171,8 @@ export default (props) => {
                     </Text>
                   </div>
                   <Text style={{ color: "#748697" }}>
-                    Preferred Hotspots will always deliver Data Packets, if
-                    heard, before others.
+                    Hotspots marked as Preferred will be chosen to deliver
+                    packets before others.
                   </Text>
                 </Col>
               </Row>
