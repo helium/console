@@ -114,7 +114,7 @@ defmodule ConsoleWeb.Router do
   end
 
   scope "/api/router", ConsoleWeb.Router do
-    # pipe_through ConsoleWeb.RouterApiPipeline
+    pipe_through ConsoleWeb.RouterApiPipeline
 
     get "/devices/unknown", DeviceController, :get_by_other_creds
     get "/devices/:id", DeviceController, :show
@@ -126,6 +126,7 @@ defmodule ConsoleWeb.Router do
     post "/organizations/burned", OrganizationController, :burned_dc
     post "/organizations/manual_update_router_dc", OrganizationController, :manual_update_router_dc
     get "/organizations/export/:organization_id", OrganizationController, :export
+    post "/organizations/import", OrganizationController, :import
   end
 
   scope "/api/v1", ConsoleWeb.V1 do

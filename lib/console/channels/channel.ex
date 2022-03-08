@@ -74,7 +74,7 @@ defmodule Console.Channels.Channel do
     end
   end
 
-  defp put_downlink_token(changeset) do
+  def put_downlink_token(changeset) do
     case changeset do
       %Ecto.Changeset{valid?: true, changes: %{type: "http"}} ->
         token = Helpers.generate_token(32)
