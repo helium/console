@@ -104,6 +104,9 @@ defmodule ConsoleWeb.Router do
 
     post "/organization_hotspot", OrganizationHotspotController, :update_organization_hotspot
     post "/organization_hotspots", OrganizationHotspotController, :update_organization_hotspots
+
+    get "/organizations/export", OrganizationController, :export
+    post "/organizations/import", OrganizationController, :import
   end
 
   scope "/api/router", ConsoleWeb.Router do
@@ -125,8 +128,6 @@ defmodule ConsoleWeb.Router do
     resources "/organizations", OrganizationController, only: [:index, :show]
     post "/organizations/burned", OrganizationController, :burned_dc
     post "/organizations/manual_update_router_dc", OrganizationController, :manual_update_router_dc
-    get "/organizations/export/:organization_id", OrganizationController, :export
-    post "/organizations/import", OrganizationController, :import
   end
 
   scope "/api/v1", ConsoleWeb.V1 do

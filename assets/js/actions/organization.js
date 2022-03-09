@@ -1,6 +1,7 @@
 import { push } from "connected-react-router";
 import sanitizeHtml from "sanitize-html";
 import * as rest from "../util/rest";
+import analyticsLogger from "../util/analyticsLogger";
 import { displayError } from "../util/messages";
 
 export const FETCHED_ORGANIZATION = "FETCHED_ORGANIZATIONS";
@@ -139,6 +140,28 @@ export const switchedOrganization = (organization) => {
 const getOrganizations = async () => {
   const organizations = await rest.get("/api/organizations/");
   return organizations.data;
+};
+
+export const exportOrganization = (id, name) => {
+  rest.get("/api/organizations/export")
+  .then(resp => {
+    analyticsLogger.logEvent("ACTION_EXPORT_ORGANIZATION_JSON", {
+      organization_id: id,
+    });
+
+    const json = JSON.stringify(resp.data, null, 2);
+    const blob = new Blob([json], { type: "application/json" });
+    const href = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = href;
+    link.download = name + "-export.json";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  })
+  .catch(() => {
+    displayError("Failed to export organization JSON")
+  })
 };
 
 export const renameOrganization = (id, params) => {

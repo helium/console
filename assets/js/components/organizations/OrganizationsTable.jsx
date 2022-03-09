@@ -7,6 +7,7 @@ import {
   switchOrganization,
   deleteOrganization,
   updateOrganization,
+  exportOrganization,
 } from "../../actions/organization";
 import { PAGINATED_ORGANIZATIONS } from "../../graphql/organizations";
 import analyticsLogger from "../../util/analyticsLogger";
@@ -24,6 +25,7 @@ import {
 } from "antd";
 import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
 import EditOutlined from "@ant-design/icons/EditOutlined";
+import ExportOutlined from "@ant-design/icons/ExportOutlined";
 const { Text } = Typography;
 import { SkeletonLayout } from "../common/SkeletonLayout";
 import WebhookKeyField from "./WebhookKeyField";
@@ -175,7 +177,7 @@ class OrganizationsTable extends Component {
               </Button>
 
               <UserCan noManager>
-                <Tooltip title="Delete Organization">
+                <Tooltip title="Delete Organization" placement="topRight">
                   <Button
                     type="danger"
                     icon={<DeleteOutlined />}
@@ -197,6 +199,17 @@ class OrganizationsTable extends Component {
               }}
             >
               <Text>Current</Text>
+
+              <UserCan noManager>
+                <Tooltip title="Export Organization JSON" placement="topRight">
+                  <Button
+                    icon={<ExportOutlined />}
+                    size="small"
+                    style={{ marginLeft: 8 }}
+                    onClick={() => exportOrganization(record.id, record.name)}
+                  />
+                </Tooltip>
+              </UserCan>
             </div>
           ),
       },
