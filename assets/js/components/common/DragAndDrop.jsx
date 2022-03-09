@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { blueForDeviceStatsLarge, dragAndDropBackgroundColor } from '../../util/colors';
 
-let style = {
+export const style = {
   display: 'flex',
   justifyContent: 'center',
-  margin: '15px 60px',
+  marginTop: '20px',
   width: '100%',
   border: `1px dashed ${blueForDeviceStatsLarge}`,
   borderRadius: 5,
