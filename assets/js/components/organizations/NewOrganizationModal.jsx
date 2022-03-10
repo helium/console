@@ -22,6 +22,11 @@ class NewOrganizationModal extends Component {
     this.setState({ [e.target.name]: e.target.value})
   }
 
+  closeModal = () => {
+    this.props.onClose()
+    this.setState({ importFailed: false })
+  }
+
   handleSubmit = (e) => {
     e.preventDefault();
     const { name } = this.state;
@@ -34,17 +39,17 @@ class NewOrganizationModal extends Component {
   }
 
   render() {
-    const { open, onClose } = this.props
+    const { open } = this.props
 
     return (
       <Modal
         title="Add a new organization"
         visible={open}
-        onCancel={onClose}
+        onCancel={this.closeModal}
         centered
         onOk={this.handleSubmit}
         footer={[
-          <Button key="back" onClick={onClose}>
+          <Button key="back" onClick={this.closeModal}>
             Cancel
           </Button>,
           <Button key="submit" type="primary" onClick={this.handleSubmit}>
@@ -87,10 +92,10 @@ class NewOrganizationModal extends Component {
 
                   importOrganization(fileReader.result)
                   .then(resp => {
-                    onClose()
+                    this.props.onClose()
                     window.location.reload(true)
                   })
-                  .catch(() => {
+                  .catch(err => {
                     this.setState({ importing: false, importFailed: true })
                   })
                 };
