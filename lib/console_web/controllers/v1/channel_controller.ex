@@ -183,7 +183,7 @@ defmodule ConsoleWeb.V1.ChannelController do
     end
   end
 
-  def create(conn, %{ "name" => name, "type" => "azure", "azure_policy_name" => policy_name, "azure_hub_name" => hub_name, "azure_policy_key" => key } = attrs) do
+  def create(conn, %{ "name" => name, "type" => "azure", "azure_policy_name" => policy_name, "azure_hub_name" => hub_name, "azure_primary_key" => key } = attrs) do
     current_organization = conn.assigns.current_organization
 
     channel_params =
