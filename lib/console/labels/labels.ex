@@ -25,9 +25,9 @@ defmodule Console.Labels do
     |> Repo.all()
   end
 
-  def get_labels_of_device(device) do
-     from(dl in DevicesLabels, where: dl.device_id == ^device.id)
-     |> Repo.all()
+  def get_device_labels(device_id) do
+    from(dl in DevicesLabels, where: dl.device_id == ^device_id)
+    |> Repo.all()
   end
 
   def get_labels_of_device_in_order_of_attachment(device) do
@@ -42,6 +42,16 @@ defmodule Console.Labels do
   def get_labels_in_list(ids) do
      from(l in Label, where: l.id in ^ids)
      |> Repo.all()
+  end
+
+  def get_all_organization_labels(org_id) do
+    from(l in Label, where: l.organization_id == ^org_id)
+    |> Repo.all()
+  end
+
+  def get_all_organization_devices_labels(label_ids) do
+    from(dl in DevicesLabels, where: dl.label_id in ^label_ids)
+    |> Repo.all()
   end
 
   def fetch_assoc(%Label{} = label, assoc \\ [:devices]) do
@@ -141,11 +151,6 @@ defmodule Console.Labels do
     do
       {:ok, devices_labels}
     end
-  end
-
-  def get_device_labels(device_id) do
-    from(dl in DevicesLabels, where: dl.device_id == ^device_id)
-      |> Repo.all()
   end
 
   def get_latest_applied_device_label(device_id, label_ids) do

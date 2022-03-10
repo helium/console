@@ -7,7 +7,7 @@ defmodule Console.Alerts do
   alias Console.Devices
   alias Console.Labels
   alias Console.Channels
-  
+
   def get_alert!(id), do: Repo.get!(Alert, id)
   def get_alert(id), do: Repo.get(Alert, id)
 
@@ -27,6 +27,16 @@ defmodule Console.Alerts do
 
   def get_alert_by_name(organization_id, name) do
     Repo.get_by(Alert, [organization_id: organization_id, name: name])
+  end
+
+  def get_all_organization_alerts(org_id) do
+    from(a in Alert, where: a.organization_id == ^org_id)
+    |> Repo.all()
+  end
+
+  def get_all_organization_alert_nodes(alert_ids) do
+    from(a in AlertNode, where: a.alert_id in ^alert_ids)
+    |> Repo.all()
   end
 
   def create_alert(attrs \\ %{}) do
@@ -82,7 +92,7 @@ defmodule Console.Alerts do
       "integration" ->
         Channels.get_channel!(organization, alert_node.node_id)
     end
-    
+
     Repo.delete(alert_node)
   end
 
@@ -104,7 +114,7 @@ defmodule Console.Alerts do
       where: an.node_id in ^label_ids
       and an.node_type == "label"
       and fragment("config ->> ? IS NOT NULL", ^event)
-    
+
     Repo.all(query)
   end
 
@@ -127,7 +137,7 @@ defmodule Console.Alerts do
 
   def update_alert_last_triggered_at(%Alert{} = alert) do
     attrs = %{ "last_triggered_at" => Timex.now }
-    
+
     alert
     |> Alert.changeset(attrs)
     |> Repo.update()

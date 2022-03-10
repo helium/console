@@ -16,6 +16,16 @@ defmodule Console.Groups do
      Repo.get_by(Group, [id: id, organization_id: organization.id])
   end
 
+  def get_all_organization_groups(org_id) do
+    from(g in Group, where: g.organization_id == ^org_id)
+    |> Repo.all()
+  end
+
+  def get_all_organization_hotspots_groups(group_ids) do
+    from(hg in HotspotGroup, where: hg.group_id in ^group_ids)
+    |> Repo.all()
+  end
+
   def get_hotspot_group!(hotspot_id, group_id) do
     from(hg in HotspotGroup, where: hg.hotspot_id == ^hotspot_id and hg.group_id == ^group_id)
     |> Repo.one!()
