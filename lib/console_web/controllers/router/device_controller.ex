@@ -473,7 +473,7 @@ defmodule ConsoleWeb.Router.DeviceController do
     ConsoleWeb.Endpoint.broadcast("graphql:events_dashboard", "graphql:events_dashboard:#{device.id}:new_event", event_to_publish)
     ConsoleWeb.Endpoint.broadcast("graphql:device_show_debug", "graphql:device_show_debug:#{device.id}:new_event", event_to_publish)
 
-    label_ids = Labels.get_labels_of_device(device) |> Enum.map(fn dl -> dl.label_id end)
+    label_ids = Labels.get_device_labels(device.id) |> Enum.map(fn dl -> dl.label_id end)
     Enum.each(label_ids, fn id ->
       ConsoleWeb.Endpoint.broadcast("graphql:label_show_debug", "graphql:label_show_debug:#{id}:new_event", event_to_publish)
     end)

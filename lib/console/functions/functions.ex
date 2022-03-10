@@ -19,6 +19,11 @@ defmodule Console.Functions do
 
   def get_function_by_name(name), do: Repo.get_by(Function,  %{:name => name})
 
+  def get_all_organization_functions(org_id) do
+    from(f in Function, where: f.organization_id == ^org_id)
+    |> Repo.all()
+  end
+
   def fetch_assoc(%Function{} = function, assoc \\ [:labels]) do
     Repo.preload(function, assoc)
   end

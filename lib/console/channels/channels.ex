@@ -25,6 +25,11 @@ defmodule Console.Channels do
      Repo.get_by(Channel, [name: name, organization_id: organization.id])
   end
 
+  def get_all_organization_channels(org_id) do
+    from(c in Channel, where: c.organization_id == ^org_id)
+    |> Repo.all()
+  end
+
   def fetch_assoc(%Channel{} = channel, assoc \\ [:organization]) do
     Repo.preload(channel, assoc)
   end

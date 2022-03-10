@@ -12,6 +12,11 @@ defmodule Console.MultiBuys do
     Repo.get_by!(MultiBuy, [id: id, organization_id: organization.id])
   end
 
+  def get_all_organization_multi_buys(org_id) do
+    from(m in MultiBuy, where: m.organization_id == ^org_id)
+    |> Repo.all()
+  end
+
   def create_multi_buy(attrs \\ %{}) do
     %MultiBuy{}
     |> MultiBuy.changeset(attrs)

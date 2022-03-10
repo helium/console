@@ -96,7 +96,7 @@ defmodule Console.Organizations.Organization do
     end
   end
 
-  defp put_webhook_key(changeset) do
+  def put_webhook_key(changeset) do
     case changeset do
       %Ecto.Changeset{valid?: true} ->
         key = Helpers.generate_token(32)
@@ -105,7 +105,7 @@ defmodule Console.Organizations.Organization do
     end
   end
 
-  defp put_default_app_eui(changeset) do
+  def put_default_app_eui(changeset) do
     case changeset do
       %Ecto.Changeset{valid?: true} ->
         app_eui =

@@ -77,7 +77,7 @@ defmodule ConsoleWeb.DeviceController do
       if device_params["active"] != nil do
         ConsoleWeb.Endpoint.broadcast("graphql:devices_index_table", "graphql:devices_index_table:#{current_organization.id}:device_list_update", %{})
 
-        device_labels = Labels.get_labels_of_device(device)
+        device_labels = Labels.get_device_labels(device.id)
         Enum.each(device_labels, fn l ->
           ConsoleWeb.Endpoint.broadcast("graphql:label_show_table", "graphql:label_show_table:#{l.label_id}:update_label_devices", %{})
         end)

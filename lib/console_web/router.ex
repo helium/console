@@ -104,6 +104,9 @@ defmodule ConsoleWeb.Router do
 
     post "/organization_hotspot", OrganizationHotspotController, :update_organization_hotspot
     post "/organization_hotspots", OrganizationHotspotController, :update_organization_hotspots
+
+    get "/organizations/export", OrganizationController, :export
+    post "/organizations/import", OrganizationController, :import
   end
 
   scope "/api/router", ConsoleWeb.Router do
