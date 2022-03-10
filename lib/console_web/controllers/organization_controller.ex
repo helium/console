@@ -334,7 +334,7 @@ defmodule ConsoleWeb.OrganizationController do
         |> Ecto.Multi.run(:organization_hotspots, fn _repo, _ ->
           Enum.each(attrs["organization_hotspots"], fn oh ->
             %Console.OrganizationHotspots.OrganizationHotspot{}
-            |> Ecto.Changeset.cast(oh, [:id, :hotspot_address, :organization_id, :claimed, :alias])
+            |> Ecto.Changeset.cast(oh, [:id, :hotspot_address, :organization_id, :claimed, :alias, :preferred])
             |> Console.Repo.insert!()
           end)
 
@@ -414,7 +414,7 @@ defmodule ConsoleWeb.OrganizationController do
       |> Enum.map(&(Map.take(&1, [:id, :organization_id, :device_id, :label_id, :function_id, :channel_id])))
     organization_hotspots =
       Console.OrganizationHotspots.all(organization)
-      |> Enum.map(&(Map.take(&1, [:id, :hotspot_address, :organization_id, :claimed, :alias])))
+      |> Enum.map(&(Map.take(&1, [:id, :hotspot_address, :organization_id, :claimed, :alias, :preferred])))
 
     result = %{
       organization: organization,
