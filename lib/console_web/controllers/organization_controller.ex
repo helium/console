@@ -365,8 +365,10 @@ defmodule ConsoleWeb.OrganizationController do
       error ->
         case error do
           %Ecto.ConstraintError{ constraint: constraint } ->
+            Appsignal.send_error(error, "Failed to import organization", __STACKTRACE__)
             {:error, :unprocessable_entity, "Could not import due to violation of constraint #{constraint}"}
           _ ->
+            Appsignal.send_error(error, "Failed to import organization", __STACKTRACE__)
             error
         end
     end
