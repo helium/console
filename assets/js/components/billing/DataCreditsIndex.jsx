@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import numeral from "numeral";
 import find from "lodash/find";
+import { PopupButton } from '@typeform/embed-react'
 import DashboardLayout from "../common/DashboardLayout";
 import MobileLayout from "../mobile/MobileLayout";
 import MobileDataCreditsIndex from "../mobile/data_credits/MobileDataCreditsIndex";
@@ -380,6 +381,7 @@ class DataCreditsIndex extends Component {
                         }
                         style={{
                           borderRadius: 4,
+                          marginRight: 20,
                           display:
                             window.disable_user_burn !== "true"
                               ? "inline"
@@ -388,6 +390,22 @@ class DataCreditsIndex extends Component {
                       >
                         Purchase Data Credits
                       </Button>
+                      {
+                        organization.received_free_dc && (
+                          <PopupButton
+                            id="j9LV2ScD"
+                            style={{
+                              display: !process.env.SELF_HOSTED ? "inline" : "none",
+                            }}
+                            className="launch-survey-button"
+                            onSubmit={() => {
+                              console.log('form submitted')
+                            }}
+                          >
+                            Get More DC
+                          </PopupButton>
+                        )
+                      }
                     </React.Fragment>
                   ) : (
                     <div />
