@@ -14,7 +14,7 @@ defmodule Console.AuditActions do
         "data" => data
       }
 
-    if Mix.env != :test do
+    if Application.get_env(:console, :env) != :test do
       Task.Supervisor.async_nolink(ConsoleWeb.TaskSupervisor, fn ->
         %AuditAction{}
         |> AuditAction.create_changeset(attrs)
