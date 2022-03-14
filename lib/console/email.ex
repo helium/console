@@ -108,6 +108,14 @@ defmodule Console.Email do
     |> render(:api_key_email)
   end
 
+  def survey_token_email(%User{email: email}, %{token: token}) do
+    base_email()
+    |> to(email)
+    |> subject("Your survey token to receive free Data Credits")
+    |> assign(:token, token)
+    |> render(:survey_token_email)
+  end
+
   defp base_email do
     url =
       case System.get_env("ENV_DOMAIN") do

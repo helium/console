@@ -1,0 +1,7 @@
+Hi there,
+
+You have received a survey token for free Data Credits on Helium Console.
+
+Your token is: <%= @token %>
+
+Please redeem your Data Credits by visiting <%= @url <> "/datacredits" %> and clicking the Redeem Survey Token button.
