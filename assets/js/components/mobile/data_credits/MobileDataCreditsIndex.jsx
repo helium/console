@@ -8,6 +8,7 @@ import DataCreditPurchasesTable from "../../billing/DataCreditPurchasesTable";
 import PurchaseCreditModal from "../../billing/PurchaseCreditModal";
 import OrganizationTransferDCModal from "../../billing/OrganizationTransferDCModal";
 import AutomaticRenewalModal from "../../billing/AutomaticRenewalModal";
+import RedeemSurveyTokenModal from "../../billing/RedeemSurveyTokenModal";
 import { SkeletonLayout } from "../../common/SkeletonLayout";
 import IndexBlankSlate from "../../billing/IndexBlankSlate";
 import { primaryBlue, tertiaryPurple } from "../../../util/colors";
@@ -33,6 +34,8 @@ const MobileDataCreditsIndex = ({
   const [showAutomaticRenewalModal, setShowAutomaticRenewalModal] =
     useState(false);
   const [showOrganizationTransferDCModal, setShowOrganizationTransferDCModal] =
+    useState(false);
+  const [showRedeemSurveyTokenModal, setShowRedeemSurveyTokenModal] =
     useState(false);
 
   const renderBlankSlate = () => {
@@ -83,12 +86,26 @@ const MobileDataCreditsIndex = ({
                       marginRight: 8,
                     }}
                     className="launch-survey-button"
-                    onSubmit={() => {
-                      setTimeout(submittedOrganizationSurvey, 4000)
-                    }}
+                    onSubmit={submittedOrganizationSurvey}
                   >
                     Get More DC
                   </PopupButton>
+                )
+              }
+              {
+                organization.received_free_dc && organization.survey_token && !organization.survey_token_used && (
+                  <Button
+                    type="primary"
+                    size="large"
+                    onClick={() => setShowRedeemSurveyTokenModal(true)}
+                    style={{
+                      borderRadius: 4,
+                      display: !process.env.SELF_HOSTED ? "inline" : "none",
+                      marginRight: 8,
+                    }}
+                  >
+                    Redeem Survey Token
+                  </Button>
                 )
               }
               <Button
@@ -291,6 +308,12 @@ const MobileDataCreditsIndex = ({
         open={showOrganizationTransferDCModal}
         onClose={() => setShowOrganizationTransferDCModal(false)}
         organization={organization}
+        mobile={true}
+      />
+
+      <RedeemSurveyTokenModal
+        open={showRedeemSurveyTokenModal}
+        onClose={() => setShowRedeemSurveyTokenModal(false)}
         mobile={true}
       />
     </div>

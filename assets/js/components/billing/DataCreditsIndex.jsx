@@ -14,6 +14,7 @@ import DefaultPaymentModal from "./DefaultPaymentModal";
 import PurchaseCreditModal from "./PurchaseCreditModal";
 import AutomaticRenewalModal from "./AutomaticRenewalModal";
 import OrganizationTransferDCModal from "./OrganizationTransferDCModal";
+import RedeemSurveyTokenModal from "./RedeemSurveyTokenModal";
 import DataCreditPurchasesTable from "./DataCreditPurchasesTable";
 import IndexBlankSlate from "./IndexBlankSlate";
 import PaymentCard from "./PaymentCard";
@@ -56,6 +57,7 @@ class DataCreditsIndex extends Component {
     showPurchaseCreditModal: false,
     showAutomaticRenewalModal: false,
     showOrganizationTransferDCModal: false,
+    showRedeemSurveyTokenModal: false,
     paymentMethods: [],
     triedFetchingPayments: false,
   };
@@ -292,6 +294,7 @@ class DataCreditsIndex extends Component {
       showPurchaseCreditModal,
       showAutomaticRenewalModal,
       showOrganizationTransferDCModal,
+      showRedeemSurveyTokenModal,
     } = this.state;
     const { organization, error, loading } = this.props.orgShowDCQuery;
 
@@ -396,15 +399,27 @@ class DataCreditsIndex extends Component {
                           <PopupButton
                             id="j9LV2ScD"
                             style={{
-                              display: !process.env.SELF_HOSTED ? "inline" : "none",
+                              display: !process.env.SELF_HOSTED ? "inline" : "none"
                             }}
                             className="launch-survey-button"
-                            onSubmit={() => {
-                              setTimeout(submittedOrganizationSurvey, 4000)
-                            }}
+                            onSubmit={submittedOrganizationSurvey}
                           >
                             Get More DC
                           </PopupButton>
+                        )
+                      }
+                      {
+                        organization.received_free_dc && organization.survey_token && !organization.survey_token_used && (
+                          <Button
+                            type="primary"
+                            onClick={() => this.openModal("showRedeemSurveyTokenModal")}
+                            style={{
+                              borderRadius: 4,
+                              display: !process.env.SELF_HOSTED ? "inline" : "none"
+                            }}
+                          >
+                            Redeem Survey Token
+                          </Button>
                         )
                       }
                     </React.Fragment>
@@ -449,6 +464,11 @@ class DataCreditsIndex extends Component {
               open={showOrganizationTransferDCModal}
               onClose={() => this.closeModal("showOrganizationTransferDCModal")}
               organization={organization}
+            />
+
+            <RedeemSurveyTokenModal
+              open={showRedeemSurveyTokenModal}
+              onClose={() => this.closeModal("showRedeemSurveyTokenModal")}
             />
           </DashboardLayout>
         </DesktopDisplay>

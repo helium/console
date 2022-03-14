@@ -452,7 +452,26 @@ defmodule ConsoleWeb.OrganizationController do
         |> send_resp(:no_content, "")
       end
     else
-      {:error, :bad_request, ""}
+      {:error, :bad_request, "Cannot create a new survey token, please refresh the page"}
+    end
+  end
+
+  def submit_survey_token(conn, %{ "token" => token }) do
+    organization = conn.assigns.current_organization
+
+    if Application.get_env(:console, :self_hosted) == nil && organization.survey_token == token && !organization.survey_token_used do
+      org_attrs = %{
+        "survey_token_used" => true,
+        "dc_balance" => organization.dc_balance + 9800,
+        "dc_balance_nonce" => organization.dc_balance_nonce + 1
+      }
+      with {:ok, _} <- Organizations.update_organization(organization, org_attrs) do
+        ConsoleWeb.Endpoint.broadcast("graphql:dc_index", "graphql:dc_index:#{organization.id}:update_dc", %{})
+        conn
+        |> send_resp(:no_content, "")
+      end
+    else
+      {:error, :bad_request, "Invalid token entered, please try again"}
     end
   end
 end

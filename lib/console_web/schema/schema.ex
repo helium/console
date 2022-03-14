@@ -229,6 +229,7 @@ defmodule ConsoleWeb.Schema do
     field :webhook_key, :string
     field :flow, :string
     field :survey_token, :string
+    field :survey_token_used, :boolean
   end
 
   object :api_key do

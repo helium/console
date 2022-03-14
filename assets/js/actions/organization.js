@@ -147,7 +147,11 @@ export const importOrganization = org_json => {
 };
 
 export const submittedOrganizationSurvey = () => {
-  return rest.post("/api/organizations/survey", {})
+  setTimeout(() => rest.post("/api/organizations/survey", {}), 3000)
+};
+
+export const submitSurveyToken = (token) => {
+  return rest.post("/api/organizations/survey_token", { token })
 };
 
 export const exportOrganization = (id, name) => {
