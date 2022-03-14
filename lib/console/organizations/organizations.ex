@@ -117,6 +117,13 @@ defmodule Console.Organizations do
     |> Repo.all()
   end
 
+  def get_organizations_with_unsent_survey_tokens() do
+    ago_25_mins = NaiveDateTime.utc_now() |> NaiveDateTime.add(-1500, :second)
+
+    from(o in Organization, where: o.survey_token_used == false and is_nil(o.survey_token_sent_at) and o.survey_token_inserted_at < ^ago_25_mins)
+    |> Repo.all()
+  end
+
   def get_invitation!(id) do
     Repo.get!(Invitation, id)
   end

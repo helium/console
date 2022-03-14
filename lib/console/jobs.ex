@@ -18,6 +18,26 @@ defmodule Console.Jobs do
     end)
   end
 
+  def send_survey_tokens do
+    to_send_organizations = Organizations.get_organizations_with_unsent_survey_tokens()
+
+    Enum.each(to_send_organizations, fn organization ->
+      Task.Supervisor.async_nolink(ConsoleWeb.TaskSupervisor, fn ->
+        admins = Organizations.get_administrators(organization)
+
+        org_attrs = %{
+          "survey_token_sent_at" => NaiveDateTime.utc_now()
+        }
+        with {:ok, _} <- Organizations.update_organization(organization, org_attrs) do
+          Enum.each(admins, fn administrator ->
+            Email.survey_token_email(administrator, %{ token: organization.survey_token }) |> Mailer.deliver_later()
+          end)
+        end
+      end)
+      |> Task.await(:infinity)
+    end)
+  end
+
   def send_alerts do
     # to avoid spamming customers with multiple notifications for the same event, get notifications in 5-min batches
     now = Timex.now

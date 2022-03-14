@@ -5,6 +5,7 @@ defmodule Console.Email do
   alias Console.ApiKeys.ApiKey
   alias Console.DcPurchases.DcPurchase
   alias Console.Organizations.Invitation
+  alias Console.Organizations.Membership
   alias Console.Organizations.Organization
   alias DateTime
 
@@ -108,7 +109,7 @@ defmodule Console.Email do
     |> render(:api_key_email)
   end
 
-  def survey_token_email(%User{email: email}, %{token: token}) do
+  def survey_token_email(%Membership{email: email}, %{token: token}) do
     base_email()
     |> to(email)
     |> subject("Your survey token to receive free Data Credits")
