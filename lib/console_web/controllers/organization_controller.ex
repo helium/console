@@ -449,6 +449,14 @@ defmodule ConsoleWeb.OrganizationController do
       with {:ok, _} <- Organizations.update_organization(organization, org_attrs) do
         ConsoleWeb.Endpoint.broadcast("graphql:dc_index", "graphql:dc_index:#{organization.id}:update_dc", %{})
 
+        AuditActions.create_audit_action(
+          organization.id,
+          conn.assigns.current_user.email,
+          "org_controller_submitted_survey",
+          nil,
+          nil
+        )
+
         conn
         |> send_resp(:no_content, "")
       end
@@ -468,6 +476,15 @@ defmodule ConsoleWeb.OrganizationController do
       }
       with {:ok, _} <- Organizations.update_organization(organization, org_attrs) do
         ConsoleWeb.Endpoint.broadcast("graphql:dc_index", "graphql:dc_index:#{organization.id}:update_dc", %{})
+
+        AuditActions.create_audit_action(
+          organization.id,
+          conn.assigns.current_user.email,
+          "org_controller_submit_survey_token",
+          nil,
+          nil
+        )
+
         conn
         |> send_resp(:no_content, "")
       end
