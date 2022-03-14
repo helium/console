@@ -107,6 +107,7 @@ defmodule ConsoleWeb.Router do
 
     get "/organizations/export", OrganizationController, :export
     post "/organizations/import", OrganizationController, :import
+    post "/organizations/survey", OrganizationController, :submitted_survey
   end
 
   scope "/api/router", ConsoleWeb.Router do

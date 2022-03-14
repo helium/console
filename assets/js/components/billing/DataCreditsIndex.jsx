@@ -19,6 +19,7 @@ import IndexBlankSlate from "./IndexBlankSlate";
 import PaymentCard from "./PaymentCard";
 import { ORGANIZATION_SHOW_DC } from "../../graphql/organizations";
 import { getPaymentMethods } from "../../actions/dataCredits";
+import { submittedOrganizationSurvey } from "../../actions/organization";
 import { Link } from "react-router-dom";
 import { Typography, Card, Row, Col, Popover, Button } from "antd";
 import WalletOutlined from "@ant-design/icons/WalletOutlined";
@@ -391,7 +392,7 @@ class DataCreditsIndex extends Component {
                         Purchase Data Credits
                       </Button>
                       {
-                        organization.received_free_dc && (
+                        organization.received_free_dc && !organization.survey_token && (
                           <PopupButton
                             id="j9LV2ScD"
                             style={{
@@ -399,7 +400,7 @@ class DataCreditsIndex extends Component {
                             }}
                             className="launch-survey-button"
                             onSubmit={() => {
-                              console.log('form submitted')
+                              setTimeout(submittedOrganizationSurvey, 4000)
                             }}
                           >
                             Get More DC

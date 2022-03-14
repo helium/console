@@ -19,6 +19,10 @@ defmodule Console.Organizations.Organization do
     field :webhook_key, :string
     field :flow, :map
     field :default_app_eui, :string
+    field :survey_token, :string
+    field :survey_token_sent_at, :naive_datetime
+    field :survey_token_inserted_at, :naive_datetime
+    field :survey_token_used, :boolean
 
     has_many :channels, Console.Channels.Channel, on_delete: :delete_all
     has_many :devices, Console.Devices.Device, on_delete: :delete_all
@@ -68,7 +72,11 @@ defmodule Console.Organizations.Organization do
       :active,
       :received_free_dc,
       :flow,
-      :name
+      :name,
+      :survey_token,
+      :survey_token_sent_at,
+      :survey_token_inserted_at,
+      :survey_token_used
     ])
   end
 

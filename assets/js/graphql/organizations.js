@@ -22,6 +22,7 @@ export const ORGANIZATION_SHOW_DC = gql`
       automatic_payment_method,
       dc_balance_nonce,
       received_free_dc,
+      survey_token
     }
   }
 `

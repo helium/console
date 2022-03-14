@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import numeral from "numeral";
 import { PopupButton } from '@typeform/embed-react'
+import { submittedOrganizationSurvey } from "../../../actions/organization";
 import UserCan from "../../common/UserCan";
 import PaymentCard from "../../billing/PaymentCard";
 import DataCreditPurchasesTable from "../../billing/DataCreditPurchasesTable";
@@ -74,7 +75,7 @@ const MobileDataCreditsIndex = ({
                 Purchase DC
               </Button>
               {
-                organization.received_free_dc && (
+                organization.received_free_dc && !organization.survey_token && (
                   <PopupButton
                     id="j9LV2ScD"
                     style={{
@@ -83,7 +84,7 @@ const MobileDataCreditsIndex = ({
                     }}
                     className="launch-survey-button"
                     onSubmit={() => {
-                      console.log('form submitted')
+                      setTimeout(submittedOrganizationSurvey, 4000)
                     }}
                   >
                     Get More DC

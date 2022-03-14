@@ -146,6 +146,10 @@ export const importOrganization = org_json => {
   return rest.post("/api/organizations/import", org_json)
 };
 
+export const submittedOrganizationSurvey = () => {
+  return rest.post("/api/organizations/survey", {})
+};
+
 export const exportOrganization = (id, name) => {
   rest.get("/api/organizations/export")
   .then(resp => {

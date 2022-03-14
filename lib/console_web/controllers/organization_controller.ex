@@ -8,6 +8,7 @@ defmodule ConsoleWeb.OrganizationController do
   alias Console.DcPurchases
   alias Console.Email
   alias Console.Mailer
+  alias Console.Helpers
   alias Console.AuditActions
 
   plug ConsoleWeb.Plug.AuthorizeAction when action in [:delete]
@@ -434,5 +435,24 @@ defmodule ConsoleWeb.OrganizationController do
 
     conn
     |> send_resp(:ok, Jason.encode!(result))
+  end
+
+  def submitted_survey(conn, _) do
+    organization = conn.assigns.current_organization
+
+    if Application.get_env(:console, :self_hosted) == nil && organization.survey_token == nil do
+      org_attrs = %{
+        "survey_token_inserted_at" => NaiveDateTime.utc_now(),
+        "survey_token_used" => false,
+        "survey_token" => Helpers.generate_token(8)
+      }
+      with {:ok, _} <- Organizations.update_organization(organization, org_attrs) do
+        ConsoleWeb.Endpoint.broadcast("graphql:dc_index", "graphql:dc_index:#{organization.id}:update_dc", %{})
+        conn
+        |> send_resp(:no_content, "")
+      end
+    else
+      {:error, :bad_request, ""}
+    end
   end
 end
