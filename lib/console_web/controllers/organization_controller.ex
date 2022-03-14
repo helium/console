@@ -463,7 +463,7 @@ defmodule ConsoleWeb.OrganizationController do
     if Application.get_env(:console, :self_hosted) == nil && organization.survey_token == token && !organization.survey_token_used do
       org_attrs = %{
         "survey_token_used" => true,
-        "dc_balance" => organization.dc_balance + 9800,
+        "dc_balance" => organization.dc_balance + 9750,
         "dc_balance_nonce" => organization.dc_balance_nonce + 1
       }
       with {:ok, _} <- Organizations.update_organization(organization, org_attrs) do
