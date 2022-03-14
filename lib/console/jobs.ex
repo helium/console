@@ -1,7 +1,7 @@
 defmodule Console.Jobs do
   # This module defines the jobs to be ran by Quantum scheduler
   # as defined in config/config.exs
-
+  require HTTPoison.Retry
   alias Console.Email
   alias Console.Mailer
   alias Console.Organizations
@@ -10,8 +10,7 @@ defmodule Console.Jobs do
   alias Console.Alerts
   alias Console.AlertEvents
   alias Console.Repo
-  alias Console.BlockchainApi
-  alias Console.Hotspots
+  alias Console.Hotspots.Hotspot
 
   def refresh_materialized_views do
     Task.Supervisor.async_nolink(ConsoleWeb.TaskSupervisor, fn ->
@@ -168,19 +167,32 @@ defmodule Console.Jobs do
   end
 
   def sync_hotspots() do
-    case BlockchainApi.each_page("/hotspots", &process_hotspots/1) do
-      :ok ->
-        :ok
+    date_begin = Timex.now() |> Timex.beginning_of_day()
+    file_date = date_begin |> Timex.format!("%Y-%m-%d", :strftime)
 
-      {:error, _} = error ->
-        error
+    route = "https://snapshots.helium.wtf/mainnet/hotspots/network/#{file_date}.json.gz"
+
+    response =
+      HTTPoison.get(route)
+      |> HTTPoison.Retry.autoretry(
+        max_attempts: Application.get_env(:console, :blockchain_api_retry),
+        wait: 15000,
+        include_404s: true,
+        retry_unknown_errors: true
+      )
+
+    case response do
+      {:ok, %HTTPoison.Response{ body: body, status_code: status_code }} ->
+        case status_code do
+          200 ->
+            hotspots = :zlib.gunzip(body) |> Jason.decode!()
+            upsert_hotspots(Enum.chunk_every(hotspots, 1000))
+          _ ->
+            Appsignal.send_error(%HTTPoison.Error{reason: body}, "Failed response when downloading hotspots list #{file_date}", "jobs.ex")
+        end
+      {:error, error} ->
+        Appsignal.send_error(error, "HTTPoison failed to download hotspots list #{file_date}", "jobs.ex")
     end
-  end
-
-  defp process_hotspots(hotspots) do
-    hotspots
-    |> Enum.map(&sanitize/1)
-    |> Enum.each(&upsert_hotspot/1)
   end
 
   @fields [
@@ -194,27 +206,33 @@ defmodule Console.Jobs do
     :short_state,
     :short_country,
     :long_city,
-    :owner
+    :owner,
+    :inserted_at,
+    :updated_at
   ]
 
   defp sanitize(hotspot) do
     hotspot
-    |> Map.put("status", hotspot["status"]["online"])
-    |> Map.put("height", hotspot["status"]["height"])
-    |> Map.put("short_state", hotspot["geocode"]["short_state"])
-    |> Map.put("short_country", hotspot["geocode"]["short_country"])
-    |> Map.put("long_city", hotspot["geocode"]["long_city"])
+    |> Map.put("status", hotspot["online"])
+    |> Map.put("height", 0)
+    |> Map.put("short_state", hotspot["short_state"])
+    |> Map.put("short_country", hotspot["short_country"])
+    |> Map.put("long_city", hotspot["short_city"])
+    |> Map.put("inserted_at", NaiveDateTime.utc_now |> NaiveDateTime.truncate(:second))
+    |> Map.put("updated_at", NaiveDateTime.utc_now |> NaiveDateTime.truncate(:second))
     |> Map.new(fn {k, v} -> {String.to_atom(k), v} end)
     |> Map.take(@fields)
   end
 
-  defp upsert_hotspot(%{address: address} = params) do
-    hotspot = Hotspots.get_hotspot(address)
+  defp upsert_hotspots(chunked_hotspots) do
+    if length(chunked_hotspots) != 0 do
+      Task.Supervisor.async_nolink(ConsoleWeb.TaskSupervisor, fn ->
+        sanitized_hotspots = List.first(chunked_hotspots) |> Enum.map(fn h -> sanitize(h) end)
+        Repo.insert_all(Hotspot, sanitized_hotspots, on_conflict: {:replace_all_except, [:id, :inserted_at, :address]}, conflict_target: :address)
+      end)
+      |> Task.await(:infinity)
 
-    if hotspot == nil do
-      Hotspots.create_hotspot(params)
-    else
-      Hotspots.update_hotspot(hotspot, params)
+      upsert_hotspots(Enum.drop(chunked_hotspots, 1))
     end
   end
 end
