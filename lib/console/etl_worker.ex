@@ -65,9 +65,17 @@ defmodule Console.EtlWorker do
             end)
             |> Ecto.Multi.run(:organization_updates, fn _repo, _ ->
               Enum.each(organizations_to_update, fn org ->
-                org_attrs = %{
-                  "dc_balance" => Enum.max([org.dc_balance - organization_updates_map[org.id]["dc_used"], 0]),
-                }
+                org_attrs =
+                  if is_nil(org.first_packet_received_at) do
+                    %{
+                      "dc_balance" => Enum.max([org.dc_balance - organization_updates_map[org.id]["dc_used"], 0]),
+                      "first_packet_received_at" => NaiveDateTime.utc_now()
+                    }
+                  else
+                    %{
+                      "dc_balance" => Enum.max([org.dc_balance - organization_updates_map[org.id]["dc_used"], 0]),
+                    }
+                  end
 
                 Organizations.update_organization!(org, org_attrs)
 

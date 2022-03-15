@@ -23,6 +23,7 @@ defmodule Console.Organizations.Organization do
     field :survey_token_sent_at, :naive_datetime
     field :survey_token_inserted_at, :naive_datetime
     field :survey_token_used, :boolean
+    field :first_packet_received_at, :naive_datetime
 
     has_many :channels, Console.Channels.Channel, on_delete: :delete_all
     has_many :devices, Console.Devices.Device, on_delete: :delete_all
@@ -76,7 +77,8 @@ defmodule Console.Organizations.Organization do
       :survey_token,
       :survey_token_sent_at,
       :survey_token_inserted_at,
-      :survey_token_used
+      :survey_token_used,
+      :first_packet_received_at,
     ])
   end
 

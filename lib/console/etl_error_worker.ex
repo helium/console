@@ -92,9 +92,17 @@ defmodule Console.EtlErrorWorker do
             end)
             |> Ecto.Multi.run(:organization, fn _repo, _ ->
               if parsed_event.sub_category in ["uplink_confirmed", "uplink_unconfirmed"] or parsed_event.category == "join_request" do
-                org_attrs = %{
-                  "dc_balance" => Enum.max([organization.dc_balance - parsed_event.data["dc"]["used"], 0]),
-                }
+                org_attrs =
+                  if is_nil(organization.first_packet_received_at) do
+                    %{
+                      "dc_balance" => Enum.max([organization.dc_balance - parsed_event.data["dc"]["used"], 0]),
+                      "first_packet_received_at" => NaiveDateTime.utc_now()
+                    }
+                  else
+                    %{
+                      "dc_balance" => Enum.max([organization.dc_balance - parsed_event.data["dc"]["used"], 0]),
+                    }
+                  end
 
                 if organization.dc_balance_nonce != parsed_event.data["dc"]["used"] do
                   ConsoleWeb.DataCreditController.broadcast_router_refill_dc_balance(
