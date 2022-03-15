@@ -129,15 +129,15 @@ defmodule ConsoleWeb.FlowsController do
           conn.assigns.current_user.email,
           "flow_controller_update",
           current_organization.id,
-          flows_changes
+          %{ complete_flows: complete_flows }
         )
 
         conn
         |> put_resp_header("message", "Flows changes have been successfully saved")
         |> send_resp(:ok, "")
-      {:error, :added_flows, "fail", _} ->
-        {:error, :bad_request, "Failed to connect all flows. Please make sure you are not duplicating flows with the same nodes."}
-      _ -> result
+      _ ->
+        Appsignal.send_error(%CaseClauseError{ term: Kernel.inspect(result) }, "Failed to save flows", ["flows_controller.ex"])
+        {:error, :bad_request, "Could not save flows changes properly. Certain underlying nodes may have been deleted. Please refresh the page and try again."}
     end
   end
 

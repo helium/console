@@ -13,7 +13,7 @@ defmodule Console.Channels.ChannelResolver do
     updated_entries = channels.entries
       |> Enum.map(fn c ->
         Map.drop(c, [:downlink_token])
-        Map.put(c, :number_devices, Flows.get_number_devices_in_flows_with_channel(current_organization, c.id))
+        |> Map.put(:number_devices, Flows.get_number_devices_in_flows_with_channel(current_organization, c.id))
       end)
 
     {:ok, Map.put(channels, :entries, updated_entries)}
