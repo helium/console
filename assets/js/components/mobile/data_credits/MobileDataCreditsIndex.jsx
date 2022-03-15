@@ -78,7 +78,7 @@ const MobileDataCreditsIndex = ({
                 Purchase DC
               </Button>
               {
-                organization.received_free_dc && !organization.survey_token && (
+                organization.received_free_dc && !organization.survey_token_inserted_at && (
                   <PopupButton
                     id="j9LV2ScD"
                     style={{
@@ -93,7 +93,7 @@ const MobileDataCreditsIndex = ({
                 )
               }
               {
-                organization.received_free_dc && organization.survey_token && !organization.survey_token_used && (
+                organization.survey_token_inserted_at && !organization.survey_token_used && (
                   <Button
                     type="primary"
                     size="large"
