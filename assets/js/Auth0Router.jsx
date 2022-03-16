@@ -134,7 +134,7 @@ const Auth0Router = (props) => {
                   {
                     /* If user has no organizations then render the no org page */
                     (loadedOrganization && !currentOrganizationId && (
-                      <NoOrganization />
+                      <NoOrganization user={user} />
                     )) ||
                       /* Otherwise if the apollo client has been instantiated, render data routes */
                       (apolloClient && (
