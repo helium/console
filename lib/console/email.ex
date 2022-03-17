@@ -112,7 +112,7 @@ defmodule Console.Email do
   def survey_token_email(%Membership{email: email}, %{token: token}) do
     base_email()
     |> to(email)
-    |> subject("Your survey token to receive free Data Credits")
+    |> subject("Claim your Free Data Credits on Helium Console")
     |> assign(:token, token)
     |> render(:survey_token_email)
   end

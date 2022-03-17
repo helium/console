@@ -2,7 +2,7 @@ import { push } from "connected-react-router";
 import sanitizeHtml from "sanitize-html";
 import * as rest from "../util/rest";
 import analyticsLogger from "../util/analyticsLogger";
-import { displayError } from "../util/messages";
+import { displayError, displayInfo } from "../util/messages";
 
 export const FETCHED_ORGANIZATION = "FETCHED_ORGANIZATIONS";
 export const FETCHING_ORGANIZATION = "FETCHING_ORGANIZATION";
@@ -152,6 +152,13 @@ export const submittedOrganizationSurvey = () => {
 
 export const submitSurveyToken = (token) => {
   return rest.post("/api/organizations/survey_token", { token })
+};
+
+export const resendSurveyToken = () => {
+  return rest.post("/api/organizations/survey_token/resend", {})
+  .then(() => {
+    displayInfo("An email containing the token has been resent")
+  })
 };
 
 export const exportOrganization = (id, name) => {

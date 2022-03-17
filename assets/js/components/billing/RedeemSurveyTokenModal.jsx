@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { submitSurveyToken } from '../../actions/organization'
+import { Link } from "react-router-dom";
+import { submitSurveyToken, resendSurveyToken } from '../../actions/organization'
 import { displayInfo } from "../../util/messages";
 import { Modal, Button, Typography, Input } from 'antd';
 const { Text } = Typography
@@ -10,7 +11,7 @@ const RedeemSurveyTokenModal = ({ open, onClose, mobile }) => {
   const handleSubmit = () => {
     submitSurveyToken(token)
     .then(res => {
-      displayInfo("Survey token redeemed successfully")
+      displayInfo("Data Credits claimed successfully")
       onClose()
     })
     .catch(() => {
@@ -20,7 +21,7 @@ const RedeemSurveyTokenModal = ({ open, onClose, mobile }) => {
 
   return (
     <Modal
-      title="Redeem Survey Token"
+      title="Claim Data Credits"
       visible={open}
       onCancel={onClose}
       centered
@@ -37,7 +38,7 @@ const RedeemSurveyTokenModal = ({ open, onClose, mobile }) => {
     >
       <div style={{ marginBottom: 20 }}>
         <Text>
-          Enter your survey token below to received additional Data Credits. The token is sent to your Console email address approximately 30 minutes after survey submission.
+          Enter your token below to received additional Data Credits.
         </Text>
       </div>
 
@@ -49,6 +50,11 @@ const RedeemSurveyTokenModal = ({ open, onClose, mobile }) => {
           onChange={e => setToken(e.target.value)}
           style={{ width: 250 }}
           maxLength={20}
+          suffix={
+            <Link to="#" onClick={resendSurveyToken}>
+              Resend Token
+            </Link>
+          }
         />
       </div>
     </Modal>

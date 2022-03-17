@@ -393,7 +393,7 @@ class DataCreditsIndex extends Component {
                         Purchase Data Credits
                       </Button>
                       {
-                        organization.survey_token_inserted_at && !organization.survey_token_used && (
+                        organization.survey_token_sent_at && !organization.survey_token_used && (
                           <Button
                             type="primary"
                             onClick={() => this.openModal("showRedeemSurveyTokenModal")}

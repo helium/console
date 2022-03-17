@@ -32,6 +32,8 @@ defmodule Console.Jobs do
           Enum.each(admins, fn administrator ->
             Email.survey_token_email(administrator, %{ token: organization.survey_token }) |> Mailer.deliver_later()
           end)
+
+          # broadcast notification
         end
       end)
       |> Task.await(:infinity)

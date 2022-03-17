@@ -109,6 +109,7 @@ defmodule ConsoleWeb.Router do
     post "/organizations/import", OrganizationController, :import
     post "/organizations/survey", OrganizationController, :submitted_survey
     post "/organizations/survey_token", OrganizationController, :submit_survey_token
+    post "/organizations/survey_token/resend", OrganizationController, :resend_survey_token
   end
 
   scope "/api/router", ConsoleWeb.Router do

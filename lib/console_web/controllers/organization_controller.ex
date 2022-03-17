@@ -497,4 +497,19 @@ defmodule ConsoleWeb.OrganizationController do
       {:error, :bad_request, "Invalid token entered, please try again"}
     end
   end
+
+  def resend_survey_token(conn, _) do
+    organization = conn.assigns.current_organization
+
+    if organization.survey_token_sent_at != nil do
+      admins = Organizations.get_administrators(organization)
+
+      Enum.each(admins, fn administrator ->
+        Email.survey_token_email(administrator, %{ token: organization.survey_token }) |> Mailer.deliver_later()
+      end)
+
+      conn
+      |> send_resp(:no_content, "")
+    end
+  end
 end

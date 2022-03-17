@@ -59,7 +59,8 @@ class MobileLayout extends Component {
             onClick={this.toggleNav}
           />
           {
-            organization && (
+            !process.env.SELF_HOSTED && organization && organization.received_free_dc &&
+            (!organization.survey_token_inserted_at || !organization.first_packet_received_at) && (
               <div
                 style={{ cursor: "pointer" }}
                 onClick={this.toggleSurveyNotification}
@@ -104,7 +105,7 @@ class MobileLayout extends Component {
           )
         }
 
-        {this.state.showSurveyNotification && (
+        {this.state.showSurveyNotification && organization && !organization.survey_token_sent_at && (
           <SurveyNotification
             toggleSurveyNotification={this.toggleSurveyNotification}
             organization={organization}
