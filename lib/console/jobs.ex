@@ -32,12 +32,12 @@ defmodule Console.Jobs do
           Enum.each(admins, fn administrator ->
             Email.survey_token_email(administrator, %{ token: organization.survey_token }) |> Mailer.deliver_later()
           end)
-
-          ConsoleWeb.Endpoint.broadcast("graphql:topbar_orgs", "graphql:topbar_orgs:#{organization.id}:update_org_survey_attrs", %{})
-          ConsoleWeb.Endpoint.broadcast("graphql:mobile_topbar_orgs", "graphql:mobile_topbar_orgs:#{organization.id}:update_org_survey_attrs", %{})
         end
       end)
       |> Task.await(:infinity)
+      
+      ConsoleWeb.Endpoint.broadcast("graphql:topbar_orgs", "graphql:topbar_orgs:#{organization.id}:update_org_survey_attrs", %{})
+      ConsoleWeb.Endpoint.broadcast("graphql:mobile_topbar_orgs", "graphql:mobile_topbar_orgs:#{organization.id}:update_org_survey_attrs", %{})
     end)
   end
 
