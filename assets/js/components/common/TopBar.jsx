@@ -66,7 +66,7 @@ class TopBar extends Component {
       }
     );
     this.channel.on(
-      `graphql:topbar_orgs:${this.props.currentOrganizationId}:survey_submitted`,
+      `graphql:topbar_orgs:${this.props.currentOrganizationId}:update_org_survey_attrs`,
       (message) => {
         this.props.orgShowQuery.refetch();
       }

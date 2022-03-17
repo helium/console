@@ -451,8 +451,8 @@ defmodule ConsoleWeb.OrganizationController do
         "survey_token" => Helpers.generate_token(8)
       }
       with {:ok, _} <- Organizations.update_organization(organization, org_attrs) do
-        ConsoleWeb.Endpoint.broadcast("graphql:topbar_orgs", "graphql:topbar_orgs:#{organization.id}:survey_submitted", %{})
-        ConsoleWeb.Endpoint.broadcast("graphql:mobile_topbar_orgs", "graphql:mobile_topbar_orgs:#{organization.id}:survey_submitted", %{})
+        ConsoleWeb.Endpoint.broadcast("graphql:topbar_orgs", "graphql:topbar_orgs:#{organization.id}:update_org_survey_attrs", %{})
+        ConsoleWeb.Endpoint.broadcast("graphql:mobile_topbar_orgs", "graphql:mobile_topbar_orgs:#{organization.id}:update_org_survey_attrs", %{})
 
         AuditActions.create_audit_action(
           organization.id,

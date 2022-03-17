@@ -130,7 +130,7 @@ defmodule Console.Organizations do
 
     from(
       o in Organization,
-      where: o.survey_token_used == false and is_nil(o.survey_token_sent_at) and o.survey_token_inserted_at < ^ago_25_mins # and device first sent before 25mins ago
+      where: o.survey_token_used == false and is_nil(o.survey_token_sent_at) and o.survey_token_inserted_at < ^ago_25_mins and o.first_packet_received_at < ^ago_25_mins
     )
     |> Repo.all()
   end

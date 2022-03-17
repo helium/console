@@ -24,7 +24,7 @@ class MobileLayout extends Component {
     this.channel = socket.channel("graphql:mobile_topbar_orgs", {});
     this.channel.join();
     this.channel.on(
-      `graphql:mobile_topbar_orgs:${this.props.currentOrganizationId}:survey_submitted`,
+      `graphql:mobile_topbar_orgs:${this.props.currentOrganizationId}:update_org_survey_attrs`,
       (message) => {
         this.props.orgShowQuery.refetch();
       }
