@@ -127,10 +127,11 @@ defmodule Console.Organizations do
 
   def get_organizations_with_unsent_survey_tokens() do
     ago_25_mins = NaiveDateTime.utc_now() |> NaiveDateTime.add(-1500, :second)
+    ago_30_days = NaiveDateTime.utc_now() |> NaiveDateTime.add(-2592000, :second)
 
     from(
       o in Organization,
-      where: o.survey_token_used == false and is_nil(o.survey_token_sent_at) and o.survey_token_inserted_at < ^ago_25_mins and o.first_packet_received_at < ^ago_25_mins
+      where: o.survey_token_used == false and is_nil(o.survey_token_sent_at) and o.survey_token_inserted_at < ^ago_25_mins and o.first_packet_received_at < ^ago_25_mins and o.inserted_at > ^ago_30_days
     )
     |> Repo.all()
   end

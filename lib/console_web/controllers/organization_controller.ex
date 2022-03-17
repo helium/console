@@ -444,7 +444,6 @@ defmodule ConsoleWeb.OrganizationController do
     organization = conn.assigns.current_organization
 
     if Application.get_env(:console, :self_hosted) == nil && organization.survey_token == nil do
-      # if not yet 30 days since org insert
       org_attrs = %{
         "survey_token_inserted_at" => NaiveDateTime.utc_now(),
         "survey_token_used" => false,
