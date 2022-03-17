@@ -12,7 +12,7 @@ const styles = {
   text: { lineHeight: 'normal', fontSize: 16, display: 'block', marginBottom: 12 }
 }
 
-export default ({ organization, toggleSurveyNotification }) => {
+export default ({ organization, toggleSurveyNotification, mobile }) => {
   return (
     <div
       style={{
@@ -32,7 +32,7 @@ export default ({ organization, toggleSurveyNotification }) => {
             e.stopPropagation()
           }}
         >
-          <div style={{ maxWidth: 720, minWidth }}>
+          <div style={{ maxWidth: 720, minWidth: mobile ? 300 : minWidth }}>
             <Text
               style={{
                 fontWeight: 600,
@@ -54,13 +54,13 @@ export default ({ organization, toggleSurveyNotification }) => {
               To claim more DC (total 10,000), complete the survey (2 minutes) and add an active device within 30 days of {organization && moment(organization.inserted_at).format("LL")}.
             </Text>
 
-            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', marginTop: 20 }}>
+            <div style={{ display: 'flex', flexDirection: mobile ? 'column' : 'row', justifyContent: 'flex-end', marginTop: 20 }}>
               { organization && !organization.survey_token_inserted_at && (
                 <PopupButton
                   id="j9LV2ScD"
                   className="launch-survey-button"
                   onSubmit={submittedOrganizationSurvey}
-                  style={{ lineHeight: 'normal', height: 36, marginRight: 10 }}
+                  style={{ lineHeight: 'normal', height: 36, marginLeft: mobile ? 0 : 10, marginTop: 4 }}
                 >
                   Take Survey
                 </PopupButton>
@@ -68,7 +68,7 @@ export default ({ organization, toggleSurveyNotification }) => {
               { organization && !organization.has_device && (
                 <Button
                   type="primary"
-                  style={{ marginRight: 10 }}
+                  style={{ marginLeft: mobile ? 0 : 10, marginTop: 4 }}
                   onClick={toggleSurveyNotification}
                 >
                   <Link to={`/devices/new`}>
@@ -78,7 +78,7 @@ export default ({ organization, toggleSurveyNotification }) => {
               )}
               { organization && organization.has_device && (
                 <Button
-                  style={{ marginRight: 10 }}
+                  style={{ marginLeft: mobile ? 0 : 10, marginTop: 4 }}
                   disabled={true}
                 >
                   Awaiting First Packet...
@@ -86,6 +86,7 @@ export default ({ organization, toggleSurveyNotification }) => {
               )}
               <Button
                 onClick={toggleSurveyNotification}
+                style={{ marginLeft: mobile ? 0 : 10, marginTop: 4 }}
               >
                 Close
               </Button>
