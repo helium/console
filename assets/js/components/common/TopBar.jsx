@@ -74,7 +74,12 @@ class TopBar extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (!process.env.SELF_HOSTED && !prevProps.orgShowQuery.organization && this.props.orgShowQuery.organization) {
+    const { organization } = this.props.orgShowQuery
+    if (
+      !process.env.SELF_HOSTED && !prevProps.orgShowQuery.organization && organization &&
+      organization.received_free_dc && !organization.survey_token_sent_at &&
+      moment(organization.inserted_at).add(30, "days").isAfter(moment())
+    ) {
       this.setState({ showSurveyNotification: true })
     }
   }
@@ -246,7 +251,7 @@ class TopBar extends Component {
           </MediaQuery>
           {
             !process.env.SELF_HOSTED && organization && organization.received_free_dc &&
-            (!organization.survey_token_inserted_at || !organization.first_packet_received_at) &&
+            !organization.survey_token_sent_at && moment(organization.inserted_at).add(30, "days").isAfter(moment()) &&
             (
               <MediaQuery minWidth={720}>
                 <div
@@ -276,9 +281,9 @@ class TopBar extends Component {
                       className="noselect"
                       style={{color: "#FFFFFF", fontWeight: 500}}
                     >
-                      {
+                      ({
                         moment().to(moment(organization.inserted_at).add(30, "days")).slice(3).concat(" left")
-                      }
+                      })
                     </Text>
                   </div>
                 </div>

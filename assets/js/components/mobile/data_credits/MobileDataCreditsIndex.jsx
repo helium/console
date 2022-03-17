@@ -87,7 +87,7 @@ const MobileDataCreditsIndex = ({
                       marginRight: 8,
                     }}
                   >
-                    Redeem Survey Token
+                    Redeem Free DC
                   </Button>
                 )
               }

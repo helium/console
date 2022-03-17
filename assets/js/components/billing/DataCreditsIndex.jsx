@@ -402,7 +402,7 @@ class DataCreditsIndex extends Component {
                               display: !process.env.SELF_HOSTED ? "inline" : "none"
                             }}
                           >
-                            Redeem Survey Token
+                            Redeem Free DC
                           </Button>
                         )
                       }
