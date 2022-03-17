@@ -8,7 +8,7 @@
     <meta name="format-detection" content="telephone=no,address=no,email=no,date=no,url=no"> <!-- Tell iOS not to automatically link certain text strings. -->
     <meta name="color-scheme" content="light">
     <meta name="supported-color-schemes" content="light">
-    <title>Redeem your Free Data Credits</title> <!-- The title tag shows in email notifications, like Android 4.4. -->
+    <title>Claim your Free Data Credits</title> <!-- The title tag shows in email notifications, like Android 4.4. -->
 
     <!-- What it does: Makes background images in 72ppi Outlook render at correct size. -->
     <!--[if gte mso 9]>
@@ -245,15 +245,18 @@
                             <!-- Spacing -->
                             <tr>
                                 <td style="font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;">
-                                    <h1 style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; margin: 0 0 30px; font-size: 30px; line-height: 30px; color: #333333; font-weight: normal; ">Redeem your Free Data Credits</h1>
+                                    <h1 style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; margin: 0 0 30px; font-size: 30px; line-height: 30px; color: #333333; font-weight: normal; ">Claim your Free Data Credits</h1>
                                     <p style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; line-height: 22px; margin: 0 0 20px;">
                                       Hi there,
                                       <br />
                                       <br />
-                                      You have received a survey token for free Data Credits on Helium Console. Please redeem your Data Credits by visiting the link below and clicking the Redeem Survey Token button.
+                                      Welcome to the Helium Network. Thank you for completing the survey and adding an active device.
                                       <br />
                                       <br />
                                       Your token is: <b><%= @token %></b>
+                                      <br />
+                                      <br />
+                                      To claim the remaining Data Credits, enter this token into your Console account in the Data Credits page by visiting the link below.
                                       <br />
                                     </p>
                                 </td>
@@ -264,7 +267,7 @@
                                     <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin: auto;">
                                         <tr>
                                             <td class="button-td button-td-primary" style="border: none;">
-                                              <a class="button-a button-a-primary" href="<%= @url <> "/datacredits" %>" style="background: #4091F7; text-decoration: none; font-weight: 500; font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 16px; line-height: 15px; text-decoration: none; padding: 13px 17px; color: #ffffff; display: block; border-radius: 4px;">Redeem Free Data Credits</a>
+                                              <a class="button-a button-a-primary" href="<%= @url <> "/datacredits" %>" style="background: #4091F7; text-decoration: none; font-weight: 500; font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 16px; line-height: 15px; text-decoration: none; padding: 13px 17px; color: #ffffff; display: block; border-radius: 4px;">Claim Free Data Credits</a>
                                           </td>
                                         </tr>
                                     </table>
