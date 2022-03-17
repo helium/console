@@ -42,7 +42,7 @@ export default ({ organization, toggleSurveyNotification, mobile }) => {
                 marginBottom: 16
               }}
             >
-              Helium Foundation Console
+              Helium Console
             </Text>
             <Text style={styles.text}>
               Thank you for creating an account. Devices need Data Credits (DC) to send data.
