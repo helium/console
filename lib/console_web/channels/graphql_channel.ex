@@ -5,6 +5,10 @@ defmodule ConsoleWeb.GraphqlChannel do
     {:ok, socket}
   end
 
+  def join("graphql:mobile_topbar_orgs", _message, socket) do
+    {:ok, socket}
+  end
+
   def join("graphql:orgs_index_table", _message, socket) do
     {:ok, socket}
   end

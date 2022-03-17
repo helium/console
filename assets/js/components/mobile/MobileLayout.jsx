@@ -21,10 +21,10 @@ class MobileLayout extends Component {
   componentDidMount() {
     const { socket } = this.props;
 
-    this.channel = socket.channel("graphql:topbar_orgs", {});
+    this.channel = socket.channel("graphql:mobile_topbar_orgs", {});
     this.channel.join();
     this.channel.on(
-      `graphql:topbar_orgs:${this.props.currentOrganizationId}:survey_submitted`,
+      `graphql:mobile_topbar_orgs:${this.props.currentOrganizationId}:survey_submitted`,
       (message) => {
         this.props.orgShowQuery.refetch();
       }

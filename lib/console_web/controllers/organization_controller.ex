@@ -452,6 +452,7 @@ defmodule ConsoleWeb.OrganizationController do
       }
       with {:ok, _} <- Organizations.update_organization(organization, org_attrs) do
         ConsoleWeb.Endpoint.broadcast("graphql:topbar_orgs", "graphql:topbar_orgs:#{organization.id}:survey_submitted", %{})
+        ConsoleWeb.Endpoint.broadcast("graphql:mobile_topbar_orgs", "graphql:mobile_topbar_orgs:#{organization.id}:survey_submitted", %{})
 
         AuditActions.create_audit_action(
           organization.id,
