@@ -4,6 +4,7 @@ defmodule Console.Organizations do
 
   alias Console.Organizations.Organization
   alias Console.Devices
+  alias Console.Devices.Device
   alias Console.Organizations.Membership
   alias Console.Organizations.Invitation
   alias Console.Auth.User
@@ -101,6 +102,13 @@ defmodule Console.Organizations do
   def get_discovery_mode_org() do
     Organization
       |> where([o], o.name == "Discovery Mode (Helium)")
+      |> Repo.one()
+  end
+
+  def get_one_device_in_org(organization) do
+    Device
+      |> where([d], d.organization_id == ^organization.id)
+      |> limit(1)
       |> Repo.one()
   end
 

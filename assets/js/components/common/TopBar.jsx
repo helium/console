@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import moment from 'moment'
 import withGql from "../../graphql/withGql";
 import { bindActionCreators } from "redux";
 import { Link } from "react-router-dom";
@@ -7,6 +8,7 @@ import { push } from "connected-react-router";
 import MediaQuery from "react-responsive";
 import numeral from "numeral";
 import HelpLinks from "./HelpLinks";
+import SurveyNotification from "./SurveyNotification";
 import { updateDisplay } from "../../actions/display";
 import DCIMg from "../../../img/datacredits.svg";
 import DCIMgDark from "../../../img/datacredits-dark.svg";
@@ -42,6 +44,7 @@ class TopBar extends Component {
     orgMenuVisible: false,
     showOrganizationModal: false,
     showHelpLinks: false,
+    showSurveyNotification: false,
   };
 
   componentDidMount() {
@@ -56,15 +59,24 @@ class TopBar extends Component {
         this.props.orgsQuery.refetch();
       }
     );
-
-    this.currentOrgChannel = socket.channel("graphql:topbar_org", {});
-    this.currentOrgChannel.join();
-    this.currentOrgChannel.on(
-      `graphql:topbar_org:${this.props.currentOrganizationId}:current_organization_renamed`,
+    this.channel.on(
+      `graphql:topbar_orgs:${this.props.currentOrganizationId}:current_organization_renamed`,
       (message) => {
         this.props.fetchOrganization();
       }
     );
+    this.channel.on(
+      `graphql:topbar_orgs:${this.props.currentOrganizationId}:survey_submitted`,
+      (message) => {
+        this.props.orgShowQuery.refetch();
+      }
+    );
+  }
+
+  componentDidUpdate(prevProps) {
+    if (!process.env.SELF_HOSTED && !prevProps.orgShowQuery.organization && this.props.orgShowQuery.organization) {
+      this.setState({ showSurveyNotification: true })
+    }
   }
 
   componentWillUnmount() {
@@ -93,6 +105,10 @@ class TopBar extends Component {
 
   toggleHelpLinks = () => {
     this.setState({ showHelpLinks: !this.state.showHelpLinks });
+  };
+
+  toggleSurveyNotification = () => {
+    this.setState({ showSurveyNotification: !this.state.showSurveyNotification });
   };
 
   handleOrgMenuClick = (e, orgs) => {
@@ -228,6 +244,47 @@ class TopBar extends Component {
               onClick={this.toggleHelpLinks}
             />
           </MediaQuery>
+          {
+            !process.env.SELF_HOSTED && organization && organization.received_free_dc &&
+            (!organization.survey_token_inserted_at || !organization.first_packet_received_at) &&
+            (
+              <MediaQuery minWidth={720}>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    height: 55,
+                    alignItems: "flex-end",
+                    marginLeft: 10,
+                    cursor: "pointer"
+                  }}
+                  onClick={this.toggleSurveyNotification}
+                >
+                  <Text
+                    className="noselect"
+                    style={{
+                      color: "#FFFFFF",
+                      fontWeight: 500,
+                      position: "relative",
+                      top: -7,
+                    }}
+                  >
+                    Claim Data Credits
+                  </Text>
+                  <div style={{ position: "relative", top: -45 }}>
+                    <Text
+                      className="noselect"
+                      style={{color: "#FFFFFF", fontWeight: 500}}
+                    >
+                      {
+                        moment().to(moment(organization.inserted_at).add(30, "days")).slice(3).concat(" left")
+                      }
+                    </Text>
+                  </div>
+                </div>
+              </MediaQuery>
+            )
+          }
         </div>
 
         <div
@@ -380,6 +437,12 @@ class TopBar extends Component {
           <HelpLinks
             toggleHelpLinks={this.toggleHelpLinks}
             pathname={this.props.pathname}
+          />
+        )}
+        {this.state.showSurveyNotification && (
+          <SurveyNotification
+            toggleSurveyNotification={this.toggleSurveyNotification}
+            organization={organization}
           />
         )}
       </div>

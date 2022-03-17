@@ -29,7 +29,14 @@ defmodule Console.Organizations.OrganizationResolver do
 
   def find(%{id: id}, %{context: %{current_user: current_user}}) do
     organization = Organizations.get_organization!(current_user, id)
-    {:ok, Map.put(organization, :flow, Poison.encode!(organization.flow)) |> Map.drop([:webhook_key])}
+    has_device = Organizations.get_one_device_in_org(organization) != nil
+    {
+      :ok,
+      organization
+      |> Map.put(:has_device, has_device) 
+      |> Map.put(:flow, Poison.encode!(organization.flow))
+      |> Map.drop([:webhook_key])
+    }
   end
 
   def all(_, %{context: %{current_user: current_user}}) do

@@ -230,6 +230,8 @@ defmodule ConsoleWeb.Schema do
     field :flow, :string
     field :survey_token_inserted_at, :naive_datetime
     field :survey_token_used, :boolean
+    field :first_packet_received_at, :naive_datetime
+    field :has_device, :boolean
   end
 
   object :api_key do
