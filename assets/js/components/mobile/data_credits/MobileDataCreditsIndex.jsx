@@ -1,4 +1,5 @@
 import React, { useState, useContext } from "react";
+import moment from 'moment'
 import numeral from "numeral";
 import UserCan from "../../common/UserCan";
 import { SurveyNotificationContext } from "../MobileLayout";
@@ -124,14 +125,21 @@ const MobileDataCreditsIndex = ({
               header={
                 <span>
                   <b style={{ marginRight: 6 }}>REMAINING DATA CREDITS</b>
-                  <span
-                    onClick={e => {
-                      e.stopPropagation()
-                      context.toggleSurveyNotification()
-                    }}
-                  >
-                    <Text style={{ color: primaryBlue}}>Claim More</Text>
-                  </span>
+                  {
+                    !process.env.SELF_HOSTED && organization && organization.received_free_dc &&
+                    !organization.survey_token_sent_at && moment(organization.inserted_at).add(30, "days").isAfter(moment()) ? (
+                      <span
+                        onClick={e => {
+                          e.stopPropagation()
+                          context.toggleSurveyNotification()
+                        }}
+                      >
+                        <Text style={{ color: primaryBlue}}>Claim More</Text>
+                      </span>
+                    ) : (
+                      <span />
+                    )
+                  }
                 </span>
               }
               key="1"

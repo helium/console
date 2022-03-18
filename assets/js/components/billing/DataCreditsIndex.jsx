@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import moment from 'moment'
 import withGql from "../../graphql/withGql";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -158,15 +159,20 @@ class DataCreditsIndex extends Component {
               title="Remaining Data Credits"
               bodyStyle={{ height: 90, padding: 0 }}
               extra={
-                <Link
-                  to="#"
-                  onClick={e => {
-                    e.preventDefault()
-                    context.toggleSurveyNotification()
-                  }}
-                >
-                  <Text style={styles.tipText}>Claim More</Text>
-                </Link>
+                !process.env.SELF_HOSTED && organization && organization.received_free_dc &&
+                !organization.survey_token_sent_at && moment(organization.inserted_at).add(30, "days").isAfter(moment()) ? (
+                  <Link
+                    to="#"
+                    onClick={e => {
+                      e.preventDefault()
+                      context.toggleSurveyNotification()
+                    }}
+                  >
+                    <Text style={styles.tipText}>Claim More</Text>
+                  </Link>
+                ) : (
+                  <span />
+                )
               }
             >
               <div
