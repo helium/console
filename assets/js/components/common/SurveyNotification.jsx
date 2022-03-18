@@ -76,7 +76,7 @@ export default ({ organization, toggleSurveyNotification, mobile }) => {
                   </Link>
                 </Button>
               )}
-              { organization && organization.has_device && (
+              { organization && organization.has_device && !organization.first_packet_received_at && (
                 <Button
                   style={{ marginLeft: mobile ? 0 : 10, marginTop: 4 }}
                   disabled={true}
