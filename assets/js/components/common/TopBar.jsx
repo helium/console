@@ -444,7 +444,7 @@ class TopBar extends Component {
             pathname={this.props.pathname}
           />
         )}
-        {this.state.showSurveyNotification && organization && !organization.survey_token_sent_at && (
+        {this.state.showSurveyNotification && (
           <SurveyNotification
             toggleSurveyNotification={this.toggleSurveyNotification}
             organization={organization}

@@ -83,7 +83,6 @@ const MobileDataCreditsIndex = ({
                     onClick={() => setShowRedeemSurveyTokenModal(true)}
                     style={{
                       borderRadius: 4,
-                      display: !process.env.SELF_HOSTED ? "inline" : "none",
                       marginRight: 8,
                     }}
                   >

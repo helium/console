@@ -110,7 +110,7 @@ class MobileLayout extends Component {
           )
         }
 
-        {this.state.showSurveyNotification && organization && !organization.survey_token_sent_at && (
+        {this.state.showSurveyNotification && (
           <SurveyNotification
             toggleSurveyNotification={this.toggleSurveyNotification}
             organization={organization}

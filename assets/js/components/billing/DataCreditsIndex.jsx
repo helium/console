@@ -399,7 +399,6 @@ class DataCreditsIndex extends Component {
                             onClick={() => this.openModal("showRedeemSurveyTokenModal")}
                             style={{
                               borderRadius: 4,
-                              display: !process.env.SELF_HOSTED ? "inline" : "none"
                             }}
                           >
                             Redeem Free DC
