@@ -500,7 +500,7 @@ defmodule ConsoleWeb.OrganizationController do
   def resend_survey_token(conn, _) do
     organization = conn.assigns.current_organization
 
-    if organization.survey_token_sent_at != nil do
+    if Application.get_env(:console, :self_hosted) == nil && organization.survey_token_sent_at != nil do
       admins = Organizations.get_administrators(organization)
 
       Enum.each(admins, fn administrator ->

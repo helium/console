@@ -19,26 +19,28 @@ defmodule Console.Jobs do
   end
 
   def send_survey_tokens do
-    to_send_organizations = Organizations.get_organizations_with_unsent_survey_tokens()
+    if Application.get_env(:console, :self_hosted) == nil do
+      to_send_organizations = Organizations.get_organizations_with_unsent_survey_tokens()
 
-    Enum.each(to_send_organizations, fn organization ->
-      Task.Supervisor.async_nolink(ConsoleWeb.TaskSupervisor, fn ->
-        admins = Organizations.get_administrators(organization)
+      Enum.each(to_send_organizations, fn organization ->
+        Task.Supervisor.async_nolink(ConsoleWeb.TaskSupervisor, fn ->
+          admins = Organizations.get_administrators(organization)
 
-        org_attrs = %{
-          "survey_token_sent_at" => NaiveDateTime.utc_now()
-        }
-        with {:ok, _} <- Organizations.update_organization(organization, org_attrs) do
-          Enum.each(admins, fn administrator ->
-            Email.survey_token_email(administrator, %{ token: organization.survey_token }) |> Mailer.deliver_later()
-          end)
-        end
+          org_attrs = %{
+            "survey_token_sent_at" => NaiveDateTime.utc_now()
+          }
+          with {:ok, _} <- Organizations.update_organization(organization, org_attrs) do
+            Enum.each(admins, fn administrator ->
+              Email.survey_token_email(administrator, %{ token: organization.survey_token }) |> Mailer.deliver_later()
+            end)
+          end
+        end)
+        |> Task.await(:infinity)
+
+        ConsoleWeb.Endpoint.broadcast("graphql:topbar_orgs", "graphql:topbar_orgs:#{organization.id}:update_org_survey_attrs", %{})
+        ConsoleWeb.Endpoint.broadcast("graphql:mobile_topbar_orgs", "graphql:mobile_topbar_orgs:#{organization.id}:update_org_survey_attrs", %{})
       end)
-      |> Task.await(:infinity)
-      
-      ConsoleWeb.Endpoint.broadcast("graphql:topbar_orgs", "graphql:topbar_orgs:#{organization.id}:update_org_survey_attrs", %{})
-      ConsoleWeb.Endpoint.broadcast("graphql:mobile_topbar_orgs", "graphql:mobile_topbar_orgs:#{organization.id}:update_org_survey_attrs", %{})
-    end)
+    end
   end
 
   def send_alerts do
