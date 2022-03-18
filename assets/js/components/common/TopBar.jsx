@@ -44,7 +44,6 @@ class TopBar extends Component {
     orgMenuVisible: false,
     showOrganizationModal: false,
     showHelpLinks: false,
-    showSurveyNotification: false,
   };
 
   componentDidMount() {
@@ -80,7 +79,7 @@ class TopBar extends Component {
       organization.received_free_dc && !organization.survey_token_sent_at &&
       moment(organization.inserted_at).add(30, "days").isAfter(moment())
     ) {
-      this.setState({ showSurveyNotification: true })
+      this.props.toggleSurveyNotification()
     }
   }
 
@@ -110,10 +109,6 @@ class TopBar extends Component {
 
   toggleHelpLinks = () => {
     this.setState({ showHelpLinks: !this.state.showHelpLinks });
-  };
-
-  toggleSurveyNotification = () => {
-    this.setState({ showSurveyNotification: !this.state.showSurveyNotification });
   };
 
   handleOrgMenuClick = (e, orgs) => {
@@ -263,7 +258,7 @@ class TopBar extends Component {
                     marginLeft: 10,
                     cursor: "pointer"
                   }}
-                  onClick={this.toggleSurveyNotification}
+                  onClick={this.props.toggleSurveyNotification}
                 >
                   <Text
                     className="noselect"
@@ -444,9 +439,9 @@ class TopBar extends Component {
             pathname={this.props.pathname}
           />
         )}
-        {this.state.showSurveyNotification && (
+        {this.props.showSurveyNotification && (
           <SurveyNotification
-            toggleSurveyNotification={this.toggleSurveyNotification}
+            toggleSurveyNotification={this.props.toggleSurveyNotification}
             organization={organization}
           />
         )}

@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import numeral from "numeral";
 import find from "lodash/find";
-import DashboardLayout from "../common/DashboardLayout";
+import DashboardLayout, {SurveyNotificationContext} from "../common/DashboardLayout";
 import MobileLayout from "../mobile/MobileLayout";
 import MobileDataCreditsIndex from "../mobile/data_credits/MobileDataCreditsIndex";
 import { MobileDisplay, DesktopDisplay } from "../mobile/MediaQuery";
@@ -142,7 +142,7 @@ class DataCreditsIndex extends Component {
     );
   };
 
-  renderContent = () => {
+  renderContent = (context) => {
     const { organization } = this.props.orgShowDCQuery;
     const { dc_balance, default_payment_id } = organization;
     const defaultPayment = find(
@@ -158,7 +158,13 @@ class DataCreditsIndex extends Component {
               title="Remaining Data Credits"
               bodyStyle={{ height: 90, padding: 0 }}
               extra={
-                <Link to="#" onClick={e => e.preventDefault()}>
+                <Link
+                  to="#"
+                  onClick={e => {
+                    e.preventDefault()
+                    context.toggleSurveyNotification()
+                  }}
+                >
                   <Text style={styles.tipText}>Claim More</Text>
                 </Link>
               }
@@ -330,134 +336,142 @@ class DataCreditsIndex extends Component {
             user={this.props.user}
             noAddButton
           >
-            <div
-              style={{
-                padding: "30px 30px 10px 30px",
-                height: "100%",
-                width: "100%",
-                backgroundColor: "#ffffff",
-                borderRadius: 6,
-                overflow: "hidden",
-                boxShadow: "0px 20px 20px -7px rgba(17, 24, 31, 0.19)",
-              }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "flex-start",
-                  padding: "0px 0px 20px 0px",
-                  overflowX: "scroll",
-                }}
-                className="no-scroll-bar"
-              >
-                <UserCan noManager>
-                  {organization && organization.dc_balance_nonce != 0 ? (
-                    <React.Fragment>
-                      {(!organization.received_free_dc ||
-                        organization.dc_balance > 10000) && (
-                        <Button
-                          style={{ borderRadius: 4, marginRight: 20 }}
-                          icon={<RightCircleOutlined />}
-                          onClick={() =>
-                            this.openModal("showOrganizationTransferDCModal")
-                          }
-                        >
-                          Transfer DC to Org
-                        </Button>
-                      )}
-                      <Button
-                        icon={<SyncOutlined />}
-                        onClick={() =>
-                          this.openModal("showAutomaticRenewalModal")
-                        }
-                        style={{
-                          borderRadius: 4,
-                          marginRight: 20,
-                          display: !process.env.SELF_HOSTED ? "inline" : "none",
-                        }}
-                      >
-                        Automatic Renewals{" "}
-                        {organization.automatic_charge_amount ? "On" : "Off"}
-                      </Button>
-                      <Button
-                        type="primary"
-                        icon={<WalletOutlined />}
-                        onClick={() =>
-                          this.openModal("showPurchaseCreditModal")
-                        }
-                        style={{
-                          borderRadius: 4,
-                          marginRight: 20,
-                          display:
-                            window.disable_user_burn !== "true"
-                              ? "inline"
-                              : "none",
-                        }}
-                      >
-                        Purchase Data Credits
-                      </Button>
-                      {
-                        organization.survey_token_sent_at && !organization.survey_token_used && (
-                          <Button
-                            type="primary"
-                            onClick={() => this.openModal("showRedeemSurveyTokenModal")}
-                            style={{
-                              borderRadius: 4,
-                            }}
-                          >
-                            Redeem Free DC
-                          </Button>
-                        )
-                      }
-                    </React.Fragment>
-                  ) : (
-                    <div />
-                  )}
-                </UserCan>
-              </div>
-              {error && <ErrorMessage />}
-              {organization &&
-                organization.dc_balance_nonce == 0 &&
-                this.renderBlankState()}
-              {organization &&
-                organization.dc_balance_nonce != 0 &&
-                this.renderContent()}
-            </div>
+            <SurveyNotificationContext.Consumer>
+            {
+              context => (
+                <>
+                  <div
+                    style={{
+                      padding: "30px 30px 10px 30px",
+                      height: "100%",
+                      width: "100%",
+                      backgroundColor: "#ffffff",
+                      borderRadius: 6,
+                      overflow: "hidden",
+                      boxShadow: "0px 20px 20px -7px rgba(17, 24, 31, 0.19)",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "flex-start",
+                        padding: "0px 0px 20px 0px",
+                        overflowX: "scroll",
+                      }}
+                      className="no-scroll-bar"
+                    >
+                      <UserCan noManager>
+                        {organization && organization.dc_balance_nonce != 0 ? (
+                          <React.Fragment>
+                            {(!organization.received_free_dc ||
+                              organization.dc_balance > 10000) && (
+                              <Button
+                                style={{ borderRadius: 4, marginRight: 20 }}
+                                icon={<RightCircleOutlined />}
+                                onClick={() =>
+                                  this.openModal("showOrganizationTransferDCModal")
+                                }
+                              >
+                                Transfer DC to Org
+                              </Button>
+                            )}
+                            <Button
+                              icon={<SyncOutlined />}
+                              onClick={() =>
+                                this.openModal("showAutomaticRenewalModal")
+                              }
+                              style={{
+                                borderRadius: 4,
+                                marginRight: 20,
+                                display: !process.env.SELF_HOSTED ? "inline" : "none",
+                              }}
+                            >
+                              Automatic Renewals{" "}
+                              {organization.automatic_charge_amount ? "On" : "Off"}
+                            </Button>
+                            <Button
+                              type="primary"
+                              icon={<WalletOutlined />}
+                              onClick={() =>
+                                this.openModal("showPurchaseCreditModal")
+                              }
+                              style={{
+                                borderRadius: 4,
+                                marginRight: 20,
+                                display:
+                                  window.disable_user_burn !== "true"
+                                    ? "inline"
+                                    : "none",
+                              }}
+                            >
+                              Purchase Data Credits
+                            </Button>
+                            {
+                              organization.survey_token_sent_at && !organization.survey_token_used && (
+                                <Button
+                                  type="primary"
+                                  onClick={() => this.openModal("showRedeemSurveyTokenModal")}
+                                  style={{
+                                    borderRadius: 4,
+                                  }}
+                                >
+                                  Redeem Free DC
+                                </Button>
+                              )
+                            }
+                          </React.Fragment>
+                        ) : (
+                          <div />
+                        )}
+                      </UserCan>
+                    </div>
+                    {error && <ErrorMessage />}
+                    {organization &&
+                      organization.dc_balance_nonce == 0 &&
+                      this.renderBlankState()}
+                    {organization &&
+                      organization.dc_balance_nonce != 0 &&
+                      this.renderContent(context)}
+                  </div>
 
-            <DefaultPaymentModal
-              open={showDefaultPaymentModal}
-              onClose={() => this.closeModal("showDefaultPaymentModal")}
-              organization={organization}
-              paymentMethods={this.state.paymentMethods}
-              fetchPaymentMethods={this.fetchPaymentMethods}
-            />
+                  <DefaultPaymentModal
+                    open={showDefaultPaymentModal}
+                    onClose={() => this.closeModal("showDefaultPaymentModal")}
+                    organization={organization}
+                    paymentMethods={this.state.paymentMethods}
+                    fetchPaymentMethods={this.fetchPaymentMethods}
+                  />
 
-            <PurchaseCreditModal
-              open={showPurchaseCreditModal}
-              onClose={() => this.closeModal("showPurchaseCreditModal")}
-              organization={organization}
-              fetchPaymentMethods={this.fetchPaymentMethods}
-              paymentMethods={this.state.paymentMethods}
-            />
+                  <PurchaseCreditModal
+                    open={showPurchaseCreditModal}
+                    onClose={() => this.closeModal("showPurchaseCreditModal")}
+                    organization={organization}
+                    fetchPaymentMethods={this.fetchPaymentMethods}
+                    paymentMethods={this.state.paymentMethods}
+                  />
 
-            <AutomaticRenewalModal
-              open={showAutomaticRenewalModal}
-              onClose={() => this.closeModal("showAutomaticRenewalModal")}
-              paymentMethods={this.state.paymentMethods}
-              organization={organization}
-            />
+                  <AutomaticRenewalModal
+                    open={showAutomaticRenewalModal}
+                    onClose={() => this.closeModal("showAutomaticRenewalModal")}
+                    paymentMethods={this.state.paymentMethods}
+                    organization={organization}
+                  />
 
-            <OrganizationTransferDCModal
-              open={showOrganizationTransferDCModal}
-              onClose={() => this.closeModal("showOrganizationTransferDCModal")}
-              organization={organization}
-            />
+                  <OrganizationTransferDCModal
+                    open={showOrganizationTransferDCModal}
+                    onClose={() => this.closeModal("showOrganizationTransferDCModal")}
+                    organization={organization}
+                  />
 
-            <RedeemSurveyTokenModal
-              open={showRedeemSurveyTokenModal}
-              onClose={() => this.closeModal("showRedeemSurveyTokenModal")}
-            />
+                  <RedeemSurveyTokenModal
+                    open={showRedeemSurveyTokenModal}
+                    onClose={() => this.closeModal("showRedeemSurveyTokenModal")}
+                  />
+                </>
+              )
+            }
+            </SurveyNotificationContext.Consumer>
           </DashboardLayout>
         </DesktopDisplay>
       </>
