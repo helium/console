@@ -434,10 +434,10 @@ class DataCreditsIndex extends Component {
                     </div>
                     {error && <ErrorMessage />}
                     {organization &&
-                      organization.dc_balance_nonce == 0 &&
+                      organization.dc_balance_nonce === 0 &&
                       this.renderBlankState()}
                     {organization &&
-                      organization.dc_balance_nonce != 0 &&
+                      organization.dc_balance_nonce !== 0 &&
                       this.renderContent(context)}
                   </div>
 
