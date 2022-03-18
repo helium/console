@@ -12,6 +12,8 @@ import Close from "../../../img/mobile/nav-drawer-close.svg";
 import Dropdown from "../../../img/mobile/nav-drawer-dropdown.svg";
 const { Text } = Typography;
 
+export const SurveyNotificationContext = React.createContext();
+
 class MobileLayout extends Component {
   state = {
     showNav: false,
@@ -88,7 +90,9 @@ class MobileLayout extends Component {
           }
         </div>
         <div style={{ height: 'calc(100% - 50px)', overflowY: 'scroll' }}>
-          {this.props.children}
+          <SurveyNotificationContext.Provider value={{ toggleSurveyNotification: this.toggleSurveyNotification }}>
+            {this.props.children}
+          </SurveyNotificationContext.Provider>
         </div>
         {
           this.state.showNav && (

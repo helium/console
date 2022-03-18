@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import numeral from "numeral";
 import UserCan from "../../common/UserCan";
+import { SurveyNotificationContext } from "../MobileLayout";
 import PaymentCard from "../../billing/PaymentCard";
 import DataCreditPurchasesTable from "../../billing/DataCreditPurchasesTable";
 import PurchaseCreditModal from "../../billing/PurchaseCreditModal";
@@ -28,6 +29,7 @@ const MobileDataCreditsIndex = ({
   user,
   styles,
 }) => {
+  const context = useContext(SurveyNotificationContext);
   const [showPurchaseCreditModal, setShowPurchaseCreditModal] = useState(false);
   const [showAutomaticRenewalModal, setShowAutomaticRenewalModal] =
     useState(false);
@@ -122,7 +124,12 @@ const MobileDataCreditsIndex = ({
               header={
                 <span>
                   <b style={{ marginRight: 6 }}>REMAINING DATA CREDITS</b>
-                  <span onClick={e => e.stopPropagation()}>
+                  <span
+                    onClick={e => {
+                      e.stopPropagation()
+                      context.toggleSurveyNotification()
+                    }}
+                  >
                     <Text style={{ color: primaryBlue}}>Claim More</Text>
                   </span>
                 </span>
