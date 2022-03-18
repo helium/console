@@ -157,6 +157,11 @@ class DataCreditsIndex extends Component {
             <Card
               title="Remaining Data Credits"
               bodyStyle={{ height: 90, padding: 0 }}
+              extra={
+                <Link to="#" onClick={e => e.preventDefault()}>
+                  <Text style={styles.tipText}>Claim More</Text>
+                </Link>
+              }
             >
               <div
                 style={{ overflowX: "scroll", padding: 24 }}
@@ -183,7 +188,7 @@ class DataCreditsIndex extends Component {
                   placement="bottom"
                   overlayStyle={{ width: 220 }}
                 >
-                  <Link to="#">
+                  <Link to="#" onClick={e => e.preventDefault()}>
                     <Text style={styles.tipText}>Learn More</Text>
                   </Link>
                 </Popover>

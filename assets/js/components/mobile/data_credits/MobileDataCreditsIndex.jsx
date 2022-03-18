@@ -12,7 +12,7 @@ import IndexBlankSlate from "../../billing/IndexBlankSlate";
 import { primaryBlue, tertiaryPurple } from "../../../util/colors";
 import DCIMg from "../../../../img/datacredits.svg";
 import BytesIMg from "../../../../img/datacredits-bytes-logo.svg";
-import { Typography, Button, Row, Col, Collapse } from "antd";
+import { Typography, Button, Row, Col, Collapse, Popover } from "antd";
 import ErrorMessage from "../../common/ErrorMessage";
 const { Text } = Typography;
 const { Panel } = Collapse;
@@ -118,7 +118,17 @@ const MobileDataCreditsIndex = ({
 
         <div style={{ margin: 15 }}>
           <Collapse expandIconPosition="right" defaultActiveKey="1">
-            <Panel header={<b>REMAINING DATA CREDITS</b>} key="1">
+            <Panel
+              header={
+                <span>
+                  <b style={{ marginRight: 6 }}>REMAINING DATA CREDITS</b>
+                  <span onClick={e => e.stopPropagation()}>
+                    <Text style={{ color: primaryBlue}}>Claim More</Text>
+                  </span>
+                </span>
+              }
+              key="1"
+            >
               <div
                 style={{ overflowX: "scroll", padding: 10 }}
                 className="no-scroll-bar"
@@ -144,7 +154,24 @@ const MobileDataCreditsIndex = ({
 
         <div style={{ margin: 15 }}>
           <Collapse expandIconPosition="right" defaultActiveKey="1">
-            <Panel header={<b>REMAINING PACKETS</b>} key="1">
+            <Panel
+              header={
+                <span>
+                  <b style={{ marginRight: 6 }}>REMAINING PACKETS</b>
+                  <span onClick={e => e.stopPropagation()}>
+                    <Popover
+                      content="Your quantity of Data Credits translates directly to number of bytes that can be transmitted by your devices."
+                      placement="bottom"
+                      overlayStyle={{ width: 220 }}
+                      trigger="click"
+                    >
+                      <Text style={{ color: primaryBlue}}>Learn More</Text>
+                    </Popover>
+                  </span>
+                </span>
+              }
+              key="1"
+            >
               <div
                 style={{ overflowX: "scroll", padding: 14 }}
                 className="no-scroll-bar"
