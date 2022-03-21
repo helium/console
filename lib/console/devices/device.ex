@@ -46,7 +46,7 @@ defmodule Console.Devices.Device do
       |> check_attrs_format()
       |> validate_required([:name, :dev_eui, :app_eui, :app_key, :oui, :organization_id])
       |> validate_length(:name, max: 50, message: "Name cannot be longer than 50 characters")
-      |> unique_constraint(:dev_eui, name: :devices_dev_eui_app_eui_app_key_index, message: "Please choose device credentials with unique DevEUI, AppEUI, and AppKey")
+      |> unique_constraint(:dev_eui, name: :devices_dev_eui_app_eui_app_key_index, message: "An unexpected error has occurred, please refresh the page and try again")
       |> unique_constraint(:hotspot_address, name: :devices_hotspot_address_index, message: "This hotspot address is already used")
   end
 
@@ -77,7 +77,7 @@ defmodule Console.Devices.Device do
       |> check_attrs_format()
       |> validate_required([:name, :dev_eui, :app_eui, :app_key, :oui, :organization_id])
       |> validate_length(:name, max: 50)
-      |> unique_constraint(:dev_eui, name: :devices_dev_eui_app_eui_app_key_index, message: "Please choose device credentials with unique DevEUI, AppEUI, and AppKey")
+      |> unique_constraint(:dev_eui, name: :devices_dev_eui_app_eui_app_key_index, message: "An unexpected error has occurred, please refresh the page and try again")
       |> unique_constraint(:hotspot_address, name: :devices_hotspot_address_index, message: "This hotspot address is already used")
   end
 
