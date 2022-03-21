@@ -2,7 +2,7 @@ defmodule Console.Repo.Migrations.UpdateMatView do
   use Ecto.Migration
 
   def up do
-    execute "DROP MATERIALIZED VIEW device_stats_view;"
+    execute "DROP MATERIALIZED VIEW IF EXISTS device_stats_view;"
     execute """
     CREATE MATERIALIZED VIEW device_stats_view AS
       SELECT stats30d.device_id, packets_30d, packets_7d, dc_30d, dc_7d from
