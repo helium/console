@@ -22,6 +22,12 @@ export const ORGANIZATION_SHOW_DC = gql`
       automatic_payment_method,
       dc_balance_nonce,
       received_free_dc,
+      survey_token_inserted_at,
+      survey_token_sent_at,
+      survey_token_used,
+      first_packet_received_at,
+      inserted_at,
+      has_device
     }
   }
 `

@@ -63,6 +63,10 @@ config :console,
 
 config :console, Console.Scheduler,
   jobs: [
+    send_survey_tokens: [
+      schedule: "*/5 * * * *", # every 5th min
+      task: {Console.Jobs, :send_survey_tokens, []}
+    ],
     refresh_materialized_views: [
       schedule: "0 * * * *", # every hour @ 0 mins
       task: {Console.Jobs, :refresh_materialized_views, []}

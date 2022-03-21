@@ -8,6 +8,7 @@ defmodule ConsoleWeb.OrganizationController do
   alias Console.DcPurchases
   alias Console.Email
   alias Console.Mailer
+  alias Console.Helpers
   alias Console.AuditActions
 
   plug ConsoleWeb.Plug.AuthorizeAction when action in [:delete]
@@ -41,7 +42,10 @@ defmodule ConsoleWeb.OrganizationController do
       membership_info = %{id: organization.id, name: organization.name, role: membership.role}
       case Enum.count(organizations) do
         1 ->
-          Organizations.update_organization(organization, %{ "dc_balance" => System.get_env("INITIAL_ORG_GIFTED_DC") || 10000, "dc_balance_nonce" => 1, "received_free_dc" => true })
+          initial_dc = String.to_integer(System.get_env("INITIAL_ORG_GIFTED_DC") || "10000")
+          if initial_dc > 0 do
+            Organizations.update_organization(organization, %{ "dc_balance" => initial_dc, "dc_balance_nonce" => 1, "received_free_dc" => true })
+          end
 
           render(conn, "show.json", organization: membership_info)
         _ ->
@@ -124,7 +128,7 @@ defmodule ConsoleWeb.OrganizationController do
       true ->
         with {:ok, %Organization{} = organization} <- Organizations.update_organization(organization, %{ "name" => name }) do
             ConsoleWeb.Endpoint.broadcast("graphql:topbar_orgs", "graphql:topbar_orgs:#{conn.assigns.current_user.id}:organization_list_update", %{})
-            ConsoleWeb.Endpoint.broadcast("graphql:topbar_org", "graphql:topbar_org:#{organization.id}:current_organization_renamed", %{})
+            ConsoleWeb.Endpoint.broadcast("graphql:topbar_orgs", "graphql:topbar_orgs:#{organization.id}:current_organization_renamed", %{})
             ConsoleWeb.Endpoint.broadcast("graphql:orgs_index_table", "graphql:orgs_index_table:#{conn.assigns.current_user.id}:organization_list_update", %{})
 
             AuditActions.create_audit_action(
@@ -434,5 +438,77 @@ defmodule ConsoleWeb.OrganizationController do
 
     conn
     |> send_resp(:ok, Jason.encode!(result))
+  end
+
+  def submitted_survey(conn, _) do
+    organization = conn.assigns.current_organization
+
+    if Application.get_env(:console, :self_hosted) == nil && organization.survey_token == nil do
+      org_attrs = %{
+        "survey_token_inserted_at" => NaiveDateTime.utc_now(),
+        "survey_token_used" => false,
+        "survey_token" => Helpers.generate_token(8)
+      }
+      with {:ok, _} <- Organizations.update_organization(organization, org_attrs) do
+        ConsoleWeb.Endpoint.broadcast("graphql:topbar_orgs", "graphql:topbar_orgs:#{organization.id}:update_org_survey_attrs", %{})
+        ConsoleWeb.Endpoint.broadcast("graphql:mobile_topbar_orgs", "graphql:mobile_topbar_orgs:#{organization.id}:update_org_survey_attrs", %{})
+
+        AuditActions.create_audit_action(
+          organization.id,
+          conn.assigns.current_user.email,
+          "org_controller_submitted_survey",
+          nil,
+          nil
+        )
+
+        conn
+        |> send_resp(:no_content, "")
+      end
+    else
+      {:error, :bad_request, "Cannot create a new survey token, please refresh the page"}
+    end
+  end
+
+  def submit_survey_token(conn, %{ "token" => token }) do
+    organization = conn.assigns.current_organization
+
+    if Application.get_env(:console, :self_hosted) == nil && organization.survey_token == token && !organization.survey_token_used do
+      org_attrs = %{
+        "survey_token_used" => true,
+        "dc_balance" => organization.dc_balance + 9750,
+        "dc_balance_nonce" => organization.dc_balance_nonce + 1
+      }
+      with {:ok, _} <- Organizations.update_organization(organization, org_attrs) do
+        ConsoleWeb.Endpoint.broadcast("graphql:dc_index", "graphql:dc_index:#{organization.id}:update_dc", %{})
+
+        AuditActions.create_audit_action(
+          organization.id,
+          conn.assigns.current_user.email,
+          "org_controller_submit_survey_token",
+          nil,
+          nil
+        )
+
+        conn
+        |> send_resp(:no_content, "")
+      end
+    else
+      {:error, :bad_request, "Invalid token entered, please try again"}
+    end
+  end
+
+  def resend_survey_token(conn, _) do
+    organization = conn.assigns.current_organization
+
+    if Application.get_env(:console, :self_hosted) == nil && organization.survey_token_sent_at != nil do
+      admins = Organizations.get_administrators(organization)
+
+      Enum.each(admins, fn administrator ->
+        Email.survey_token_email(administrator, %{ token: organization.survey_token }) |> Mailer.deliver_later()
+      end)
+
+      conn
+      |> send_resp(:no_content, "")
+    end
   end
 end

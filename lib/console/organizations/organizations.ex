@@ -4,6 +4,7 @@ defmodule Console.Organizations do
 
   alias Console.Organizations.Organization
   alias Console.Devices
+  alias Console.Devices.Device
   alias Console.Organizations.Membership
   alias Console.Organizations.Invitation
   alias Console.Auth.User
@@ -104,6 +105,13 @@ defmodule Console.Organizations do
       |> Repo.one()
   end
 
+  def get_one_device_in_org(organization) do
+    Device
+      |> where([d], d.organization_id == ^organization.id)
+      |> limit(1)
+      |> Repo.one()
+  end
+
   def get_organization!(id) do
     Repo.get!(Organization, id)
   end
@@ -114,6 +122,17 @@ defmodule Console.Organizations do
 
   def get_organizations_in_list(ids) do
     from(o in Organization, where: o.id in ^ids)
+    |> Repo.all()
+  end
+
+  def get_organizations_with_unsent_survey_tokens() do
+    ago_25_mins = NaiveDateTime.utc_now() |> NaiveDateTime.add(-1500, :second)
+    ago_30_days = NaiveDateTime.utc_now() |> NaiveDateTime.add(-2592000, :second)
+
+    from(
+      o in Organization,
+      where: o.survey_token_used == false and is_nil(o.survey_token_sent_at) and o.survey_token_inserted_at < ^ago_25_mins and o.first_packet_received_at < ^ago_25_mins and o.inserted_at > ^ago_30_days
+    )
     |> Repo.all()
   end
 

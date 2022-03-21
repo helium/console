@@ -1,17 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import moment from 'moment'
 import numeral from "numeral";
 import UserCan from "../../common/UserCan";
+import { SurveyNotificationContext } from "../MobileLayout";
 import PaymentCard from "../../billing/PaymentCard";
 import DataCreditPurchasesTable from "../../billing/DataCreditPurchasesTable";
 import PurchaseCreditModal from "../../billing/PurchaseCreditModal";
 import OrganizationTransferDCModal from "../../billing/OrganizationTransferDCModal";
 import AutomaticRenewalModal from "../../billing/AutomaticRenewalModal";
+import RedeemSurveyTokenModal from "../../billing/RedeemSurveyTokenModal";
 import { SkeletonLayout } from "../../common/SkeletonLayout";
 import IndexBlankSlate from "../../billing/IndexBlankSlate";
 import { primaryBlue, tertiaryPurple } from "../../../util/colors";
 import DCIMg from "../../../../img/datacredits.svg";
 import BytesIMg from "../../../../img/datacredits-bytes-logo.svg";
-import { Typography, Button, Row, Col, Collapse } from "antd";
+import { Typography, Button, Row, Col, Collapse, Popover } from "antd";
 import ErrorMessage from "../../common/ErrorMessage";
 const { Text } = Typography;
 const { Panel } = Collapse;
@@ -27,10 +30,13 @@ const MobileDataCreditsIndex = ({
   user,
   styles,
 }) => {
+  const context = useContext(SurveyNotificationContext);
   const [showPurchaseCreditModal, setShowPurchaseCreditModal] = useState(false);
   const [showAutomaticRenewalModal, setShowAutomaticRenewalModal] =
     useState(false);
   const [showOrganizationTransferDCModal, setShowOrganizationTransferDCModal] =
+    useState(false);
+  const [showRedeemSurveyTokenModal, setShowRedeemSurveyTokenModal] =
     useState(false);
 
   const renderBlankSlate = () => {
@@ -72,6 +78,21 @@ const MobileDataCreditsIndex = ({
               >
                 Purchase DC
               </Button>
+              {
+                organization.survey_token_sent_at && !organization.survey_token_used && (
+                  <Button
+                    type="primary"
+                    size="large"
+                    onClick={() => setShowRedeemSurveyTokenModal(true)}
+                    style={{
+                      borderRadius: 4,
+                      marginRight: 8,
+                    }}
+                  >
+                    Redeem Free DC
+                  </Button>
+                )
+              }
               <Button
                 onClick={() => setShowAutomaticRenewalModal(true)}
                 size="large"
@@ -100,7 +121,29 @@ const MobileDataCreditsIndex = ({
 
         <div style={{ margin: 15 }}>
           <Collapse expandIconPosition="right" defaultActiveKey="1">
-            <Panel header={<b>REMAINING DATA CREDITS</b>} key="1">
+            <Panel
+              header={
+                <span>
+                  <b style={{ marginRight: 6 }}>REMAINING DATA CREDITS</b>
+                  {
+                    !process.env.SELF_HOSTED && organization && organization.received_free_dc &&
+                    !organization.survey_token_sent_at && moment(organization.inserted_at).add(30, "days").isAfter(moment()) ? (
+                      <span
+                        onClick={e => {
+                          e.stopPropagation()
+                          context.toggleSurveyNotification()
+                        }}
+                      >
+                        <Text style={{ color: primaryBlue}}>Claim More</Text>
+                      </span>
+                    ) : (
+                      <span />
+                    )
+                  }
+                </span>
+              }
+              key="1"
+            >
               <div
                 style={{ overflowX: "scroll", padding: 10 }}
                 className="no-scroll-bar"
@@ -126,7 +169,24 @@ const MobileDataCreditsIndex = ({
 
         <div style={{ margin: 15 }}>
           <Collapse expandIconPosition="right" defaultActiveKey="1">
-            <Panel header={<b>REMAINING PACKETS</b>} key="1">
+            <Panel
+              header={
+                <span>
+                  <b style={{ marginRight: 6 }}>REMAINING PACKETS</b>
+                  <span onClick={e => e.stopPropagation()}>
+                    <Popover
+                      content="Your quantity of Data Credits translates directly to number of bytes that can be transmitted by your devices."
+                      placement="bottom"
+                      overlayStyle={{ width: 220 }}
+                      trigger="click"
+                    >
+                      <Text style={{ color: primaryBlue}}>Learn More</Text>
+                    </Popover>
+                  </span>
+                </span>
+              }
+              key="1"
+            >
               <div
                 style={{ overflowX: "scroll", padding: 14 }}
                 className="no-scroll-bar"
@@ -272,6 +332,12 @@ const MobileDataCreditsIndex = ({
         open={showOrganizationTransferDCModal}
         onClose={() => setShowOrganizationTransferDCModal(false)}
         organization={organization}
+        mobile={true}
+      />
+
+      <RedeemSurveyTokenModal
+        open={showRedeemSurveyTokenModal}
+        onClose={() => setShowRedeemSurveyTokenModal(false)}
         mobile={true}
       />
     </div>
