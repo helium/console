@@ -3,7 +3,7 @@ defmodule ConsoleWeb.V1.FunctionController do
   import Ecto.Query, warn: false
 
   alias Console.Organizations
-  alias Console.Flows
+  # alias Console.Flows
   alias Console.Functions
   alias Console.Functions.Function
   
