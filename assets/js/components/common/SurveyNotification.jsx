@@ -51,7 +51,13 @@ export default ({ organization, toggleSurveyNotification, mobile }) => {
               Your current DC balance is {organization && numeral(organization.dc_balance).format("0,0")}.
             </Text>
             <Text style={styles.text}>
-              To claim more DC (total 10,000), complete the survey (2 minutes) and add an active device within 30 days of {organization && moment(organization.inserted_at).format("LL")}.
+              {
+                organization && organization.survey_token_inserted_at && organization.first_packet_received_at ? (
+                  "Thank you for completing the survey and adding an active device. Within the next 30 minutes an email will be sent with a token to claim remaining Data Credits."
+                ) : (
+                  `To claim more DC (total 10,000), complete the survey (2 minutes) and add an active device within 30 days of ${organization && moment(organization.inserted_at).format("LL")}.`
+                )
+              }
             </Text>
 
             <div style={{ display: 'flex', flexDirection: mobile ? 'column' : 'row', justifyContent: 'flex-end', marginTop: 20 }}>
