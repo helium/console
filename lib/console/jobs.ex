@@ -37,6 +37,7 @@ defmodule Console.Jobs do
         end)
         |> Task.await(:infinity)
 
+        ConsoleWeb.Endpoint.broadcast("graphql:dc_index", "graphql:dc_index:#{organization.id}:update_dc", %{})
         ConsoleWeb.Endpoint.broadcast("graphql:topbar_orgs", "graphql:topbar_orgs:#{organization.id}:update_org_survey_attrs", %{})
         ConsoleWeb.Endpoint.broadcast("graphql:mobile_topbar_orgs", "graphql:mobile_topbar_orgs:#{organization.id}:update_org_survey_attrs", %{})
       end)
