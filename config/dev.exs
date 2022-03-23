@@ -91,6 +91,9 @@ config :console,
 config :console,
   socket_check_origin: "//localhost"
 
+config :console,
+  max_devices_in_org: 1000
+  
 config :logger, level: :debug
 
 # config :prometheus, App.PrometheusExporter,
