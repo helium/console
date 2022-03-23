@@ -115,7 +115,7 @@ defmodule Console.Devices do
   def create_device(attrs \\ %{}, %Organization{} = organization) do
     count = get_organization_device_count(organization)
     cond do
-      organization.name !== "Discovery Mode (Helium)" and count > 9999 ->
+      organization.name !== "Discovery Mode (Helium)" and count >= Application.get_env(:console, :max_devices_in_org) ->
         {:error, :forbidden, "Device limit for organization reached"}
       true ->
         cond do
