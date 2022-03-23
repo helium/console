@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import DashboardLayout from "../common/DashboardLayout";
-import { MobileDisplay, DesktopDisplay } from '../mobile/MediaQuery'
+import { MobileDisplay, DesktopDisplay } from "../mobile/MediaQuery";
 import { useQuery, useLazyQuery } from "@apollo/client";
 import {
   HOTSPOT_STATS,
@@ -77,6 +77,7 @@ export default (props) => {
     },
   ] = useLazyQuery(SEARCH_HOTSPOTS, {
     fetchPolicy: "cache-and-network",
+    notifyOnNetworkStatusChange: true,
   });
 
   const [
