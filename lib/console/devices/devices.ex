@@ -19,14 +19,14 @@ defmodule Console.Devices do
         nil ->
           from(
             d in Device,
-            where: is_nil(d.hotspot_address),
+            where: is_nil(d.hotspot_address) and d.hide_from_xor == false,
             order_by: d.id,
             limit: 1000
           )
         _ ->
           from(
             d in Device,
-            where: is_nil(d.hotspot_address) and d.id > ^cursor,
+            where: is_nil(d.hotspot_address) and d.hide_from_xor == false and d.id > ^cursor,
             order_by: d.id,
             limit: 1000
           )

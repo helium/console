@@ -26,6 +26,7 @@ defmodule Console.Devices.Device do
     field :active, :boolean
     field :hotspot_address, :string
     field :in_xor_filter, :boolean
+    field :hide_from_xor, :boolean
 
     belongs_to :organization, Organization
     belongs_to :multi_buy, MultiBuy
