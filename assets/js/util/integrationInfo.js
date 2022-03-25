@@ -51,7 +51,7 @@ export const NEW_CHANNEL_TYPES = [
     img: `${Azure}`,
     info: "This Integration facilitates connecting your devices to Azure IoT Central.",
     docLink:
-      "https://docs.helium.com/use-the-network/console/integrations/azure",
+      "https://docs.helium.com/use-the-network/console/integrations/azure-central",
   },
   // { name: "Google IoT", type: "google", img: `${Google}`, inactive: true },
 ];
