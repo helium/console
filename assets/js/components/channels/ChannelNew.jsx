@@ -6,7 +6,8 @@ import { Link } from "react-router-dom";
 import { bindActionCreators } from "redux";
 import ChannelDashboardLayout from "./ChannelDashboardLayout";
 import { codeEditorLineColor, codeEditorBgColor } from "../../util/colors";
-import AzureForm from "./forms/AzureForm.jsx";
+import AzureHubForm from "./forms/AzureHubForm.jsx";
+import AzureCentralForm from "./forms/AzureCentralForm.jsx";
 import AWSForm from "./forms/AWSForm.jsx";
 import GoogleForm from "./forms/GoogleForm.jsx";
 import MQTTForm from "./forms/MQTTForm.jsx";
@@ -220,7 +221,9 @@ class ChannelNew extends Component {
           <HTTPForm onValidInput={this.handleStep2Input} mobile={mobile} />
         );
       case "azure":
-        return <AzureForm onValidInput={this.handleStep2Input} />;
+        return <AzureHubForm onValidInput={this.handleStep2Input} />;
+      case "azure-central":
+        return <AzureCentralForm onValidInput={this.handleStep2Input} />;
       case "mydevices":
         return <MyDevicesForm onValidInput={this.handleStep2Input} />;
       case "adafruit":

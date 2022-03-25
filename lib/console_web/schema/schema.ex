@@ -194,6 +194,9 @@ defmodule ConsoleWeb.Schema do
     field :azure_hub_name, :string
     field :azure_policy_name, :string
     field :azure_policy_key, :string
+    field :iot_central_api_key, :string
+    field :iot_central_scope_id, :string
+    field :iot_central_app_name, :string
     field :last_errored, :boolean
   end
 

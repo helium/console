@@ -1,5 +1,6 @@
 import React from "react";
-import AzureForm from "./forms/AzureForm.jsx";
+import AzureHubForm from "./forms/AzureHubForm.jsx";
+import AzureCentralForm from "./forms/AzureCentralForm.jsx";
 import AWSForm from "./forms/AWSForm.jsx";
 import GoogleForm from "./forms/GoogleForm.jsx";
 import MQTTForm from "./forms/MQTTForm.jsx";
@@ -43,9 +44,18 @@ export const renderConnectionDetails = (channel, onValidInput, mobile) => {
           mobile={mobile}
         />
       );
+    case "azure-central":
+      return (
+        <AzureCentralForm
+          onValidInput={onValidInput}
+          type="update"
+          channel={channel}
+          mobile={mobile}
+        />
+      );
     default:
       return (
-        <AzureForm
+        <AzureHubForm
           onValidInput={onValidInput}
           type="update"
           channel={channel}

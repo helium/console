@@ -39,6 +39,9 @@ export const CHANNEL_SHOW = gql`
       azure_hub_name
       azure_policy_name
       azure_policy_key
+      iot_central_api_key
+      iot_central_scope_id
+      iot_central_app_name
       last_errored
     }
   }
