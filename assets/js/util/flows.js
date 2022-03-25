@@ -16,6 +16,7 @@ export const integrationImgMap = {
   adafruit: AdafruitIcon,
   aws: AwsIcon,
   azure: AzureIcon,
+  iot_central: AzureIcon,
   cargo: CargoIcon,
   cayenne: CayenneIcon,
   datacake: DatacakeIcon,
