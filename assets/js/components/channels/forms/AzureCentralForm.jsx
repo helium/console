@@ -13,7 +13,6 @@ class AzureCentralForm extends Component {
     const { channel } = this.props;
 
     if (channel) {
-      console.log({ channel });
       this.setState({
         appName: channel.iot_central_app_name,
         scopeId: channel.iot_central_scope_id,
