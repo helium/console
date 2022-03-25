@@ -222,7 +222,7 @@ class ChannelNew extends Component {
         );
       case "azure":
         return <AzureHubForm onValidInput={this.handleStep2Input} />;
-      case "azure-central":
+      case "iot_central":
         return <AzureCentralForm onValidInput={this.handleStep2Input} />;
       case "mydevices":
         return <MyDevicesForm onValidInput={this.handleStep2Input} />;

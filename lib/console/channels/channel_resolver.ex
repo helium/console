@@ -45,7 +45,7 @@ defmodule Console.Channels.ChannelResolver do
           |> Map.put(:azure_hub_name, channel.credentials["azure_hub_name"])
           |> Map.put(:azure_policy_name, channel.credentials["azure_policy_name"])
           |> Map.put(:azure_policy_key, channel.credentials["azure_policy_key"])
-        "azure-central" ->
+        "iot_central" ->
           channel
           |> Map.put(:iot_central_api_key, channel.credentials["iot_central_api_key"])
           |> Map.put(:iot_central_scope_id, channel.credentials["iot_central_scope_id"])

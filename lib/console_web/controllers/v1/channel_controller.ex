@@ -218,7 +218,7 @@ defmodule ConsoleWeb.V1.ChannelController do
     end
   end
 
-  def create(conn, %{ "name" => name, "type" => "azure-central", "iot_central_api_key" => api_key, "iot_central_scope_id" => scope_id, "iot_central_app_name" => app_name } = attrs) do
+  def create(conn, %{ "name" => name, "type" => "iot_central", "iot_central_api_key" => api_key, "iot_central_scope_id" => scope_id, "iot_central_app_name" => app_name } = attrs) do
     current_organization = conn.assigns.current_organization
 
     channel_params =
@@ -229,7 +229,7 @@ defmodule ConsoleWeb.V1.ChannelController do
           "iot_central_app_name" => app_name
         },
         "name" => name,
-        "type" => "azure-central",
+        "type" => "iot_central",
         "organization_id" => current_organization.id
       }
 

@@ -44,7 +44,7 @@ export const renderConnectionDetails = (channel, onValidInput, mobile) => {
           mobile={mobile}
         />
       );
-    case "azure-central":
+    case "iot_central":
       return (
         <AzureCentralForm
           onValidInput={onValidInput}
