@@ -84,7 +84,7 @@ defmodule ConsoleWeb.Router.DeviceController do
             0 ->
               case device.multi_buy_id do
                 nil -> 1
-                _ -> if device.multi_buy.value == 10, do: 9999, else: device.multi_buy.value
+                _ -> if device.multi_buy.value == 17, do: 9999, else: device.multi_buy.value
               end
             _ ->
               label_multi_buys =
@@ -97,13 +97,13 @@ defmodule ConsoleWeb.Router.DeviceController do
                 0 ->
                   case device.multi_buy_id do
                     nil -> 1
-                    _ -> if device.multi_buy.value == 10, do: 9999, else: device.multi_buy.value
+                    _ -> if device.multi_buy.value == 17, do: 9999, else: device.multi_buy.value
                   end
                 _ ->
                   max_value = Enum.max(label_multi_buys)
                   case device.multi_buy_id do
-                    nil -> if max_value == 10, do: 9999, else: max_value
-                    _ -> if device.multi_buy.value == 10, do: 9999, else: device.multi_buy.value
+                    nil -> if max_value == 17, do: 9999, else: max_value
+                    _ -> if device.multi_buy.value == 17, do: 9999, else: device.multi_buy.value
                   end
               end
           end

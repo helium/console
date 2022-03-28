@@ -18,7 +18,7 @@ export default (props) => {
     {
       title: "Multiple Packet Value",
       dataIndex: "value",
-      render: (data) => (data === 10 ? "All Available" : "Up to " + data),
+      render: (data) => (data === 17 ? "All Available" : "Up to " + data),
     },
     {
       title: "",

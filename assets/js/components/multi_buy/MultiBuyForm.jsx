@@ -136,7 +136,7 @@ export default ({ show, id, openDeleteMultiplePacketModal }) => {
                   <Slider
                     value={multiBuyValue}
                     min={1}
-                    max={10}
+                    max={17}
                     tooltipVisible={false}
                     onChange={(value) => setMultiBuyValue(value)}
                     disabled={!userCan({ role: currentRole })}
@@ -146,9 +146,9 @@ export default ({ show, id, openDeleteMultiplePacketModal }) => {
                 <p style={{ color: "#096DD9", fontSize: 18, fontWeight: 600 }}>
                   {(!multiBuyValue || multiBuyValue == 1) && "Just 1 Packet"}
                   {multiBuyValue > 1 &&
-                    multiBuyValue < 10 &&
+                    multiBuyValue < 17 &&
                     `Up to ${multiBuyValue} Packets`}
-                  {multiBuyValue == 10 && `All Available Packets`}
+                  {multiBuyValue == 17 && `All Available Packets`}
                 </p>
               </div>
 
