@@ -114,9 +114,8 @@ class TopBar extends Component {
   handleOrgMenuClick = (e, orgs) => {
     this.setState({ orgMenuVisible: false });
     if (e.key === "current") return;
-    if (e.key === "new") {
-      return this.openOrganizationModal();
-    }
+    if (e.key === "new") return this.openOrganizationModal();
+
     const selectedOrg = orgs.filter((org) => org.id === e.key)[0];
     analyticsLogger.logEvent("ACTION_SWITCH_ORG", { id: e.key });
     this.props.switchOrganization(selectedOrg);

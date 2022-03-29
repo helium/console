@@ -81,7 +81,7 @@ defmodule Console.Organizations.Organization do
       :first_packet_received_at,
     ])
   end
-
+  
   defp check_against_discovery_name(changeset) do
     case changeset do
       %Ecto.Changeset{valid?: true, changes: %{name: name}} ->

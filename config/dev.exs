@@ -93,7 +93,10 @@ config :console,
 
 config :console,
   max_devices_in_org: 1000
-  
+
+config :console,
+  impose_hard_cap: false
+
 config :logger, level: :debug
 
 # config :prometheus, App.PrometheusExporter,

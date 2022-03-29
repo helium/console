@@ -103,19 +103,21 @@ class OrganizationIndex extends Component {
                   <Text style={{ fontSize: 22, fontWeight: 600 }}>
                     All Organizations
                   </Text>
-                  <UserCan noManager>
-                    <Button
-                      icon={<PlusOutlined />}
-                      style={{ borderRadius: 4 }}
-                      onClick={() => {
-                        analyticsLogger.logEvent("ACTION_NEW_ORG");
-                        this.openOrganizationModal();
-                      }}
-                      type="primary"
-                    >
-                      Add Organization
-                    </Button>
-                  </UserCan>
+                  {process.env.IMPOSE_HARD_CAP !== 'true' && (
+                    <UserCan noManager>
+                      <Button
+                        icon={<PlusOutlined />}
+                        style={{ borderRadius: 4 }}
+                        onClick={() => {
+                          analyticsLogger.logEvent("ACTION_NEW_ORG");
+                          this.openOrganizationModal();
+                        }}
+                        type="primary"
+                      >
+                        Add Organization
+                      </Button>
+                    </UserCan>
+                  )}
                 </div>
                 <OrganizationsTable
                   openDeleteOrganizationModal={this.openDeleteOrganizationModal}
