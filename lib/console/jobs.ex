@@ -198,27 +198,27 @@ defmodule Console.Jobs do
 
     route = "https://snapshots.helium.wtf/mainnet/hotspots/network/#{file_date}.json.gz"
 
-    response =
-      HTTPoison.get(route)
-      |> HTTPoison.Retry.autoretry(
-        max_attempts: Application.get_env(:console, :blockchain_api_retry),
-        wait: 15000,
-        include_404s: true,
-        retry_unknown_errors: true
-      )
-
-    case response do
-      {:ok, %HTTPoison.Response{ body: body, status_code: status_code }} ->
-        case status_code do
-          200 ->
-            hotspots = :zlib.gunzip(body) |> Jason.decode!()
-            upsert_hotspots(Enum.chunk_every(hotspots, 1000))
-          _ ->
-            Appsignal.send_error(%HTTPoison.Error{reason: body}, "Failed response when downloading hotspots list #{file_date}", "jobs.ex")
-        end
-      {:error, error} ->
-        Appsignal.send_error(error, "HTTPoison failed to download hotspots list #{file_date}", "jobs.ex")
-    end
+    # response =
+    #   HTTPoison.get(route)
+    #   |> HTTPoison.Retry.autoretry(
+    #     max_attempts: Application.get_env(:console, :blockchain_api_retry),
+    #     wait: 15000,
+    #     include_404s: true,
+    #     retry_unknown_errors: true
+    #   )
+    #
+    # case response do
+    #   {:ok, %HTTPoison.Response{ body: body, status_code: status_code }} ->
+    #     case status_code do
+    #       200 ->
+    #         hotspots = :zlib.gunzip(body) |> Jason.decode!()
+    #         upsert_hotspots(Enum.chunk_every(hotspots, 1000))
+    #       _ ->
+    #         Appsignal.send_error(%HTTPoison.Error{reason: body}, "Failed response when downloading hotspots list #{file_date}", "jobs.ex")
+    #     end
+    #   {:error, error} ->
+    #     Appsignal.send_error(error, "HTTPoison failed to download hotspots list #{file_date}", "jobs.ex")
+    # end
   end
 
   @fields [
