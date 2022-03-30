@@ -48,7 +48,6 @@ export default (props) => {
         <div
           style={{ backgroundColor: 'white', padding: 40, display: 'flex', flexDirection: 'column', alignItems: 'center' }}
           onClick={e => {
-            e.preventDefault()
             e.stopPropagation()
           }}
         >

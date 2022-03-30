@@ -4,6 +4,7 @@ defmodule Console.Organizations do
 
   alias Console.Organizations.Organization
   alias Console.Devices
+  alias Console.Devices.Device
   alias Console.Organizations.Membership
   alias Console.Organizations.Invitation
   alias Console.Auth.User
@@ -98,12 +99,6 @@ defmodule Console.Organizations do
       |> Repo.one()
   end
 
-  def get_discovery_mode_org() do
-    Organization
-      |> where([o], o.name == "Discovery Mode (Helium)")
-      |> Repo.one()
-  end
-
   def get_organization!(id) do
     Repo.get!(Organization, id)
   end
@@ -114,6 +109,24 @@ defmodule Console.Organizations do
 
   def get_organizations_in_list(ids) do
     from(o in Organization, where: o.id in ^ids)
+    |> Repo.all()
+  end
+
+  def get_one_device_in_org(organization) do
+    Device
+      |> where([d], d.organization_id == ^organization.id)
+      |> limit(1)
+      |> Repo.one()
+  end
+
+  def get_organizations_with_unsent_survey_tokens() do
+    ago_25_mins = NaiveDateTime.utc_now() |> NaiveDateTime.add(-1500, :second)
+    ago_30_days = NaiveDateTime.utc_now() |> NaiveDateTime.add(-2592000, :second)
+
+    from(
+      o in Organization,
+      where: o.survey_token_used == false and is_nil(o.survey_token_sent_at) and o.survey_token_inserted_at < ^ago_25_mins and o.first_packet_received_at < ^ago_25_mins and o.inserted_at > ^ago_30_days
+    )
     |> Repo.all()
   end
 
@@ -182,32 +195,41 @@ defmodule Console.Organizations do
     end
   end
 
+  def get_discovery_mode_org() do
+    Organization
+      |> where([o], o.name == "Discovery Mode (Helium)")
+      |> Repo.one()
+  end
+
   def create_organization(%{} = user, attrs \\ %{}) do
     count = get_organizations(user) |> Enum.count()
 
-    if count > 499 do
-      {:error, :forbidden, "Maximum number of organizations reached"}
-    else
-      organization_changeset =
-        %Organization{}
-        |> Organization.create_changeset(attrs)
+    cond do
+      Application.get_env(:console, :impose_hard_cap) == true and count > 0 ->
+        {:error, :forbidden, "Organization limit reached"}
+      Application.get_env(:console, :impose_hard_cap) != true and count > 499 ->
+        {:error, :forbidden, "Organization limit reached"}
+      true ->
+        organization_changeset =
+          %Organization{}
+          |> Organization.create_changeset(attrs)
 
-      membership_fn = fn _repo, %{organization: organization} ->
-        %Membership{}
-        |> Membership.join_org_changeset(user, organization, "admin")
-        |> Repo.insert()
-      end
+        membership_fn = fn _repo, %{organization: organization} ->
+          %Membership{}
+          |> Membership.join_org_changeset(user, organization, "admin")
+          |> Repo.insert()
+        end
 
-      result =
-        Ecto.Multi.new()
-        |> Ecto.Multi.insert(:organization, organization_changeset)
-        |> Ecto.Multi.run(:membership, membership_fn)
-        |> Repo.transaction()
+        result =
+          Ecto.Multi.new()
+          |> Ecto.Multi.insert(:organization, organization_changeset)
+          |> Ecto.Multi.run(:membership, membership_fn)
+          |> Repo.transaction()
 
-      case result do
-        {:ok, %{organization: organization}} -> {:ok, organization}
-        {:error, :organization, %Ecto.Changeset{} = changeset, _} -> {:error, changeset}
-      end
+        case result do
+          {:ok, %{organization: organization}} -> {:ok, organization}
+          {:error, :organization, %Ecto.Changeset{} = changeset, _} -> {:error, changeset}
+        end
     end
   end
 

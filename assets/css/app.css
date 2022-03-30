@@ -749,3 +749,28 @@ a.version-link {
 .channel-new-panels-mobile > div > div > div.ant-collapse-content-box {
   padding: 0px;
 }
+
+.launch-survey-button {
+  white-space: nowrap;
+  padding: 4px 15px;
+  border-radius: 2px;
+  font-size: 16px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  color: #fff;
+  border-color: #1890ff;
+  background: #1890ff;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.12);
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.045);
+}
+.launch-survey-button:hover,
+.launch-survey-button:focus {
+  color: #fff;
+  border-color: #40a9ff;
+  background: #40a9ff;
+}

@@ -6,7 +6,7 @@ import WarningTwoTone from "@ant-design/icons/WarningTwoTone";
 import EyeOutlined from "@ant-design/icons/EyeOutlined";
 import EyeInvisibleOutlined from "@ant-design/icons/EyeInvisibleOutlined";
 
-class AzureForm extends Component {
+class AzureHubForm extends Component {
   state = {
     hubName: "",
     policyName: "",
@@ -197,4 +197,4 @@ class AzureForm extends Component {
   }
 }
 
-export default AzureForm;
+export default AzureHubForm;

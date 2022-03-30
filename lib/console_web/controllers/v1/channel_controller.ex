@@ -183,7 +183,7 @@ defmodule ConsoleWeb.V1.ChannelController do
     end
   end
 
-  def create(conn, %{ "name" => name, "type" => "azure", "azure_policy_name" => policy_name, "azure_hub_name" => hub_name, "azure_policy_key" => key } = attrs) do
+  def create(conn, %{ "name" => name, "type" => "azure", "azure_policy_name" => policy_name, "azure_hub_name" => hub_name, "azure_primary_key" => key } = attrs) do
     current_organization = conn.assigns.current_organization
 
     channel_params =
@@ -195,6 +195,41 @@ defmodule ConsoleWeb.V1.ChannelController do
         },
         "name" => name,
         "type" => "azure",
+        "organization_id" => current_organization.id
+      }
+
+    with {:ok, %Channel{} = channel} <- Channels.create_channel(current_organization, channel_params) do
+      channel =
+        channel
+        |> Map.put(:devices, [])
+        |> Map.put(:labels, [])
+
+      AuditActions.create_audit_action(
+        current_organization.id,
+        "v1_api",
+        "channel_controller_create",
+        channel.id,
+        attrs
+      )
+
+      conn
+      |> put_status(:created)
+      |> render("show.json", channel: channel)
+    end
+  end
+
+  def create(conn, %{ "name" => name, "type" => "iot_central", "iot_central_api_key" => api_key, "iot_central_scope_id" => scope_id, "iot_central_app_name" => app_name } = attrs) do
+    current_organization = conn.assigns.current_organization
+
+    channel_params =
+      %{
+        "credentials" => %{
+          "iot_central_api_key" => api_key,
+          "iot_central_scope_id" => scope_id,
+          "iot_central_app_name" => app_name
+        },
+        "name" => name,
+        "type" => "iot_central",
         "organization_id" => current_organization.id
       }
 

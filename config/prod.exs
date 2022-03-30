@@ -28,8 +28,7 @@ config :console, Console.Mailer,
 
 config :console,
   router_secrets: String.split(System.get_env("ROUTER_SECRETS"), ","),
-  blockchain_api_retry: String.to_integer(System.get_env("BLOCKCHAIN_API_RETRY") || "1"),
-  blockchain_api_url: System.get_env("BLOCKCHAIN_API_URL")
+  blockchain_api_retry: String.to_integer(System.get_env("BLOCKCHAIN_API_RETRY") || "1")
 
 config :console,
   mailerlite_api_key: System.get_env("MAILERLITE_KEY")
@@ -63,6 +62,9 @@ config :console,
   use_amqp_events: if System.get_env("USE_AMQP_EVENTS") == "true", do: true, else: false
 
 config :console,
+  impose_hard_cap: if System.get_env("IMPOSE_HARD_CAP") == "true", do: true, else: false
+
+config :console,
   amqp_url: System.get_env("AMQP_URL")
 
 config :console,
@@ -83,6 +85,9 @@ config :console,
     "131.0.72.0"
   ]
 
+config :console,
+  max_devices_in_org: String.to_integer(System.get_env("MAX_DEVICES_IN_ORG") || "10000")
+  
 config :console,
   socket_check_origin: System.get_env("SOCKET_CHECK_ORIGIN")
 

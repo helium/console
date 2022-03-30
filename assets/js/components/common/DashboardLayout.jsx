@@ -7,13 +7,19 @@ import { Layout, Popover, Button } from "antd";
 import ToolOutlined from "@ant-design/icons/ToolOutlined";
 const { Header, Footer, Sider, Content } = Layout;
 
+export const SurveyNotificationContext = React.createContext();
+
 class DashboardLayout extends Component {
   state = {
     showNav: true,
+    showSurveyNotification: false,
   };
 
   toggleNav = () => {
     this.setState({ showNav: !this.state.showNav });
+  };
+  toggleSurveyNotification = () => {
+    this.setState({ showSurveyNotification: !this.state.showSurveyNotification });
   };
 
   render() {
@@ -38,6 +44,8 @@ class DashboardLayout extends Component {
             user={user}
             toggleNav={this.toggleNav}
             showNav={this.state.showNav}
+            showSurveyNotification={this.state.showSurveyNotification}
+            toggleSurveyNotification={this.toggleSurveyNotification}
           />
         </Header>
 
@@ -90,7 +98,9 @@ class DashboardLayout extends Component {
                   noHeaderPadding={noHeaderPadding}
                   full={full}
                 >
-                  {this.props.children}
+                  <SurveyNotificationContext.Provider value={{ toggleSurveyNotification: this.toggleSurveyNotification }}>
+                    {this.props.children}
+                  </SurveyNotificationContext.Provider>
                 </ContentLayout>
               )}
               {!noFooter && (

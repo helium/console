@@ -26,6 +26,7 @@ defmodule Console.Devices.Device do
     field :active, :boolean
     field :hotspot_address, :string
     field :in_xor_filter, :boolean
+    field :hide_from_xor, :boolean
 
     belongs_to :organization, Organization
     belongs_to :multi_buy, MultiBuy
@@ -46,8 +47,26 @@ defmodule Console.Devices.Device do
       |> check_attrs_format()
       |> validate_required([:name, :dev_eui, :app_eui, :app_key, :oui, :organization_id])
       |> validate_length(:name, max: 50, message: "Name cannot be longer than 50 characters")
-      |> unique_constraint(:dev_eui, name: :devices_dev_eui_app_eui_app_key_index, message: "Please choose device credentials with unique DevEUI, AppEUI, and AppKey")
+      |> unique_constraint(:dev_eui, name: :devices_dev_eui_app_eui_app_key_index, message: "An unexpected error has occurred, please refresh the page and try again")
       |> unique_constraint(:hotspot_address, name: :devices_hotspot_address_index, message: "This hotspot address is already used")
+  end
+
+  def update_changeset(device, attrs) do
+    attrs = Helpers.sanitize_attrs(attrs, ["name", "dev_eui", "app_eui", "app_key"])
+    attrs = Helpers.upcase_attrs(attrs, ["dev_eui", "app_eui", "app_key"])
+
+    device
+      |> cast(attrs, [:name, :dev_eui, :app_eui, :app_key, :active, :multi_buy_id, :config_profile_id, :in_xor_filter])
+      |> check_attrs_format()
+      |> validate_required([:name, :dev_eui, :app_eui, :app_key, :oui, :organization_id])
+      |> validate_length(:name, max: 50)
+      |> unique_constraint(:dev_eui, name: :devices_dev_eui_app_eui_app_key_index, message: "An unexpected error has occurred, please refresh the page and try again")
+      |> unique_constraint(:hotspot_address, name: :devices_hotspot_address_index, message: "This hotspot address is already used")
+  end
+
+  def router_update_changeset(device, attrs) do
+    device
+      |> cast(attrs, [:frame_up, :frame_down, :last_connected, :total_packets, :dc_usage, :in_xor_filter])
   end
 
   def create_discovery_changeset(device, device_params = %{ "name" => _name, "hotspot_address" => _hotspot_address, "organization_id" => _organization_id }) do
@@ -66,24 +85,6 @@ defmodule Console.Devices.Device do
       |> validate_required([:name, :dev_eui, :app_eui, :app_key, :oui, :organization_id])
       |> unique_constraint(:dev_eui, name: :devices_dev_eui_app_eui_app_key_index, message: "Values for DevEUI, AppEUI, and AppKey must be unique, please try again")
       |> unique_constraint(:hotspot_address, name: :devices_hotspot_address_index, message: "This hotspot address is already used")
-  end
-
-  def update_changeset(device, attrs) do
-    attrs = Helpers.sanitize_attrs(attrs, ["name", "dev_eui", "app_eui", "app_key"])
-    attrs = Helpers.upcase_attrs(attrs, ["dev_eui", "app_eui", "app_key"])
-
-    device
-      |> cast(attrs, [:name, :dev_eui, :app_eui, :app_key, :active, :multi_buy_id, :config_profile_id, :in_xor_filter])
-      |> check_attrs_format()
-      |> validate_required([:name, :dev_eui, :app_eui, :app_key, :oui, :organization_id])
-      |> validate_length(:name, max: 50)
-      |> unique_constraint(:dev_eui, name: :devices_dev_eui_app_eui_app_key_index, message: "Please choose device credentials with unique DevEUI, AppEUI, and AppKey")
-      |> unique_constraint(:hotspot_address, name: :devices_hotspot_address_index, message: "This hotspot address is already used")
-  end
-
-  def router_update_changeset(device, attrs) do
-    device
-      |> cast(attrs, [:frame_up, :frame_down, :last_connected, :total_packets, :dc_usage, :in_xor_filter])
   end
 
   defp check_attrs_format(changeset) do

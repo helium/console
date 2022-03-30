@@ -5,6 +5,7 @@ defmodule Console.Email do
   alias Console.ApiKeys.ApiKey
   alias Console.DcPurchases.DcPurchase
   alias Console.Organizations.Invitation
+  alias Console.Organizations.Membership
   alias Console.Organizations.Organization
   alias DateTime
 
@@ -106,6 +107,14 @@ defmodule Console.Email do
     |> assign(:token, token)
     |> assign(:key_name, name)
     |> render(:api_key_email)
+  end
+
+  def survey_token_email(%Membership{email: email}, %{token: token}) do
+    base_email()
+    |> to(email)
+    |> subject("Claim your Free Data Credits on Helium Console")
+    |> assign(:token, token)
+    |> render(:survey_token_email)
   end
 
   defp base_email do

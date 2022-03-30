@@ -1,0 +1,7 @@
+Hi there,
+
+Welcome to the Helium Network. Thank you for completing the survey and adding an active device.
+
+Your token is: <%= @token %>
+
+To claim the remaining Data Credits, enter this token into your Console account in the Data Credits page by visiting <%= @url <> "/datacredits" %>.

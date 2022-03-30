@@ -11,16 +11,16 @@ defmodule Console.Repo.Migrations.AddAppEuiToOrg do
 
     flush()
 
-    organizations = from(o in Organization, where: is_nil(o.default_app_eui)) |> Console.Repo.all
-    Enum.each(organizations, fn organization ->
-      app_eui = "6081F9" <> Helpers.generate_string(10, '0123456789ABCDEF')
+    # organizations = from(o in Organization, where: is_nil(o.default_app_eui)) |> Console.Repo.all
+    # Enum.each(organizations, fn organization ->
+    #   app_eui = "6081F9" <> Helpers.generate_string(10, '0123456789ABCDEF')
 
-      organization
-      |> Organization.update_changeset(%{ default_app_eui: app_eui })
-      |> Console.Repo.update()
-    end)
+    #   organization
+    #   |> Organization.update_changeset(%{ default_app_eui: app_eui })
+    #   |> Console.Repo.update()
+    # end)
 
-    flush()
+    # flush()
 
     alter table(:organizations) do
       modify :default_app_eui, :string, null: false

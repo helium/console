@@ -29,8 +29,8 @@ class OrganizationMenu extends Component {
             ))}
           </Menu.ItemGroup>
         )}
-        {role === "admin" && <Menu.Divider />}
-        {role === "admin" && (
+        {process.env.IMPOSE_HARD_CAP !== 'true' && role === "admin" && <Menu.Divider />}
+        {process.env.IMPOSE_HARD_CAP !== 'true' && role === "admin" && (
           <Menu.Item key="new">
             <PlusOutlined /> New Organization
           </Menu.Item>

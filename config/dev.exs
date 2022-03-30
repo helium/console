@@ -61,8 +61,7 @@ config :console,
   router_secrets: [
     "1524243720:2JD3juUA9RGaOf3Fpj7fNOylAgZ/jAalgOe45X6+jW4sy9gyCy1ELJrIWKvrgMx/"
   ],
-  blockchain_api_retry: 1,
-  blockchain_api_url: "https://api.helium.io/v1"
+  blockchain_api_retry: 1
 
 config :console, Console.Mailer,
   adapter: Bamboo.LocalAdapter
@@ -91,6 +90,12 @@ config :console,
 
 config :console,
   socket_check_origin: "//localhost"
+
+config :console,
+  max_devices_in_org: 1000
+
+config :console,
+  impose_hard_cap: false
 
 config :logger, level: :debug
 

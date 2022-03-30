@@ -43,7 +43,7 @@ export default ({
         }}
       >
         <Select
-          value={`${hotspots.pageSize} results`}
+          value={`${hotspots.pageSize ? hotspots.pageSize : 0} results`}
           onSelect={handleChangePageSize}
           style={{ marginRight: 40, paddingTop: 2 }}
         >

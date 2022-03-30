@@ -19,14 +19,14 @@ defmodule Console.Devices do
         nil ->
           from(
             d in Device,
-            where: is_nil(d.hotspot_address),
+            where: is_nil(d.hotspot_address) and d.hide_from_xor == false,
             order_by: d.id,
             limit: 1000
           )
         _ ->
           from(
             d in Device,
-            where: is_nil(d.hotspot_address) and d.id > ^cursor,
+            where: is_nil(d.hotspot_address) and d.hide_from_xor == false and d.id > ^cursor,
             order_by: d.id,
             limit: 1000
           )
@@ -114,21 +114,23 @@ defmodule Console.Devices do
 
   def create_device(attrs \\ %{}, %Organization{} = organization) do
     count = get_organization_device_count(organization)
+
     cond do
-      organization.name !== "Discovery Mode (Helium)" and count > 9999 ->
-        {:error, :forbidden, "Device limit for organization reached"}
+      Application.get_env(:console, :impose_hard_cap) == true and count > 9 ->
+        {:error, "Device limit reached"}
+      Application.get_env(:console, :impose_hard_cap) != true and count >= Application.get_env(:console, :max_devices_in_org) ->
+        {:error, "Device limit reached"}
       true ->
-        cond do
-          attrs["hotspot_address"] != nil ->
-            %Device{}
-            |> Device.create_discovery_changeset(attrs)
-            |> Repo.insert()
-          true ->
-            %Device{}
-            |> Device.create_changeset(attrs)
-            |> Repo.insert()
-        end
+        %Device{}
+        |> Device.create_changeset(attrs)
+        |> Repo.insert()
     end
+  end
+
+  def create_discovery_device(attrs \\ %{}) do
+    %Device{}
+    |> Device.create_discovery_changeset(attrs)
+    |> Repo.insert()
   end
 
   def update_device(%Device{} = device, attrs) do

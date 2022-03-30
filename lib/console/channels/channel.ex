@@ -32,7 +32,7 @@ defmodule Console.Channels.Channel do
     channel
     |> cast(attrs, [:name, :type, :active, :credentials, :organization_id, :payload_template])
     |> validate_required([:name, :type, :active, :credentials, :organization_id])
-    |> validate_inclusion(:type, ~w(http mqtt aws azure google))
+    |> validate_inclusion(:type, ~w(http mqtt aws azure google iot_central))
     |> validate_length(:name, max: 50, message: "Name cannot be longer than 50 characters")
     |> check_credentials()
     |> put_type_name()
@@ -64,6 +64,7 @@ defmodule Console.Channels.Channel do
           case type do
             "aws" -> "AWS IoT"
             "azure" -> "Azure IoT Hub"
+            "iot_central" -> "Azure IoT Central"
             "google" -> "Google Cloud IoT Core"
             "mqtt" -> "MQTT"
             "http" -> "HTTP"

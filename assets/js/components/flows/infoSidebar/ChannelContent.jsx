@@ -279,7 +279,7 @@ class ChannelContent extends Component {
                   <Warning numberWarnings={1} />
                   <WarningItem
                     warningText={
-                      "The Integration is unsuccessful. Check the Integration for details."
+                      "The Integration is unsuccessful. Please check the Debug panel for Devices and/or Labels connected to this Integration."
                     }
                   />
                 </React.Fragment>

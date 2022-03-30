@@ -63,6 +63,10 @@ config :console,
 
 config :console, Console.Scheduler,
   jobs: [
+    send_survey_tokens: [
+      schedule: "*/5 * * * *", # every 5th min
+      task: {Console.Jobs, :send_survey_tokens, []}
+    ],
     refresh_materialized_views: [
       schedule: "0 * * * *", # every hour @ 0 mins
       task: {Console.Jobs, :refresh_materialized_views, []}
@@ -79,8 +83,16 @@ config :console, Console.Scheduler,
       schedule: "0 0 * * *", # every day @ 00:00
       task: {Console.Jobs, :delete_sent_alerts, []}
     ],
-    sync_hotspots: [
-      schedule: "0 * * * *", # every hour @ 0 mins
+    sync_hotspots_1: [
+      schedule: "0 2 * * *", # every day at 2am utc
+      task: {Console.Jobs, :sync_hotspots, []}
+    ],
+    sync_hotspots_2: [
+      schedule: "0 6 * * *", # every day at 6am utc
+      task: {Console.Jobs, :sync_hotspots, []}
+    ],
+    sync_hotspots_3: [
+      schedule: "0 10 * * *", # every day at 10am utc
       task: {Console.Jobs, :sync_hotspots, []}
     ],
   ]

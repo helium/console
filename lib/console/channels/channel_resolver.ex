@@ -13,7 +13,7 @@ defmodule Console.Channels.ChannelResolver do
     updated_entries = channels.entries
       |> Enum.map(fn c ->
         Map.drop(c, [:downlink_token])
-        Map.put(c, :number_devices, Flows.get_number_devices_in_flows_with_channel(current_organization, c.id))
+        |> Map.put(:number_devices, Flows.get_number_devices_in_flows_with_channel(current_organization, c.id))
       end)
 
     {:ok, Map.put(channels, :entries, updated_entries)}
@@ -45,6 +45,11 @@ defmodule Console.Channels.ChannelResolver do
           |> Map.put(:azure_hub_name, channel.credentials["azure_hub_name"])
           |> Map.put(:azure_policy_name, channel.credentials["azure_policy_name"])
           |> Map.put(:azure_policy_key, channel.credentials["azure_policy_key"])
+        "iot_central" ->
+          channel
+          |> Map.put(:iot_central_api_key, channel.credentials["iot_central_api_key"])
+          |> Map.put(:iot_central_scope_id, channel.credentials["iot_central_scope_id"])
+          |> Map.put(:iot_central_app_name, channel.credentials["iot_central_app_name"])
         "mqtt" ->
           channel
           |> Map.put(:credentials, %{
