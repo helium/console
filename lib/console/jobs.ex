@@ -212,7 +212,17 @@ defmodule Console.Jobs do
         case status_code do
           200 ->
             hotspots = :zlib.gunzip(body) |> Jason.decode!()
-            upsert_hotspots(Enum.chunk_every(hotspots, 1000))
+
+            hotspots
+            |> Stream.chunk_every(1000)
+            |> Stream.each(fn chunk ->
+              Task.Supervisor.async_nolink(ConsoleWeb.TaskSupervisor, fn ->
+                sanitized_hotspots = chunk |> Enum.map(fn h -> sanitize(h) end)
+                Repo.insert_all(Hotspot, sanitized_hotspots, on_conflict: {:replace_all_except, [:id, :inserted_at, :address]}, conflict_target: :address)
+              end)
+              |> Task.await(:infinity)
+            end)
+            |> Stream.run()
           _ ->
             Appsignal.send_error(%HTTPoison.Error{reason: body}, "Failed response when downloading hotspots list #{file_date}", "jobs.ex")
         end
@@ -248,17 +258,5 @@ defmodule Console.Jobs do
     |> Map.put("updated_at", NaiveDateTime.utc_now |> NaiveDateTime.truncate(:second))
     |> Map.new(fn {k, v} -> {String.to_atom(k), v} end)
     |> Map.take(@fields)
-  end
-
-  defp upsert_hotspots(chunked_hotspots) do
-    if length(chunked_hotspots) != 0 do
-      Task.Supervisor.async_nolink(ConsoleWeb.TaskSupervisor, fn ->
-        sanitized_hotspots = List.first(chunked_hotspots) |> Enum.map(fn h -> sanitize(h) end)
-        Repo.insert_all(Hotspot, sanitized_hotspots, on_conflict: {:replace_all_except, [:id, :inserted_at, :address]}, conflict_target: :address)
-      end)
-      |> Task.await(:infinity)
-
-      upsert_hotspots(Enum.drop(chunked_hotspots, 1))
-    end
   end
 end
