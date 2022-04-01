@@ -100,14 +100,14 @@ defmodule Console.Search do
         (SELECT DISTINCT on(id) * FROM
         (
           (
-            SELECT id, name AS title, value::VARCHAR AS description, 1.0::float AS score, 'multi_buys' AS category
-            FROM multi_buys
+            SELECT id, name AS title, 'Packet Config' AS description, 1.0::float AS score, 'packet_configs' AS category
+            FROM packet_configs
             WHERE organization_id = $3 AND (name ILIKE $1)
           )
           UNION
           (
-            SELECT id, name AS title, value::VARCHAR AS description, 0.5::float AS score, 'multi_buys' AS category
-            FROM multi_buys
+            SELECT id, name AS title, 'Packet Config' AS description, 0.5::float AS score, 'packet_configs' AS category
+            FROM packet_configs
             WHERE organization_id = $3 AND (name ~* $2)
           )
         ) f ORDER BY id, score DESC)
@@ -203,10 +203,10 @@ defmodule Console.Search do
     )
     UNION
     (
-      SELECT id, name AS title, value::VARCHAR AS description, score, 'multi_buys' AS category
+      SELECT id, name AS title, 'Packet Config' AS description, score, 'packet_configs' AS category
       FROM (
         SELECT *, SIMILARITY(name || ' ', $1) AS score
-        FROM multi_buys
+        FROM packet_configs
         WHERE organization_id = $2
         ORDER BY score DESC
       ) AS b

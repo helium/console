@@ -2,6 +2,7 @@ defmodule ConsoleWeb.OrganizationHotspotController do
   use ConsoleWeb, :controller
 
   alias Console.OrganizationHotspots
+  alias Console.PacketConfigs
 
   plug ConsoleWeb.Plug.AuthorizeAction
   action_fallback ConsoleWeb.FallbackController
@@ -29,8 +30,13 @@ defmodule ConsoleWeb.OrganizationHotspotController do
         if claimed do
           {:error, :bad_request, "Hotspot has already been followed, please refresh the page and check again"}
         else
-          with {:ok, hotspot_groups_count} <- OrganizationHotspots.unclaim_org_hotspot(org_hotspot, hotspot_address, current_organization) do
+          with {:ok, {hotspot_groups_count, nil}} <- OrganizationHotspots.unclaim_org_hotspot(org_hotspot, hotspot_address, current_organization) do
             ConsoleWeb.Endpoint.broadcast("graphql:coverage_index_org_hotspots", "graphql:coverage_index_org_hotspots:#{current_organization.id}:org_hotspots_update", %{})
+
+            preferred_hotspots = OrganizationHotspots.all_preferred(current_organization)
+            if length(preferred_hotspots) == 0 do
+              PacketConfigs.turn_off_preferred_active_for_all(current_organization)
+            end
 
             msg = cond do
               hotspot_groups_count > 0 -> "Hotspot removed from My Hotspots tab and Hotspot Groups successfully"
@@ -111,15 +117,21 @@ defmodule ConsoleWeb.OrganizationHotspotController do
       {:error, :bad_request, "Please select at least one hotspot"}
     else
       if claimed do
-        with {:ok, _count, _organization_hotspots} <- OrganizationHotspots.claim_org_hotspots(hotspot_addresses, current_organization) do
+        with {:ok, _, _} <- OrganizationHotspots.claim_org_hotspots(hotspot_addresses, current_organization) do
           ConsoleWeb.Endpoint.broadcast("graphql:coverage_index_org_hotspots", "graphql:coverage_index_org_hotspots:#{current_organization.id}:org_hotspots_update", %{})
           conn
             |> put_resp_header("message", "Hotspots followed successfully")
             |> send_resp(:ok, "")
         end
       else
-        with {:ok, hotspot_groups_count} <- OrganizationHotspots.unclaim_org_hotspots(hotspot_addresses, current_organization) do
+        with {:ok, {hotspot_groups_count, nil}} <- OrganizationHotspots.unclaim_org_hotspots(hotspot_addresses, current_organization) do
           ConsoleWeb.Endpoint.broadcast("graphql:coverage_index_org_hotspots", "graphql:coverage_index_org_hotspots:#{current_organization.id}:org_hotspots_update", %{})
+          
+          preferred_hotspots = OrganizationHotspots.all_preferred(current_organization)
+          if length(preferred_hotspots) == 0 do
+            PacketConfigs.turn_off_preferred_active_for_all(current_organization)
+          end
+          
           msg = cond do
             hotspot_groups_count > 0 -> "Hotspots removed from My Hotspots tab and Hotspot Groups successfully"
             true -> "Hotspots removed from My Hotspots tab successfully"

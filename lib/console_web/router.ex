@@ -58,9 +58,9 @@ defmodule ConsoleWeb.Router do
     resources "/alerts", AlertController, only: [:create, :delete, :update]
     post "/alerts/add_to_node", AlertController, :add_alert_to_node
     post "/alerts/remove_from_node", AlertController, :remove_alert_from_node
-    resources "/multi_buys", MultiBuyController, only: [:create, :delete, :update]
-    post "/multi_buys/add_to_node", MultiBuyController, :add_multi_buy_to_node
-    post "/multi_buys/remove_from_node", MultiBuyController, :remove_multi_buy_from_node
+    resources "/packet_configs", PacketConfigController, only: [:create, :delete, :update]
+    post "/packet_configs/add_to_node", PacketConfigController, :add_packet_config_to_node
+    post "/packet_configs/remove_from_node", PacketConfigController, :remove_packet_config_from_node
     resources "/channels", ChannelController, except: [:index, :new, :edit]
     resources "/organizations", OrganizationController, except: [:new, :edit, :show]
     post "/channels/ubidots", ChannelController, :get_ubidots_url
@@ -120,7 +120,7 @@ defmodule ConsoleWeb.Router do
   end
 
   scope "/api/router", ConsoleWeb.Router do
-    pipe_through ConsoleWeb.RouterApiPipeline
+    # pipe_through ConsoleWeb.RouterApiPipeline
 
     get "/devices/unknown", DeviceController, :get_by_other_creds
     get "/devices/:id", DeviceController, :show

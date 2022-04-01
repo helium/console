@@ -16,6 +16,12 @@ defmodule Console.OrganizationHotspots do
     |> Repo.all()
   end
 
+  def all_preferred(organization) do
+    OrganizationHotspot
+    |> where([oh], oh.organization_id == ^organization.id and oh.preferred == true)
+    |> Repo.all()
+  end
+
   def get_org_hotspot(hotspot_address, organization) do
     Repo.get_by(OrganizationHotspot, [hotspot_address: hotspot_address, organization_id: organization.id])
   end

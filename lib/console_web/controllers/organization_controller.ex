@@ -244,10 +244,10 @@ defmodule ConsoleWeb.OrganizationController do
 
           {:ok, "success"}
         end)
-        |> Ecto.Multi.run(:multi_buys, fn _repo, _ ->
-          Enum.each(attrs["multi_buys"], fn mb ->
-            %Console.MultiBuys.MultiBuy{}
-            |> Ecto.Changeset.cast(mb, [:id, :name, :value, :organization_id])
+        |> Ecto.Multi.run(:packet_configs, fn _repo, _ ->
+          Enum.each(attrs["packet_configs"], fn mb ->
+            %Console.PacketConfigs.PacketConfig{}
+            |> Ecto.Changeset.cast(mb, [:id, :name, :multi_buy_value, :multi_active, :preferred_active, :organization_id])
             |> Console.Repo.insert!()
           end)
 
@@ -386,9 +386,9 @@ defmodule ConsoleWeb.OrganizationController do
     alerts =
       Console.Alerts.get_all_organization_alerts(organization_id)
       |> Enum.map(&(Map.take(&1, [:id, :name, :node_type, :config, :organization_id])))
-    multi_buys =
-      Console.MultiBuys.get_all_organization_multi_buys(organization_id)
-      |> Enum.map(&(Map.take(&1, [:id, :name, :value, :organization_id])))
+    packet_configs =
+      Console.PacketConfigs.get_all_organization_packet_configs(organization_id)
+      |> Enum.map(&(Map.take(&1, [:id, :name, :multi_buy_value, :multi_active, :preferred_active, :organization_id])))
     config_profiles =
       Console.ConfigProfiles.get_all_organization_config_profiles(organization_id)
       |> Enum.map(&(Map.take(&1, [:id, :name, :adr_allowed, :cf_list_enabled, :rx_delay, :organization_id])))
@@ -423,7 +423,7 @@ defmodule ConsoleWeb.OrganizationController do
     result = %{
       organization: organization,
       alerts: alerts,
-      multi_buys: multi_buys,
+      packet_configs: packet_configs,
       config_profiles: config_profiles,
       devices: devices,
       functions: functions,

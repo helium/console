@@ -31,7 +31,7 @@ defmodule ConsoleWeb.Schema do
     field :total_packets, :integer
     field :dc_usage, :integer
     field :active, :boolean
-    field :multi_buy_id, :id
+    field :packet_config_id, :id
     field :alerts, list_of(:alert)
     field :in_xor_filter, :boolean
     field :updated_at, :naive_datetime
@@ -134,10 +134,12 @@ defmodule ConsoleWeb.Schema do
     field :organization_id, :id
   end
 
-  object :multi_buy do
+  object :packet_config do
     field :id, :id
     field :name, :string
-    field :value, :integer
+    field :multi_buy_value, :integer
+    field :multi_active, :boolean
+    field :preferred_active, :boolean
   end
 
   object :config_profile do
@@ -163,7 +165,7 @@ defmodule ConsoleWeb.Schema do
     field :inserted_at, :naive_datetime
     field :devices, list_of(:device)
     field :device_count, :integer
-    field :multi_buy_id, :id
+    field :packet_config_id, :id
     field :alerts, list_of(:alert)
     field :updated_at, :naive_datetime
     field :config_profile_id, :id
@@ -370,6 +372,10 @@ defmodule ConsoleWeb.Schema do
       resolve &Console.OrganizationHotspots.OrganizationHotspotsResolver.all/2
     end
 
+    field :all_preferred_hotspots, list_of(:organization_hotspot) do
+      resolve &Console.OrganizationHotspots.OrganizationHotspotsResolver.all_preferred/2
+    end
+
     field :hotspot_stats, list_of(:hotspot) do
       arg :column, non_null(:string)
       arg :order, non_null(:string)
@@ -451,8 +457,8 @@ defmodule ConsoleWeb.Schema do
       resolve &Console.Alerts.AlertResolver.all/2
     end
 
-    field :all_multi_buys, list_of(:multi_buy) do
-      resolve &Console.MultiBuys.MultiBuyResolver.all/2
+    field :all_packet_configs, list_of(:packet_config) do
+      resolve &Console.PacketConfigs.PacketConfigResolver.all/2
     end
 
     field :all_config_profiles, list_of(:config_profile) do
@@ -587,10 +593,10 @@ defmodule ConsoleWeb.Schema do
       resolve &Console.Alerts.AlertResolver.find/2
     end
 
-    @desc "Get a single multi_buy"
-    field :multi_buy, :multi_buy do
+    @desc "Get a single packet_config"
+    field :packet_config, :packet_config do
       arg :id, non_null(:id)
-      resolve &Console.MultiBuys.MultiBuyResolver.find/2
+      resolve &Console.PacketConfigs.PacketConfigResolver.find/2
     end
 
     @desc "Get a single config_profile"

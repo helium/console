@@ -17,6 +17,7 @@ defmodule ConsoleWeb.Router.DeviceView do
   end
 
   def render("device.json", %{device: device}) do
+    # TODO add preferred hotspots (if applicable)
     %{
       id: device.id,
       name: device.name,
