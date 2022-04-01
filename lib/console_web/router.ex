@@ -120,7 +120,7 @@ defmodule ConsoleWeb.Router do
   end
 
   scope "/api/router", ConsoleWeb.Router do
-    # pipe_through ConsoleWeb.RouterApiPipeline
+    pipe_through ConsoleWeb.RouterApiPipeline
 
     get "/devices/unknown", DeviceController, :get_by_other_creds
     get "/devices/:id", DeviceController, :show
