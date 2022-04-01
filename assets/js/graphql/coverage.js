@@ -80,6 +80,14 @@ export const ALL_ORGANIZATION_HOTSPOTS = gql`
   }
 `;
 
+export const ALL_PREFERRED_HOTSPOTS = gql`
+  query AllPreferredHotspotsQuery {
+    allPreferredHotspots {
+      hotspot_address
+    }
+  }
+`;
+
 export const HOTSPOT_SHOW = gql`
   query HotspotShowQuery($address: String) {
     hotspot(address: $address) {

@@ -200,8 +200,8 @@ export default ({
       data = Object.assign({}, data, {
         deviceCount: event.dataTransfer.getData("node/label_device_count"),
         hasAlerts: event.dataTransfer.getData("node/has_alerts") === "true",
-        multi_buy_id:
-          event.dataTransfer.getData("node/multi_buy_id") !== "null",
+        packet_config_id:
+          event.dataTransfer.getData("node/packet_config_id") !== "null",
         config_profile_id:
           event.dataTransfer.getData("node/config_profile_id") !== "null",
         devicesNotInFilter:
@@ -213,8 +213,8 @@ export default ({
       data = Object.assign({}, data, {
         deviceCount: event.dataTransfer.getData("node/label_device_count"),
         hasAlerts: event.dataTransfer.getData("node/has_alerts") === "true",
-        multi_buy_id:
-          event.dataTransfer.getData("node/multi_buy_id") !== "null",
+        packet_config_id:
+          event.dataTransfer.getData("node/packet_config_id") !== "null",
         config_profile_id:
           event.dataTransfer.getData("node/config_profile_id") !== "null",
         inXORFilter:

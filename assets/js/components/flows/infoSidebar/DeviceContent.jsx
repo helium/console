@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import UserCan, { userCan } from "../../common/UserCan";
 import AlertNodeSettings from "./AlertNodeSettings";
-import MultiBuyNodeSettings from "./MultiBuyNodeSettings";
+import PacketConfigSettings from "./PacketConfigSettings";
 import DeviceCredentials from "../../devices/DeviceCredentials";
 import DeviceShowLabelsTable from "../../devices/DeviceShowLabelsTable";
 import DeviceRemoveLabelModal from "../../devices/DeviceRemoveLabelModal";
@@ -423,7 +423,7 @@ class DeviceContent extends Component {
             <ConfigProfileSettings currentNode={device} nodeType="device" />
           </TabPane>
           <TabPane tab="Packets" key="5">
-            <MultiBuyNodeSettings currentNode={device} />
+            <PacketConfigSettings currentNode={device} />
           </TabPane>
         </Tabs>
 

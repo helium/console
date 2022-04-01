@@ -65,7 +65,8 @@ export const getColumns = (
   followHotspot,
   preferHotspot,
   selectHotspotAddress,
-  tab
+  tab,
+  warnUnfollow
 ) => {
   const columns = [
     {
@@ -88,7 +89,17 @@ export const getColumns = (
               if (hotspot_claimed && !hotspot_preferred) {
                 preferHotspot(record.hotspot_address, true);
               } else {
-                followHotspot(record.hotspot_address, !hotspot_claimed);
+                if (
+                  warnUnfollow &&
+                  !!hotspot_claimed &&
+                  props.preferredHotspotAddresses.filter(
+                    (pha) => pha !== record.hotspot_address
+                  ).length === 0
+                ) {
+                  warnUnfollow([record.hotspot_address]);
+                } else {
+                  followHotspot(record.hotspot_address, !hotspot_claimed);
+                }
               }
             }}
           >
@@ -268,7 +279,11 @@ export const getColumns = (
   }
 };
 
-export const ActionButton = ({ selectedAddresses }) => {
+export const ActionButton = ({
+  selectedAddresses,
+  warnUnfollow,
+  preferredHotspotAddresses,
+}) => {
   const menu = () => (
     <Menu
       onClick={(e) => {
@@ -277,7 +292,16 @@ export const ActionButton = ({ selectedAddresses }) => {
         } else if (e.key === "prefer") {
           preferHotspots(selectedAddresses, true);
         } else {
-          followHotspots(selectedAddresses, false);
+          if (
+            warnUnfollow &&
+            preferredHotspotAddresses.filter(
+              (pha) => !selectedAddresses.includes(pha)
+            ).length === 0
+          ) {
+            warnUnfollow(selectedAddresses);
+          } else {
+            followHotspots(selectedAddresses, false);
+          }
         }
       }}
     >

@@ -34,7 +34,7 @@ import FunctionShow from "./components/functions/FunctionShow";
 import FlowsIndex from "./components/flows/FlowsIndex";
 import AlertsIndex from "./components/alerts/AlertsIndex";
 import CoverageIndex from "./components/coverage/CoverageIndex";
-import MultiBuyIndex from "./components/multi_buy/MultiBuyIndex";
+import PacketConfigsIndex from "./components/packet_configs/PacketConfigsIndex";
 import NoOrganization from "./components/organizations/NoOrganization";
 import Welcome from "./components/Welcome";
 import ConfirmEmailPrompt from "./components/auth/ConfirmEmailPrompt";
@@ -221,23 +221,23 @@ const MagicRouter = (props) => {
                 />
                 <Route
                   exact
-                  path="/multi_buys"
+                  path="/packets"
                   component={(props) => (
-                    <MultiBuyIndex user={user} {...props} />
+                    <PacketConfigsIndex user={user} {...props} />
                   )}
                 />
                 <Route
                   exact
-                  path="/multi_buys/new"
+                  path="/packets/new"
                   component={(props) => (
-                    <MultiBuyIndex user={user} {...props} />
+                    <PacketConfigsIndex user={user} {...props} />
                   )}
                 />
                 <Route
                   exact
-                  path="/multi_buys/:id"
+                  path="/packets/:id"
                   component={(props) => (
-                    <MultiBuyIndex user={user} {...props} />
+                    <PacketConfigsIndex user={user} {...props} />
                   )}
                 />
                 <Route

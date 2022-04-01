@@ -15,6 +15,7 @@ import debounce from "lodash/debounce";
 import UserCan from "../common/UserCan";
 import ErrorMessage from "../common/ErrorMessage";
 import PreferralModesCycleInfo from "./PreferralModesCycleInfo";
+import ConfirmHotspotUnfollowModal from "./ConfirmHotspotUnfollowModal";
 
 const PAGE_SIZE_KEY = "hotspotSearchPageSize";
 let startPageSize = parseInt(localStorage.getItem(PAGE_SIZE_KEY)) || 10;
@@ -37,13 +38,22 @@ export default ({ searchHotspots, data, error, loading, ...props }) => {
   const [storedSearchTerms, setStoredSearchTerms] = useState(recentSearchTerms);
   const [selectedRows, setSelectedRows] = useState([]);
   const [allSelected, setAllSelected] = useState(false);
+  const [showConfirmUnfollowModal, setShowConfirmUnfollowModal] =
+    useState(false);
+  const [hotspotsToUnfollow, setHotspotsToUnfollow] = useState([]);
+
+  const warnUnfollow = (hotspotsToUnfollow) => {
+    setShowConfirmUnfollowModal(true);
+    setHotspotsToUnfollow(hotspotsToUnfollow);
+  };
 
   const columns = getColumns(
     props,
     followHotspot,
     preferHotspot,
     props.selectHotspotAddress,
-    props.tab
+    props.tab,
+    warnUnfollow
   );
 
   const handleChangePageSize = (pageSize) => {
@@ -244,6 +254,8 @@ export default ({ searchHotspots, data, error, loading, ...props }) => {
               {selectedRows.length !== 0 && (
                 <ActionButton
                   selectedAddresses={selectedRows.map((r) => r.hotspot_address)}
+                  warnUnfollow={warnUnfollow}
+                  preferredHotspotAddresses={props.preferredHotspotAddresses}
                 />
               )}
             </div>
@@ -271,6 +283,18 @@ export default ({ searchHotspots, data, error, loading, ...props }) => {
           />
         </React.Fragment>
       )}
+      <ConfirmHotspotUnfollowModal
+        open={showConfirmUnfollowModal}
+        close={() => {
+          setShowConfirmUnfollowModal(false);
+        }}
+        submit={() => {
+          followHotspots(hotspotsToUnfollow, false).then(() => {
+            setShowConfirmUnfollowModal(false);
+          });
+        }}
+        multiple={hotspotsToUnfollow.length > 1}
+      />
     </React.Fragment>
   );
 };

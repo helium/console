@@ -6,7 +6,7 @@ export const ALL_RESOURCES = gql`
       id
       name
       in_xor_filter
-      multi_buy_id
+      packet_config_id
       config_profile_id
       alerts {
         id
@@ -19,7 +19,7 @@ export const ALL_RESOURCES = gql`
       name
       device_count
       config_profile_id
-      multi_buy_id
+      packet_config_id
       alerts {
         id
         name

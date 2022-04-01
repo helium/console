@@ -1,12 +1,17 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Table, Typography, Row, Col, Pagination } from "antd";
-import { followHotspot, preferHotspot } from "../../actions/coverage";
+import {
+  followHotspot,
+  preferHotspot,
+  followHotspots,
+} from "../../actions/coverage";
 import { getColumns, ActionButton } from "./Constants";
 const { Text } = Typography;
 import SelectedFlag from "../../../img/coverage/selected-flag.svg";
 import PreferredFlag from "../../../img/coverage/preferred-flag.svg";
 import UserCan from "../common/UserCan";
+import ConfirmHotspotUnfollowModal from "./ConfirmHotspotUnfollowModal";
 
 export default (props) => {
   const [page, setPage] = useState(1);
@@ -15,13 +20,22 @@ export default (props) => {
   const [order, setOrder] = useState("desc");
   const [selectedRows, setSelectedRows] = useState([]);
   const [allSelected, setAllSelected] = useState(false);
+  const [showConfirmUnfollowModal, setShowConfirmUnfollowModal] =
+    useState(false);
+  const [hotspotsToUnfollow, setHotspotsToUnfollow] = useState([]);
+
+  const warnUnfollow = (hotspotsToUnfollow) => {
+    setShowConfirmUnfollowModal(true);
+    setHotspotsToUnfollow(hotspotsToUnfollow);
+  };
 
   const columns = getColumns(
     props,
     followHotspot,
     preferHotspot,
     props.selectHotspotAddress,
-    props.tab
+    props.tab,
+    warnUnfollow
   );
 
   const handleSort = (pagi, filter, sorter) => {
@@ -69,7 +83,7 @@ export default (props) => {
   };
 
   return (
-    <div>
+    <>
       <div style={{ padding: "25px 25px 40px 25px" }}>
         <div style={{ marginBottom: 12 }}>
           <Text style={{ fontSize: 22, fontWeight: 600 }}>Device Coverage</Text>
@@ -110,6 +124,8 @@ export default (props) => {
                     selectedAddresses={selectedRows.map(
                       (r) => r.hotspot_address
                     )}
+                    warnUnfollow={warnUnfollow}
+                    preferredHotspotAddresses={props.preferredHotspotAddresses}
                   />
                 )}
               </div>
@@ -229,6 +245,20 @@ export default (props) => {
           </div>
         </div>
       )}
-    </div>
+      <ConfirmHotspotUnfollowModal
+        open={showConfirmUnfollowModal}
+        close={() => {
+          setShowConfirmUnfollowModal(false);
+          setHotspotsToUnfollow([]);
+        }}
+        submit={() => {
+          followHotspots(hotspotsToUnfollow, false).then(() => {
+            setShowConfirmUnfollowModal(false);
+            setHotspotsToUnfollow([]);
+          });
+        }}
+        multiple={hotspotsToUnfollow.length > 1}
+      />
+    </>
   );
 };

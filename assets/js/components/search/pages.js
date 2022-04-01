@@ -67,12 +67,12 @@ const pages = [
     synonyms: "notifications",
   },
   {
-    title: "Multiple Packets",
+    title: "Packets",
     description: "Configure your packet purchase settings",
-    url: "/multi_buys",
-    id: "/multi_buys",
-    category: "multibuys",
-    synonyms: "packets",
+    url: "/packets",
+    id: "/packets",
+    category: "packets",
+    synonyms: "multibuys",
   },
   {
     title: "Configuration Profiles",

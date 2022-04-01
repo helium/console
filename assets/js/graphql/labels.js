@@ -6,7 +6,7 @@ export const LABEL_FRAGMENT = gql`
     id
     inserted_at
     creator
-    multi_buy_id
+    packet_config_id
     config_profile_id
     devices {
       name
