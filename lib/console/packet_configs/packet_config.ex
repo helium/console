@@ -24,7 +24,6 @@ defmodule Console.PacketConfigs.PacketConfig do
 
   def changeset(packet_config, attrs) do
     attrs = Helpers.sanitize_attrs(attrs, ["name"])
-    IO.inspect attrs
 
     packet_config
     |> cast(attrs, [:name, :multi_buy_value, :multi_active, :preferred_active, :organization_id])
