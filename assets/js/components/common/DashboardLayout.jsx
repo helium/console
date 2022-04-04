@@ -58,24 +58,23 @@ class DashboardLayout extends Component {
               }}
             >
               <NavDrawer user={user} />
-              {process.env.CONSOLE_VERSION && (
-                <Popover
-                  content="Click to see release details"
-                  placement="right"
-                >
-                  <Button
-                    className="version-link"
-                    icon={<ToolOutlined />}
-                    href={
-                      process.env.RELEASE_BLOG_LINK ||
-                      "https://engineering.helium.com"
-                    }
-                    target="_blank"
+              {
+                !process.env.HIDE_CONSOLE_VERSION && (
+                  <Popover
+                    content="Click to see release details"
+                    placement="right"
                   >
-                    {process.env.CONSOLE_VERSION}
-                  </Button>
-                </Popover>
-              )}
+                    <Button
+                      className="version-link"
+                      icon={<ToolOutlined />}
+                      href="https://engineering.helium.com"
+                      target="_blank"
+                    >
+                      v2.2.5
+                    </Button>
+                  </Popover>
+                )
+              }
             </Sider>
           )}
           <Layout>

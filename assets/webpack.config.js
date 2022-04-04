@@ -112,14 +112,13 @@ module.exports = function (env) {
         "ENV_DOMAIN",
         "STRIPE_PUBLIC_KEY",
         "INTERCOM_ID_SECRET",
-        "CONSOLE_VERSION",
-        "RELEASE_BLOG_LINK",
         "MAPBOX_PRIVATE_KEY",
         "MAPBOX_STYLE_URL",
         "USE_MAGIC_AUTH",
         "MAGIC_PUBLIC_KEY",
         "USER_INVITE_ONLY",
-        "IMPOSE_HARD_CAP"
+        "IMPOSE_HARD_CAP",
+        "HIDE_CONSOLE_VERSION"
       ]),
       new NodePolyfillPlugin()
     ],
