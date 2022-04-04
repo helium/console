@@ -26,6 +26,7 @@ import UnselectedFlag from "../../../img/coverage/unselected-flag.svg";
 import LocationIcon from "../../../img/coverage/hotspot-show-location-icon.svg";
 import AliasIcon from "../../../img/coverage/hotspot-show-alias-icon.svg";
 import { debugSidebarBackgroundColor } from "../../util/colors";
+import ConfirmHotspotUnfollowModal from "./ConfirmHotspotUnfollowModal";
 
 export default (props) => {
   const [getHotspot, { error, loading, data, refetch }] =
@@ -34,6 +35,14 @@ export default (props) => {
   const [showAliasInput, toggleAliasInput] = useState(false);
   const [showDebugSidebar, setShowDebugSidebar] = useState(false);
   const [activeTab, setActiveTab] = useState("stats");
+  const [showConfirmUnfollowModal, setShowConfirmUnfollowModal] =
+    useState(false);
+  const [hotspotToUnfollow, setHotspotToUnfollow] = useState([]);
+
+  const warnUnfollow = (hotspotToUnfollow) => {
+    setShowConfirmUnfollowModal(true);
+    setHotspotToUnfollow(hotspotToUnfollow);
+  };
 
   useEffect(() => {
     getHotspot({
@@ -201,7 +210,16 @@ export default (props) => {
                     if (hotspotClaimed && !hotspotPreferred) {
                       preferHotspot(hotspot.hotspot_address, true);
                     } else {
-                      followHotspot(hotspot.hotspot_address, !hotspotClaimed);
+                      if (
+                        hotspotClaimed &&
+                        props.preferredHotspotAddresses.filter(
+                          (pha) => pha !== hotspot.hotspot_address
+                        ).length === 0
+                      ) {
+                        warnUnfollow(hotspot.hotspot_address);
+                      } else {
+                        followHotspot(hotspot.hotspot_address, !hotspotClaimed);
+                      }
                     }
                   }}
                 >
@@ -287,6 +305,18 @@ export default (props) => {
       >
         <Debug hotspotAddress={hotspot.hotspot_address} entryWidth={600} />
       </Sidebar>
+      <ConfirmHotspotUnfollowModal
+        open={showConfirmUnfollowModal}
+        close={() => {
+          setShowConfirmUnfollowModal(false);
+        }}
+        submit={() => {
+          followHotspot(hotspotToUnfollow, false).then(() => {
+            setShowConfirmUnfollowModal(false);
+          });
+        }}
+        multiple={false}
+      />
     </Fragment>
   );
 };
