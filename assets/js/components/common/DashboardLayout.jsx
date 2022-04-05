@@ -77,19 +77,13 @@ class DashboardLayout extends Component {
                 </Popover>
               )}
               {process.env.SELF_HOSTED && (
-                <Popover
-                  content="Click to see release details"
-                  placement="right"
+                <Button
+                  icon={<ToolOutlined />}
+                  href="https://engineering.helium.com"
+                  target="_blank"
                 >
-                  <Button
-                    className="version-link"
-                    icon={<ToolOutlined />}
-                    href="https://engineering.helium.com"
-                    target="_blank"
-                  >
-                    v2.2.5
-                  </Button>
-                </Popover>
+                  v2.2.5
+                </Button>
               )}
             </Sider>
           )}
