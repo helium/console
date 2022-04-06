@@ -11,6 +11,7 @@ import Datacake from "../../img/datacake.png";
 import Tago from "../../img/tago.png";
 import Microshare from "../../img/microshare.png";
 import Akenza from "../../img/akenza.png";
+import IotCentral from "../../img/iot-central-channel.svg";
 
 export const NEW_CHANNEL_TYPES = [
   {
@@ -48,7 +49,7 @@ export const NEW_CHANNEL_TYPES = [
   {
     name: "Azure IoT Central",
     type: "iot_central",
-    img: `${Azure}`,
+    img: `${IotCentral}`,
     info: "This Integration facilitates connecting your devices to Azure IoT Central.",
     docLink:
       "https://docs.helium.com/use-the-network/console/integrations/iot_central",
