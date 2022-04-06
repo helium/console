@@ -265,7 +265,7 @@ defmodule ConsoleWeb.OrganizationController do
         |> Ecto.Multi.run(:devices, fn _repo, _ ->
           Enum.each(attrs["devices"], fn device ->
             %Console.Devices.Device{}
-            |> Ecto.Changeset.cast(device, [:id, :name, :oui, :dev_eui, :app_eui, :app_key, :multi_buy_id, :config_profile_id, :organization_id])
+            |> Ecto.Changeset.cast(device, [:id, :name, :oui, :dev_eui, :app_eui, :app_key, :packet_config_id, :config_profile_id, :organization_id])
             |> Console.Repo.insert!()
           end)
 
@@ -293,7 +293,7 @@ defmodule ConsoleWeb.OrganizationController do
         |> Ecto.Multi.run(:labels, fn _repo, _ ->
           Enum.each(attrs["labels"], fn label ->
             %Console.Labels.Label{}
-            |> Ecto.Changeset.cast(label, [:id, :name, :creator, :multi_buy_id, :config_profile_id, :organization_id])
+            |> Ecto.Changeset.cast(label, [:id, :name, :creator, :packet_config_id, :config_profile_id, :organization_id])
             |> Console.Repo.insert!()
           end)
 
@@ -394,13 +394,13 @@ defmodule ConsoleWeb.OrganizationController do
       |> Enum.map(&(Map.take(&1, [:id, :name, :adr_allowed, :cf_list_enabled, :rx_delay, :organization_id])))
     devices =
       Console.Devices.get_devices(organization_id)
-      |> Enum.map(&(Map.take(&1, [:id, :name, :oui, :dev_eui, :app_eui, :app_key, :multi_buy_id, :config_profile_id, :organization_id])))
+      |> Enum.map(&(Map.take(&1, [:id, :name, :oui, :dev_eui, :app_eui, :app_key, :packet_config_id, :config_profile_id, :organization_id])))
     functions = Console.Functions.get_all_organization_functions(organization_id)
       |> Enum.map(&(Map.take(&1, [:id, :name, :body, :type, :format, :organization_id])))
     channels = Console.Channels.get_all_organization_channels(organization_id)
       |> Enum.map(&(Map.take(&1, [:id, :name, :type, :type_name, :payload_template, :receive_joins, :credentials, :organization_id])))
     labels = Console.Labels.get_all_organization_labels(organization_id)
-      |> Enum.map(&(Map.take(&1, [:id, :name, :creator, :multi_buy_id, :config_profile_id, :organization_id])))
+      |> Enum.map(&(Map.take(&1, [:id, :name, :creator, :packet_config_id, :config_profile_id, :organization_id])))
     groups = Console.Groups.get_all_organization_groups(organization_id)
       |> Enum.map(&(Map.take(&1, [:id, :name, :organization_id])))
     alert_nodes =
