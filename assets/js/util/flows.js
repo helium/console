@@ -1,6 +1,6 @@
 import AdafruitIcon from "../../img/channels/adafruit.png";
 import AwsIcon from "../../img/channels/aws.png";
-import AzureIcon from "../../img/channels/azure.png";
+import AzureIcon from "../../img/channels/azure.svg";
 import CargoIcon from "../../img/channels/cargo.png";
 import CayenneIcon from "../../img/channels/cayenne.png";
 import DatacakeIcon from "../../img/channels/datacake.png";
@@ -11,12 +11,13 @@ import UbidotsIcon from "../../img/channels/ubidots.png";
 import GoogleSheetIcon from "../../img/channels/google-sheet.svg";
 import MicroshareIcon from "../../img/channels/microshare.png";
 import AkenzaIcon from "../../img/channels/akenza.png";
+import IotCentral from "../../img/channels/iot-central.svg";
 
 export const integrationImgMap = {
   adafruit: AdafruitIcon,
   aws: AwsIcon,
   azure: AzureIcon,
-  iot_central: AzureIcon,
+  iot_central: IotCentral,
   cargo: CargoIcon,
   cayenne: CayenneIcon,
   datacake: DatacakeIcon,
