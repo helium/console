@@ -34,15 +34,20 @@ defmodule ConsoleWeb.V1.LabelController do
   end
 
   def show(conn, %{ "id" => id }) do
-    current_organization = conn.assigns.current_organization
+    with {:ok, _id} <- Ecto.UUID.dump(id) do
+      current_organization = conn.assigns.current_organization
 
-    case Labels.get_label(current_organization, id)
-      |> Repo.preload([:config_profile])
-    do
-      nil ->
-        {:error, :not_found, "Label not found"}
-      %Label{} = label ->
-        render(conn, "show.json", label: put_config_settings_on_label(label))
+      case Labels.get_label(current_organization, id)
+        |> Repo.preload([:config_profile])
+      do
+        nil ->
+          {:error, :not_found, "Label not found"}
+        %Label{} = label ->
+          render(conn, "show.json", label: put_config_settings_on_label(label))
+      end
+    else
+      :error ->
+        {:error, :bad_request, "id param must be a valid UUID"}
     end
   end
 
@@ -104,109 +109,140 @@ defmodule ConsoleWeb.V1.LabelController do
   end
 
   def update(conn, %{ "id" => id, "config_profile_id" => profile_id }) do
-    current_organization = conn.assigns.current_organization
+    cond do
+      Ecto.UUID.dump(id) == :error ->
+        {:error, :bad_request, "id param must be a valid UUID"}
+      not is_nil(profile_id) and Ecto.UUID.dump(profile_id) == :error ->
+        {:error, :bad_request, "config_profile_id param must be a valid UUID"}
+      true ->
+        current_organization = conn.assigns.current_organization
 
-    case Labels.get_label(current_organization, id) do
-      nil ->
-        {:error, :not_found, "Label not found"}
-      %Label{} = label ->
-        if profile_id == nil do
-          with {:ok, label} <- Labels.update_label(label, %{ config_profile_id: nil }) do
-            label = label |> Repo.preload([:config_profile])
-            broadcast_router_update_devices(label)
-
-            render(conn, "show.json", label: put_config_settings_on_label(label))
-          end
-        else
-          config_profile = ConfigProfiles.get_config_profile(current_organization, profile_id)
-          case config_profile do
-            nil ->
-              {:error, :not_found, "Config Profile not found"}
-            _ ->
-              with {:ok, label} <- Labels.update_label(label, %{ config_profile_id: config_profile.id }) do
+        case Labels.get_label(current_organization, id) do
+          nil ->
+            {:error, :not_found, "Label not found"}
+          %Label{} = label ->
+            if profile_id == nil do
+              with {:ok, label} <- Labels.update_label(label, %{ config_profile_id: nil }) do
                 label = label |> Repo.preload([:config_profile])
                 broadcast_router_update_devices(label)
 
                 render(conn, "show.json", label: put_config_settings_on_label(label))
               end
-          end
+            else
+              config_profile = ConfigProfiles.get_config_profile(current_organization, profile_id)
+              case config_profile do
+                nil ->
+                  {:error, :not_found, "Config Profile not found"}
+                _ ->
+                  with {:ok, label} <- Labels.update_label(label, %{ config_profile_id: config_profile.id }) do
+                    label = label |> Repo.preload([:config_profile])
+                    broadcast_router_update_devices(label)
+
+                    render(conn, "show.json", label: put_config_settings_on_label(label))
+                  end
+              end
+            end
         end
     end
   end
 
   def delete(conn, %{"id" => id} = attrs) do
-    current_organization = conn.assigns.current_organization
+    with {:ok, _id} <- Ecto.UUID.dump(id) do
+      current_organization = conn.assigns.current_organization
 
-    case Labels.get_label(current_organization, id) do
-      nil ->
-        {:error, :not_found, "Label not found"}
-      %Label{} = label ->
-        with {:ok, _} <- Labels.delete_label(label) do
-          broadcast_router_update_devices(label)
+      case Labels.get_label(current_organization, id) do
+        nil ->
+          {:error, :not_found, "Label not found"}
+        %Label{} = label ->
+          with {:ok, _} <- Labels.delete_label(label) do
+            broadcast_router_update_devices(label)
 
-          AuditActions.create_audit_action(
-            current_organization.id,
-            "v1_api",
-            "label_controller_delete",
-            id,
-            attrs
-          )
+            AuditActions.create_audit_action(
+              current_organization.id,
+              "v1_api",
+              "label_controller_delete",
+              id,
+              attrs
+            )
 
-          conn
-          |> send_resp(:ok, "Label deleted")
-        end
+            conn
+            |> send_resp(:ok, "Label deleted")
+          end
+      end
+    else
+      :error ->
+        {:error, :bad_request, "id param must be a valid UUID"}
     end
   end
 
   def add_device_to_label(conn, %{ "label" => label_id, "device_id" => device_id}) do
-    current_organization = conn.assigns.current_organization
-    destination_label = Labels.get_label!(current_organization, label_id)
-    device = Devices.get_device!(current_organization, device_id)
+    cond do
+      Ecto.UUID.dump(label_id) == :error ->
+        {:error, :bad_request, "label param must be a valid UUID"}
+      Ecto.UUID.dump(device_id) == :error ->
+        {:error, :bad_request, "device_id param must be a valid UUID"}
+      true ->
+        current_organization = conn.assigns.current_organization
+        destination_label = Labels.get_label!(current_organization, label_id)
+        device = Devices.get_device!(current_organization, device_id)
 
-    with {:ok, _} <- Labels.add_devices_to_label([device.id], destination_label.id, current_organization) do
-      conn
-      |> send_resp(:ok, "Device added to label successfully")
+        with {:ok, _} <- Labels.add_devices_to_label([device.id], destination_label.id, current_organization) do
+          conn
+          |> send_resp(:ok, "Device added to label successfully")
+        end
     end
   end
 
   def delete_device_from_label(conn, %{ "label_id" => label_id, "device_id" => device_id}) do
-    current_organization = conn.assigns.current_organization
-    device = Devices.get_device!(current_organization, device_id)
-    label = Labels.get_label!(current_organization, label_id)
+    cond do
+      Ecto.UUID.dump(label_id) == :error ->
+        {:error, :bad_request, "label param must be a valid UUID"}
+      Ecto.UUID.dump(device_id) == :error ->
+        {:error, :bad_request, "device_id param must be a valid UUID"}
+      true ->
+        current_organization = conn.assigns.current_organization
+        device = Devices.get_device!(current_organization, device_id)
+        label = Labels.get_label!(current_organization, label_id)
 
-    with {count, nil} <- Labels.delete_devices_from_label([device.id], label.id, current_organization) do
-      msg =
-        case count do
-          0 -> "Device was not in label"
-          _ ->
-            broadcast_router_update_devices([device])
-            "Device removed from label successfully"
+        with {count, nil} <- Labels.delete_devices_from_label([device.id], label.id, current_organization) do
+          msg =
+            case count do
+              0 -> "Device was not in label"
+              _ ->
+                broadcast_router_update_devices([device])
+                "Device removed from label successfully"
+            end
+
+            conn
+            |> send_resp(:ok, msg)
         end
-
-        conn
-        |> send_resp(:ok, msg)
     end
   end
 
   def set_devices_active(conn, %{ "label_id" => label_id, "active" => active }) do
-    current_organization = conn.assigns.current_organization
+    with {:ok, _id} <- Ecto.UUID.dump(label_id) do
+      current_organization = conn.assigns.current_organization
 
-    case Labels.get_label(current_organization, label_id) do
-      nil ->
-        {:error, :not_found, "Label not found"}
-      %Label{} = label ->
-        device_ids = Labels.fetch_assoc(label, [:devices]) |> Map.get(:devices) |> Enum.map(fn d -> d.id end)
+      case Labels.get_label(current_organization, label_id) do
+        nil ->
+          {:error, :not_found, "Label not found"}
+        %Label{} = label ->
+          device_ids = Labels.fetch_assoc(label, [:devices]) |> Map.get(:devices) |> Enum.map(fn d -> d.id end)
 
-        case length(device_ids) do
-          0 ->
-            conn |> send_resp(:bad_request, "No devices attached to label")
-          _ ->
-            with {_, nil} <- Devices.update_devices_active(device_ids, active, current_organization) do
-              broadcast_router_update_devices(label)
+          case length(device_ids) do
+            0 ->
+              conn |> send_resp(:bad_request, "No devices attached to label")
+            _ ->
+              with {_, nil} <- Devices.update_devices_active(device_ids, active, current_organization) do
+                broadcast_router_update_devices(label)
 
-              conn |> send_resp(:ok, "Updated devices attached to label successfully")
-            end
-        end
+                conn |> send_resp(:ok, "Updated devices in label successfully")
+              end
+          end
+      end
+    else
+      :error ->
+        {:error, :bad_request, "label_id param must be a valid UUID"}
     end
   end
 

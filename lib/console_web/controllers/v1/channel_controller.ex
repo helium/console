@@ -39,15 +39,20 @@ defmodule ConsoleWeb.V1.ChannelController do
   end
 
   def show(conn, %{ "id" => id }) do
-    current_organization = conn.assigns.current_organization
+    with {:ok, _id} <- Ecto.UUID.dump(id) do
+      current_organization = conn.assigns.current_organization
 
-    case Channels.get_channel(current_organization, id) do
-      nil ->
-        {:error, :not_found, "Integration not found"}
-      %Channel{} = channel ->
-        channel = attach_devices_and_labels(current_organization, channel)
+      case Channels.get_channel(current_organization, id) do
+        nil ->
+          {:error, :not_found, "Integration not found"}
+        %Channel{} = channel ->
+          channel = attach_devices_and_labels(current_organization, channel)
 
-        render(conn, "show.json", channel: channel)
+          render(conn, "show.json", channel: channel)
+      end
+    else
+      :error ->
+        {:error, :bad_request, "id param must be a valid UUID"}
     end
   end
 
@@ -336,48 +341,53 @@ defmodule ConsoleWeb.V1.ChannelController do
   end
 
   def delete(conn, %{ "id" => id } = attrs) do
-    current_organization = conn.assigns.current_organization
+    with {:ok, _id} <- Ecto.UUID.dump(id) do
+      current_organization = conn.assigns.current_organization
 
-    case Channels.get_channel(current_organization, id) do
-      nil ->
-        {:error, :not_found, "Integration not found"}
-      %Channel{} = channel ->
-        affected_flows = Flows.get_flows_with_channel_id(current_organization.id, channel.id)
-        all_device_ids = Flows.get_all_flows_associated_device_ids(affected_flows)
+      case Channels.get_channel(current_organization, id) do
+        nil ->
+          {:error, :not_found, "Integration not found"}
+        %Channel{} = channel ->
+          affected_flows = Flows.get_flows_with_channel_id(current_organization.id, channel.id)
+          all_device_ids = Flows.get_all_flows_associated_device_ids(affected_flows)
 
-        # get channel info before deleting
-        deleted_channel = case length(all_device_ids) do
-          0 -> nil
-          _ -> %{ channel_id: channel.id, channel_name: channel.name }
-        end
-
-        with {:ok, _} <- Channels.delete_channel(channel) do
-          if (deleted_channel != nil) do
-            { _, time } = Timex.format(Timex.now, "%H:%M:%S UTC", :strftime)
-            details = %{
-              channel_name: deleted_channel.channel_name,
-              deleted_by: "v1 API",
-              time: time
-            }
-            AlertEvents.delete_unsent_alert_events_for_integration(channel.id)
-            AlertEvents.notify_alert_event(deleted_channel.channel_id, "integration", "integration_with_devices_deleted", details)
-            Alerts.delete_alert_nodes(channel.id, "integration")
-
-            broadcast_router_update_devices(all_device_ids)
+          # get channel info before deleting
+          deleted_channel = case length(all_device_ids) do
+            0 -> nil
+            _ -> %{ channel_id: channel.id, channel_name: channel.name }
           end
 
-          AuditActions.create_audit_action(
-            current_organization.id,
-            "v1_api",
-            "channel_controller_delete",
-            channel.id,
-            attrs
-          )
+          with {:ok, _} <- Channels.delete_channel(channel) do
+            if (deleted_channel != nil) do
+              { _, time } = Timex.format(Timex.now, "%H:%M:%S UTC", :strftime)
+              details = %{
+                channel_name: deleted_channel.channel_name,
+                deleted_by: "v1 API",
+                time: time
+              }
+              AlertEvents.delete_unsent_alert_events_for_integration(channel.id)
+              AlertEvents.notify_alert_event(deleted_channel.channel_id, "integration", "integration_with_devices_deleted", details)
+              Alerts.delete_alert_nodes(channel.id, "integration")
 
-          conn
-          |> put_status(:ok)
-          |> render("show.json", channel: channel)
-        end
+              broadcast_router_update_devices(all_device_ids)
+            end
+
+            AuditActions.create_audit_action(
+              current_organization.id,
+              "v1_api",
+              "channel_controller_delete",
+              channel.id,
+              attrs
+            )
+
+            conn
+            |> put_status(:ok)
+            |> render("show.json", channel: channel)
+          end
+      end
+    else
+      :error ->
+        {:error, :bad_request, "id param must be a valid UUID"}
     end
   end
 

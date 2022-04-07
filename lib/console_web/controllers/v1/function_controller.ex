@@ -19,13 +19,18 @@ defmodule ConsoleWeb.V1.FunctionController do
   end
 
   def show(conn, %{ "id" => id }) do
-    current_organization = conn.assigns.current_organization
+    with {:ok, _id} <- Ecto.UUID.dump(id) do
+      current_organization = conn.assigns.current_organization
 
-    case Functions.get_function(current_organization, id) do
-      nil ->
-        {:error, :not_found, "Function not found"}
-      %Function{} = function ->
-        render(conn, "show.json", function: function)
+      case Functions.get_function(current_organization, id) do
+        nil ->
+          {:error, :not_found, "Function not found"}
+        %Function{} = function ->
+          render(conn, "show.json", function: function)
+      end
+    else
+      :error ->
+        {:error, :bad_request, "id param must be a valid UUID"}
     end
   end
 
@@ -46,43 +51,53 @@ defmodule ConsoleWeb.V1.FunctionController do
   # end
 
   # def update(conn, %{ "id" => id } = attrs) do
-  #   current_organization = conn.assigns.current_organization
-  #
-  #   case Functions.get_function(current_organization, id) do
-  #     nil ->
-  #       {:error, :not_found, "Function not found"}
-  #     %Function{} = function ->
-  #       function_attrs = Map.take(attrs, ["name", "active"])
-  #
-  #       if length(Map.keys(function_attrs)) == 0 do
-  #         {:error, :bad_request, "Only function name or active status can be updated"}
-  #       else
-  #         with {:ok, function} <- Functions.update_function(function, function_attrs) do
-  #           affected_flows = Flows.get_flows_with_function_id(current_organization.id, function.id)
-  #           all_device_ids = Flows.get_all_flows_associated_device_ids(affected_flows)
-  #           broadcast_router_update_devices(all_device_ids)
-  #
-  #           render(conn, "show.json", function: function)
+  #   with {:ok, _id} <- Ecto.UUID.dump(id) do
+  #     current_organization = conn.assigns.current_organization
+    
+  #     case Functions.get_function(current_organization, id) do
+  #       nil ->
+  #         {:error, :not_found, "Function not found"}
+  #       %Function{} = function ->
+  #         function_attrs = Map.take(attrs, ["name", "active"])
+    
+  #         if length(Map.keys(function_attrs)) == 0 do
+  #           {:error, :bad_request, "Only function name or active status can be updated"}
+  #         else
+  #           with {:ok, function} <- Functions.update_function(function, function_attrs) do
+  #             affected_flows = Flows.get_flows_with_function_id(current_organization.id, function.id)
+  #             all_device_ids = Flows.get_all_flows_associated_device_ids(affected_flows)
+  #             broadcast_router_update_devices(all_device_ids)
+    
+  #             render(conn, "show.json", function: function)
+  #           end
   #         end
-  #       end
+  #     end
+  #   else
+  #     :error ->
+  #       {:error, :bad_request, "id param must be a valid UUID"}
   #   end
   # end
   #
   # def delete(conn, %{ "id" => id }) do
-  #   current_organization = conn.assigns.current_organization
-  #
-  #   case Functions.get_function(current_organization, id) do
-  #     nil ->
-  #       {:error, :not_found, "Function not found"}
-  #     %Function{} = function ->
-  #       with {:ok, _} <- Functions.delete_function(function) do
-  #         affected_flows = Flows.get_flows_with_function_id(current_organization.id, function.id)
-  #         all_device_ids = Flows.get_all_flows_associated_device_ids(affected_flows)
-  #         broadcast_router_update_devices(all_device_ids)
-  #
-  #         conn
-  #         |> send_resp(:ok, "Function deleted")
-  #       end
+  #   with {:ok, _id} <- Ecto.UUID.dump(id) do
+  #     current_organization = conn.assigns.current_organization
+    
+  #     case Functions.get_function(current_organization, id) do
+  #       nil ->
+  #         {:error, :not_found, "Function not found"}
+  #       %Function{} = function ->
+  #         with {:ok, _} <- Functions.delete_function(function) do
+  #           affected_flows = Flows.get_flows_with_function_id(current_organization.id, function.id)
+  #           all_device_ids = Flows.get_all_flows_associated_device_ids(affected_flows)
+  #           broadcast_router_update_devices(all_device_ids)
+    
+  #           conn
+  #           |> send_resp(:ok, "Function deleted")
+  #         end
+  #     end
+  #   else
+  #     :error ->
+  #       {:error, :bad_request, "integration_id param must be a valid UUID"}
   #   end
   # end
 

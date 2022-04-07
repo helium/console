@@ -9,11 +9,23 @@ defmodule ConsoleWeb.V1.DownlinkController do
   plug CORSPlug, origin: "*"
 
   def down(conn, %{ "channel_id" => channel_id, "downlink_token" => token, "device_id" => device_id }) do
-    down(conn, channel_id, token, device_id)
+    cond do
+      Ecto.UUID.dump(channel_id) == :error ->
+        {:error, :bad_request, "channel_id param must be a valid UUID"}
+      Ecto.UUID.dump(device_id) == :error ->
+        {:error, :bad_request, "device_id param must be a valid UUID"}
+      true ->
+        down(conn, channel_id, token, device_id)
+    end
   end
 
   def down(conn, %{ "channel_id" => channel_id, "downlink_token" => token }) do
-    down(conn, channel_id, token, nil)
+    with {:ok, _id} <- Ecto.UUID.dump(channel_id) do
+      down(conn, channel_id, token, nil)
+    else
+      :error ->
+        {:error, :bad_request, "channel_id param must be a valid UUID"}
+    end
   end
 
   defp down(conn, channel_id, token, device_id) do

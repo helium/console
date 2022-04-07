@@ -139,6 +139,7 @@ defmodule ConsoleWeb.V1AlertControllerTest do
         "device_join_otaa_first_time" => %{"email" => %{"recipient" => "admin"}}
       } })
       device = insert(:device, %{ organization_id: organization.id, dev_eui: "1111111111111111", app_eui: "1111111111111111", app_key: "11111111111111111111111111111111" })
+      integration = insert(:channel, %{ organization_id: organization.id })
 
       resp_conn =
         build_conn()
@@ -147,6 +148,16 @@ defmodule ConsoleWeb.V1AlertControllerTest do
             "alert_id" => alert_1.id,
             "node_id" => device.id,
             "node_type" => "device"
+          })
+      assert response(resp_conn, 400) # should not be able to add alert of different node type
+
+      resp_conn =
+        build_conn()
+          |> put_req_header("key", key)
+          |> post("/api/v1/alerts/add_to_node", %{
+            "alert_id" => alert_1.id,
+            "node_id" => integration.id,
+            "node_type" => "integration"
           })
       assert response(resp_conn, 200)
 

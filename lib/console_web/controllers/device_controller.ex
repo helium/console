@@ -58,6 +58,8 @@ defmodule ConsoleWeb.DeviceController do
         |> render("show.json", device: device)
       {:error, "Device limit reached"} ->
         {:error, :forbidden, "The device/organization cap has been met. To add devices or organizations for commercial use cases, reach out to sales@nova.xyz."}
+      {:error, %Ecto.Changeset{ valid?: false, errors: _errors }} ->
+        {:error, :unprocessable_entity, "Invalid credentials"}
     end
   end
 

@@ -96,7 +96,7 @@ defmodule ConsoleWeb.V1.DeviceController do
     cond do
       Ecto.UUID.dump(id) == :error ->
         {:error, :bad_request, "id param must be a valid UUID"}
-      Ecto.UUID.dump(profile_id) == :error ->
+      not is_nil(profile_id) and Ecto.UUID.dump(profile_id) == :error ->
         {:error, :bad_request, "config_profile_id param must be a valid UUID"}
       true ->
         current_organization = conn.assigns.current_organization
