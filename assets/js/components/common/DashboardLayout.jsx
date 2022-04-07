@@ -58,7 +58,7 @@ class DashboardLayout extends Component {
               }}
             >
               <NavDrawer user={user} />
-              {process.env.CONSOLE_VERSION && (
+              {!process.env.SELF_HOSTED && process.env.CONSOLE_VERSION && (
                 <Popover
                   content="Click to see release details"
                   placement="right"
@@ -75,6 +75,15 @@ class DashboardLayout extends Component {
                     {process.env.CONSOLE_VERSION}
                   </Button>
                 </Popover>
+              )}
+              {process.env.SELF_HOSTED && (
+                <Button
+                  icon={<ToolOutlined />}
+                  href="https://engineering.helium.com"
+                  target="_blank"
+                >
+                  v2.2.5
+                </Button>
               )}
             </Sider>
           )}
