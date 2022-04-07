@@ -79,10 +79,10 @@ class DashboardLayout extends Component {
               {process.env.SELF_HOSTED && (
                 <Button
                   icon={<ToolOutlined />}
-                  href="https://engineering.helium.com"
+                  href="https://engineering.helium.com/2022/04/07/console-updates-2.2.6.html"
                   target="_blank"
                 >
-                  v2.2.5
+                  v2.2.6
                 </Button>
               )}
             </Sider>
