@@ -78,6 +78,7 @@ class DashboardLayout extends Component {
               )}
               {process.env.SELF_HOSTED && (
                 <Button
+                  className="version-link"
                   icon={<ToolOutlined />}
                   href="https://engineering.helium.com/2022/04/07/console-updates-2.2.6.html"
                   target="_blank"
