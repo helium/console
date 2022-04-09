@@ -10,10 +10,10 @@ export const cfListText1 = `
 `;
 
 export const cfListText2 =
-  "- Enabled, the server will send a CF List with every other join.";
+  "- Enabled, the server will include the CFList with join accept. The channel mask is also transmitted via ADR command.";
 
 export const cfListText3 =
-  "- Disabled, the server will not send a CF List. The channel mask is still transmitted via ADR command.";
+  "- Disabled, the server will not include CFList with join accepts. The channel mask is only transmitted via ADR command.";
 
 export const rxDelayText1 = `
   Specify the number of seconds the device's first receive window begins after the transmit ends.
