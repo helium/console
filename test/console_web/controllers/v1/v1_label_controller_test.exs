@@ -85,11 +85,10 @@ defmodule ConsoleWeb.V1LabelControllerTest do
 
       label = Labels.fetch_assoc(label, [:devices])
       assert label.devices |> length() == 0
-      assert_error_sent 400, fn ->
-        build_conn()
-          |> put_req_header("key", key)
-          |> post("/api/v1/devices/#{device["id"]}/labels", %{ "label" => "id" })
-      end # label_id not valid
+      resp_conn = build_conn()
+        |> put_req_header("key", key)
+        |> post("/api/v1/devices/#{device["id"]}/labels", %{ "label" => "id" })  # label_id not valid
+      assert response(resp_conn, 400)
 
       resp_conn = build_conn()
         |> put_req_header("key", key)
@@ -100,9 +99,9 @@ defmodule ConsoleWeb.V1LabelControllerTest do
       label = Labels.fetch_assoc(label, [:devices])
       assert label.devices |> length() == 1
 
-      assert_error_sent 400, fn ->
-        build_conn() |> put_req_header("key", key) |> delete("/api/v1/devices/a/labels/b")
-      end # delete does not work when ids are wrong
+      resp_conn = build_conn()
+        |> put_req_header("key", key) |> delete("/api/v1/devices/a/labels/b") # delete does not work when ids are wrong
+       assert response(resp_conn, 400)
 
       resp_conn = build_conn() |> put_req_header("key", key) |> delete("/api/v1/devices/#{device["id"]}/labels/#{label.id}")
       assert response(resp_conn, 200) == "Device removed from label successfully"

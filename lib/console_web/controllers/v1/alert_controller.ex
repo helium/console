@@ -23,68 +23,96 @@ defmodule ConsoleWeb.V1.AlertController do
   end
 
   def update(conn, %{"id" => id, "alert" => alert_params}) do
-    current_organization = conn.assigns.current_organization
-    case Alerts.get_alert(current_organization, id) do
-      nil ->
-        {:error, :not_found, "Alert not found"}
-      %Alert{} = alert ->
-        with {:ok, %Alert{}} <- Alerts.update_alert(alert, alert_params) do
-          conn
-          |> send_resp(:ok, "Alert updated")
-        end
+    with {:ok, _id} <- Ecto.UUID.dump(id) do
+      current_organization = conn.assigns.current_organization
+      case Alerts.get_alert(current_organization, id) do
+        nil ->
+          {:error, :not_found, "Alert not found"}
+        %Alert{} = alert ->
+          with {:ok, %Alert{}} <- Alerts.update_alert(alert, alert_params) do
+            conn
+            |> send_resp(:ok, "Alert updated")
+          end
+      end
+    else
+      :error ->
+        {:error, :bad_request, "id param must be a valid UUID"}
     end
   end
 
   def delete(conn, %{ "id" => id }) do
-    current_organization = conn.assigns.current_organization
+    with {:ok, _id} <- Ecto.UUID.dump(id) do
+      current_organization = conn.assigns.current_organization
 
-    case Alerts.get_alert(current_organization, id) do
-      nil ->
-        {:error, :not_found, "Alert not found"}
-      %Alert{} = alert ->
-        with {:ok, _} <- Alerts.delete_alert(alert) do
-          conn
-          |> send_resp(:ok, "Alert deleted")
-        end
+      case Alerts.get_alert(current_organization, id) do
+        nil ->
+          {:error, :not_found, "Alert not found"}
+        %Alert{} = alert ->
+          with {:ok, _} <- Alerts.delete_alert(alert) do
+            conn
+            |> send_resp(:ok, "Alert deleted")
+          end
+      end
+    else
+      :error ->
+        {:error, :bad_request, "id param must be a valid UUID"}
     end
   end
 
   def add_alert_to_node(conn, %{ "alert_id" => alert_id, "node_id" => node_id, "node_type" => node_type }) do
-    current_organization = conn.assigns.current_organization
-    alert_node = Alerts.get_alert_node(alert_id, node_id, node_type)
+    cond do
+      Ecto.UUID.dump(alert_id) == :error ->
+        {:error, :bad_request, "alert_id param must be a valid UUID"}
+      Ecto.UUID.dump(node_id) == :error ->
+        {:error, :bad_request, "node_id param must be a valid UUID"}
+      true ->
+        current_organization = conn.assigns.current_organization
+        alert_node = Alerts.get_alert_node(alert_id, node_id, node_type)
 
-    if alert_node == nil do
-      case Alerts.get_alert(current_organization, alert_id) do
-        nil ->
-          {:error, :not_found, "Alert not found"}
-        %Alert{} = alert ->
-          with {:ok, %AlertNode{}} <- Alerts.add_alert_node(current_organization, alert, node_id, node_type) do
-            conn
-            |> send_resp(:ok, "Alert was successfully added to the #{node_type} node")
+        if alert_node == nil do
+          case Alerts.get_alert(current_organization, alert_id) do
+            nil ->
+              {:error, :not_found, "Alert not found"}
+            %Alert{} = alert ->
+              if alert.node_type == node_type do # TODO address when it is label or device vs. device/label
+                with {:ok, %AlertNode{}} <- Alerts.add_alert_node(current_organization, alert, node_id, node_type) do
+                  conn
+                  |> send_resp(:ok, "Alert was successfully added to the #{node_type} node")
+                end
+              else
+                {:error, :bad_request, "Alert type does not match node_type"}
+              end
+          end
+        else
+          {:error, :bad_request, "Alert already added to provided node"}
         end
-      end
-    else
-      {:error, :bad_request, "Alert already added to provided node"}
     end
   end
 
   def remove_alert_from_node(conn, %{ "alert_id" => alert_id, "node_id" => node_id, "node_type" => node_type }) do
-    current_organization = conn.assigns.current_organization
-    alert = Alerts.get_alert(current_organization, alert_id)
-    alert_node = Alerts.get_alert_node(alert_id, node_id, node_type)
+    cond do
+      Ecto.UUID.dump(alert_id) == :error ->
+        {:error, :bad_request, "alert_id param must be a valid UUID"}
+      Ecto.UUID.dump(node_id) == :error ->
+        {:error, :bad_request, "node_id param must be a valid UUID"}
+      true ->
+        current_organization = conn.assigns.current_organization
+        alert = Alerts.get_alert(current_organization, alert_id)
+        alert_node = Alerts.get_alert_node(alert_id, node_id, node_type)
 
-    if alert != nil and alert_node != nil do
-      with {:ok, %AlertNode{} = _deleted_alert_node} <- Alerts.remove_alert_node(current_organization, alert_node) do
-        conn
-          |> send_resp(:ok, "Alert was successfully removed from the #{node_type} node")
-      end
-    else
-      msg =
-        case alert do
-          nil -> "Alert not found"
-          _ -> "Alert not attached to node"
+        if alert != nil and alert_node != nil do
+          with {:ok, %AlertNode{} = _deleted_alert_node} <- Alerts.remove_alert_node(current_organization, alert_node) do
+            conn
+              |> send_resp(:ok, "Alert was successfully removed from the #{node_type} node")
+          end
+        else
+          msg =
+            case alert do
+              nil -> "Alert not found"
+              _ -> "Alert not attached to node"
+            end
+          {:error, :not_found, msg}
         end
-      {:error, :not_found, msg}
-    end
+      end
   end
 end

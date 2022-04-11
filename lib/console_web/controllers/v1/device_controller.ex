@@ -9,7 +9,6 @@ defmodule ConsoleWeb.V1.DeviceController do
   alias Console.Devices.Device
   alias Console.ConfigProfiles
   alias Console.Events
-  alias Console.Repo
   alias Console.AlertEvents
   alias Console.Alerts
   alias Console.AuditActions
@@ -76,100 +75,122 @@ defmodule ConsoleWeb.V1.DeviceController do
   end
 
   def show(conn, %{ "id" => id }) do
-    current_organization = conn.assigns.current_organization
+    with {:ok, _id} <- Ecto.UUID.dump(id) do
+      current_organization = conn.assigns.current_organization
 
-    case Devices.get_device(current_organization, id)
-      |> Repo.preload([[labels: :config_profile], :config_profile])
-    do
-      nil ->
-        {:error, :not_found, "Device not found"}
-      %Device{} = device ->
-        render(conn, "show.json", device: put_config_settings_on_device(device))
+      case Devices.get_device(current_organization, id)
+        |> Repo.preload([[labels: :config_profile], :config_profile])
+      do
+        nil ->
+          {:error, :not_found, "Device not found"}
+        %Device{} = device ->
+          render(conn, "show.json", device: put_config_settings_on_device(device))
+      end
+    else
+      :error ->
+        {:error, :bad_request, "id param must be a valid UUID"}
     end
   end
 
   def update(conn, %{ "id" => id, "config_profile_id" => profile_id }) do
-    current_organization = conn.assigns.current_organization
+    cond do
+      Ecto.UUID.dump(id) == :error ->
+        {:error, :bad_request, "id param must be a valid UUID"}
+      not is_nil(profile_id) and Ecto.UUID.dump(profile_id) == :error ->
+        {:error, :bad_request, "config_profile_id param must be a valid UUID"}
+      true ->
+        current_organization = conn.assigns.current_organization
 
-    case Devices.get_device(current_organization, id) do
-      nil ->
-        {:error, :not_found, "Device not found"}
-      %Device{} = device ->
-        if profile_id == nil do
-          with {:ok, device} <- Devices.update_device(device, %{ config_profile_id: nil }) do
-            device = device |> Repo.preload([[labels: :config_profile], :config_profile])
-            broadcast_router_update_devices(device)
-
-            render(conn, "show.json", device: put_config_settings_on_device(device))
-          end
-        else
-          config_profile = ConfigProfiles.get_config_profile(current_organization, profile_id)
-          case config_profile do
-            nil ->
-              {:error, :not_found, "Config Profile not found"}
-            _ ->
-              with {:ok, device} <- Devices.update_device(device, %{ config_profile_id: config_profile.id }) do
+        case Devices.get_device(current_organization, id) do
+          nil ->
+            {:error, :not_found, "Device not found"}
+          %Device{} = device ->
+            if profile_id == nil do
+              with {:ok, device} <- Devices.update_device(device, %{ config_profile_id: nil }) do
                 device = device |> Repo.preload([[labels: :config_profile], :config_profile])
                 broadcast_router_update_devices(device)
 
                 render(conn, "show.json", device: put_config_settings_on_device(device))
               end
-          end
+            else
+              config_profile = ConfigProfiles.get_config_profile(current_organization, profile_id)
+              case config_profile do
+                nil ->
+                  {:error, :not_found, "Config Profile not found"}
+                _ ->
+                  with {:ok, device} <- Devices.update_device(device, %{ config_profile_id: config_profile.id }) do
+                    device = device |> Repo.preload([[labels: :config_profile], :config_profile])
+                    broadcast_router_update_devices(device)
+
+                    render(conn, "show.json", device: put_config_settings_on_device(device))
+                  end
+              end
+            end
         end
     end
   end
 
   def update(conn, %{ "id" => id, "active" => active }) do
-    current_organization = conn.assigns.current_organization
+    with {:ok, _id} <- Ecto.UUID.dump(id) do
+      current_organization = conn.assigns.current_organization
 
-    case Devices.get_device(current_organization, id) do
-      nil ->
-        {:error, :not_found, "Device not found"}
-      %Device{} = device ->
-        with {:ok, device} <- Devices.update_device(device, %{ active: active }) do
-          device = device |> Repo.preload([[labels: :config_profile], :config_profile])
-          broadcast_router_update_devices(device)
+      case Devices.get_device(current_organization, id) do
+        nil ->
+          {:error, :not_found, "Device not found"}
+        %Device{} = device ->
+          with {:ok, device} <- Devices.update_device(device, %{ active: active }) do
+            device = device |> Repo.preload([[labels: :config_profile], :config_profile])
+            broadcast_router_update_devices(device)
 
-          render(conn, "show.json", device: put_config_settings_on_device(device))
-        end
+            render(conn, "show.json", device: put_config_settings_on_device(device))
+          end
+      end
+    else
+      :error ->
+        {:error, :bad_request, "id param must be a valid UUID"}
     end
   end
 
   def delete(conn, %{ "id" => id } = attrs) do
-    current_organization = conn.assigns.current_organization
+    with {:ok, _id} <- Ecto.UUID.dump(id) do
+      current_organization = conn.assigns.current_organization
 
-    case Devices.get_device(current_organization, id) |> Repo.preload([:labels]) do
-      nil ->
-        {:error, :not_found, "Device not found"}
-      %Device{} = device ->
-        # grab info for notifications before device(s) deletion
-        deleted_device = %{ device_id: id, labels: Enum.map(device.labels, fn l -> l.id end), device_name: device.name }
+      case Devices.get_device(current_organization, id) |> Repo.preload([:labels]) do
+        nil ->
+          {:error, :not_found, "Device not found"}
+        %Device{} = device ->
+          # grab info for notifications before device(s) deletion
+          deleted_device = %{ device_id: id, labels: Enum.map(device.labels, fn l -> l.id end), device_name: device.name }
 
-        with {:ok, _} <- Devices.delete_device(device) do
-          broadcast_router_update_devices(device)
+          with {:ok, _} <- Devices.delete_device(device) do
+            broadcast_router_update_devices(device)
 
-          { _, time } = Timex.format(Timex.now, "%H:%M:%S UTC", :strftime)
-          details = %{
-            device_name: deleted_device.device_name,
-            deleted_by: "v1 API",
-            time: time
-          }
+            { _, time } = Timex.format(Timex.now, "%H:%M:%S UTC", :strftime)
+            details = %{
+              device_name: deleted_device.device_name,
+              deleted_by: "v1 API",
+              time: time
+            }
 
-          AlertEvents.delete_unsent_alert_events_for_device(deleted_device.device_id)
-          AlertEvents.notify_alert_event(deleted_device.device_id, "device", "device_deleted", details, deleted_device.labels)
-          Alerts.delete_alert_nodes(deleted_device.device_id, "device")
+            AlertEvents.delete_unsent_alert_events_for_device(deleted_device.device_id)
+            AlertEvents.notify_alert_event(deleted_device.device_id, "device", "device_deleted", details, deleted_device.labels)
+            Alerts.delete_alert_nodes(deleted_device.device_id, "device")
 
-          AuditActions.create_audit_action(
-            current_organization.id,
-            "v1_api",
-            "device_controller_delete",
-            deleted_device.device_id,
-            attrs
-          )
+            AuditActions.create_audit_action(
+              current_organization.id,
+              "v1_api",
+              "device_controller_delete",
+              deleted_device.device_id,
+              attrs
+            )
 
-          conn
-          |> send_resp(:ok, "Device deleted")
-        end
+            conn
+            |> send_resp(:ok, "Device deleted")
+          end
+      end
+    else
+      :error ->
+        {:error, :bad_request, "id param must be a valid UUID"}
     end
   end
 
@@ -329,20 +350,25 @@ defmodule ConsoleWeb.V1.DeviceController do
   end
 
   def get_events(conn, params = %{ "device_id" => device_id }) do
-    current_organization = conn.assigns.current_organization
+    with {:ok, _id} <- Ecto.UUID.dump(device_id) do
+      current_organization = conn.assigns.current_organization
 
-    case Devices.get_device(current_organization, device_id) do
-      nil ->
-        {:error, :not_found, "Device not found"}
-      %Device{} = device ->
-        events =
-          case params["sub_category"] do
-            nil -> Events.get_device_last_events(device.id, 100)
-            sub_category -> Events.get_device_last_events(device.id, 10, sub_category)
-          end
-        device = Map.put(device, :events, events)
+      case Devices.get_device(current_organization, device_id) do
+        nil ->
+          {:error, :not_found, "Device not found"}
+        %Device{} = device ->
+          events =
+            case params["sub_category"] do
+              nil -> Events.get_device_last_events(device.id, 100)
+              sub_category -> Events.get_device_last_events(device.id, 10, sub_category)
+            end
+          device = Map.put(device, :events, events)
 
-        render(conn, "show_events.json", device: device)
+          render(conn, "show_events.json", device: device)
+      end
+    else
+      :error ->
+        {:error, :bad_request, "device_id param must be a valid UUID"}
     end
   end
 
