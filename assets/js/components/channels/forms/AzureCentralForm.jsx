@@ -39,7 +39,7 @@ class AzureCentralForm extends Component {
     return (
       <div>
         <div style={{ marginTop: "20px" }}>
-          <Text style={{ display: "block" }}>API Key</Text>
+          <Text style={{ display: "block" }}>API Token</Text>
           <Input
             placeholder=""
             name="apiKey"
