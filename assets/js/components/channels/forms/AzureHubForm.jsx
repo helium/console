@@ -58,7 +58,8 @@ class AzureHubForm extends Component {
       } else {
         const credentials = {};
         e.target.value.split(";").forEach((x) => {
-          const [key, value] = x.split("=");
+          const [key, value] = x.split(/=(.*)/s);
+
           if (
             ["HostName", "SharedAccessKeyName", "SharedAccessKey"].indexOf(
               key
