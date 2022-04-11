@@ -12,10 +12,6 @@ defmodule ConsoleWeb.DataCreditController do
   action_fallback(ConsoleWeb.FallbackController)
 
   @stripe_api_url "https://api.stripe.com"
-  @headers [
-    {"Authorization", "Bearer #{Application.get_env(:console, :stripe_secret_key)}"},
-    {"Content-Type", "application/x-www-form-urlencoded"}
-  ]
 
   def create_customer_id_and_charge(conn, %{ "amountUSD" => amountUSD }) do
     { amount, _ } = Float.parse(amountUSD)
@@ -28,8 +24,12 @@ defmodule ConsoleWeb.DataCreditController do
         "name" => current_organization.name,
         "description" => current_organization.id,
       })
+      headers = [
+        {"Authorization", "Bearer #{Application.get_env(:console, :stripe_secret_key)}"},
+        {"Content-Type", "application/x-www-form-urlencoded"}
+      ]
       # create a customer id in stripe
-      with {:ok, stripe_response} <- HTTPoison.post("#{@stripe_api_url}/v1/customers", request_body, @headers) do
+      with {:ok, stripe_response} <- HTTPoison.post("#{@stripe_api_url}/v1/customers", request_body, headers) do
          with 200 <- stripe_response.status_code do
            customer = Poison.decode!(stripe_response.body)
            with {:ok, %Organization{} = organization} <- Organizations.update_organization(current_organization, %{ "stripe_customer_id" => customer["id"]}) do
@@ -41,7 +41,7 @@ defmodule ConsoleWeb.DataCreditController do
                "receipt_email" => conn.assigns.current_user.email
              })
 
-             with {:ok, stripe_response} <- HTTPoison.post("#{@stripe_api_url}/v1/payment_intents", request_body, @headers) do
+             with {:ok, stripe_response} <- HTTPoison.post("#{@stripe_api_url}/v1/payment_intents", request_body, headers) do
                with 200 <- stripe_response.status_code do
                  payment_intent = Poison.decode!(stripe_response.body)
                  conn |> send_resp(:ok, Poison.encode!(%{ payment_intent_secret: payment_intent["client_secret"] }))
@@ -66,8 +66,12 @@ defmodule ConsoleWeb.DataCreditController do
         "currency" => "usd",
         "receipt_email" => conn.assigns.current_user.email
       })
+      headers = [
+        {"Authorization", "Bearer #{Application.get_env(:console, :stripe_secret_key)}"},
+        {"Content-Type", "application/x-www-form-urlencoded"}
+      ]
 
-      with {:ok, stripe_response} <- HTTPoison.post("#{@stripe_api_url}/v1/payment_intents", request_body, @headers) do
+      with {:ok, stripe_response} <- HTTPoison.post("#{@stripe_api_url}/v1/payment_intents", request_body, headers) do
         with 200 <- stripe_response.status_code do
           payment_intent = Poison.decode!(stripe_response.body)
           conn |> send_resp(:ok, Poison.encode!(%{ payment_intent_secret: payment_intent["client_secret"] }))
@@ -78,8 +82,12 @@ defmodule ConsoleWeb.DataCreditController do
 
   def get_payment_methods(conn, _) do
     current_organization = conn.assigns.current_organization
+    headers = [
+      {"Authorization", "Bearer #{Application.get_env(:console, :stripe_secret_key)}"},
+      {"Content-Type", "application/x-www-form-urlencoded"}
+    ]
 
-    with {:ok, stripe_response} <- HTTPoison.get("#{@stripe_api_url}/v1/payment_methods?customer=#{current_organization.stripe_customer_id}&type=card", @headers) do
+    with {:ok, stripe_response} <- HTTPoison.get("#{@stripe_api_url}/v1/payment_methods?customer=#{current_organization.stripe_customer_id}&type=card", headers) do
       with 200 <- stripe_response.status_code do
         conn |> send_resp(:ok, stripe_response.body)
       end
@@ -92,8 +100,12 @@ defmodule ConsoleWeb.DataCreditController do
     request_body = URI.encode_query(%{
       "customer" => current_organization.stripe_customer_id,
     })
+    headers = [
+      {"Authorization", "Bearer #{Application.get_env(:console, :stripe_secret_key)}"},
+      {"Content-Type", "application/x-www-form-urlencoded"}
+    ]
 
-    with {:ok, stripe_response} <- HTTPoison.post("#{@stripe_api_url}/v1/setup_intents", request_body, @headers) do
+    with {:ok, stripe_response} <- HTTPoison.post("#{@stripe_api_url}/v1/setup_intents", request_body, headers) do
       with 200 <- stripe_response.status_code do
         setup_intent = Poison.decode!(stripe_response.body)
         # Send email about payment method added
@@ -128,8 +140,12 @@ defmodule ConsoleWeb.DataCreditController do
     current_organization = conn.assigns.current_organization
 
     request_body = URI.encode_query(%{})
+    headers = [
+      {"Authorization", "Bearer #{Application.get_env(:console, :stripe_secret_key)}"},
+      {"Content-Type", "application/x-www-form-urlencoded"}
+    ]
 
-    with {:ok, stripe_response} <- HTTPoison.post("#{@stripe_api_url}/v1/payment_methods/#{paymentId}/detach", request_body, @headers) do
+    with {:ok, stripe_response} <- HTTPoison.post("#{@stripe_api_url}/v1/payment_methods/#{paymentId}/detach", request_body, headers) do
       with 200 <- stripe_response.status_code do
         msg =
           if current_organization.automatic_payment_method == paymentId do
@@ -176,9 +192,13 @@ defmodule ConsoleWeb.DataCreditController do
       "organization_id" => current_organization.id,
       "payment_id" => payment_id,
     }
+    headers = [
+      {"Authorization", "Bearer #{Application.get_env(:console, :stripe_secret_key)}"},
+      {"Content-Type", "application/x-www-form-urlencoded"}
+    ]
 
     with nil <- DcPurchases.get_by_payment_id(payment_id),
-      {:ok, stripe_response} <- HTTPoison.get("#{@stripe_api_url}/v1/payment_intents/#{payment_id}", @headers),
+      {:ok, stripe_response} <- HTTPoison.get("#{@stripe_api_url}/v1/payment_intents/#{payment_id}", headers),
       200 <- stripe_response.status_code do
         payment_intent = Poison.decode!(stripe_response.body)
 

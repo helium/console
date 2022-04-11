@@ -83,9 +83,15 @@ config :console,
 
 config :console,
   socket_check_origin: System.get_env("SOCKET_CHECK_ORIGIN") || "//localhost"
-  
+
 config :console,
   max_devices_in_org: String.to_integer(System.get_env("MAX_DEVICES_IN_ORG") || "10000")
+
+config :console,
+  stripe_public_key: System.get_env("STRIPE_PUBLIC_KEY")
+
+config :console,
+  stripe_secret_key: System.get_env("STRIPE_SECRET_KEY")
 
 config :console, Console.Mailer,
   adapter: Bamboo.MailgunAdapter,
