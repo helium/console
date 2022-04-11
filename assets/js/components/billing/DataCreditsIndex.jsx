@@ -133,7 +133,7 @@ class DataCreditsIndex extends Component {
     this.setState({ [modal]: false });
   };
 
-  renderBlankState = () => {
+  renderBlankSlate = () => {
     const { organization } = this.props.orgShowDCQuery;
     return (
       <IndexBlankSlate
@@ -435,7 +435,7 @@ class DataCreditsIndex extends Component {
                     {error && <ErrorMessage />}
                     {organization &&
                       organization.dc_balance_nonce === 0 &&
-                      this.renderBlankState()}
+                      this.renderBlankSlate()}
                     {organization &&
                       organization.dc_balance_nonce !== 0 &&
                       this.renderContent(context)}

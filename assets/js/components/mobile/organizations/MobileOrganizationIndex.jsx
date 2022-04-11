@@ -68,7 +68,7 @@ const MobileOrganizationIndex = ({ user }) => {
               key={org.id}
               mainTitle={org.name}
               subtext={`${
-                org.dc_balance ? numeral(org.dc_balance).format("0,0") : 0
+                numeral(org.dc_balance).format("0,0")
               } DC`}
               rightAction={
                 currentOrganizationId === org.id ? (

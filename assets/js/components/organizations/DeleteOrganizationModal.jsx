@@ -49,7 +49,7 @@ class DeleteOrganizationModal extends Component {
     const currentOrg = find(this.props.allOrganizationsQuery.allOrganizations, { id: selectedOrgId })
 
     analyticsLogger.logEvent("ACTION_DELETE_ORG", {"id": selectedOrgId, "name": currentOrg.name })
-    if (!currentOrg.dc_balance || currentOrg.dc_balance < 1) {
+    if (currentOrg.dc_balance < 1) {
       this.props.deleteOrganization(selectedOrgId)
     } else {
       this.props.deleteOrganization(selectedOrgId, this.state.destinationOrgId)
@@ -84,7 +84,7 @@ class DeleteOrganizationModal extends Component {
               onClick={this.handleSubmit}
               type="danger"
               ghost
-              disabled={(currentOrg && currentOrg.dc_balance && !this.state.destinationOrgId) || (currentOrg && this.state.confirmText !== DELETE_ORG_TEXT)}
+              disabled={(currentOrg && currentOrg.dc_balance > 0 && !this.state.destinationOrgId) || (currentOrg && this.state.confirmText !== DELETE_ORG_TEXT)}
             >
               Delete Organization
             </Button>,
@@ -96,7 +96,7 @@ class DeleteOrganizationModal extends Component {
         </div>
 
         {
-          currentOrg && currentOrg.dc_balance && (
+          currentOrg && currentOrg.dc_balance > 0 && (
             <div>
               <div style={{ marginTop: 20 }}>
                 <Text style={{ fontWeight: 500, color: 'black' }}>
