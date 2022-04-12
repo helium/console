@@ -474,7 +474,7 @@ const renderPageLinks = (pathname) => {
           <Text style={styles.header2}>Packets</Text>
           <a
             style={styles.link}
-            href="https://docs.helium.com/use-the-network/console/adr#configuring-multiple-packets"
+            href="https://docs.helium.com/use-the-network/console/packets"
             target="_blank"
           >
             Configuring Multiple Packets

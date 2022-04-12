@@ -127,7 +127,7 @@ export default ({
             <p>
               <a
                 className="help-link"
-                href="https://docs.helium.com/use-the-network/console/multi-packets" // TODO update links (ask Dal)
+                href="https://docs.helium.com/use-the-network/console/packets"
                 target="_blank"
               >
                 Learn more about Packet Configurations
