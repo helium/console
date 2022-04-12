@@ -119,8 +119,10 @@ export default ({
           </h1>
           <div>
             <p style={{ fontSize: "16px" }}>
-              Content around packets: multiple packets and using preferred
-              hotspots (TODO fix this text)
+              Use to choose which Hotspots to receive packets from or how many
+              packets to purchase from Hotspots (if available). A Packet
+              Configuration requires either a Preferred Hotspot or a Multiple
+              Packet setting.
             </p>
             <p>
               <a
@@ -182,9 +184,8 @@ export default ({
                         fontWeight: 400,
                       }}
                     >
-                      Preferred Hotspot information about using this setting,
-                      best effort, packets will ONLY be sent from Preferred
-                      Hotspots.
+                      If this setting is chosen, packets will ONLY be purchased
+                      from the selected Preferred Hotspots.
                     </Text>
                     {!orgHasPreferredHotspots && (
                       <Alert
