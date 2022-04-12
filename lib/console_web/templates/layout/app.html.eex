@@ -29,6 +29,7 @@
       window.magic_public_key = "<%= Application.get_env(:console, :magic_public_key) %>"
       window.user_invite_only = "<%= Application.get_env(:console, :user_invite_only) %>"
       window.stripe_public_key = "<%= Application.get_env(:console, :stripe_public_key) %>"
+      window.stripe_minimum_purchase = "<%= Application.get_env(:console, :stripe_minimum_purchase) %>"
     </script>
     <div class="mainContainer">
       <main role="main">

@@ -361,7 +361,7 @@ class PurchaseCreditModal extends Component {
       >
         <Text>{`1 DC = 24 Byte Packet = $${0.00001} USD`}</Text>
         {!process.env.SELF_HOSTED || window.stripe_public_key && (
-          <Text>(Credit Card purchases: minimum $10)</Text>
+          <Text>(Credit Card purchases: minimum ${window.stripe_minimum_purchase || 10})</Text>
         )}
         <br />
         <Text
@@ -554,6 +554,7 @@ class PurchaseCreditModal extends Component {
         </Button>,
       ];
 
+    const stripe_min_purchase = window.stripe_minimum_purchase ? parseInt(window.stripe_minimum_purchase) : 10
     const allButtons = [
       <Button
         key="back"
@@ -585,7 +586,7 @@ class PurchaseCreditModal extends Component {
           this.state.countUSD == 0 ||
           this.state.loading ||
           this.state.gettingPrice ||
-          this.state.countUSD < 10
+          this.state.countUSD < stripe_min_purchase
         }
         style={{ marginTop: this.props.mobile ? 6 : 0 }}
       >
