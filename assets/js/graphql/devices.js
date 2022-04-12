@@ -88,8 +88,8 @@ export const PAGINATED_DEVICES = gql`
   query PaginatedDevicesQuery(
     $page: Int
     $pageSize: Int
-    $column: String
-    $order: String
+    $column: String!
+    $order: String!
   ) {
     devices(page: $page, pageSize: $pageSize, column: $column, order: $order) {
       entries {
@@ -115,8 +115,8 @@ export const PAGINATED_DEVICES_BY_LABEL = gql`
     $page: Int
     $pageSize: Int
     $labelId: ID!
-    $column: String
-    $order: String
+    $column: String!
+    $order: String!
   ) {
     devices_by_label(
       page: $page
