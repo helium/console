@@ -151,9 +151,10 @@ class PurchaseCreditModal extends Component {
     if (e.target.value.length > 11) return;
     // Refactor out conversion rates between USD, DC, Bytes later
     if (e.target.name == "countDC") {
+      const costMultiplier = window.dc_cost_multiplier || 1
       this.setState({
         countDC: e.target.value,
-        countUSD: e.target.value / 100000,
+        countUSD: e.target.value / 100000 * costMultiplier,
         countB: e.target.value * 24,
         gettingPrice: true,
       });
@@ -181,11 +182,12 @@ class PurchaseCreditModal extends Component {
       ? defaultPayment.id
       : undefined;
 
+    const costMultiplier = window.dc_cost_multiplier || 1
     await this.setState({
       loading: true,
       countUSD: parseFloat(this.state.countUSD.toFixed(2)),
-      countDC: parseInt(this.state.countUSD.toFixed(2) * 100000),
-      countB: parseInt(this.state.countUSD.toFixed(2) * 100000),
+      countDC: parseInt(this.state.countUSD.toFixed(2) * 100000 / costMultiplier),
+      countB: parseInt(this.state.countUSD.toFixed(2) * 100000 * 24 / costMultiplier),
     });
 
     if (organization.stripe_customer_id === null) {
@@ -349,6 +351,7 @@ class PurchaseCreditModal extends Component {
 
   renderCountSelection = () => {
     const { countUSD, countB } = this.state;
+    const costMultiplier = window.dc_cost_multiplier || 1
     return (
       <div
         style={{
@@ -359,7 +362,7 @@ class PurchaseCreditModal extends Component {
           alignItems: "center",
         }}
       >
-        <Text>{`1 DC = 24 Byte Packet = $${0.00001} USD`}</Text>
+        <Text>{`1 DC = 24 Byte Packet = $${0.00001 * costMultiplier} USD`}</Text>
         {!process.env.SELF_HOSTED || window.stripe_public_key && (
           <Text>(Credit Card purchases: minimum ${window.stripe_minimum_purchase || 10})</Text>
         )}

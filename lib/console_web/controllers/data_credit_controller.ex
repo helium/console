@@ -184,7 +184,7 @@ defmodule ConsoleWeb.DataCreditController do
     current_user = conn.assigns.current_user
     # Refactor out conversion rates between USD, DC, Bytes later
     attrs = %{
-      "dc_purchased" => cost * 1000,
+      "dc_purchased" => round(cost / Application.get_env(:console, :dc_cost_multiplier) * 1000),
       "cost" => cost,
       "card_type" => card_type,
       "last_4" => last_4,
