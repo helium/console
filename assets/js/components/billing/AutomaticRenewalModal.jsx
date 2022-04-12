@@ -39,12 +39,14 @@ class AutomaticRenewalModal extends Component {
 
     if (!prevProps.open && this.props.open) {
       analyticsLogger.logEvent("ACTION_OPEN_AUTO_RENEW_MODAL")
+
+      const costMultiplier = window.dc_cost_multiplier || 1
       this.setState({
         chargeOption: '$5',
         paymentMethod: this.props.organization.automatic_payment_method || null,
         countUSD: this.props.organization.automatic_charge_amount && this.props.organization.automatic_charge_amount / 100,
-        countDC: this.props.organization.automatic_charge_amount && this.props.organization.automatic_charge_amount * 1000,
-        countB: this.props.organization.automatic_charge_amount && this.props.organization.automatic_charge_amount * 24000
+        countDC: this.props.organization.automatic_charge_amount && this.props.organization.automatic_charge_amount * 1000 / costMultiplier,
+        countB: this.props.organization.automatic_charge_amount && this.props.organization.automatic_charge_amount * 24000 / costMultiplier
       })
     }
   }
@@ -55,10 +57,11 @@ class AutomaticRenewalModal extends Component {
     if (e.target.value.split('.')[1] && e.target.value.split('.')[1].length > 2) return
     // Refactor out conversion rates between USD, DC, Bytes later
     if (e.target.name == 'countUSD') {
+      const costMultiplier = window.dc_cost_multiplier || 1
       this.setState({
-        countDC: numeral(e.target.value * 100000).format('0,0'),
+        countDC: numeral(e.target.value * 100000 / costMultiplier).format('0,0'),
         countUSD: e.target.value,
-        countB: e.target.value * 100000 * 24
+        countB: e.target.value * 100000 * 24 / costMultiplier
       })
     }
     if (e.target.value == '') {

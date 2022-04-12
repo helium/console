@@ -225,7 +225,7 @@ class DataCreditsIndex extends Component {
               </div>
             </Card>
           </Col>
-          {!process.env.SELF_HOSTED && (
+          {!process.env.SELF_HOSTED || window.stripe_public_key && (
             <Col span={8}>
               <UserCan noManager>
                 <Card
@@ -390,29 +390,29 @@ class DataCreditsIndex extends Component {
                               style={{
                                 borderRadius: 4,
                                 marginRight: 20,
-                                display: !process.env.SELF_HOSTED ? "inline" : "none",
+                                display: !process.env.SELF_HOSTED || window.stripe_public_key ? "inline" : "none",
                               }}
                             >
                               Automatic Renewals{" "}
                               {organization.automatic_charge_amount ? "On" : "Off"}
                             </Button>
-                            <Button
-                              type="primary"
-                              icon={<WalletOutlined />}
-                              onClick={() =>
-                                this.openModal("showPurchaseCreditModal")
-                              }
-                              style={{
-                                borderRadius: 4,
-                                marginRight: 20,
-                                display:
-                                  window.disable_user_burn !== "true"
-                                    ? "inline"
-                                    : "none",
-                              }}
-                            >
-                              Purchase Data Credits
-                            </Button>
+                            {
+                              (!process.env.SELF_HOSTED || window.stripe_public_key || !window.disable_user_burn) && (
+                                <Button
+                                  type="primary"
+                                  icon={<WalletOutlined />}
+                                  onClick={() =>
+                                    this.openModal("showPurchaseCreditModal")
+                                  }
+                                  style={{
+                                    borderRadius: 4,
+                                    marginRight: 20,
+                                  }}
+                                >
+                                  Purchase Data Credits
+                                </Button>
+                              )
+                            }
                             {
                               organization.survey_token_sent_at && !organization.survey_token_used && (
                                 <Button

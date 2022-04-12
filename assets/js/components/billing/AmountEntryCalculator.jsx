@@ -22,7 +22,7 @@ const styles = {
 
 const AmountEntryCalculator = ({ countDC, countB, countUSD, handleCountInputUpdate, disabled, mobile }) => (
   <div>
-    <Text strong>Enter the quantity to purchase (minimum $10)</Text>
+    <Text strong>Enter the quantity to purchase (minimum ${window.stripe_minimum_purchase || 10})</Text>
     <div style={{ ...styles.container, marginTop: 12 }}>
       <Row gutter={24} style={{ marginBottom: 12 }}>
         <Col span={14}>

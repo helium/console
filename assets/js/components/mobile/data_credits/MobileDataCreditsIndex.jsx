@@ -65,19 +65,21 @@ const MobileDataCreditsIndex = ({
         >
           <UserCan noManager>
             <div style={{ display: "flex", flexDirection: "row" }}>
-              <Button
-                type="primary"
-                size="large"
-                onClick={() => setShowPurchaseCreditModal(true)}
-                style={{
-                  borderRadius: 4,
-                  marginRight: 8,
-                  display:
-                    window.disable_user_burn !== "true" ? "inline" : "none",
-                }}
-              >
-                Purchase DC
-              </Button>
+              {
+                (!process.env.SELF_HOSTED || window.stripe_public_key || !window.disable_user_burn) && (
+                  <Button
+                    type="primary"
+                    size="large"
+                    onClick={() => setShowPurchaseCreditModal(true)}
+                    style={{
+                      borderRadius: 4,
+                      marginRight: 8,
+                    }}
+                  >
+                    Purchase DC
+                  </Button>
+                )
+              }
               {
                 organization.survey_token_sent_at && !organization.survey_token_used && (
                   <Button
@@ -99,7 +101,7 @@ const MobileDataCreditsIndex = ({
                 style={{
                   borderRadius: 4,
                   marginRight: 8,
-                  display: !process.env.SELF_HOSTED ? "inline" : "none",
+                  display: !process.env.SELF_HOSTED || window.stripe_public_key ? "inline" : "none",
                 }}
               >
                 Automatic Renewals{" "}
@@ -212,7 +214,7 @@ const MobileDataCreditsIndex = ({
           </Collapse>
         </div>
 
-        {!process.env.SELF_HOSTED && (
+        {!process.env.SELF_HOSTED || window.stripe_public_key && (
           <UserCan noManager>
             <div style={{ margin: 15 }}>
               <Collapse expandIconPosition="right" defaultActiveKey="1">

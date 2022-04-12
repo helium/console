@@ -91,7 +91,7 @@ class PurchaseCreditModal extends Component {
   };
 
   componentDidMount() {
-    if (!process.env.SELF_HOSTED) {
+    if (!process.env.SELF_HOSTED || window.stripe_public_key) {
       const elements = stripe.elements();
 
       const style = {
@@ -151,9 +151,10 @@ class PurchaseCreditModal extends Component {
     if (e.target.value.length > 11) return;
     // Refactor out conversion rates between USD, DC, Bytes later
     if (e.target.name == "countDC") {
+      const costMultiplier = window.dc_cost_multiplier || 1
       this.setState({
         countDC: e.target.value,
-        countUSD: e.target.value / 100000,
+        countUSD: e.target.value / 100000 * costMultiplier,
         countB: e.target.value * 24,
         gettingPrice: true,
       });
@@ -181,11 +182,12 @@ class PurchaseCreditModal extends Component {
       ? defaultPayment.id
       : undefined;
 
+    const costMultiplier = window.dc_cost_multiplier || 1
     await this.setState({
       loading: true,
       countUSD: parseFloat(this.state.countUSD.toFixed(2)),
-      countDC: parseInt(this.state.countUSD.toFixed(2) * 100000),
-      countB: parseInt(this.state.countUSD.toFixed(2) * 100000),
+      countDC: parseInt(this.state.countUSD.toFixed(2) * 100000 / costMultiplier),
+      countB: parseInt(this.state.countUSD.toFixed(2) * 100000 * 24 / costMultiplier),
     });
 
     if (organization.stripe_customer_id === null) {
@@ -349,6 +351,7 @@ class PurchaseCreditModal extends Component {
 
   renderCountSelection = () => {
     const { countUSD, countB } = this.state;
+    const costMultiplier = window.dc_cost_multiplier || 1
     return (
       <div
         style={{
@@ -359,9 +362,9 @@ class PurchaseCreditModal extends Component {
           alignItems: "center",
         }}
       >
-        <Text>{`1 DC = 24 Byte Packet = $${0.00001} USD`}</Text>
-        {!process.env.SELF_HOSTED && (
-          <Text>(Credit Card purchases: minimum $10)</Text>
+        <Text>{`1 DC = 24 Byte Packet = $${0.00001 * costMultiplier} USD`}</Text>
+        {!process.env.SELF_HOSTED || window.stripe_public_key && (
+          <Text>(Credit Card purchases: minimum ${window.stripe_minimum_purchase || 10})</Text>
         )}
         <br />
         <Text
@@ -553,67 +556,59 @@ class PurchaseCreditModal extends Component {
           Close
         </Button>,
       ];
+
+    const stripe_min_purchase = window.stripe_minimum_purchase ? parseInt(window.stripe_minimum_purchase) : 10
+    const allButtons = [
+      <Button
+        key="back"
+        onClick={this.handleClose}
+        disabled={this.state.loading}
+        style={{ marginTop: this.props.mobile ? 6 : 0 }}
+      >
+        Cancel
+      </Button>,
+      <Button
+        key="submit2"
+        type="primary"
+        onClick={this.showQRCode}
+        disabled={
+          !this.state.countUSD ||
+          this.state.countUSD == 0 ||
+          this.state.gettingPrice
+        }
+        style={{ marginTop: this.props.mobile ? 6 : 0 }}
+      >
+        Burn HNT to DC
+      </Button>,
+      <Button
+        key="submit"
+        type="primary"
+        onClick={this.showCreditCard}
+        disabled={
+          !this.state.countUSD ||
+          this.state.countUSD == 0 ||
+          this.state.loading ||
+          this.state.gettingPrice ||
+          this.state.countUSD < stripe_min_purchase
+        }
+        style={{ marginTop: this.props.mobile ? 6 : 0 }}
+      >
+        Purchase with Credit Card
+      </Button>,
+    ];
+
     if (!process.env.SELF_HOSTED) {
-      return [
-        <Button
-          key="back"
-          onClick={this.handleClose}
-          disabled={this.state.loading}
-          style={{ marginTop: this.props.mobile ? 6 : 0 }}
-        >
-          Cancel
-        </Button>,
-        <Button
-          key="submit2"
-          type="primary"
-          onClick={this.showQRCode}
-          disabled={
-            !this.state.countUSD ||
-            this.state.countUSD == 0 ||
-            this.state.gettingPrice
-          }
-          style={{ marginTop: this.props.mobile ? 6 : 0 }}
-        >
-          Burn HNT to DC
-        </Button>,
-        <Button
-          key="submit"
-          type="primary"
-          onClick={this.showCreditCard}
-          disabled={
-            !this.state.countUSD ||
-            this.state.countUSD == 0 ||
-            this.state.loading ||
-            this.state.gettingPrice ||
-            this.state.countUSD < 10
-          }
-          style={{ marginTop: this.props.mobile ? 6 : 0 }}
-        >
-          Purchase with Credit Card
-        </Button>,
-      ];
-    } else {
-      return [
-        <Button
-          key="back"
-          onClick={this.handleClose}
-          disabled={this.state.loading}
-        >
-          Cancel
-        </Button>,
-        <Button
-          key="submit2"
-          type="primary"
-          onClick={this.showQRCode}
-          disabled={
-            !this.state.countUSD ||
-            this.state.countUSD == 0 ||
-            this.state.gettingPrice
-          }
-        >
-          Burn HNT to DC
-        </Button>,
-      ];
+      return allButtons
+    }
+    if (process.env.SELF_HOSTED) {
+      let buttons = [allButtons[0]]
+      if (!window.disable_user_burn) {
+        buttons = buttons.concat(allButtons[1])
+      }
+      if (window.stripe_public_key) {
+        buttons = buttons.concat(allButtons[2])
+      }
+      return buttons
     }
   };
 

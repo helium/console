@@ -17,7 +17,7 @@ class DefaultPaymentModal extends Component {
   }
 
   componentDidMount() {
-    if (!process.env.SELF_HOSTED) {
+    if (!process.env.SELF_HOSTED || window.stripe_public_key) {
       const elements = stripe.elements()
 
       const style = {
