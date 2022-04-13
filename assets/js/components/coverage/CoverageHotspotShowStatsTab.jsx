@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import numeral from "numeral";
 import { useQuery } from "@apollo/client";
+import Chart from 'chart.js/auto'
 import { Bar } from 'react-chartjs-2';
 import range from 'lodash/range'
 import analyticsLogger from "../../util/analyticsLogger";

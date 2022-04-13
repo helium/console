@@ -14,7 +14,7 @@ const { Text } = Typography
 class SearchResult extends Component {
   renderDescriptionText = () => {
     const { result } = this.props
-    if (result.category === "functions") {
+    if (result.category === "functions" && result.id !== "/functions") {
       return functionFormats[result.description]
     }
     if (result.description === "device/label alert") {
@@ -53,7 +53,6 @@ class SearchResult extends Component {
         </div>
         <div style={{ flexGrow: 1 }} />
         <JumpTo show={selected} />
-
       </div>
     )
   }

@@ -46,7 +46,7 @@ class SearchBar extends Component {
 
     // update page results state
     const { searchResults } = this.state;
-    const pageResults = searchPages(newQuery);
+    const pageResults = searchPages(newQuery).map(r => r.item);
     const flatResults = searchResults.concat(pageResults);
     const selectedResult = flatResults[0];
 
