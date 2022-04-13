@@ -85,15 +85,18 @@ config :console, Console.Scheduler,
     ],
     sync_hotspots_1: [
       schedule: "0 2 * * *", # every day at 2am utc
-      task: {Console.Jobs, :sync_hotspots, []}
+      task: {Console.Jobs, :sync_hotspots, []},
+      state: (if System.get_env("USE_SCHEDULER_FOR_HOTSPOT_SYNC"), do: :inactive, else: :active)
     ],
     sync_hotspots_2: [
       schedule: "0 6 * * *", # every day at 6am utc
-      task: {Console.Jobs, :sync_hotspots, []}
+      task: {Console.Jobs, :sync_hotspots, []},
+      state: (if System.get_env("USE_SCHEDULER_FOR_HOTSPOT_SYNC"), do: :inactive, else: :active)
     ],
     sync_hotspots_3: [
       schedule: "0 10 * * *", # every day at 10am utc
-      task: {Console.Jobs, :sync_hotspots, []}
+      task: {Console.Jobs, :sync_hotspots, []},
+      state: (if System.get_env("USE_SCHEDULER_FOR_HOTSPOT_SYNC"), do: :inactive, else: :active)
     ],
   ]
 
