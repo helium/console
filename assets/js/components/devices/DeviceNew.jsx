@@ -351,9 +351,11 @@ export default (props) => {
             </Button>
             <div>
               {!(USING_CAP && deviceCount >= 10) && (
-                <Text style={{ fontSize: 27, fontWeight: 600 }}>
-                  Create New Device
-                </Text>
+                <>
+                  <Text style={{ fontSize: 27, fontWeight: 600 }}>
+                    Create New Device
+                  </Text>
+                </>
               )}
             </div>
           </div>
@@ -370,6 +372,13 @@ export default (props) => {
             ) : (
               <>
                 {renderHelpText(true)}
+                {USING_CAP && (
+                  <div style={{ paddingBottom: "10px", textAlign: "end" }}>
+                    <Text style={{ fontSize: 16, fontWeight: 600 }}>
+                      {USING_CAP && `${10 - deviceCount} of 10 Devices Left`}
+                    </Text>
+                  </div>
+                )}
                 <Button
                   key="submit"
                   onClick={() => {
