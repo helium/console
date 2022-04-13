@@ -28,7 +28,7 @@ import { isMobile } from "../../util/constants";
 import DeviceCapMetMessage from "./DeviceCapMetMessage";
 
 export default (props) => {
-  const USING_CAP = process.env.IMPOSE_HARD_CAP !== "true";
+  const USING_CAP = process.env.IMPOSE_HARD_CAP === "true";
   const history = useHistory();
   const dispatch = useDispatch();
   const nameInputRef = React.createRef();
