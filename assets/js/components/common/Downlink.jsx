@@ -118,7 +118,7 @@ class Downlink extends Component {
                 <InputNumber
                   style={{ width: "100%" }}
                   defaultValue={1}
-                  min={1}
+                  min={0}
                   max={223}
                   onChange={(port) => this.setState({ port })}
                 />
