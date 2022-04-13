@@ -128,7 +128,9 @@ const Auth0Router = (props) => {
                 <PublicRoute
                   path="/join_organization"
                   loaded={loadedOrganization}
-                  component={JoinOrganizationPrompt}
+                  component={(props) => (
+                    <JoinOrganizationPrompt user={user} {...props} />
+                  )}
                 />
                 <Route>
                   {
