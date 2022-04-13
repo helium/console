@@ -1,14 +1,14 @@
-import React, { Component } from "react";
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
+import React, { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { useHistory } from "react-router-dom";
+import { useQuery } from "@apollo/client";
+import { ALL_IMPORTS, DEVICE_COUNT } from "../../graphql/devices";
+import { ALL_LABELS } from "../../graphql/labels";
 import ChooseImportType from "./import/ChooseImportType";
 import { createDevice } from "../../actions/device";
 import { MobileDisplay, DesktopDisplay } from "../mobile/MediaQuery";
 import MobileLayout from "../mobile/MobileLayout";
 import { displayInfo, displayError } from "../../util/messages";
-import withGql from "../../graphql/withGql";
-import { ALL_IMPORTS } from "../../graphql/devices";
-import { ALL_LABELS } from "../../graphql/labels";
 import UserCan from "../common/UserCan";
 import DeviceDashboardLayout from "./DeviceDashboardLayout";
 import ImportDevicesModal from "./import/ImportDevicesModal";
@@ -25,95 +25,57 @@ const { Text } = Typography;
 import find from "lodash/find";
 import ProfileDropdown from "../common/ProfileDropdown";
 import { isMobile } from "../../util/constants";
+import DeviceCapMetMessage from "./DeviceCapMetMessage";
 
-class DeviceNew extends Component {
-  nameInputRef = React.createRef();
+export default (props) => {
+  const USING_CAP = process.env.IMPOSE_HARD_CAP !== "true";
+  const history = useHistory();
+  const dispatch = useDispatch();
+  const nameInputRef = React.createRef();
 
-  state = {
-    name: "",
-    devEUI: process.env.SELF_HOSTED
-      ? randomString(16)
-      : "6081F9" + randomString(10),
-    appEUI: process.env.SELF_HOSTED
-      ? randomString(16)
-      : this.props.currentOrganizationAppEui,
-    appKey: randomString(32),
-    labelName: null,
-    showAppKey: true,
-    showImportDevicesModal: false,
-    importComplete: false,
-    importType: "",
-    page: 1,
-    pageSize: 10,
-    import_status: { failed_devices: [] },
-    selectedLabel: {},
-    configProfileId: null,
-    newDeviceId: null,
-    showScanDeviceModal: false,
-  };
+  const PAGE = 1;
+  const PAGE_SIZE = 10;
 
-  componentDidMount() {
-    if (this.nameInputRef.current) {
-      this.nameInputRef.current.focus();
+  const currentOrganizationAppEui = useSelector(
+    (state) => state.organization.currentOrganizationAppEui
+  );
+
+  const [name, setName] = useState("");
+  const [devEUI, setDevEUI] = useState(
+    process.env.SELF_HOSTED ? randomString(16) : "6081F9" + randomString(10)
+  );
+  const [appEUI, setAppEUI] = useState(
+    process.env.SELF_HOSTED ? randomString(16) : currentOrganizationAppEui
+  );
+  const [appKey, setAppKey] = useState(randomString(32));
+  const [labelName, setLabelName] = useState(null);
+  const [showAppKey, setShowAppKey] = useState(true);
+  const [showImportDevicesModal, setShowImportDevicesModal] = useState(false);
+  const [importComplete, setImportComplete] = useState(false);
+  const [importType, setImportType] = useState("");
+  const [importStatus, setImportStatus] = useState({ failed_devices: [] }); //import_status
+  const [configProfileId, setConfigProfileId] = useState(null);
+  const [showScanDeviceModal, setShowScanDeviceModal] = useState(false);
+
+  const { data: importsQueryData, refetch: importsQueryRefetch } = useQuery(
+    ALL_IMPORTS,
+    {
+      variables: { page: PAGE, pageSize: PAGE_SIZE },
     }
+  );
 
-    const { socket, currentOrganizationId, user } = this.props;
-    this.importChannel = socket.channel("graphql:device_import_update", {});
-    this.importChannel.join();
-    this.importChannel.on(
-      `graphql:device_import_update:${currentOrganizationId}:import_list_updated`,
-      (message) => {
-        const { page, pageSize } = this.state;
-        this.props.importsQuery.refetch({ page, pageSize });
-        const user_id = user.sub.startsWith("auth0")
-          ? user.sub.slice(6)
-          : user.sub;
+  const deviceImports = importsQueryData?.device_imports || [];
 
-        this.setState({ importComplete: true });
+  const { data: allLabelsData } = useQuery(ALL_LABELS, {
+    variables: {},
+  });
+  const allLabels = allLabelsData?.allLabels || [];
 
-        if (user_id === message.user_id && message.status === "success") {
-          displayInfo(
-            `Imported ${message.successful_devices} device${
-              (message.successful_devices !== 1 && "s") || ""
-            } from ${
-              message.type === "ttn" ? "The Things Network" : "CSV"
-            }. Refresh this page to see the changes.`
-          );
-          this.setState({
-            import_status: {
-              failed_devices: message.failed_devices,
-              successful_count: message.successful_devices,
-            },
-          });
-        }
-        if (user_id === message.user_id && message.status === "failed") {
-          displayError(
-            `Failed to import devices from ${
-              message.type === "ttn" ? "The Things Network" : "CSV"
-            }.`
-          );
-          this.setState({
-            import_status: {
-              failed_devices: message.failed_devices || [],
-            },
-          });
-        }
-      }
-    );
-  }
+  const { data: deviceCountData } = useQuery(DEVICE_COUNT);
+  const deviceCount = deviceCountData?.device_count?.count || 0;
 
-  componentWillUnmount() {
-    this.importChannel.leave();
-  }
-
-  handleInputUpdate = (e) => {
-    this.setState({ [e.target.name]: e.target.value });
-  };
-
-  handleSubmit = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    const { name, devEUI, appEUI, appKey, labelName, configProfileId } =
-      this.state;
     if (devEUI.length === 16 && appEUI.length === 16 && appKey.length === 32) {
       analyticsLogger.logEvent(
         isMobile ? "ACTION_CREATE_DEVICE_MOBILE" : "ACTION_CREATE_DEVICE",
@@ -125,14 +87,14 @@ class DeviceNew extends Component {
           configProfileId: configProfileId,
         }
       );
-      let foundLabel = find(this.props.allLabelsQuery.allLabels, {
+      let foundLabel = find(allLabels, {
         name: labelName,
       });
       let label = foundLabel
         ? { labelApplied: foundLabel.id }
         : { newLabel: labelName };
-      this.props
-        .createDevice(
+      dispatch(
+        createDevice(
           {
             name,
             dev_eui: devEUI.toUpperCase(),
@@ -142,9 +104,14 @@ class DeviceNew extends Component {
           },
           label
         )
-        .then(() => {
-          this.props.history.push("/devices");
-        });
+      ).then(() => {
+        if (USING_CAP && deviceCount === 9) {
+          displayInfo(
+            "The device cap has been met. To add devices for commercial use cases, reach out to sales@nova.xyz."
+          );
+        }
+        history.push("/devices");
+      });
     } else {
       displayError(
         `Please ensure your device credentials are of the correct length.`
@@ -152,30 +119,26 @@ class DeviceNew extends Component {
     }
   };
 
-  setImportType = (importType) => {
-    this.setState({ importType, showImportDevicesModal: true });
+  const closeImportDevicesModal = () => {
+    setShowImportDevicesModal(false);
+    setImportComplete(false);
+    setImportStatus({ failed_devices: [] });
   };
 
-  closeImportDevicesModal = () => {
-    this.setState({
-      showImportDevicesModal: false,
-      importComplete: false,
-      import_status: { failed_devices: [] },
-    });
+  const closeScanDeviceModal = () => {
+    setShowScanDeviceModal(false);
   };
 
-  closeScanDeviceModal = () => {
-    this.setState({ showScanDeviceModal: false });
+  const updateEuiPair = (devEUI, appEUI) => {
+    setDevEUI(devEUI);
+    setAppEUI(appEUI);
+    setAppKey("");
   };
 
-  updateEuiPair = (devEUI, appEUI) => {
-    this.setState({ devEUI: devEUI, appEUI: appEUI, appKey: "" })
-  }
-
-  renderHelpText = (mobile) => (
+  const renderHelpText = (mobile) => (
     <p style={{ fontSize: 16 }}>
-      <b>Important:</b> The first time a device joins the Network could take up
-      to 20 mins.{" "}
+      <b>Important:</b> {USING_CAP && "Users can add up to 10 devices."} The
+      first time a device joins the Network could take up to 20 mins.{" "}
       <a
         className="help-link"
         href="https://docs.helium.com/use-the-network/console/adding-devices/#important-information-when-adding-devices"
@@ -187,34 +150,36 @@ class DeviceNew extends Component {
     </p>
   );
 
-  renderDeviceDetails = () => {
-    const { allLabels } = this.props.allLabelsQuery;
-
+  const renderDeviceDetails = () => {
     return (
       <React.Fragment>
         <Input
           placeholder="Device Name"
           name="name"
-          value={this.state.name}
-          onChange={this.handleInputUpdate}
+          value={name}
+          onChange={(e) => {
+            setName(e.target.value);
+          }}
           addonBefore="Name"
-          ref={this.nameInputRef}
+          ref={nameInputRef}
           autoFocus
-          suffix={`${this.state.name.length}/50`}
+          suffix={`${name.length}/50`}
           maxLength={50}
         />
 
         <Input
           placeholder="Device EUI"
           name="devEUI"
-          value={this.state.devEUI}
-          onChange={this.handleInputUpdate}
+          value={devEUI}
+          onChange={(e) => {
+            setDevEUI(e.target.value);
+          }}
           style={{ marginTop: 10 }}
           maxLength={16}
           addonBefore="Dev EUI"
           suffix={
-            <Text type={this.state.devEUI.length !== 16 ? "danger" : ""}>
-              {Math.floor(this.state.devEUI.length / 2)} / 8 Bytes
+            <Text type={devEUI.length !== 16 ? "danger" : ""}>
+              {Math.floor(devEUI.length / 2)} / 8 Bytes
             </Text>
           }
         />
@@ -222,14 +187,16 @@ class DeviceNew extends Component {
         <Input
           placeholder="App EUI"
           name="appEUI"
-          value={this.state.appEUI}
-          onChange={this.handleInputUpdate}
+          value={appEUI}
+          onChange={(e) => {
+            setAppEUI(e.target.value);
+          }}
           style={{ marginTop: 10 }}
           maxLength={16}
           addonBefore="App EUI"
           suffix={
-            <Text type={this.state.appEUI.length !== 16 ? "danger" : ""}>
-              {Math.floor(this.state.appEUI.length / 2)} / 8 Bytes
+            <Text type={appEUI.length !== 16 ? "danger" : ""}>
+              {Math.floor(appEUI.length / 2)} / 8 Bytes
             </Text>
           }
         />
@@ -237,9 +204,11 @@ class DeviceNew extends Component {
         <Input
           placeholder="App Key"
           name="appKey"
-          value={this.state.showAppKey ? this.state.appKey : "✱".repeat(28)}
-          disabled={!this.state.showAppKey}
-          onChange={this.handleInputUpdate}
+          value={showAppKey ? appKey : "✱".repeat(28)}
+          disabled={!showAppKey}
+          onChange={(e) => {
+            setAppKey(e.target.value);
+          }}
           style={{ marginTop: 10 }}
           maxLength={56}
           addonBefore={
@@ -251,30 +220,24 @@ class DeviceNew extends Component {
               }}
             >
               App Key
-              {this.state.showAppKey ? (
+              {showAppKey ? (
                 <EyeOutlined
-                  onClick={() =>
-                    this.setState({
-                      showAppKey: !this.state.showAppKey,
-                    })
-                  }
+                  onClick={() => {
+                    setShowAppKey(!showAppKey);
+                  }}
                   style={{ marginLeft: 5 }}
                 />
               ) : (
                 <EyeInvisibleOutlined
-                  onClick={() =>
-                    this.setState({
-                      showAppKey: !this.state.showAppKey,
-                    })
-                  }
+                  onClick={() => setShowAppKey(!showAppKey)}
                   style={{ marginLeft: 5 }}
                 />
               )}
             </div>
           }
           suffix={
-            <Text type={this.state.appKey.length !== 32 ? "danger" : ""}>
-              {Math.floor(this.state.appKey.length / 2)} / 16 Bytes
+            <Text type={appKey.length !== 32 ? "danger" : ""}>
+              {Math.floor(appKey.length / 2)} / 16 Bytes
             </Text>
           }
         />
@@ -283,7 +246,7 @@ class DeviceNew extends Component {
         </Text>
         <ProfileDropdown
           selectProfile={(id) => {
-            this.setState({ configProfileId: id });
+            setConfigProfileId(id);
           }}
         />
 
@@ -292,111 +255,180 @@ class DeviceNew extends Component {
         </Text>
         <LabelAppliedNew
           allLabels={allLabels}
-          value={this.state.labelName}
-          select={(value) => this.setState({ labelName: value })}
+          value={labelName}
+          select={(value) => setLabelName(value)}
         />
       </React.Fragment>
     );
   };
 
-  render() {
-    const { showImportDevicesModal, importComplete, importType } = this.state;
-    const { device_imports } = this.props.importsQuery;
+  const socket = useSelector((state) => state.apollo.socket);
+  const currentOrganizationId = useSelector(
+    (state) => state.organization.currentOrganizationId
+  );
+  const importChannel = socket.channel("graphql:device_import_update", {});
 
-    return (
-      <>
-        <MobileDisplay>
-          <MobileLayout>
-            <div
+  useEffect(() => {
+    // executed when mounted
+    if (nameInputRef.current) {
+      nameInputRef.current.focus();
+    }
+
+    importChannel.join();
+    importChannel.on(
+      `graphql:device_import_update:${currentOrganizationId}:import_list_updated`,
+      (message) => {
+        importsQueryRefetch({ page: PAGE, pageSize: PAGE_SIZE });
+        const user_id = props.user.sub.startsWith("auth0")
+          ? props.user.sub.slice(6)
+          : props.user.sub;
+
+        setImportComplete(true);
+
+        if (user_id === message.user_id && message.status === "success") {
+          displayInfo(
+            `Imported ${message.successful_devices} device${
+              (message.successful_devices !== 1 && "s") || ""
+            } from ${
+              message.type === "ttn" ? "The Things Network" : "CSV"
+            }. Refresh this page to see the changes.`
+          );
+          setImportStatus({
+            failed_devices: message.failed_devices,
+            successful_count: message.successful_devices,
+          });
+        }
+        if (user_id === message.user_id && message.status === "failed") {
+          displayError(
+            `Failed to import devices from ${
+              message.type === "ttn" ? "The Things Network" : "CSV"
+            }.`
+          );
+          setImportStatus({
+            failed_devices: message.failed_devices || [],
+          });
+        }
+      }
+    );
+
+    // executed when unmounted
+    return () => {
+      importChannel.leave();
+    };
+  }, []);
+
+  return (
+    <>
+      <MobileDisplay>
+        <MobileLayout>
+          <div
+            style={{
+              padding: "10px 15px",
+              boxShadow: "0px 3px 7px 0px #ccc",
+              backgroundColor: "#F5F7F9",
+              height: 100,
+              position: "relative",
+              zIndex: 10,
+            }}
+          >
+            <Button
+              icon={<ArrowLeftOutlined style={{ fontSize: 12 }} />}
               style={{
-                padding: "10px 15px",
-                boxShadow: "0px 3px 7px 0px #ccc",
-                backgroundColor: "#F5F7F9",
-                height: 100,
-                position: "relative",
-                zIndex: 10,
+                border: "none",
+                padding: 0,
+                fontSize: 14,
+                color: "#2C79EE",
+                height: 24,
+                boxShadow: "none",
+                background: "none",
+                fontWeight: 600,
+              }}
+              onClick={() => {
+                history.push("/devices");
               }}
             >
-              <Button
-                icon={<ArrowLeftOutlined style={{ fontSize: 12 }} />}
-                style={{
-                  border: "none",
-                  padding: 0,
-                  fontSize: 14,
-                  color: "#2C79EE",
-                  height: 24,
-                  boxShadow: "none",
-                  background: "none",
-                  fontWeight: 600,
-                }}
-                onClick={() => {
-                  this.props.history.push("/devices");
-                }}
-              >
-                Back to Devices
-              </Button>
-              <div>
+              Back to Devices
+            </Button>
+            <div>
+              {!(USING_CAP && deviceCount >= 10) && (
                 <Text style={{ fontSize: 27, fontWeight: 600 }}>
                   Create New Device
                 </Text>
-              </div>
+              )}
             </div>
-            <div
-              style={{
-                padding: "25px 15px",
-                backgroundColor: "#ffffff",
-                height: "calc(100% - 100px)",
-                overflowY: "scroll",
-              }}
-            >
-              {this.renderHelpText(true)}
-              <Button
-                key="submit"
-                onClick={() => { this.setState({ showScanDeviceModal: true })}}
-                style={{ marginBottom: 20 }}
-              >
-                Scan Device QR Code
-              </Button>
-              {this.renderDeviceDetails()}
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "flex-end",
-                }}
-              >
-                <UserCan>
-                  <Button
-                    key="submit"
-                    type="primary"
-                    icon={<SaveOutlined />}
-                    onClick={this.handleSubmit}
-                    style={{ marginTop: 15, borderRadius: 4 }}
-                  >
-                    Save Device
-                  </Button>
-                </UserCan>
-              </div>
-            </div>
-            <ScanDeviceModal
-              open={this.state.showScanDeviceModal}
-              onClose={this.closeScanDeviceModal}
-              updateEuiPair={this.updateEuiPair}
-            />
-          </MobileLayout>
-        </MobileDisplay>
-        <DesktopDisplay>
-          <DeviceDashboardLayout {...this.props}>
-            <div className="no-scroll-bar" style={{ overflowX: "scroll" }}>
+          </div>
+          <div
+            style={{
+              padding: "25px 15px",
+              backgroundColor: "#ffffff",
+              height: "calc(100% - 100px)",
+              overflowY: "scroll",
+            }}
+          >
+            {USING_CAP && deviceCount >= 10 ? (
+              <DeviceCapMetMessage mobile />
+            ) : (
+              <>
+                {renderHelpText(true)}
+                <Button
+                  key="submit"
+                  onClick={() => {
+                    setShowScanDeviceModal(true);
+                  }}
+                  style={{ marginBottom: 20 }}
+                >
+                  Scan Device QR Code
+                </Button>
+                {renderDeviceDetails()}
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "flex-end",
+                  }}
+                >
+                  <UserCan>
+                    <Button
+                      key="submit"
+                      type="primary"
+                      icon={<SaveOutlined />}
+                      onClick={handleSubmit}
+                      style={{ marginTop: 15, borderRadius: 4 }}
+                    >
+                      Save Device
+                    </Button>
+                  </UserCan>
+                </div>
+              </>
+            )}
+          </div>
+          <ScanDeviceModal
+            open={showScanDeviceModal}
+            onClose={closeScanDeviceModal}
+            updateEuiPair={updateEuiPair}
+          />
+        </MobileLayout>
+      </MobileDisplay>
+      <DesktopDisplay>
+        <DeviceDashboardLayout {...props}>
+          <div className="no-scroll-bar" style={{ overflowX: "scroll" }}>
+            {USING_CAP && deviceCount >= 10 ? (
+              <DeviceCapMetMessage />
+            ) : (
               <div style={{ padding: "30px 30px 20px 30px", minWidth }}>
                 <Text style={{ fontSize: 22, fontWeight: 600 }}>
                   Add New Device
                 </Text>
-                <div>{this.renderHelpText()}</div>
+                <div>{renderHelpText()}</div>
                 <Row gutter={30} style={{ marginTop: 10 }}>
                   <Col span={14}>
-                    <Card title="Enter Device Details">
-                      {this.renderDeviceDetails()}
+                    <Card
+                      title="Enter Device Details"
+                      extra={
+                        USING_CAP && `${10 - deviceCount} of 10 Devices Left`
+                      }
+                    >
+                      {renderDeviceDetails()}
                     </Card>
                     <div
                       style={{
@@ -410,7 +442,7 @@ class DeviceNew extends Component {
                         <Button
                           key="submit"
                           icon={<SaveOutlined />}
-                          onClick={this.handleSubmit}
+                          onClick={handleSubmit}
                           style={{ margin: 0 }}
                         >
                           Save Device
@@ -427,28 +459,31 @@ class DeviceNew extends Component {
                       }}
                     >
                       <ChooseImportType
-                        onImportSelect={this.setImportType}
-                        deviceImports={device_imports}
+                        onImportSelect={(importType) => {
+                          setImportType(importType);
+                          setShowImportDevicesModal(true);
+                        }}
+                        deviceImports={deviceImports}
                       />
                     </div>
                   </Col>
                 </Row>
               </div>
-            </div>
+            )}
+          </div>
 
-            <ImportDevicesModal
-              open={showImportDevicesModal}
-              onClose={this.closeImportDevicesModal}
-              importComplete={importComplete}
-              importType={importType}
-              import_status={this.state.import_status}
-            />
-          </DeviceDashboardLayout>
-        </DesktopDisplay>
-      </>
-    );
-  }
-}
+          <ImportDevicesModal
+            open={showImportDevicesModal}
+            onClose={closeImportDevicesModal}
+            importComplete={importComplete}
+            importType={importType}
+            import_status={importStatus}
+          />
+        </DeviceDashboardLayout>
+      </DesktopDisplay>
+    </>
+  );
+};
 
 const randomString = (length) => {
   let chars = "0123456789ABCDEF";
@@ -457,34 +492,3 @@ const randomString = (length) => {
     result += chars[Math.floor(Math.random() * chars.length)];
   return result;
 };
-
-function mapStateToProps(state) {
-  return {
-    currentOrganizationId: state.organization.currentOrganizationId,
-    currentOrganizationAppEui: state.organization.currentOrganizationAppEui,
-    socket: state.apollo.socket,
-  };
-}
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ createDevice }, dispatch);
-}
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(
-  withGql(
-    withGql(DeviceNew, ALL_LABELS, (props) => ({
-      fetchPolicy: "cache-and-network",
-      variables: {},
-      name: "allLabelsQuery",
-    })),
-    ALL_IMPORTS,
-    (props) => ({
-      fetchPolicy: "cache-first",
-      variables: { page: 1, pageSize: 10 },
-      name: "importsQuery",
-    })
-  )
-);
