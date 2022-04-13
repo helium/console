@@ -24,10 +24,10 @@ const HOTSPOT_FRAGMENT = gql`
 
 export const HOTSPOT_STATS = gql`
   query HotspotStatsQuery(
-    $column: String
-    $order: String
-    $page: Int
-    $pageSize: Int
+    $column: String!
+    $order: String!
+    $page: Int!
+    $pageSize: Int!
   ) {
     hotspotStats(
       column: $column
@@ -43,10 +43,10 @@ export const HOTSPOT_STATS = gql`
 
 export const FOLLOWED_HOTSPOT_STATS = gql`
   query FollowedHotspotStatsQuery(
-    $column: String
-    $order: String
-    $page: Int
-    $pageSize: Int
+    $column: String!
+    $order: String!
+    $page: Int!
+    $pageSize: Int!
   ) {
     followedHotspotStats(
       column: $column
@@ -80,7 +80,7 @@ export const ALL_ORGANIZATION_HOTSPOTS = gql`
 `;
 
 export const HOTSPOT_SHOW = gql`
-  query HotspotShowQuery($address: String) {
+  query HotspotShowQuery($address: String!) {
     hotspot(address: $address) {
       ...HotspotFragment
       most_heard_device_id
@@ -92,7 +92,7 @@ export const HOTSPOT_SHOW = gql`
 `;
 
 export const HOTSPOT_SHOW_PACKETS = gql`
-  query HotspotShowPacketsQuery($address: String) {
+  query HotspotShowPacketsQuery($address: String!) {
     hotspotPackets(address: $address) {
       device_id
       reported_at_epoch
@@ -102,11 +102,11 @@ export const HOTSPOT_SHOW_PACKETS = gql`
 
 export const HOTSPOT_SHOW_DEVICES_HEARD = gql`
   query HotspotShowDevicesHeardQuery(
-    $address: String
-    $column: String
-    $order: String
-    $page: Int
-    $pageSize: Int
+    $address: String!
+    $column: String!
+    $order: String!
+    $page: Int!
+    $pageSize: Int!
   ) {
     hotspotDevicesHeard(
       address: $address
@@ -142,10 +142,10 @@ export const ALL_GROUPS = gql`
 
 export const GROUPED_HOTSPOT_STATS = gql`
   query GroupedHotspotStatsQuery(
-    $column: String
-    $order: String
-    $page: Int
-    $pageSize: Int
+    $column: String!
+    $order: String!
+    $page: Int!
+    $pageSize: Int!
     $groupId: ID!
   ) {
     groupedHotspotStats(

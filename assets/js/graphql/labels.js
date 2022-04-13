@@ -75,8 +75,8 @@ export const PAGINATED_LABELS_BY_DEVICE = gql`
     $page: Int
     $pageSize: Int
     $deviceId: ID!
-    $column: String
-    $order: String
+    $column: String!
+    $order: String!
   ) {
     labels_by_device(
       page: $page

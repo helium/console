@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import Chart from 'chart.js/auto'
 import { Bubble } from "react-chartjs-2";
 
 const categoryTag = (category, subCategories) => {
