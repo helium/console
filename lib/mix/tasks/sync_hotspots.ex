@@ -3,7 +3,7 @@ defmodule Mix.Tasks.SyncHotspots do
   alias Console.Jobs
 
   def run(_) do
-    IO.inspect "Syncing hotspots from public API"
+    IO.inspect "Starting to sync hotspots..."
     Mix.Task.run("app.start")
     Jobs.sync_hotspots()
   end
