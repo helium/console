@@ -12,7 +12,7 @@ export default ({ organization, onClick }) => {
         <img style={{ width: 100, marginBottom: 20 }} src={DCIMg} />
         <h1>Data Credits</h1>
         {
-          window.disable_user_burn !== "true" && (
+          (!process.env.SELF_HOSTED || window.stripe_public_key || window.disable_user_burn !== true) && (
             <React.Fragment>
               <UserCan noManager>
                 <p style={{ fontSize: 16 }}>

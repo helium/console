@@ -602,7 +602,7 @@ class PurchaseCreditModal extends Component {
     }
     if (process.env.SELF_HOSTED) {
       let buttons = [allButtons[0]]
-      if (!window.disable_user_burn) {
+      if (window.disable_user_burn !== 'true') {
         buttons = buttons.concat(allButtons[1])
       }
       if (window.stripe_public_key) {

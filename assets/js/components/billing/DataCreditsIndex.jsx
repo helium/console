@@ -397,7 +397,7 @@ class DataCreditsIndex extends Component {
                               {organization.automatic_charge_amount ? "On" : "Off"}
                             </Button>
                             {
-                              (!process.env.SELF_HOSTED || window.stripe_public_key || !window.disable_user_burn) && (
+                              (!process.env.SELF_HOSTED || window.stripe_public_key || window.disable_user_burn !== 'true') && (
                                 <Button
                                   type="primary"
                                   icon={<WalletOutlined />}
