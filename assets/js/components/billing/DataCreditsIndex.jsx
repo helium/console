@@ -100,6 +100,10 @@ class DataCreditsIndex extends Component {
   }
 
   fetchPaymentMethods = (callback, attempt = 0) => {
+    if (process.env.SELF_HOSTED && !window.stripe_public_key) {
+      return
+    }
+
     if (attempt == 3) {
       return analyticsLogger.logEvent(
         isMobile
