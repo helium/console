@@ -57,7 +57,7 @@ defmodule ConsoleWeb.DeviceController do
         |> put_resp_header("message",  "Device #{device.name} added successfully")
         |> render("show.json", device: device)
       {:error, "Device limit reached"} ->
-        {:error, :forbidden, "The device/organization cap has been met. To add devices or organizations for commercial use cases, reach out to sales@nova.xyz."}
+        {:error, :forbidden, "The device/organization cap has been met. To add devices or organizations for commercial use cases, check docs for Console Hosting Providers."}
       {:error, %Ecto.Changeset{ valid?: false, errors: [dev_eui: {msg, [constraint: :unique, constraint_name: "devices_dev_eui_app_eui_app_key_index"]}]}} ->
         {:error, :forbidden, msg}
       {:error, %Ecto.Changeset{ valid?: false, errors: [message: msg]}} ->
