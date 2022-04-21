@@ -16,8 +16,11 @@ export default ({ mobile }) => (
     </Text>
     <Divider />
     <Text style={{ fontSize: 18 }}>
-      To add devices for commercial use cases, reach out to{" "}
-      <a href="mailto:sales@nova.xyz">sales@nova.xyz</a>.
+      To add more, check other Console Hosting Providers{" "}
+      <a href="https://docs.helium.com/use-the-network/console/hosting-providers">
+        here
+      </a>
+      .
     </Text>
   </div>
 );
