@@ -281,7 +281,7 @@ defmodule ConsoleWeb.V1.DeviceController do
       {:error, _, error, _} ->
         {:error, :bad_request, error}
       {:error, "Device limit reached"} ->
-        {:error, :forbidden, "The device/organization cap has been met. To add devices or organizations for commercial use cases, reach out to sales@nova.xyz."}
+        {:error, :forbidden, "The device/organization cap has been met. To add devices or organizations for commercial use cases, check docs for Console Hosting Providers."}
       {:error, error} ->
         {:error, :bad_request, error}
     end
