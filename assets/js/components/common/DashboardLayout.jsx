@@ -80,10 +80,10 @@ class DashboardLayout extends Component {
                 <Button
                   className="version-link"
                   icon={<ToolOutlined />}
-                  href="https://engineering.helium.com/2022/04/07/console-updates-2.2.6.html"
+                  href="https://engineering.helium.com/2022/04/21/console-updates-2.2.7.html"
                   target="_blank"
                 >
-                  v2.2.6
+                  v2.2.7
                 </Button>
               )}
             </Sider>
