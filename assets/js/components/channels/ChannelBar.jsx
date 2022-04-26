@@ -1,7 +1,7 @@
 import React from 'react';
 import NavPointTriangle from '../common/NavPointTriangle';
 import BarIcon from '../../../img/channels/channel-bar-icon.svg'
-import { getIntegrationTypeForFlows, integrationImgMap } from '../../util/flows'
+import { getIntegrationTypeForFlows, integrationImgMap } from '../../util/integrationInfo'
 import { Typography } from 'antd';
 const { Text } = Typography;
 import { Link } from 'react-router-dom';

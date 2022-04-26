@@ -4,7 +4,7 @@ import { Typography } from "antd";
 const { Text } = Typography;
 import ChannelIcon from "../../../../img/channel-node-icon.svg";
 import SelectedNodeIcon from "./SelectedNodeIcon";
-import { integrationImgMap } from "../../../util/flows";
+import { integrationImgMap } from "../../../util/integrationInfo";
 import AlertTag from "../../../../img/alerts/alert-node-tag.svg";
 import Warning from "../Warning";
 

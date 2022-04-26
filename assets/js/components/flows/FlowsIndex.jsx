@@ -6,7 +6,7 @@ import { isEdge, isNode, ReactFlowProvider } from "react-flow-renderer";
 import { Prompt } from "react-router";
 import { ALL_RESOURCES } from "../../graphql/flows";
 import { updateFlows } from "../../actions/flow";
-import { getIntegrationTypeForFlows } from "../../util/flows";
+import { getIntegrationTypeForFlows } from "../../util/integrationInfo";
 import { MobileDisplay, DesktopDisplay } from "../mobile/MediaQuery";
 import DashboardLayout from "../common/DashboardLayout";
 import FlowsWorkspace from "./FlowsWorkspace";
