@@ -1,157 +1,233 @@
 import React, { Component } from "react";
-import { Typography, Input, Button, Popover } from "antd";
-import InfoCircleOutlined from "@ant-design/icons/InfoCircleOutlined";
-import cheerio from "cheerio";
-import { post } from "../../../util/rest";
-const { Text } = Typography;
+import Editor from "react-simple-code-editor";
+import range from "lodash/range";
+import kebabCase from "lodash/kebabCase";
+import { highlight, languages } from "prismjs/components/prism-core";
+import { IntegrationTypeTileSimple } from "../IntegrationTypeTileSimple";
+import { getRootType } from "../../../util/integrationInfo";
+import { codeEditorLineColor, codeEditorBgColor } from "../../../util/colors";
+import { Link } from "react-router-dom";
+import ChannelNameForm from "./ChannelNameForm.jsx";
+import GoogleSheetRequestFields from "./GoogleSheetRequestFields.jsx";
+import analyticsLogger from "../../../util/analyticsLogger";
+import { Card, Typography, Input, Button } from 'antd';
+const { Text } = Typography
+
+const slugify = (text) => kebabCase(text.replace(/&/g, "-and-"));
+const makeTemplate = (definition) => {
+  const fields = [];
+  const payloads = [];
+
+  Object.entries(definition).forEach(([fieldName, entry]) => {
+    const name = slugify(fieldName);
+    fields.push(`"${name}": "${entry}"`);
+    payloads.push(`"${name}": "FILL ME IN"`);
+  });
+
+  return `function Decoder(bytes, port) {
+  // TODO: Transform bytes to decoded payload below
+  var decodedPayload = {
+    ${payloads.join(",\n".padEnd(6))}
+  };
+  // END TODO
+
+  return Serialize(decodedPayload)
+}
+
+// Generated: do not touch unless your Google Form fields have changed
+var field_mapping = {
+  ${fields.join(",\n".padEnd(4))}
+};
+// End Generated
+
+function Serialize(payload) {
+  var str = [];
+  for (var key in payload) {
+    if (payload.hasOwnProperty(key)) {
+      var name = encodeURIComponent(field_mapping[key]);
+      var value = encodeURIComponent(payload[key]);
+      str.push(name + "=" + value);
+    }
+  }
+  return str.join("&");
+}
+// DO NOT REMOVE: Google Form Function
+  `;
+};
 
 class GoogleSheetForm extends Component {
   state = {
-    loading: false,
+    method: "post",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    showNextSteps: false,
+    validInput: false,
+    channelName: "",
     formId: "",
-    failedToLoadFormData: false,
-    fieldsMapping: "",
+    googleFunctionBody: ""
   };
 
-  handleFormIdUpdate = (e) => {
-    this.setState({ formId: e.target.value });
+  handleNameInput = (e) => {
+    this.setState({ channelName: e.target.value });
   };
 
-  getFormData = async () => {
-    this.setState({ loading: true, failedToLoadFormData: false });
+  onClickEditor = () => {
+    const editor = document.getElementsByClassName(
+      "npm__react-simple-code-editor__textarea"
+    )[0];
+    editor.focus();
+  };
 
-    post("/api/channels/google_sheets", {
-      formId: this.state.formId,
+  handleGoogleFunctionBodyUpdate = (googleFunctionBody) => {
+    this.setState({ googleFunctionBody });
+  };
+
+  validateInput = (formId, fieldsMapping) => {
+    this.setState({
+      showNextSteps: true,
+      validInput: true,
+      formId,
+      googleFunctionBody: makeTemplate(JSON.parse(fieldsMapping))
     })
-      .then(({ data }) => {
-        // from https://restful-google-form.vercel.app/ source code
-        const $ = cheerio.load(data);
-        const script = $("script:not([src])")
-          .toArray()
-          .map((s) => $(s)[0].children[0].data)
-          .filter((text) =>
-            text ? text.includes("FB_PUBLIC_LOAD_DATA_") : ""
-          )[0];
+  }
 
-        if (!script) {
-          this.setState({ loading: false, failedToLoadFormData: true });
-        } else {
-          const _arr = script
-            .replace("var FB_PUBLIC_LOAD_DATA_ = ", "")
-            .replace(/\,(?!\s*?[\{\[\"\'\w])/g, "") // Remove trailing comma
-            .replace(";", "");
-          const arr = JSON.parse(_arr);
-          const rawQuestions = arr[1][1];
-          if (!Array.isArray(rawQuestions)) {
-            this.setState({ loading: false, failedToLoadFormData: true });
-          } else {
-            const loadData = rawQuestions.filter((q) => q);
-            const questions = loadData.map((d) => {
-              return {
-                key: "entry." + d[4][0][0],
-                name: d[1],
-              };
-            });
-            const fieldsMapping = questions.reduce((acc, curr) => {
-              return Object.assign({}, acc, { [curr["name"]]: curr["key"] });
-            }, {});
+  clearInputs = () => {
+    this.setState({
+      showNextSteps: false,
+      validInput: false,
+      channelName: "",
+      formId: "",
+      googleFunctionBody: ""
+    })
+  }
 
-            this.setState({
-              loading: false,
-              fieldsMapping: JSON.stringify(fieldsMapping, null, 2),
-            });
-          }
-        }
-      })
-      .catch(() => {
-        this.setState({ loading: false, failedToLoadFormData: true });
-      });
-  };
+  onSubmit = () => {
+    const { method, formId, headers, channelName, googleFunctionBody } = this.state
 
-  validateInput = () => {
-    const { formId, fieldsMapping } = this.state;
-    if (fieldsMapping.length > 0) {
-      this.props.onValidInput({
-        method: "post",
-        endpoint: `https://docs.google.com/forms/d/e/${formId}/formResponse`,
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      });
+    let payload = {
+      channel: {
+        name: channelName,
+        type: getRootType(this.props.type),
+        credentials: {
+          method: method,
+          endpoint: `https://docs.google.com/forms/d/e/${formId}/formResponse`,
+          headers: headers
+        },
+        payload_template: "{{{decoded.payload}}}",
+      },
+    };
 
-      this.props.updateGoogleFieldsMapping(fieldsMapping);
-    }
-  };
+    this.props.createChannel(payload, {
+      format: "googlesheet",
+      body: googleFunctionBody,
+    });
+
+    analyticsLogger.logEvent(
+      this.props.mobile ? "ACTION_CREATE_CHANNEL_MOBILE" : "ACTION_CREATE_CHANNEL",
+      {
+        name: channelName,
+        type: this.props.type,
+      }
+    )
+  }
 
   render() {
     return (
-      <div>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-          }}
-        >
-          <Text style={{ display: "block" }}>Enter Google Form ID</Text>
-          <Popover
-            content="Please make sure you are using the Google Form ID that is sent out to the public. The internal ID for editing the form will not work in this input."
-            placement="top"
-            overlayStyle={{ width: 220 }}
-          >
-            <InfoCircleOutlined
-              style={{ marginLeft: 8, fontSize: 14, cursor: "pointer" }}
-            />
-          </Popover>
-        </div>
-        <div>
-          <Input
-            value={this.state.formId}
-            onChange={this.handleFormIdUpdate}
-            style={{ ...(!this.props.mobile && { width: "50%" }) }}
-          />
-          <Button
-            disabled={this.state.formId.length < 1}
-            onClick={this.getFormData}
-            style={{
-              ...(this.props.mobile ? { marginTop: 10 } : { marginLeft: 8 }),
-            }}
-          >
-            Get Google Form Fields
-          </Button>
-        </div>
+      <>
+        <Card title="Step 1 – Choose an Integration Type">
+          <div>
+            <IntegrationTypeTileSimple type={this.props.type} />
+            <Link
+              to="#"
+              onClick={(e) => {
+                e.preventDefault();
+                this.props.reset()
+              }}
+            >
+              <Button style={{ marginTop: 15 }}>Change</Button>
+            </Link>
+          </div>
+        </Card>
 
-        {this.state.loading && (
-          <div style={{ marginTop: 12 }}>
-            <Text>Loading from Google...</Text>
-          </div>
+        <Card title="Step 2 - Endpoint Details">
+          <GoogleSheetRequestFields from="ChannelNew" validateInput={this.validateInput} clearInputs={this.clearInputs} />
+        </Card>
+
+        {this.state.showNextSteps && (
+          <ChannelNameForm
+            channelName={this.state.channelName}
+            onInputUpdate={this.handleNameInput}
+            validInput={this.state.validInput}
+            submit={this.onSubmit}
+            mobile={this.props.mobile}
+            noSubmit={true}
+          />
         )}
-        {this.state.failedToLoadFormData && (
-          <div style={{ marginTop: 12 }}>
-            <Text>Failed to load data from Google Form, please try again.</Text>
-          </div>
-        )}
-        {this.state.fieldsMapping && (
-          <div style={{ marginTop: 12 }}>
-            <Text style={{ display: "block" }}>
-              Obtained Google Form fields
-            </Text>
-            <pre style={{ fontSize: 10, marginTop: 10 }}>
-              {this.state.fieldsMapping}
-            </pre>
-            {this.props.from === "ChannelNew" && (
+
+        {this.state.showNextSteps && (
+          <Card
+            title={"Step 4 - Update Function Body"}
+            bodyStyle={{ padding: 0 }}
+            extra={
               <Button
                 type="primary"
-                onClick={this.validateInput}
-                style={{
-                  ...(this.props.mobile && { fontSize: 14 }),
-                  marginTop: 20,
-                }}
+                htmlType="submit"
+                onClick={this.onSubmit}
               >
-                Generate Function Body w/ Fields Above
+                Add Integration
               </Button>
-            )}
-          </div>
+            }
+          >
+            <div style={{ height: 303, overflowY: "scroll" }}>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  cursor: "text",
+                }}
+                onClick={this.onClickEditor}
+              >
+                <div
+                  style={{
+                    backgroundColor: codeEditorBgColor,
+                    paddingTop: 9,
+                    marginTop: 1,
+                    paddingBottom: 9,
+                  }}
+                >
+                  {range(301).map((i) => (
+                    <p
+                      key={i}
+                      style={{
+                        textAlign: "right",
+                        fontFamily: "monospace",
+                        color: codeEditorLineColor,
+                        fontSize: 14,
+                        marginBottom: 0,
+                        paddingLeft: 10,
+                        paddingRight: 10,
+                        backgroundColor: codeEditorBgColor,
+                      }}
+                    >
+                      {i}
+                    </p>
+                  ))}
+                </div>
+
+                <Editor
+                  value={this.state.googleFunctionBody}
+                  onValueChange={this.handleGoogleFunctionBodyUpdate}
+                  highlight={(code) => highlight(code, languages.js)}
+                  padding={10}
+                  style={{
+                    fontFamily: "monospace",
+                    fontSize: 14,
+                  }}
+                />
+              </div>
+            </div>
+          </Card>
         )}
-      </div>
+      </>
     );
   }
 }
