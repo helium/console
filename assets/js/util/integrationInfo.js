@@ -147,6 +147,24 @@ export const PREMADE_CHANNEL_TYPES = [
   },
 ];
 
+export const getRootType = (type) => {
+  switch (type) {
+    case "cargo":
+    case "mydevices":
+    case "ubidots":
+    case "datacake":
+    case "tago":
+    case "googlesheet":
+    case "akenza":
+    case "microshare":
+      return "http";
+    case "adafruit":
+      return "mqtt";
+    default:
+      return type;
+  }
+};
+
 export const integrationImgMap = {
   // adafruit: AdafruitIcon,
   aws: AwsIcon,
