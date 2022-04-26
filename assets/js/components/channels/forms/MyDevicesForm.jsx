@@ -1,41 +1,89 @@
 import React, { Component } from 'react';
-import { Typography } from 'antd';
+import { IntegrationTypeTileSimple } from "../IntegrationTypeTileSimple";
+import { getRootType } from "../../../util/integrationInfo";
+import { Link } from "react-router-dom";
+import ChannelNameForm from "./ChannelNameForm.jsx";
+import analyticsLogger from "../../../util/analyticsLogger";
+import { Card, Typography, Button } from 'antd';
 const { Text } = Typography
 
 class MyDevicesForm extends Component {
   state = {
     method: "post",
     endpoint: "https://lora.mydevices.com/v1/networks/helium/uplink",
-    headers: []
+    headers: {},
+    showNextSteps: true,
+    validInput: true,
+    channelName: "",
   }
 
-  componentDidMount = () => {
-    this.validateInput()
-  }
+  handleNameInput = (e) => {
+    this.setState({ channelName: e.target.value });
+  };
 
-  validateInput = () => {
-    const { method, endpoint, headers } = this.state
-    if (method.length > 0 && endpoint.length > 0) {
-      const parsedHeaders = headers.reduce((a, h) => {
-        if (h.header !== "" && h.value !== "") a[h.header] = h.value
-        return a
-      }, {})
+  onSubmit = () => {
+    const { method, endpoint, headers, channelName } = this.state
 
-      this.props.onValidInput({
-        method,
-        endpoint,
-        headers: parsedHeaders,
-      })
-    }
+    let payload = {
+      channel: {
+        name: channelName,
+        type: getRootType(this.props.type),
+        credentials: {
+          method: method,
+          endpoint: endpoint,
+          headers: headers
+        },
+      },
+    };
+
+    this.props.createChannel(payload);
+
+    analyticsLogger.logEvent(
+      this.props.mobile ? "ACTION_CREATE_CHANNEL_MOBILE" : "ACTION_CREATE_CHANNEL",
+      {
+        name: channelName,
+        type: this.props.type,
+      }
+    )
   }
 
   render() {
     return(
-      <div>
-        <Text>
-          Use a supported device listed on their console or encode the payload with the Cayenne Low Power Payload (Cayenne LPP) format.
-        </Text>
-      </div>
+      <>
+        <Card title="Step 1 – Choose an Integration Type">
+          <div>
+            <IntegrationTypeTileSimple type={this.props.type} />
+            <Link
+              to="#"
+              onClick={(e) => {
+                e.preventDefault();
+                this.setState({
+                  channelName: "",
+                })
+                this.props.reset()
+              }}
+            >
+              <Button style={{ marginTop: 15 }}>Change</Button>
+            </Link>
+          </div>
+        </Card>
+
+        <Card title="Step 2 - Endpoint Details">
+          <Text>
+            Use a supported device listed on their console or encode the payload with the Cayenne Low Power Payload (Cayenne LPP) format.
+          </Text>
+        </Card>
+
+        {this.state.showNextSteps && (
+          <ChannelNameForm
+            channelName={this.state.channelName}
+            onInputUpdate={this.handleNameInput}
+            validInput={this.state.validInput}
+            submit={this.onSubmit}
+            mobile={this.props.mobile}
+          />
+        )}
+      </>
     );
   }
 }
