@@ -57,9 +57,6 @@ class MyDevicesForm extends Component {
               to="#"
               onClick={(e) => {
                 e.preventDefault();
-                this.setState({
-                  channelName: "",
-                })
                 this.props.reset()
               }}
             >

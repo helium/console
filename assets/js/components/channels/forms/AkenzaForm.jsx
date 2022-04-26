@@ -79,11 +79,6 @@ class AkenzaForm extends Component {
               to="#"
               onClick={(e) => {
                 e.preventDefault();
-                this.setState({
-                  showNextSteps: false,
-                  validInput: false,
-                  channelName: "",
-                })
                 this.props.reset()
               }}
             >
