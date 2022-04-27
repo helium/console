@@ -1,14 +1,27 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { createOrganization, importOrganization } from "../../actions/organization";
+import {
+  createOrganization,
+  importOrganization,
+} from "../../actions/organization";
 import { getInvitations, resendInvitations } from "../../actions/invitation";
 import { logOut } from "../../actions/auth";
 import AuthLayout from "../common/AuthLayout";
 import DragAndDrop, { style as dropStyle } from "../common/DragAndDrop";
 import Logo from "../../../img/symbol.svg";
 import { primaryBlue, blueForDeviceStatsLarge } from "../../util/colors";
-import { Card, Input, Button, Typography, Row, Col, Form, Spin } from "antd";
-import LoadingOutlined from '@ant-design/icons/LoadingOutlined';
+import {
+  Card,
+  Input,
+  Button,
+  Typography,
+  Row,
+  Col,
+  Form,
+  Spin,
+  Alert,
+} from "antd";
+import LoadingOutlined from "@ant-design/icons/LoadingOutlined";
 const { Text, Title } = Typography;
 
 export default ({ user }) => {
@@ -180,85 +193,90 @@ export default ({ user }) => {
             </>
           )}
 
-          {
-            showImportOrg && (
-              <div style={{ textAlign: "center", marginBottom: 10 }}>
-                <Title>Helium Console</Title>
-                <Text
-                  style={{
-                    color: primaryBlue,
-                    fontSize: 18,
-                    fontWeight: 300,
-                  }}
-                >
-                  Import Your Organization
-                </Text>
-              </div>
-            )
-          }
-          {
-            showImportOrg && importFailed && (
-              <div style={dropStyle}>
+          {showImportOrg && (
+            <div style={{ textAlign: "center", marginBottom: 10 }}>
+              <Title>Helium Console</Title>
+              <Text
+                style={{
+                  color: primaryBlue,
+                  fontSize: 18,
+                  fontWeight: 300,
+                }}
+              >
+                Import Your Organization
+              </Text>
+              <Alert
+                type="warning"
+                message="Ensure imported devices are deactivated on the original Console before attempting to rejoin them on this Console."
+                style={{ fontSize: "16px", marginTop: 10 }}
+              />
+            </div>
+          )}
+          {showImportOrg && importFailed && (
+            <div style={dropStyle}>
+              <Text
+                style={{
+                  textAlign: "center",
+                  margin: "30px 40px",
+                  fontSize: 14,
+                  color: blueForDeviceStatsLarge,
+                }}
+              >
+                <span style={{ display: "block", marginBottom: 10 }}>
+                  Failed to import organization with provided file
+                </span>
+                <Button size="small" onClick={() => setImportFailed(false)}>
+                  Try Again
+                </Button>
+              </Text>
+            </div>
+          )}
+          {showImportOrg && !importFailed && (
+            <DragAndDrop
+              fileSelected={(file) => {
+                let fileReader = new FileReader();
+                fileReader.onloadend = () => {
+                  setImporting(true);
+
+                  importOrganization(fileReader.result)
+                    .then((resp) => {
+                      window.location.reload(true);
+                    })
+                    .catch((err) => {
+                      setImportFailed(true);
+                      setImporting(false);
+                    });
+                };
+                fileReader.readAsText(file);
+              }}
+            >
+              {importing ? (
+                <LoadingOutlined
+                  style={{ fontSize: 50, color: "#38A2FF", margin: 20 }}
+                  spin
+                />
+              ) : (
                 <Text
                   style={{
                     textAlign: "center",
                     margin: "30px 40px",
-                    fontSize: 14,
+                    fontSize: 16,
                     color: blueForDeviceStatsLarge,
                   }}
                 >
-                  <span style={{ display: 'block', marginBottom: 10 }}>Failed to import organization with provided file</span>
-                  <Button size="small" onClick={() => setImportFailed(false)}>
-                    Try Again
-                  </Button>
+                  Drag exported organization .json file here or click to choose
+                  file
                 </Text>
-              </div>
-            )
-          }
-          {
-            showImportOrg && !importFailed && (
-              <DragAndDrop
-                fileSelected={(file) => {
-                  let fileReader = new FileReader();
-                  fileReader.onloadend = () => {
-                    setImporting(true)
-
-                    importOrganization(fileReader.result)
-                    .then(resp => {
-                      window.location.reload(true)
-                    })
-                    .catch(err => {
-                      setImportFailed(true)
-                      setImporting(false)
-                    })
-                  };
-                  fileReader.readAsText(file);
-                }}
-              >
-                {
-                  importing ? (
-                    <LoadingOutlined style={{ fontSize: 50, color: "#38A2FF", margin: 20 }} spin />
-                  ) : (
-                    <Text
-                      style={{
-                        textAlign: "center",
-                        margin: "30px 40px",
-                        fontSize: 14,
-                        color: blueForDeviceStatsLarge,
-                      }}
-                    >
-                      Drag exported organization .json file here or click to choose file
-                    </Text>
-                  )
-                }
-              </DragAndDrop>
-            )
-          }
+              )}
+            </DragAndDrop>
+          )}
           <Button
             onClick={() => setShowImportOrg(!showImportOrg)}
-            style={{ width: "100%", marginTop: 8 }}
+            style={{ width: "100%", marginTop: 20 }}
           >
-            {showImportOrg ? "Take me back" : "I want to import an organization" }
+            {showImportOrg
+              ? "Take me back"
+              : "I want to import an organization"}
           </Button>
         </Card>
       )}
