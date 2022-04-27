@@ -2,12 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import ChannelDashboardLayout from "./ChannelDashboardLayout";
-import AzureHubForm from "./default/AzureHubForm.jsx";
-import AzureCentralForm from "./default/AzureCentralForm.jsx";
-import AWSForm from "./default/AWSForm.jsx";
-import GoogleForm from "./default/GoogleForm.jsx";
-import MQTTForm from "./default/MQTTForm.jsx";
-import HTTPForm from "./default/HTTPForm.jsx";
+import CommonForm from "./default/CommonForm.jsx";
 import CargoForm from "./community/cargo/CargoForm.jsx";
 import MyDevicesForm from "./community/my_devices/MyDevicesForm.jsx";
 import AdafruitForm from "./community/adafruit/AdafruitForm.jsx";
@@ -49,18 +44,8 @@ class ChannelNew extends Component {
     const { type } = this.state
 
     switch (type) {
-      case "aws":
-        return <AWSForm mobile={mobile} type={type} reset={() => this.handleSelectType(null)} createChannel={this.props.createChannel} />
-      case "google":
-        return <GoogleForm mobile={mobile} type={type} reset={() => this.handleSelectType(null)} createChannel={this.props.createChannel} />
-      case "mqtt":
-        return <MQTTForm mobile={mobile} type={type} reset={() => this.handleSelectType(null)} createChannel={this.props.createChannel} />
-      case "http":
-        return <HTTPForm mobile={mobile} type={type} reset={() => this.handleSelectType(null)} createChannel={this.props.createChannel} />
-      case "azure":
-        return <AzureHubForm mobile={mobile} type={type} reset={() => this.handleSelectType(null)} createChannel={this.props.createChannel} />
-      case "iot_central":
-        return <AzureCentralForm mobile={mobile} type={type} reset={() => this.handleSelectType(null)} createChannel={this.props.createChannel} />
+      case "cargo":
+        return <CargoForm mobile={mobile} type={type} reset={() => this.handleSelectType(null)} createChannel={this.props.createChannel} />
       case "mydevices":
         return <MyDevicesForm mobile={mobile} type={type} reset={() => this.handleSelectType(null)} createChannel={this.props.createChannel} />
       case "adafruit":
@@ -78,7 +63,7 @@ class ChannelNew extends Component {
       case "microshare":
         return <MicroshareForm mobile={mobile} type={type} reset={() => this.handleSelectType(null)} createChannel={this.props.createChannel} />
       default:
-        return <CargoForm mobile={mobile} type={type} reset={() => this.handleSelectType(null)} createChannel={this.props.createChannel} />
+        return <CommonForm mobile={mobile} type={type} reset={() => this.handleSelectType(null)} createChannel={this.props.createChannel} />
     }
   };
 

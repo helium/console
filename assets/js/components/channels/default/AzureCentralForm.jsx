@@ -24,14 +24,12 @@ class AzureCentralForm extends Component {
   handleInputUpdate = (e) => {
     this.setState({ [e.target.name]: e.target.value }, () => {
       const { apiKey, scopeId, appName } = this.state;
-      if (apiKey.length > 0 && scopeId.length > 0 && appName.length > 0) {
-        // check validation, if pass
-        this.props.onValidInput({
-          iot_central_api_key: apiKey,
-          iot_central_scope_id: scopeId,
-          iot_central_app_name: appName,
-        });
-      }
+      
+      this.props.onValidInput({
+        iot_central_api_key: apiKey,
+        iot_central_scope_id: scopeId,
+        iot_central_app_name: appName,
+      }, apiKey.length > 0 && scopeId.length > 0 && appName.length > 0);
     });
   };
 

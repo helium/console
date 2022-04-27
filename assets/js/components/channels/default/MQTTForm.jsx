@@ -48,19 +48,17 @@ class MQTTForm extends Component {
     this.setState({ [e.target.name]: e.target.value }, () => {
       const { endpoint, uplinkTopic, downlinkTopic } = this.state;
 
-      if (endpoint.length > 0) {
-        this.props.onValidInput({
-          endpoint,
-          uplink: {
-            topic: uplinkTopic || "helium/{{device_id}}/rx",
+      this.props.onValidInput({
+        endpoint,
+        uplink: {
+          topic: uplinkTopic || "helium/{{device_id}}/rx",
+        },
+        ...(!endpoint.includes("@io.adafruit.com") && {
+          downlink: {
+            topic: downlinkTopic || "helium/{{device_id}}/tx",
           },
-          ...(!endpoint.includes("@io.adafruit.com") && {
-            downlink: {
-              topic: downlinkTopic || "helium/{{device_id}}/tx",
-            },
-          }),
-        });
-      }
+        }),
+      }, endpoint.length > 0);
     });
   };
 
