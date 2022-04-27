@@ -13,7 +13,7 @@ defmodule ConsoleWeb.DataCreditController do
 
   @stripe_api_url "https://api.stripe.com"
 
-  def create_customer_id_and_charge(conn, %{ "amountUSD" => amountUSD }) do
+  def create_customer_id_and_charge(conn, params = %{ "amountUSD" => amountUSD }) do
     { amount, _ } = Float.parse(amountUSD)
     if amount < Application.get_env(:console, :stripe_minimum_purchase) do
       {:error, :bad_request, "Credit card charges cannot be less than $#{Application.get_env(:console, :stripe_minimum_purchase)}"}
@@ -34,12 +34,15 @@ defmodule ConsoleWeb.DataCreditController do
            customer = Poison.decode!(stripe_response.body)
            with {:ok, %Organization{} = organization} <- Organizations.update_organization(current_organization, %{ "stripe_customer_id" => customer["id"]}) do
              # create a payment intent in stripe
+             description = if not is_nil(params["description"]) and params["description"] != "", do: " - " <> params["description"], else: ""
              request_body = URI.encode_query(%{
-               "customer" => organization.stripe_customer_id,
-               "amount" => Float.round(amount * 100) |> trunc(),
-               "currency" => "usd",
-               "receipt_email" => conn.assigns.current_user.email
+                "customer" => organization.stripe_customer_id,
+                "amount" => Float.round(amount * 100) |> trunc(),
+                "currency" => "usd",
+                "receipt_email" => conn.assigns.current_user.email,
+                "description" => "Data Credits" <> description
              })
+              
 
              with {:ok, stripe_response} <- HTTPoison.post("#{@stripe_api_url}/v1/payment_intents", request_body, headers) do
                with 200 <- stripe_response.status_code do
@@ -53,18 +56,20 @@ defmodule ConsoleWeb.DataCreditController do
     end
   end
 
-  def create_charge(conn, %{ "amountUSD" => amountUSD }) do
+  def create_charge(conn, params = %{ "amountUSD" => amountUSD }) do
     { amount, _ } = Float.parse(amountUSD)
 
     if amount < Application.get_env(:console, :stripe_minimum_purchase) do
       {:error, :bad_request, "Credit card charges cannot be less than $#{Application.get_env(:console, :stripe_minimum_purchase)}"}
     else
       current_organization = conn.assigns.current_organization
+      description = if not is_nil(params["description"]) and params["description"] != "", do: " - " <> params["description"], else: ""
       request_body = URI.encode_query(%{
         "customer" => current_organization.stripe_customer_id,
         "amount" => Float.round(amount * 100) |> trunc(),
         "currency" => "usd",
-        "receipt_email" => conn.assigns.current_user.email
+        "receipt_email" => conn.assigns.current_user.email,
+        "description" => "Data Credits" <> description
       })
       headers = [
         {"Authorization", "Bearer #{Application.get_env(:console, :stripe_secret_key)}"},
@@ -179,10 +184,11 @@ defmodule ConsoleWeb.DataCreditController do
     end
   end
 
-  def create_dc_purchase(conn, %{"cost" => cost, "cardType" => card_type, "last4" => last_4, "paymentId" => payment_id}) do
+  def create_dc_purchase(conn, params = %{"cost" => cost, "cardType" => card_type, "last4" => last_4, "paymentId" => payment_id}) do
     current_organization = conn.assigns.current_organization
     current_user = conn.assigns.current_user
     # Refactor out conversion rates between USD, DC, Bytes later
+    description = if not is_nil(params["description"]) and params["description"] != "", do: " - " <> params["description"], else: ""
     attrs = %{
       "dc_purchased" => round(cost / Application.get_env(:console, :dc_cost_multiplier) * 1000),
       "cost" => cost,
@@ -191,7 +197,9 @@ defmodule ConsoleWeb.DataCreditController do
       "user_id" => current_user.id,
       "organization_id" => current_organization.id,
       "payment_id" => payment_id,
+      "description" => "Data Credits" <> description
     }
+
     headers = [
       {"Authorization", "Bearer #{Application.get_env(:console, :stripe_secret_key)}"},
       {"Content-Type", "application/x-www-form-urlencoded"}
