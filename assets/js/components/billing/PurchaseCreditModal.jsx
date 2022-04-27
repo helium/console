@@ -88,6 +88,7 @@ class PurchaseCreditModal extends Component {
     nextTimeStamp: null,
     manualQREntry: false,
     routerAddress: "",
+    description: null,
   };
 
   componentDidMount() {
@@ -151,10 +152,10 @@ class PurchaseCreditModal extends Component {
     if (e.target.value.length > 11) return;
     // Refactor out conversion rates between USD, DC, Bytes later
     if (e.target.name == "countDC") {
-      const costMultiplier = window.dc_cost_multiplier || 1
+      const costMultiplier = window.dc_cost_multiplier || 1;
       this.setState({
         countDC: e.target.value,
-        countUSD: e.target.value / 100000 * costMultiplier,
+        countUSD: (e.target.value / 100000) * costMultiplier,
         countB: e.target.value * 24,
         gettingPrice: true,
       });
@@ -182,16 +183,20 @@ class PurchaseCreditModal extends Component {
       ? defaultPayment.id
       : undefined;
 
-    const costMultiplier = window.dc_cost_multiplier || 1
+    const costMultiplier = window.dc_cost_multiplier || 1;
     await this.setState({
       loading: true,
       countUSD: parseFloat(this.state.countUSD.toFixed(2)),
-      countDC: parseInt(this.state.countUSD.toFixed(2) * 100000 / costMultiplier),
-      countB: parseInt(this.state.countUSD.toFixed(2) * 100000 * 24 / costMultiplier),
+      countDC: parseInt(
+        (this.state.countUSD.toFixed(2) * 100000) / costMultiplier
+      ),
+      countB: parseInt(
+        (this.state.countUSD.toFixed(2) * 100000 * 24) / costMultiplier
+      ),
     });
 
     if (organization.stripe_customer_id === null) {
-      createCustomerIdAndCharge(this.state.countUSD)
+      createCustomerIdAndCharge(this.state.countUSD, this.state.description)
         .then(({ payment_intent_secret }) => {
           this.setState(
             {
@@ -207,7 +212,7 @@ class PurchaseCreditModal extends Component {
           this.setState({ loading: false });
         });
     } else {
-      createCharge(this.state.countUSD)
+      createCharge(this.state.countUSD, this.state.description)
         .then(({ payment_intent_secret }) => {
           this.setState(
             {
@@ -227,7 +232,7 @@ class PurchaseCreditModal extends Component {
 
   showQRCode = () => {
     analyticsLogger.logEvent("ACTION_OPEN_PURCHASE_DC_MODAL_QR_CODE");
-    if (this.state.routerAddress === '') {
+    if (this.state.routerAddress === "") {
       this.props.getRouterAddress().then(({ data }) => {
         if (typeof data.address === "string") {
           this.setState({ routerAddress: data.address });
@@ -324,7 +329,8 @@ class PurchaseCreditModal extends Component {
         result.paymentIntent.amount,
         paymentMethod.card.brand,
         paymentMethod.card.last4,
-        result.paymentIntent.id
+        result.paymentIntent.id,
+        this.state.description
       )
       .then(() => {})
       .catch((err) => {
@@ -351,7 +357,7 @@ class PurchaseCreditModal extends Component {
 
   renderCountSelection = () => {
     const { countUSD, countB } = this.state;
-    const costMultiplier = window.dc_cost_multiplier || 1
+    const costMultiplier = window.dc_cost_multiplier || 1;
     return (
       <div
         style={{
@@ -362,23 +368,33 @@ class PurchaseCreditModal extends Component {
           alignItems: "center",
         }}
       >
-        <Text>{`1 DC = 24 Byte Packet = $${0.00001 * costMultiplier} USD`}</Text>
-        {!process.env.SELF_HOSTED || window.stripe_public_key && (
-          <Text>(Credit Card purchases: minimum ${window.stripe_minimum_purchase || 10})</Text>
-        )}
+        <Text>{`1 DC = 24 Byte Packet = $${
+          0.00001 * costMultiplier
+        } USD`}</Text>
+        {!process.env.SELF_HOSTED ||
+          (window.stripe_public_key && (
+            <Text>
+              (Credit Card purchases: minimum $
+              {window.stripe_minimum_purchase || 10})
+            </Text>
+          ))}
         <br />
         <Text
           strong
           style={{
             padding: this.props.mobile ? "0px 15px" : 0,
-            width: this.props.mobile ? '100%' : '80%',
-            textAlign: 'center'
+            width: this.props.mobile ? "100%" : "80%",
+            textAlign: "center",
           }}
         >
-          Data Credits purchased on Console can only be used for device
-          packet transfer and are non-transferrable.
+          Data Credits purchased on Console can only be used for device packet
+          transfer and are non-transferrable.
         </Text>
-        <div style={this.props.mobile ? styles.countBlueBoxMobile : styles.countBlueBox}>
+        <div
+          style={
+            this.props.mobile ? styles.countBlueBoxMobile : styles.countBlueBox
+          }
+        >
           <div>
             <Input
               placeholder="Enter Quantity"
@@ -402,6 +418,34 @@ class PurchaseCreditModal extends Component {
               </Text>
             </div>
           )}
+        </div>
+        <div style={{ padding: "20px 0", width: "75%" }}>
+          <Input
+            name="description"
+            value={this.state.description}
+            onChange={(e) => {
+              this.setState({ description: e.target.value });
+            }}
+            addonBefore={
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
+              >
+                Memo
+                <Popover
+                  content="For Stripe payments only, you may use this field to add info (e.g. VAT number) so it shows on the emailed receipt."
+                  placement="bottom"
+                >
+                  <InfoCircleOutlined
+                    style={{ fontSize: 16, marginLeft: 10 }}
+                  />
+                </Popover>
+              </div>
+            }
+          />
         </div>
       </div>
     );
@@ -557,7 +601,9 @@ class PurchaseCreditModal extends Component {
         </Button>,
       ];
 
-    const stripe_min_purchase = window.stripe_minimum_purchase ? parseInt(window.stripe_minimum_purchase) : 10
+    const stripe_min_purchase = window.stripe_minimum_purchase
+      ? parseInt(window.stripe_minimum_purchase)
+      : 10;
     const allButtons = [
       <Button
         key="back"
@@ -598,17 +644,17 @@ class PurchaseCreditModal extends Component {
     ];
 
     if (!process.env.SELF_HOSTED) {
-      return allButtons
+      return allButtons;
     }
     if (process.env.SELF_HOSTED) {
-      let buttons = [allButtons[0]]
-      if (window.disable_user_burn !== 'true') {
-        buttons = buttons.concat(allButtons[1])
+      let buttons = [allButtons[0]];
+      if (window.disable_user_burn !== "true") {
+        buttons = buttons.concat(allButtons[1]);
       }
       if (window.stripe_public_key) {
-        buttons = buttons.concat(allButtons[2])
+        buttons = buttons.concat(allButtons[2]);
       }
-      return buttons
+      return buttons;
     }
   };
 
@@ -643,7 +689,9 @@ class PurchaseCreditModal extends Component {
         onCancel={loading ? () => {} : this.handleClose}
         centered
         footer={this.renderModalFooter()}
-        bodyStyle={{ padding: (this.state.showPage == "default" || this.props.mobile) && 0 }}
+        bodyStyle={{
+          padding: (this.state.showPage == "default" || this.props.mobile) && 0,
+        }}
         width={560}
       >
         {this.state.showPage == "default" && this.renderCountSelection()}
