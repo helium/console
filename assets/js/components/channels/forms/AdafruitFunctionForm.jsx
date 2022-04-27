@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { ALL_FUNCTIONS } from '../../graphql/functions';
-import withGql from '../../graphql/withGql'
+import { ALL_FUNCTIONS } from '../../../graphql/functions';
+import withGql from '../../../graphql/withGql'
 import { Typography, Radio, Card, Row, Select } from 'antd';
 const { Text } = Typography
 const { Option } = Select

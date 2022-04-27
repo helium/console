@@ -157,7 +157,7 @@ class GoogleSheetForm extends Component {
             channelName={this.state.channelName}
             onInputUpdate={this.handleNameInput}
             validInput={this.state.validInput}
-            submit={this.onSubmit}
+            submit={() => {}}
             mobile={this.props.mobile}
             noSubmit={true}
           />
