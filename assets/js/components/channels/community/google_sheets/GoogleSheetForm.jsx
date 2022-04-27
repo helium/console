@@ -3,13 +3,13 @@ import Editor from "react-simple-code-editor";
 import range from "lodash/range";
 import kebabCase from "lodash/kebabCase";
 import { highlight, languages } from "prismjs/components/prism-core";
-import { IntegrationTypeTileSimple } from "../IntegrationTypeTileSimple";
-import { getRootType } from "../../../util/integrationInfo";
-import { codeEditorLineColor, codeEditorBgColor } from "../../../util/colors";
+import { IntegrationTypeTileSimple } from "../../IntegrationTypeTileSimple";
+import { getRootType } from "../../../../util/integrationInfo";
+import { codeEditorLineColor, codeEditorBgColor } from "../../../../util/colors";
 import { Link } from "react-router-dom";
-import ChannelNameForm from "./ChannelNameForm.jsx";
+import ChannelNameForm from "../../default/ChannelNameForm.jsx";
 import GoogleSheetRequestFields from "./GoogleSheetRequestFields.jsx";
-import analyticsLogger from "../../../util/analyticsLogger";
+import analyticsLogger from "../../../../util/analyticsLogger";
 import { Card, Typography, Input, Button } from 'antd';
 const { Text } = Typography
 

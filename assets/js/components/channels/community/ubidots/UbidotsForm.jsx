@@ -1,12 +1,12 @@
 import React, { Component } from "react";
-import { IntegrationTypeTileSimple } from "../IntegrationTypeTileSimple";
-import { getRootType } from "../../../util/integrationInfo";
+import { IntegrationTypeTileSimple } from "../../IntegrationTypeTileSimple";
+import { getRootType } from "../../../../util/integrationInfo";
 import { Link } from "react-router-dom";
-import ChannelNameForm from "./ChannelNameForm.jsx";
-import analyticsLogger from "../../../util/analyticsLogger";
+import ChannelNameForm from "../../default/ChannelNameForm.jsx";
+import analyticsLogger from "../../../../util/analyticsLogger";
 import { Card, Typography, Input, Button } from 'antd';
 const { Text } = Typography
-import { post } from "../../../util/rest";
+import { post } from "../../../../util/rest";
 
 class UbidotsForm extends Component {
   state = {

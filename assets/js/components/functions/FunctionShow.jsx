@@ -6,7 +6,7 @@ import { MobileDisplay, DesktopDisplay } from "../mobile/MediaQuery";
 import UserCan from "../common/UserCan";
 import FunctionValidator from "./FunctionValidator";
 import DeleteFunctionModal from "./DeleteFunctionModal";
-import GoogleSheetRequestFields from "../channels/forms/GoogleSheetRequestFields";
+import GoogleSheetRequestFields from "../channels/community/google_sheets/GoogleSheetRequestFields";
 import { FUNCTION_SHOW } from "../../graphql/functions";
 import { updateFunction } from "../../actions/function";
 import analyticsLogger from "../../util/analyticsLogger";

@@ -1,25 +1,25 @@
 import React, { Component } from "react";
-import { IntegrationTypeTileSimple } from "../IntegrationTypeTileSimple";
-import { getRootType } from "../../../util/integrationInfo";
+import { IntegrationTypeTileSimple } from "../../IntegrationTypeTileSimple";
+import { getRootType } from "../../../../util/integrationInfo";
 import { Link } from "react-router-dom";
-import ChannelNameForm from "./ChannelNameForm.jsx";
-import analyticsLogger from "../../../util/analyticsLogger";
+import ChannelNameForm from "../../default/ChannelNameForm.jsx";
+import analyticsLogger from "../../../../util/analyticsLogger";
 import { Card, Typography, Input, Button } from 'antd';
 const { Text } = Typography
 
-class DatacakeForm extends Component {
+class AkenzaForm extends Component {
   state = {
     method: "post",
     headers: {},
     endpoint: "",
-    token: "",
+    secret: "",
     showNextSteps: false,
     validInput: false,
     channelName: "",
   };
 
-  handleTokenUpdate = (e) => {
-    this.setState({ token: e.target.value }, this.validateInput);
+  handleSecretUpdate = (e) => {
+    this.setState({ secret: e.target.value }, this.validateInput);
   };
 
   handleNameInput = (e) => {
@@ -27,15 +27,12 @@ class DatacakeForm extends Component {
   };
 
   validateInput = () => {
-    const { token } = this.state;
-    if (token.length > 0) {
+    const { secret } = this.state;
+    if (secret.length > 0) {
       this.setState({
         method: "post",
-        endpoint: "https://api.datacake.co/integrations/lorawan/helium/",
-        headers: {
-          Key: "Authentication",
-          Value: `Token ${token}`,
-        },
+        endpoint: `https://data-gateway.akenza.io/v3/capture?secret=${secret}`,
+        headers: {},
         showNextSteps: true,
         validInput: true,
       });
@@ -92,15 +89,13 @@ class DatacakeForm extends Component {
 
         <Card title="Step 2 - Endpoint Details">
           <div>
-            <Text style={{ display: "block" }}>Enter Datacake Token:</Text>
+            <Text style={{ display: "block" }}>Enter Akenza Uplink Secret:</Text>
           </div>
           <div>
             <Input
-              value={this.state.token}
-              onChange={this.handleTokenUpdate}
-              style={{
-                ...(this.props.mobile ? { width: "100%" } : { width: "50%" }),
-              }}
+              value={this.state.secret}
+              onChange={this.handleSecretUpdate}
+              style={{ ...(!this.props.mobile && { width: "50%" }) }}
             />
           </div>
         </Card>
@@ -119,4 +114,4 @@ class DatacakeForm extends Component {
   }
 }
 
-export default DatacakeForm;
+export default AkenzaForm;

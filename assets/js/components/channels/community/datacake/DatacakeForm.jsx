@@ -1,13 +1,13 @@
 import React, { Component } from "react";
-import { IntegrationTypeTileSimple } from "../IntegrationTypeTileSimple";
-import { getRootType } from "../../../util/integrationInfo";
+import { IntegrationTypeTileSimple } from "../../IntegrationTypeTileSimple";
+import { getRootType } from "../../../../util/integrationInfo";
 import { Link } from "react-router-dom";
-import ChannelNameForm from "./ChannelNameForm.jsx";
-import analyticsLogger from "../../../util/analyticsLogger";
+import ChannelNameForm from "../../default/ChannelNameForm.jsx";
+import analyticsLogger from "../../../../util/analyticsLogger";
 import { Card, Typography, Input, Button } from 'antd';
 const { Text } = Typography
 
-class MicroshareForm extends Component {
+class DatacakeForm extends Component {
   state = {
     method: "post",
     headers: {},
@@ -31,9 +31,10 @@ class MicroshareForm extends Component {
     if (token.length > 0) {
       this.setState({
         method: "post",
-        endpoint: `https://ingest.paks.microshare.io/share/io.microshare.helium.packed/token/${token}`,
+        endpoint: "https://api.datacake.co/integrations/lorawan/helium/",
         headers: {
-          Authorization: `Bearer ${token}`,
+          Key: "Authentication",
+          Value: `Token ${token}`,
         },
         showNextSteps: true,
         validInput: true,
@@ -91,13 +92,15 @@ class MicroshareForm extends Component {
 
         <Card title="Step 2 - Endpoint Details">
           <div>
-            <Text style={{ display: "block" }}>Enter Token:</Text>
+            <Text style={{ display: "block" }}>Enter Datacake Token:</Text>
           </div>
           <div>
             <Input
               value={this.state.token}
               onChange={this.handleTokenUpdate}
-              style={{ ...(!this.props.mobile && { width: "50%" }) }}
+              style={{
+                ...(this.props.mobile ? { width: "100%" } : { width: "50%" }),
+              }}
             />
           </div>
         </Card>
@@ -116,4 +119,4 @@ class MicroshareForm extends Component {
   }
 }
 
-export default MicroshareForm;
+export default DatacakeForm;

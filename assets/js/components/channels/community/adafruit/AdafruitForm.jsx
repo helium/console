@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import { IntegrationTypeTileSimple } from "../IntegrationTypeTileSimple";
-import { getRootType } from "../../../util/integrationInfo";
+import { IntegrationTypeTileSimple } from "../../IntegrationTypeTileSimple";
+import { getRootType } from "../../../../util/integrationInfo";
 import { Link } from "react-router-dom";
-import ChannelNameForm from "./ChannelNameForm.jsx";
-import AdafruitFunctionForm from "./AdafruitFunctionForm.jsx";
-import { adafruitTemplate } from "../../../util/integrationTemplates";
-import analyticsLogger from "../../../util/analyticsLogger";
+import ChannelNameForm from "../../default/ChannelNameForm.jsx";
+import AdafruitFunctionSelect from "./AdafruitFunctionSelect.jsx";
+import { adafruitTemplate } from "../../../../util/integrationTemplates";
+import analyticsLogger from "../../../../util/analyticsLogger";
 import { Card, Typography, Input, Button, Tooltip, Popover, Row, Col } from 'antd';
 const { Text } = Typography
 import QuestionCircleFilled from '@ant-design/icons/QuestionCircleFilled';
@@ -195,7 +195,7 @@ class AdafruitForm extends Component {
         )}
 
         {this.state.showNextSteps && (
-          <AdafruitFunctionForm
+          <AdafruitFunctionSelect
             handleFunctionUpdate={this.handleAdafruitFunctionSelect}
           >
             <div style={{ marginTop: 20 }}>
@@ -208,7 +208,7 @@ class AdafruitForm extends Component {
                 Add Integration
               </Button>
             </div>
-          </AdafruitFunctionForm>
+          </AdafruitFunctionSelect>
         )}
       </>
     );

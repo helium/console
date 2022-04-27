@@ -1,46 +1,24 @@
-import React, { Component } from "react";
-import { IntegrationTypeTileSimple } from "../IntegrationTypeTileSimple";
-import { getRootType } from "../../../util/integrationInfo";
+import React, { Component } from 'react';
+import { IntegrationTypeTileSimple } from "../../IntegrationTypeTileSimple";
+import { getRootType } from "../../../../util/integrationInfo";
 import { Link } from "react-router-dom";
-import ChannelNameForm from "./ChannelNameForm.jsx";
-import analyticsLogger from "../../../util/analyticsLogger";
-import { Card, Typography, Input, Button } from 'antd';
+import ChannelNameForm from "../../default/ChannelNameForm.jsx";
+import analyticsLogger from "../../../../util/analyticsLogger";
+import { Card, Typography, Button } from 'antd';
 const { Text } = Typography
 
-class AkenzaForm extends Component {
+class MyDevicesForm extends Component {
   state = {
     method: "post",
+    endpoint: "https://lora.mydevices.com/v1/networks/helium/uplink",
     headers: {},
-    endpoint: "",
-    secret: "",
-    showNextSteps: false,
-    validInput: false,
+    showNextSteps: true,
+    validInput: true,
     channelName: "",
-  };
-
-  handleSecretUpdate = (e) => {
-    this.setState({ secret: e.target.value }, this.validateInput);
-  };
+  }
 
   handleNameInput = (e) => {
     this.setState({ channelName: e.target.value });
-  };
-
-  validateInput = () => {
-    const { secret } = this.state;
-    if (secret.length > 0) {
-      this.setState({
-        method: "post",
-        endpoint: `https://data-gateway.akenza.io/v3/capture?secret=${secret}`,
-        headers: {},
-        showNextSteps: true,
-        validInput: true,
-      });
-    } else {
-      this.setState({
-        validInput: false
-      });
-    }
   };
 
   onSubmit = () => {
@@ -70,7 +48,7 @@ class AkenzaForm extends Component {
   }
 
   render() {
-    return (
+    return(
       <>
         <Card title="Step 1 – Choose an Integration Type">
           <div>
@@ -88,16 +66,9 @@ class AkenzaForm extends Component {
         </Card>
 
         <Card title="Step 2 - Endpoint Details">
-          <div>
-            <Text style={{ display: "block" }}>Enter Akenza Uplink Secret:</Text>
-          </div>
-          <div>
-            <Input
-              value={this.state.secret}
-              onChange={this.handleSecretUpdate}
-              style={{ ...(!this.props.mobile && { width: "50%" }) }}
-            />
-          </div>
+          <Text>
+            Use a supported device listed on their console or encode the payload with the Cayenne Low Power Payload (Cayenne LPP) format.
+          </Text>
         </Card>
 
         {this.state.showNextSteps && (
@@ -114,4 +85,4 @@ class AkenzaForm extends Component {
   }
 }
 
-export default AkenzaForm;
+export default MyDevicesForm;

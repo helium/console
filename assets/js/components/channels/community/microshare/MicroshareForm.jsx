@@ -1,28 +1,48 @@
-import React, { Component } from 'react';
-import { IntegrationTypeTileSimple } from "../IntegrationTypeTileSimple";
-import { getRootType } from "../../../util/integrationInfo";
+import React, { Component } from "react";
+import { IntegrationTypeTileSimple } from "../../IntegrationTypeTileSimple";
+import { getRootType } from "../../../../util/integrationInfo";
 import { Link } from "react-router-dom";
-import ChannelNameForm from "./ChannelNameForm.jsx";
-import analyticsLogger from "../../../util/analyticsLogger";
-import { Card, Typography, Button } from 'antd';
+import ChannelNameForm from "../../default/ChannelNameForm.jsx";
+import analyticsLogger from "../../../../util/analyticsLogger";
+import { Card, Typography, Input, Button } from 'antd';
 const { Text } = Typography
 
-class CargoForm extends Component {
+class MicroshareForm extends Component {
   state = {
     method: "post",
-    endpoint: "https://cargo.helium.com/api/payloads",
-    headers: { "Content-Type": "application/json" },
+    headers: {},
+    endpoint: "",
+    token: "",
     showNextSteps: false,
     validInput: false,
     channelName: "",
-  }
+  };
 
-  validateInput = () => {
-    this.setState({ showNextSteps: true, validInput: true })
-  }
+  handleTokenUpdate = (e) => {
+    this.setState({ token: e.target.value }, this.validateInput);
+  };
 
   handleNameInput = (e) => {
     this.setState({ channelName: e.target.value });
+  };
+
+  validateInput = () => {
+    const { token } = this.state;
+    if (token.length > 0) {
+      this.setState({
+        method: "post",
+        endpoint: `https://ingest.paks.microshare.io/share/io.microshare.helium.packed/token/${token}`,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        showNextSteps: true,
+        validInput: true,
+      });
+    } else {
+      this.setState({
+        validInput: false
+      });
+    }
   };
 
   onSubmit = () => {
@@ -52,7 +72,7 @@ class CargoForm extends Component {
   }
 
   render() {
-    return(
+    return (
       <>
         <Card title="Step 1 – Choose an Integration Type">
           <div>
@@ -70,25 +90,16 @@ class CargoForm extends Component {
         </Card>
 
         <Card title="Step 2 - Endpoint Details">
-          <Text>
-            You are opting to test your devices on the Helium Cargo HTTP integration endpoint.
-          </Text>
-          <br />
-          <Text>
-            Helium Cargo is an evaluation tool and the data collected is available to all developers.
-          </Text>
-          <br />
-          <Text>
-            Please do not share any sensitive information. Use at your own discretion.
-          </Text>
-          <br />
-          <Button
-            onClick={this.validateInput}
-            type="default"
-            style={{marginTop: 20}}
-          >
-            I AGREE
-          </Button>
+          <div>
+            <Text style={{ display: "block" }}>Enter Token:</Text>
+          </div>
+          <div>
+            <Input
+              value={this.state.token}
+              onChange={this.handleTokenUpdate}
+              style={{ ...(!this.props.mobile && { width: "50%" }) }}
+            />
+          </div>
         </Card>
 
         {this.state.showNextSteps && (
@@ -105,4 +116,4 @@ class CargoForm extends Component {
   }
 }
 
-export default CargoForm;
+export default MicroshareForm;

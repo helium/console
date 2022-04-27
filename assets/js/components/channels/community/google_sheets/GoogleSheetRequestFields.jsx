@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Typography, Input, Button, Popover } from "antd";
 import InfoCircleOutlined from "@ant-design/icons/InfoCircleOutlined";
 import cheerio from "cheerio";
-import { post } from "../../../util/rest";
+import { post } from "../../../../util/rest";
 const { Text } = Typography;
 
 class GoogleSheetRequestFields extends Component {

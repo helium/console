@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import { ALL_FUNCTIONS } from '../../../graphql/functions';
-import withGql from '../../../graphql/withGql'
+import { ALL_FUNCTIONS } from '../../../../graphql/functions';
+import withGql from '../../../../graphql/withGql'
 import { Typography, Radio, Card, Row, Select } from 'antd';
 const { Text } = Typography
 const { Option } = Select
 
-class AdafruitFunctionForm extends Component {
+class AdafruitFunctionSelect extends Component {
   state = {
     format: 'cayenne',
     functionSelected: null
@@ -67,4 +67,4 @@ class AdafruitFunctionForm extends Component {
   }
 }
 
-export default withGql(AdafruitFunctionForm, ALL_FUNCTIONS, props => ({ fetchPolicy: 'cache-first', variables: {}, name: 'allFunctionsQuery' }))
+export default withGql(AdafruitFunctionSelect, ALL_FUNCTIONS, props => ({ fetchPolicy: 'cache-first', variables: {}, name: 'allFunctionsQuery' }))

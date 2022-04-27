@@ -1,10 +1,10 @@
 import React from "react";
-import AzureHubForm from "./forms/AzureHubForm.jsx";
-import AzureCentralForm from "./forms/AzureCentralForm.jsx";
-import AWSForm from "./forms/AWSForm.jsx";
-import GoogleForm from "./forms/GoogleForm.jsx";
-import MQTTForm from "./forms/MQTTForm.jsx";
-import HTTPForm from "./forms/HTTPForm.jsx";
+import AzureHubForm from "./default/AzureHubForm.jsx";
+import AzureCentralForm from "./default/AzureCentralForm.jsx";
+import AWSForm from "./default/AWSForm.jsx";
+import GoogleForm from "./default/GoogleForm.jsx";
+import MQTTForm from "./default/MQTTForm.jsx";
+import HTTPForm from "./default/HTTPForm.jsx";
 
 export const renderConnectionDetails = (channel, onValidInput, mobile) => {
   switch (channel.type) {
