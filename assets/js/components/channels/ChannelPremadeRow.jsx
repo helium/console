@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { IntegrationTypeTile } from "./IntegrationTypeTile";
-import { PREMADE_CHANNEL_TYPES } from "../../util/integrationInfo";
+import { COMMUNITY_INTEGRATION_TYPES } from "../../util/integrationInfo";
 import _JSXStyle from "styled-jsx/style";
 
 const styles = {
@@ -37,7 +37,7 @@ class ChannelPremadeRow extends Component {
           ...(mobile && { flexWrap: "wrap", justifyContent: "center" }),
         }}
       >
-        {PREMADE_CHANNEL_TYPES.map((channel, i) => {
+        {COMMUNITY_INTEGRATION_TYPES.map((channel, i) => {
           if (channel.name)
             return (
               <div

@@ -1,11 +1,11 @@
 import React from 'react';
 import { Typography } from 'antd';
 const { Text } = Typography
-import { NEW_CHANNEL_TYPES, PREMADE_CHANNEL_TYPES } from '../../util/integrationInfo';
+import { CORE_INTEGRATION_TYPES, COMMUNITY_INTEGRATION_TYPES } from '../../util/integrationInfo';
 
 export const IntegrationTypeTileSimple = props => {
   const { type } = props;
-  const { img, name, info, docLink } = [...NEW_CHANNEL_TYPES, ...PREMADE_CHANNEL_TYPES].filter(channel => channel.type === type)[0];
+  const { img, name, info, docLink } = [...CORE_INTEGRATION_TYPES, ...COMMUNITY_INTEGRATION_TYPES].filter(channel => channel.type === type)[0];
 
   return (
     <div>

@@ -117,7 +117,7 @@ class GoogleSheetForm extends Component {
     };
 
     this.props.createChannel(payload, {
-      format: "googlesheet",
+      format: "google_sheets",
       body: googleFunctionBody,
     });
 

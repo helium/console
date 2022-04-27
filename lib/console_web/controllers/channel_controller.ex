@@ -33,7 +33,7 @@ defmodule ConsoleWeb.ChannelController do
           "cayenne" ->
             function_params = Map.merge(function_params, %{"name" => channel_params["name"], "type" => "decoder", "organization_id" => current_organization.id })
             Functions.create_function(function_params, current_organization)
-          "googlesheet" ->
+          "google_sheets" ->
             function_params = Map.merge(function_params, %{"name" => channel_params["name"], "type" => "decoder", "organization_id" => current_organization.id, "format" => "custom" })
             Functions.create_function(function_params, current_organization)
         end

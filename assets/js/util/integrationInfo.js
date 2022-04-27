@@ -1,34 +1,41 @@
-import Azure from "../../img/azure-channel.svg";
-import Aws from "../../img/aws-channel.svg";
-import GoogleSheet from "../../img/google-sheet-channel.svg";
-import Mqtt from "../../img/mqtt-channel.svg";
-import Http from "../../img/http-channel.svg";
-import Cargo from "../../img/heliumcargo.svg";
-import MyDevices from "../../img/mydevices.svg";
-import Adafruit from "../../img/adafruitio.png";
-import Ubidots from "../../img/ubidots.png";
-import Datacake from "../../img/datacake.png";
-import Tago from "../../img/tago.png";
-import Microshare from "../../img/microshare.png";
-import Akenza from "../../img/akenza.png";
-import IotCentral from "../../img/iot-central-channel.svg";
+import Aws from "../../img/channels/aws-channel.svg";
+import AwsDark from "../../img/channels/aws-dark.png";
+import Azure from "../../img/channels/azure-channel.svg";
+import AzureDark from "../../img/channels/azure-dark.svg";
+import Http from "../../img/channels/http-channel.svg";
+import HttpDark from "../../img/channels/http-dark.png";
+import IotCentral from "../../img/channels/iot-central-channel.svg";
+import IotCentralDark from "../../img/channels/iot-central-dark.svg";
+import Mqtt from "../../img/channels/mqtt-channel.svg";
+import MqttDark from "../../img/channels/mqtt-dark.png";
 
-import AdafruitIcon from "../../img/channels/adafruit.png";
-import AwsIcon from "../../img/channels/aws.png";
-import AzureIcon from "../../img/channels/azure.svg";
-import CargoIcon from "../../img/channels/cargo.png";
-import CayenneIcon from "../../img/channels/cayenne.png";
-import DatacakeIcon from "../../img/channels/datacake.png";
-import HttpIcon from "../../img/channels/http.png";
-import MqttIcon from "../../img/channels/mqtt.png";
-import TagoIcon from "../../img/channels/tago.png";
-import UbidotsIcon from "../../img/channels/ubidots.png";
-import GoogleSheetIcon from "../../img/channels/google-sheet.svg";
-import MicroshareIcon from "../../img/channels/microshare.png";
-import AkenzaIcon from "../../img/channels/akenza.png";
-import IotCentralIcon from "../../img/channels/iot-central.svg";
+// Community integration images
+import Adafruit from "../../img/channels/community/adafruit.png";
+import AdafruitDark from "../../img/channels/community/flows/adafruit-dark.png";
+import Akenza from "../../img/channels/community/akenza.png";
+import AkenzaDark from "../../img/channels/community/flows/akenza-dark.png";
+import Cargo from "../../img/channels/community/cargo.svg";
+import CargoDark from "../../img/channels/community/flows/cargo-dark.png";
+import Datacake from "../../img/channels/community/datacake.png";
+import DatacakeDark from "../../img/channels/community/flows/datacake-dark.png";
+import GoogleSheet from "../../img/channels/community/google-sheet-channel.svg";
+import GoogleSheetDark from "../../img/channels/community/flows/google-sheet-dark.svg";
+import Microshare from "../../img/channels/community/microshare.png";
+import MicroshareDark from "../../img/channels/community/flows/microshare-dark.png";
+import MyDevices from "../../img/channels/community/mydevices.svg";
+import MyDevicesDark from "../../img/channels/community/flows/mydevices-dark.png";
+import Tago from "../../img/channels/community/tago.png";
+import TagoDark from "../../img/channels/community/flows/tago-dark.png";
+import Ubidots from "../../img/channels/community/ubidots.png";
+import UbidotsDark from "../../img/channels/community/flows/ubidots-dark.png";
 
-export const NEW_CHANNEL_TYPES = [
+let allowedIntegrations
+try {
+  // To customize allowed integrations, copy allowed-integrations.json file from templates folder to root foler
+  allowedIntegrations = require("../../../allowed-integrations.json");
+} catch (err) {}
+
+const core_integrations = [
   {
     name: "HTTP",
     type: "http",
@@ -71,8 +78,9 @@ export const NEW_CHANNEL_TYPES = [
   },
   // { name: "Google IoT", type: "google", img: `${Google}`, inactive: true },
 ];
+export const CORE_INTEGRATION_TYPES = allowedIntegrations ? core_integrations.filter(i => allowedIntegrations[i.type]) : core_integrations
 
-export const PREMADE_CHANNEL_TYPES = [
+const community_integrations = [
   {
     name: "Helium Cargo",
     type: "cargo",
@@ -83,7 +91,7 @@ export const PREMADE_CHANNEL_TYPES = [
   },
   {
     name: "myDevices Cayenne",
-    type: "mydevices",
+    type: "my_devices",
     img: `${MyDevices}`,
     info: "myDevices Cayenne lets you quickly visualize real-time data sent over the Helium Network.",
     docLink:
@@ -123,7 +131,7 @@ export const PREMADE_CHANNEL_TYPES = [
   },
   {
     name: "Google Sheets",
-    type: "googlesheet",
+    type: "google_sheets",
     img: `${GoogleSheet}`,
     info: "This Integration streamlines sending data to a Google Sheet by using a Google Form.",
     docLink:
@@ -146,15 +154,16 @@ export const PREMADE_CHANNEL_TYPES = [
       "https://docs.helium.com/use-the-network/console/integrations/akenza",
   },
 ];
+export const COMMUNITY_INTEGRATION_TYPES = allowedIntegrations ? community_integrations.filter(i => allowedIntegrations[i.type]) : community_integrations
 
 export const getRootType = (type) => {
   switch (type) {
     case "cargo":
-    case "mydevices":
+    case "my_devices":
     case "ubidots":
     case "datacake":
     case "tago":
-    case "googlesheet":
+    case "google_sheets":
     case "akenza":
     case "microshare":
       return "http";
@@ -166,35 +175,18 @@ export const getRootType = (type) => {
 };
 
 export const integrationImgMap = {
-  // adafruit: AdafruitIcon,
-  aws: AwsIcon,
-  azure: AzureIcon,
-  iot_central: IotCentralIcon,
-  // cargo: CargoIcon,
-  // cayenne: CayenneIcon,
-  // datacake: DatacakeIcon,
-  http: HttpIcon,
-  mqtt: MqttIcon,
-  // tago: TagoIcon,
-  // ubidots: UbidotsIcon,
-  // googlesheets: GoogleSheetIcon,
-  // microshare: MicroshareIcon,
-  // akenza: AkenzaIcon,
-};
-
-export const getIntegrationTypeForFlows = (endpoint, type) => {
-  // if (!endpoint) return type;
-  // if (endpoint === "https://cargo.helium.com/api/payloads") return "cargo";
-  // if (endpoint === "https://lora.mydevices.com/v1/networks/helium/uplink")
-  //   return "cayenne";
-  // if (endpoint === "https://api.datacake.co/integrations/lorawan/helium/")
-  //   return "datacake";
-  // if (endpoint === "https://helium.middleware.tago.io/uplink") return "tago";
-  // if (endpoint.indexOf("io.adafruit.com") !== -1) return "adafruit";
-  // if (endpoint.indexOf("industrial.ubidots.com") !== -1) return "ubidots";
-  // if (endpoint.indexOf("docs.google.com/forms/d/e/") !== -1)
-  //   return "googlesheets";
-  // if (endpoint.indexOf("microshare.io") !== -1) return "microshare";
-  // if (endpoint.indexOf("data-gateway.akenza.io") !== -1) return "akenza";
-  return type;
+  adafruit: AdafruitDark,
+  aws: AwsDark,
+  azure: AzureDark,
+  iot_central: IotCentralDark,
+  cargo: CargoDark,
+  cayenne: MyDevicesDark,
+  datacake: DatacakeDark,
+  http: HttpDark,
+  mqtt: MqttDark,
+  tago: TagoDark,
+  ubidots: UbidotsDark,
+  google_sheets: GoogleSheetDark,
+  microshare: MicroshareDark,
+  akenza: AkenzaDark,
 };

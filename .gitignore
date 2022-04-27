@@ -41,3 +41,5 @@ data/
 /.env-router
 docker-compose.yaml
 nginx.conf
+
+/allowed-integrations.json

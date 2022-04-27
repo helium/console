@@ -1,7 +1,7 @@
 import React from 'react';
 import NavPointTriangle from '../common/NavPointTriangle';
 import BarIcon from '../../../img/channels/channel-bar-icon.svg'
-import { getIntegrationTypeForFlows, integrationImgMap } from '../../util/integrationInfo'
+import { integrationImgMap } from '../../util/integrationInfo'
 import { Typography } from 'antd';
 const { Text } = Typography;
 import { Link } from 'react-router-dom';
@@ -38,7 +38,7 @@ const ChannelButton = ({ id, name, type, selected }) => (
 );
 
 export default ({ channels, shownChannelId }) => {
-  const updatedChannels = channels.map(c => Object.assign({}, c, { type: getIntegrationTypeForFlows(c.endpoint, c.type) }))
+  const updatedChannels = channels.map(c => Object.assign({}, c, { type: c.type }))
 
   return (
     <div style={{ display: 'flex', flexDirection: 'row' }}>

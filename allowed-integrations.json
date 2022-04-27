@@ -1,0 +1,16 @@
+{
+  "aws": true,
+  "azure": true,
+  "iot_central": true,
+  "http": true,
+  "mqtt": true,
+  "cargo": true,
+  "my_devices": true,
+  "ubidots": true,
+  "adafruit": true,
+  "datacake": true,
+  "tago": true,
+  "google_sheets": true,
+  "microshare": true,
+  "akenza": true
+}

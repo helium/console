@@ -6,7 +6,6 @@ import { isEdge, isNode, ReactFlowProvider } from "react-flow-renderer";
 import { Prompt } from "react-router";
 import { ALL_RESOURCES } from "../../graphql/flows";
 import { updateFlows } from "../../actions/flow";
-import { getIntegrationTypeForFlows } from "../../util/integrationInfo";
 import { MobileDisplay, DesktopDisplay } from "../mobile/MediaQuery";
 import DashboardLayout from "../common/DashboardLayout";
 import FlowsWorkspace from "./FlowsWorkspace";
@@ -342,8 +341,6 @@ const generateInitialElementsMap = (data, flowPositions, activeResources) => {
     }
   });
   allChannels.forEach((channel) => {
-    const type = getIntegrationTypeForFlows(channel.endpoint, channel.type);
-
     const node = {
       id: `channel-${channel.id}`,
       type: "channelNode",
@@ -351,7 +348,7 @@ const generateInitialElementsMap = (data, flowPositions, activeResources) => {
         label: channel.name,
         id: `channel-${channel.id}`,
         type_name: channel.type_name,
-        type,
+        type: channel.type,
         hasAlerts: channel.alerts.length > 0,
         lastErrored: channel.last_errored,
       },

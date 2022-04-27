@@ -46,7 +46,7 @@ class ChannelNew extends Component {
     switch (type) {
       case "cargo":
         return <CargoForm mobile={mobile} type={type} reset={() => this.handleSelectType(null)} createChannel={this.props.createChannel} />
-      case "mydevices":
+      case "my_devices":
         return <MyDevicesForm mobile={mobile} type={type} reset={() => this.handleSelectType(null)} createChannel={this.props.createChannel} />
       case "adafruit":
         return <AdafruitForm mobile={mobile} type={type} reset={() => this.handleSelectType(null)} createChannel={this.props.createChannel} />
@@ -58,7 +58,7 @@ class ChannelNew extends Component {
         return <TagoForm mobile={mobile} type={type} reset={() => this.handleSelectType(null)} createChannel={this.props.createChannel} />
       case "akenza":
         return <AkenzaForm mobile={mobile} type={type} reset={() => this.handleSelectType(null)} createChannel={this.props.createChannel} />
-      case "googlesheet":
+      case "google_sheets":
         return <GoogleSheetForm from="ChannelNew" mobile={mobile} type={type} reset={() => this.handleSelectType(null)} createChannel={this.props.createChannel} />
       case "microshare":
         return <MicroshareForm mobile={mobile} type={type} reset={() => this.handleSelectType(null)} createChannel={this.props.createChannel} />
