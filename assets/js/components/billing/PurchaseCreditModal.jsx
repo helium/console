@@ -436,7 +436,7 @@ class PurchaseCreditModal extends Component {
               >
                 Memo
                 <Popover
-                  content="For Stripe payments only, this will show on the emailed receipt."
+                  content="For Stripe payments only, you may use this field to add info (e.g. VAT number) so it shows on the emailed receipt."
                   placement="bottom"
                 >
                   <InfoCircleOutlined

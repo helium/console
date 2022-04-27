@@ -1,29 +1,29 @@
 import React, { Component } from "react";
-import Chart from 'chart.js/auto'
+import Chart from "chart.js/auto";
 import { Bubble } from "react-chartjs-2";
 
 const categoryTag = (category, subCategories) => {
   switch (category) {
     case "uplink_dropped":
-      return "Uplink Dropped"
+      return "Uplink Dropped";
     case "uplink":
-      return "Uplink"
+      return "Uplink";
     case "downlink_dropped":
-      return "Downlink Dropped"
+      return "Downlink Dropped";
     case "downlink":
       if (subCategories.includes("downlink_queued")) {
-        return "Downlink Queued"
+        return "Downlink Queued";
       } else if (subCategories.includes("downlink_ack")) {
-        return "Acknowledge"
+        return "Acknowledge";
       } else {
-        return "Downlink"
+        return "Downlink";
       }
     case "join_request":
-      return "Join Request"
+      return "Join Request";
     case "join_accept":
-      return "Join Accept"
+      return "Join Accept";
     case "misc":
-      return "Misc. Integration Error"
+      return "Misc. Integration Error";
   }
 };
 
@@ -66,28 +66,28 @@ class PacketGraph extends Component {
       scales: {
         y: {
           title: {
-            text: 'RSSI',
-            display: true
+            text: "RSSI",
+            display: true,
           },
           min: -120,
           max: 20,
         },
         x: {
           title: {
-            text: 'Time Past in Seconds',
-            display: true
+            text: "Time Passed in Seconds",
+            display: true,
           },
           min: 0,
           max: 300,
           grid: {
-            display: false
+            display: false,
           },
           ticks: {
             callback: (value) => {
               if (value !== 0) return "-" + parseInt(value) + "s";
               else return value + "s";
             },
-          }
+          },
         },
       },
     };
@@ -102,7 +102,10 @@ class PacketGraph extends Component {
   componentDidUpdate(prevProps) {
     if (
       prevProps.events.length !== this.props.events.length ||
-      (prevProps.events[0] && this.props.events[0] && prevProps.events[0].integrations.length !== this.props.events[0].integrations.length)
+      (prevProps.events[0] &&
+        this.props.events[0] &&
+        prevProps.events[0].integrations.length !==
+          this.props.events[0].integrations.length)
     ) {
       clearInterval(this.chartUpdateInterval);
       this.updateChart();
@@ -127,7 +130,7 @@ class PacketGraph extends Component {
       const timeDiff = currentTime - eventTime;
       const integrations = event.integrations;
       const hotspots = event.hotspots;
-      const tag = categoryTag(event.category, event.sub_categories)
+      const tag = categoryTag(event.category, event.sub_categories);
 
       if (timeDiff < 300000) {
         if (integrations.length > 0 && integrations[0].id !== "no_channel") {
@@ -137,7 +140,7 @@ class PacketGraph extends Component {
               y: parseFloat(hotspots[0] ? hotspots[0].rssi : 0),
               r: event.payload_size / 4 + 2,
               h: hotspots[0] ? hotspots[0].name : "unknown",
-              tag
+              tag,
             });
           } else {
             success.push({
@@ -145,7 +148,7 @@ class PacketGraph extends Component {
               y: parseFloat(hotspots[0] ? hotspots[0].rssi : 0),
               r: event.payload_size / 4 + 2,
               h: hotspots[0] ? hotspots[0].name : "unknown",
-              tag
+              tag,
             });
           }
         } else {
@@ -154,7 +157,7 @@ class PacketGraph extends Component {
             y: parseFloat(hotspots[0] ? hotspots[0].rssi : 0),
             r: event.payload_size / 4 + 2,
             h: hotspots[0] ? hotspots[0].name : "unknown",
-            tag
+            tag,
           });
         }
       }
@@ -184,7 +187,13 @@ class PacketGraph extends Component {
   };
 
   render() {
-    return <Bubble id="packet-graph" data={this.state.data} options={this.chartOptions} />;
+    return (
+      <Bubble
+        id="packet-graph"
+        data={this.state.data}
+        options={this.chartOptions}
+      />
+    );
   }
 }
 
