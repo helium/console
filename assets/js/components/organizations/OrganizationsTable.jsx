@@ -30,12 +30,14 @@ const { Text } = Typography;
 import { SkeletonLayout } from "../common/SkeletonLayout";
 import WebhookKeyField from "./WebhookKeyField";
 import ErrorMessage from "../common/ErrorMessage";
+import MigrationDevicesConfirmModal from "./MigrationDevicesConfirmModal";
 
 class OrganizationsTable extends Component {
   state = {
     page: 1,
     pageSize: 10,
     webhookKeyToShow: "none",
+    showDevicesConfirmModal: false,
   };
 
   componentDidMount() {
@@ -206,7 +208,9 @@ class OrganizationsTable extends Component {
                     icon={<ExportOutlined />}
                     size="small"
                     style={{ marginLeft: 8 }}
-                    onClick={() => exportOrganization(record.id, record.name)}
+                    onClick={() => {
+                      this.setState({ showDevicesConfirmModal: true });
+                    }}
                   />
                 </Tooltip>
               </UserCan>
@@ -215,8 +219,12 @@ class OrganizationsTable extends Component {
       },
     ];
 
-    const { currentOrganizationId, switchOrganization, deleteOrganization } =
-      this.props;
+    const {
+      currentOrganizationId,
+      currentOrganizationName,
+      switchOrganization,
+      deleteOrganization,
+    } = this.props;
     const { organizations, loading, error } =
       this.props.paginatedOrganizationsQuery;
 
@@ -251,6 +259,21 @@ class OrganizationsTable extends Component {
             />
           </div>
         )}
+        <MigrationDevicesConfirmModal
+          open={this.state.showDevicesConfirmModal}
+          close={() => {
+            this.setState({ showDevicesConfirmModal: false });
+          }}
+          handleExport={(deactivate) => {
+            exportOrganization(
+              currentOrganizationId,
+              currentOrganizationName,
+              deactivate
+            ).then(() => {
+              this.setState({ showDevicesConfirmModal: false });
+            });
+          }}
+        />
       </div>
     );
   }
@@ -259,6 +282,7 @@ class OrganizationsTable extends Component {
 function mapStateToProps(state) {
   return {
     currentOrganizationId: state.organization.currentOrganizationId,
+    currentOrganizationName: state.organization.currentOrganizationName,
     socket: state.apollo.socket,
   };
 }

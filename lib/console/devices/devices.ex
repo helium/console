@@ -237,4 +237,9 @@ defmodule Console.Devices do
     from(d in Device, where: d.id in ^device_ids and d.organization_id == ^organization_id)
     |> Repo.update_all(set: [config_profile_id: config_profile_id])
   end
+
+  def deactivate_org_devices(organization) do
+    from(d in Device, where: d.organization_id == ^organization.id)
+    |> Repo.update_all(set: [active: false])
+  end
 end

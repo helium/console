@@ -142,45 +142,45 @@ const getOrganizations = async () => {
   return organizations.data;
 };
 
-export const importOrganization = org_json => {
-  return rest.post("/api/organizations/import", org_json)
+export const importOrganization = (org_json) => {
+  return rest.post("/api/organizations/import", org_json);
 };
 
 export const submittedOrganizationSurvey = () => {
-  setTimeout(() => rest.post("/api/organizations/survey", {}), 3000)
+  setTimeout(() => rest.post("/api/organizations/survey", {}), 3000);
 };
 
 export const submitSurveyToken = (token) => {
-  return rest.post("/api/organizations/survey_token", { token })
+  return rest.post("/api/organizations/survey_token", { token });
 };
 
 export const resendSurveyToken = () => {
-  return rest.post("/api/organizations/survey_token/resend", {})
-  .then(() => {
-    displayInfo("An email containing the token has been resent")
-  })
+  return rest.post("/api/organizations/survey_token/resend", {}).then(() => {
+    displayInfo("An email containing the token has been resent");
+  });
 };
 
-export const exportOrganization = (id, name) => {
-  rest.get("/api/organizations/export")
-  .then(resp => {
-    analyticsLogger.logEvent("ACTION_EXPORT_ORGANIZATION_JSON", {
-      organization_id: id,
-    });
+export const exportOrganization = (id, name, deactivate) => {
+  return rest
+    .get(`/api/organizations/export?deactivate=${deactivate}`)
+    .then((resp) => {
+      analyticsLogger.logEvent("ACTION_EXPORT_ORGANIZATION_JSON", {
+        organization_id: id,
+      });
 
-    const json = JSON.stringify(resp.data, null, 2);
-    const blob = new Blob([json], { type: "application/json" });
-    const href = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = href;
-    link.download = name + "-export.json";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  })
-  .catch(() => {
-    displayError("Failed to export organization JSON")
-  })
+      const json = JSON.stringify(resp.data, null, 2);
+      const blob = new Blob([json], { type: "application/json" });
+      const href = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = href;
+      link.download = name + "-export.json";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    })
+    .catch(() => {
+      displayError("Failed to export organization JSON");
+    });
 };
 
 export const renameOrganization = (id, params) => {
