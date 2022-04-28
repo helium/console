@@ -6,6 +6,26 @@ defmodule Console.Channels.Channel do
   alias Console.Organizations.Organization
   alias Console.Channels.Channel
 
+  @allowed_types ~w(http mqtt aws azure google iot_central cargo my_devices akenza datacake microshare tago ubidots google_sheets adafruit)
+  @http_types ~w(http cargo my_devices akenza datacake microshare tago ubidots google_sheets)
+  @long_type_names %{
+    "aws" => "AWS IoT",
+    "azure" => "Azure IoT Hub",
+    "iot_central" => "Azure IoT Central",
+    "google" => "Google Cloud IoT Core",
+    "mqtt" => "MQTT",
+    "http" => "HTTP",
+    "cargo" => "Cargo",
+    "my_devices" => "myDevices Cayenne",
+    "akenza" => "Akenza",
+    "datacake" => "Datacake",
+    "microshare" => "Microshare",
+    "tago" => "Tago.IO",
+    "ubidots" => "Ubidots",
+    "google_sheets" => "Google Sheets",
+    "adafruit" => "Adafruit IO",
+  }
+
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "channels" do
@@ -32,7 +52,7 @@ defmodule Console.Channels.Channel do
     channel
     |> cast(attrs, [:name, :type, :active, :credentials, :organization_id, :payload_template])
     |> validate_required([:name, :type, :active, :credentials, :organization_id])
-    |> validate_inclusion(:type, ~w(http mqtt aws azure google iot_central cargo my_devices akenza datacake microshare tago ubidots google_sheets adafruit))
+    |> validate_inclusion(:type, @allowed_types)
     |> validate_length(:name, max: 50, message: "Name cannot be longer than 50 characters")
     |> check_credentials()
     |> put_type_name()
@@ -60,24 +80,7 @@ defmodule Console.Channels.Channel do
   defp put_type_name(changeset) do
     case changeset do
       %Ecto.Changeset{valid?: true, changes: %{type: type}} ->
-        type_name =
-          case type do
-            "aws" -> "AWS IoT"
-            "azure" -> "Azure IoT Hub"
-            "iot_central" -> "Azure IoT Central"
-            "google" -> "Google Cloud IoT Core"
-            "mqtt" -> "MQTT"
-            "http" -> "HTTP"
-            "cargo" -> "Cargo"
-            "my_devices" -> "myDevices Cayenne"
-            "akenza" -> "Akenza"
-            "datacake" -> "Datacake"
-            "microshare" -> "Microshare"
-            "tago" -> "Tago.IO"
-            "ubidots" -> "Ubidots"
-            "google_sheets" -> "Google Sheets"
-            "adafruit" -> "Adafruit IO"
-          end
+        type_name = @long_type_names[type]
 
         put_change(changeset, :type_name, type_name)
       _ -> changeset
@@ -86,12 +89,20 @@ defmodule Console.Channels.Channel do
 
   def put_downlink_token(changeset) do
     case changeset do
-      %Ecto.Changeset{valid?: true, changes: %{type: "http"}} ->
-        token = Helpers.generate_token(32)
-        put_change(changeset, :downlink_token, token)
-      %Ecto.Changeset{valid?: true, changes: %{downlink_token: "new"}, data: %Channel{type: "http"}} ->
-        token = Helpers.generate_token(32)
-        put_change(changeset, :downlink_token, token)
+      %Ecto.Changeset{valid?: true, changes: %{type: type}} ->
+        if type in @http_types do
+          token = Helpers.generate_token(32)
+          put_change(changeset, :downlink_token, token)
+        else
+          changeset
+        end
+      %Ecto.Changeset{valid?: true, changes: %{downlink_token: "new"}, data: %Channel{type: type}} ->
+        if type in @http_types do
+          token = Helpers.generate_token(32)
+          put_change(changeset, :downlink_token, token)
+        else
+          changeset
+        end
       _ -> changeset
     end
   end
