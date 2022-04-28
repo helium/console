@@ -378,7 +378,7 @@ defmodule ConsoleWeb.OrganizationController do
     end
   end
 
-  def export(conn, _) do
+  def export(conn, %{ "deactivate" => deactivate }) do
     organization_id = conn.assigns.current_organization.id
     organization =
       Organizations.get_organization!(organization_id)
@@ -394,7 +394,7 @@ defmodule ConsoleWeb.OrganizationController do
       |> Enum.map(&(Map.take(&1, [:id, :name, :adr_allowed, :cf_list_enabled, :rx_delay, :organization_id])))
     devices =
       Console.Devices.get_devices(organization_id)
-      |> Enum.map(&(Map.take(&1, [:id, :name, :oui, :dev_eui, :app_eui, :app_key, :multi_buy_id, :config_profile_id, :organization_id])))
+      |> Enum.map(&(Map.take(&1, [:id, :name, :oui, :dev_eui, :app_eui, :app_key, :multi_buy_id, :config_profile_id, :organization_id, :active])))
     functions = Console.Functions.get_all_organization_functions(organization_id)
       |> Enum.map(&(Map.take(&1, [:id, :name, :body, :type, :format, :organization_id])))
     channels = Console.Channels.get_all_organization_channels(organization_id)
@@ -419,6 +419,13 @@ defmodule ConsoleWeb.OrganizationController do
     organization_hotspots =
       Console.OrganizationHotspots.all(organization)
       |> Enum.map(&(Map.take(&1, [:id, :hotspot_address, :organization_id, :claimed, :alias])))
+    
+    devices = case deactivate do
+      "false" -> Enum.map(devices, fn device ->
+        Map.update!(device, :active, fn _ -> false end)
+      end)
+      "true" -> devices
+    end
 
     result = %{
       organization: organization,
@@ -435,6 +442,10 @@ defmodule ConsoleWeb.OrganizationController do
       flows: flows,
       organization_hotspots: organization_hotspots
     }
+
+    if deactivate == "true" do
+      Console.Devices.deactivate_org_devices(conn.assigns.current_organization)
+    end
 
     conn
     |> send_resp(:ok, Jason.encode!(result))
