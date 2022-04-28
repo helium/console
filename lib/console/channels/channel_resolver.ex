@@ -2,6 +2,7 @@ defmodule Console.Channels.ChannelResolver do
   alias Console.Repo
   alias Console.Channels.Channel
   alias Console.Flows
+  alias Console.CommunityChannels
   import Ecto.Query
   alias Console.Alerts
 
@@ -32,7 +33,6 @@ defmodule Console.Channels.ChannelResolver do
           channel
           |> Map.put(:endpoint, channel.credentials["endpoint"])
           |> Map.put(:method, channel.credentials["method"])
-          |> Map.put(:inbound_token, channel.credentials["inbound_token"])
           |> Map.put(:headers, Jason.encode!(channel.credentials["headers"]))
           |> Map.put(:url_params, Jason.encode!(channel.credentials["url_params"]))
         "aws" ->
@@ -64,6 +64,7 @@ defmodule Console.Channels.ChannelResolver do
           |> Map.put(:endpoint, channel.credentials["endpoint"])
         _ ->
           channel
+          |> CommunityChannels.append_connection_details()
       end
 
     channel =
@@ -82,18 +83,7 @@ defmodule Console.Channels.ChannelResolver do
     channels = Ecto.assoc(current_organization, :channels) |> Repo.all()
 
     channels =
-      Enum.map(channels, fn channel ->
-        case channel.type do
-          "http" ->
-            channel
-            |> Map.put(:endpoint, channel.credentials["endpoint"])
-          "mqtt" ->
-            channel
-            |> Map.put(:endpoint, channel.credentials["endpoint"])
-          _ ->
-            channel
-        end
-      end)
+      channels
       |> Enum.map(fn c ->
         Map.drop(c, [:downlink_token])
         |> Map.put(:alerts, Alerts.get_alerts_by_node(c.id, "integration"))

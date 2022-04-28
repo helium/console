@@ -1,7 +1,9 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import includes from 'lodash/includes'
 import { bindActionCreators } from "redux";
 import ChannelDashboardLayout from "./ChannelDashboardLayout";
+import ChannelConnectionDetails from "./ChannelConnectionDetails";
 import UserCan, { userCan } from "../common/UserCan";
 import { MobileDisplay, DesktopDisplay } from "../mobile/MediaQuery";
 import { displayError } from "../../util/messages";
@@ -34,11 +36,13 @@ import DeleteChannelModal from "./DeleteChannelModal";
 import MobileLayout from "../mobile/MobileLayout";
 import MobileChannelShow from "../mobile/channels/MobileChannelShow";
 import {
-  renderConnectionDetails,
   getDownlinkKey,
   getDownlinkUrl,
 } from "./constants";
 import ErrorMessage from "../common/ErrorMessage";
+
+export const http_integrations = ["http", "cargo", "my_devices", "akenza", "datacake", "microshare", "tago", "ubidots", "google_sheets"]
+export const mqtt_integrations = ["mqtt", "adafruit"]
 
 class ChannelShow extends Component {
   state = {
@@ -46,7 +50,7 @@ class ChannelShow extends Component {
     credentials: {},
     showDownlinkToken: false,
     templateBody: undefined,
-    validInput: true,
+    validInput: false,
     showDeleteChannelModal: false,
   };
 
@@ -101,8 +105,16 @@ class ChannelShow extends Component {
       (!prevProps.channelShowQuery.channel && this.props.channelShowQuery.channel) ||
       (this.props.channelShowQuery.channel && prevProps.channelShowQuery.channel !== this.props.channelShowQuery.channel)
     ) {
+      this.channel.on(
+        `graphql:channel_show:${this.props.channelShowQuery.channel.id}:channel_update`,
+        (message) => {
+          this.props.channelShowQuery.refetch();
+        }
+      );
+
       this.setState({
         templateBody: this.props.channelShowQuery.channel.payload_template,
+        validInput: false
       });
     }
   }
@@ -305,7 +317,7 @@ class ChannelShow extends Component {
                         </Paragraph>
                       </Col>
                       <Col span={12}>
-                        {channel.type === "http" && (
+                        {includes(http_integrations, channel.type) && (
                           <Card size="small" title="HTTP Details">
                             <HttpDetails channel={channel} />
                           </Card>
@@ -315,14 +327,14 @@ class ChannelShow extends Component {
                             <AwsDetails channel={channel} />
                           </Card>
                         )}
-                        {channel.type === "mqtt" && (
+                        {includes(mqtt_integrations, channel.type) && (
                           <Card size="small" title="MQTT Details">
                             <MqttDetails channel={channel} />
                           </Card>
                         )}
                       </Col>
                     </Row>
-                    {channel.type === "http" && (
+                    {channel.downlink_token && (
                       <UserCan>
                         <Divider />
                         <Text>Downlink URL</Text>
@@ -402,37 +414,18 @@ class ChannelShow extends Component {
                 </div>
               </Card>
 
-              <UserCan>
-                <Card
-                  title="Update your Connection Details"
-                  bodyStyle={{ padding: 0 }}
-                >
-                  <div
-                    className="no-scroll-bar"
-                    style={{ overflowX: "scroll" }}
-                  >
-                    <div style={{ padding: 24, minWidth }}>
-                      {renderConnectionDetails(
-                        channel,
-                        this.handleUpdateDetailsInput
-                      )}
-                      <Divider />
-                      <Button
-                        type="primary"
-                        onClick={this.handleUpdateDetailsChange}
-                        disabled={!this.state.validInput}
-                      >
-                        Update Details
-                      </Button>
-                    </div>
-                  </div>
-                </Card>
-              </UserCan>
+              <ChannelConnectionDetails
+                channel={channel}
+                handleUpdateDetailsChange={this.handleUpdateDetailsChange}
+                handleUpdateDetailsInput={this.handleUpdateDetailsInput}
+                validInput={this.state.validInput}
+              />
 
-              {((channel.type == "http" &&
-                channel.endpoint !==
-                  "https://lora.mydevices.com/v1/networks/helium/uplink") ||
-                channel.type == "mqtt") && (
+              {
+                (
+                  (includes(http_integrations.filter(i => i !== "my_devices"), channel.type) && channel.endpoint !== "https://lora.mydevices.com/v1/networks/helium/uplink") ||
+                  channel.type == "mqtt"
+                ) && (
                 <ChannelPayloadTemplate
                   templateBody={this.state.templateBody || ""}
                   handleTemplateUpdate={this.handleTemplateUpdate}

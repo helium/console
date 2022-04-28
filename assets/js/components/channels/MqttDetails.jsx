@@ -7,11 +7,12 @@ const MqttDetails = (props) => {
   const { credentials } = channel;
 
   if (!credentials || !credentials.endpoint) return <div />
+
   return (
     <React.Fragment>
       <Paragraph><Text strong>Endpoint: </Text><Text>{credentials.endpoint}</Text></Paragraph>
       <Paragraph><Text strong>Uplink Topic: </Text><Text>{credentials.uplink.topic}</Text></Paragraph>
-      <Paragraph><Text strong>Downlink Topic: </Text><Text>{credentials.downlink.topic}</Text></Paragraph>
+      <Paragraph><Text strong>Downlink Topic: </Text><Text>{credentials.downlink.topic || "default"}</Text></Paragraph>
     </React.Fragment>
   )
 }

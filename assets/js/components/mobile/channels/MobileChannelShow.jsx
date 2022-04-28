@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import includes from 'lodash/includes'
 import { Button, Collapse, Typography, Switch, Divider, Input } from "antd";
 const { Text, Paragraph } = Typography;
 const { Panel } = Collapse;
@@ -17,12 +18,13 @@ import analyticsLogger from "../../../util/analyticsLogger";
 import { updateChannel } from "../../../actions/channel";
 import CopyIcon from "../../../../img/channels/mobile/copy.svg";
 import DeleteChannelModal from "../../channels/DeleteChannelModal";
+import ChannelConnectionDetails from "../../channels/ChannelConnectionDetails";
 import {
-  renderConnectionDetails,
   getDownlinkKey,
   getDownlinkUrl,
 } from "../../channels/constants";
 import { displayError } from "../../../util/messages";
+import { http_integrations, mqtt_integrations } from '../../channels/ChannelShow'
 
 export default ({ channel }) => {
   const history = useHistory();
@@ -148,7 +150,7 @@ export default ({ channel }) => {
               <Text strong># Piped Devices: </Text>
               <Text>{channel.number_devices}</Text>
             </Paragraph>
-            {channel.type === "http" && (
+            {channel.downlink_token && (
               <UserCan>
                 <Divider />
                 <Text>Downlink URL</Text>
@@ -214,7 +216,7 @@ export default ({ channel }) => {
               </UserCan>
             )}
           </Panel>
-          {channel.type === "http" && (
+          {includes(http_integrations, channel.type) && (
             <Panel header={<b>HTTP DETAILS</b>} key="2">
               <HttpDetails channel={channel} />
             </Panel>
@@ -224,25 +226,21 @@ export default ({ channel }) => {
               <AwsDetails channel={channel} key="2" />
             </Panel>
           )}
-          {channel.type === "mqtt" && (
+          {includes(mqtt_integrations, channel.type)  && (
             <Panel header={<b>MQTT DETAILS</b>} key="2">
               <MqttDetails channel={channel} />
             </Panel>
           )}
         </Collapse>
-        <Collapse expandIconPosition="right" style={{ margin: "25px 0" }}>
-          <Panel header={<b>UPDATE YOUR CONNECTION DETAILS</b>} key="1">
-            {renderConnectionDetails(channel, handleUpdateDetailsInput, true)}
-            <Button
-              type="primary"
-              style={{ marginTop: 10 }}
-              onClick={handleUpdateDetailsChange}
-              disabled={!validInput}
-            >
-              Update Details
-            </Button>
-          </Panel>
-        </Collapse>
+
+        <ChannelConnectionDetails
+          channel={channel}
+          handleUpdateDetailsChange={handleUpdateDetailsChange}
+          handleUpdateDetailsInput={handleUpdateDetailsInput}
+          validInput={validInput}
+          mobile
+        />
+
         <div
           style={{
             display: "flex",
