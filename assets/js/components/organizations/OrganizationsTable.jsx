@@ -208,7 +208,6 @@ class OrganizationsTable extends Component {
                     icon={<ExportOutlined />}
                     size="small"
                     style={{ marginLeft: 8 }}
-                    // onClick={() => exportOrganization(record.id, record.name)}
                     onClick={() => {
                       this.setState({ showDevicesConfirmModal: true });
                     }}
