@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { IntegrationTypeTileSimple } from "../../IntegrationTypeTileSimple";
-import { getRootType } from "../../../../util/integrationInfo";
 import { Link } from "react-router-dom";
 import ChannelNameForm from "../../default/ChannelNameForm.jsx";
 import analyticsLogger from "../../../../util/analyticsLogger";
@@ -9,9 +8,6 @@ const { Text } = Typography
 
 class MyDevicesForm extends Component {
   state = {
-    method: "post",
-    endpoint: "https://lora.mydevices.com/v1/networks/helium/uplink",
-    headers: {},
     showNextSteps: true,
     validInput: true,
     channelName: "",
@@ -22,17 +18,13 @@ class MyDevicesForm extends Component {
   };
 
   onSubmit = () => {
-    const { method, endpoint, headers, channelName } = this.state
+    const { channelName } = this.state
 
     let payload = {
       channel: {
         name: channelName,
-        type: getRootType(this.props.type),
-        credentials: {
-          method: method,
-          endpoint: endpoint,
-          headers: headers
-        },
+        type: this.props.type,
+        credentials: {},
       },
     };
 

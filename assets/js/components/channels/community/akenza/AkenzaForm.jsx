@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { IntegrationTypeTileSimple } from "../../IntegrationTypeTileSimple";
-import { getRootType } from "../../../../util/integrationInfo";
 import { Link } from "react-router-dom";
 import ChannelNameForm from "../../default/ChannelNameForm.jsx";
 import analyticsLogger from "../../../../util/analyticsLogger";
@@ -9,9 +8,6 @@ const { Text } = Typography
 
 class AkenzaForm extends Component {
   state = {
-    method: "post",
-    headers: {},
-    endpoint: "",
     secret: "",
     showNextSteps: false,
     validInput: false,
@@ -30,9 +26,6 @@ class AkenzaForm extends Component {
     const { secret } = this.state;
     if (secret.length > 0) {
       this.setState({
-        method: "post",
-        endpoint: `https://data-gateway.akenza.io/v3/capture?secret=${secret}`,
-        headers: {},
         showNextSteps: true,
         validInput: true,
       });
@@ -44,16 +37,14 @@ class AkenzaForm extends Component {
   };
 
   onSubmit = () => {
-    const { method, endpoint, headers, channelName } = this.state
+    const { secret, channelName } = this.state
 
     let payload = {
       channel: {
         name: channelName,
-        type: getRootType(this.props.type),
+        type: this.props.type,
         credentials: {
-          method: method,
-          endpoint: endpoint,
-          headers: headers
+          secret
         },
       },
     };

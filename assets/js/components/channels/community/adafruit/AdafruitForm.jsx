@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { IntegrationTypeTileSimple } from "../../IntegrationTypeTileSimple";
-import { getRootType } from "../../../../util/integrationInfo";
 import { Link } from "react-router-dom";
 import ChannelNameForm from "../../default/ChannelNameForm.jsx";
 import AdafruitFunctionSelect from "./AdafruitFunctionSelect.jsx";
@@ -64,7 +63,7 @@ class AdafruitForm extends Component {
     let payload = {
       channel: {
         name: channelName,
-        type: getRootType(this.props.type),
+        type: this.props.type,
         credentials: {
           endpoint,
           uplink

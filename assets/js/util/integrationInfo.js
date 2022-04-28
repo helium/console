@@ -156,31 +156,13 @@ const community_integrations = [
 ];
 export const COMMUNITY_INTEGRATION_TYPES = allowedIntegrations ? community_integrations.filter(i => allowedIntegrations[i.type]) : community_integrations
 
-export const getRootType = (type) => {
-  switch (type) {
-    case "cargo":
-    case "my_devices":
-    case "ubidots":
-    case "datacake":
-    case "tago":
-    case "google_sheets":
-    case "akenza":
-    case "microshare":
-      return "http";
-    case "adafruit":
-      return "mqtt";
-    default:
-      return type;
-  }
-};
-
 export const integrationImgMap = {
   adafruit: AdafruitDark,
   aws: AwsDark,
   azure: AzureDark,
   iot_central: IotCentralDark,
   cargo: CargoDark,
-  cayenne: MyDevicesDark,
+  my_devices: MyDevicesDark,
   datacake: DatacakeDark,
   http: HttpDark,
   mqtt: MqttDark,

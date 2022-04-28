@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { IntegrationTypeTileSimple } from "../../IntegrationTypeTileSimple";
-import { getRootType } from "../../../../util/integrationInfo";
 import { Link } from "react-router-dom";
 import ChannelNameForm from "../../default/ChannelNameForm.jsx";
 import analyticsLogger from "../../../../util/analyticsLogger";
@@ -9,9 +8,6 @@ const { Text } = Typography
 
 class TagoForm extends Component {
   state = {
-    method: "post",
-    headers: {},
-    endpoint: "",
     token: "",
     showNextSteps: false,
     validInput: false,
@@ -30,11 +26,6 @@ class TagoForm extends Component {
     const { token } = this.state;
     if (token.length > 0) {
       this.setState({
-        method: "post",
-        endpoint: "https://helium.middleware.tago.io/uplink",
-        headers: {
-          Authorization: token,
-        },
         showNextSteps: true,
         validInput: true,
       });
@@ -46,16 +37,14 @@ class TagoForm extends Component {
   };
 
   onSubmit = () => {
-    const { method, endpoint, headers, channelName } = this.state
+    const { token, channelName } = this.state
 
     let payload = {
       channel: {
         name: channelName,
-        type: getRootType(this.props.type),
+        type: this.props.type,
         credentials: {
-          method: method,
-          endpoint: endpoint,
-          headers: headers
+          token
         },
       },
     };

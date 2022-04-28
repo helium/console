@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { IntegrationTypeTileSimple } from "../IntegrationTypeTileSimple";
-import { getRootType } from "../../../util/integrationInfo";
 import { Link } from "react-router-dom";
 import ChannelNameForm from "./ChannelNameForm.jsx";
 import AzureHubForm from "./AzureHubForm.jsx";
@@ -35,7 +34,7 @@ class CommonForm extends Component {
     let payload = {
       channel: {
         name: channelName,
-        type: getRootType(this.props.type),
+        type: this.props.type,
         credentials,
       },
     };

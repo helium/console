@@ -32,7 +32,7 @@ defmodule Console.Channels.Channel do
     channel
     |> cast(attrs, [:name, :type, :active, :credentials, :organization_id, :payload_template])
     |> validate_required([:name, :type, :active, :credentials, :organization_id])
-    |> validate_inclusion(:type, ~w(http mqtt aws azure google iot_central))
+    |> validate_inclusion(:type, ~w(http mqtt aws azure google iot_central cargo my_devices akenza datacake microshare tago ubidots google_sheets adafruit))
     |> validate_length(:name, max: 50, message: "Name cannot be longer than 50 characters")
     |> check_credentials()
     |> put_type_name()
@@ -68,6 +68,15 @@ defmodule Console.Channels.Channel do
             "google" -> "Google Cloud IoT Core"
             "mqtt" -> "MQTT"
             "http" -> "HTTP"
+            "cargo" -> "Cargo"
+            "my_devices" -> "myDevices Cayenne"
+            "akenza" -> "Akenza"
+            "datacake" -> "Datacake"
+            "microshare" -> "Microshare"
+            "tago" -> "Tago.IO"
+            "ubidots" -> "Ubidots"
+            "google_sheets" -> "Google Sheets"
+            "adafruit" -> "Adafruit IO"
           end
 
         put_change(changeset, :type_name, type_name)

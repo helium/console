@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { IntegrationTypeTileSimple } from "../../IntegrationTypeTileSimple";
-import { getRootType } from "../../../../util/integrationInfo";
 import { Link } from "react-router-dom";
 import ChannelNameForm from "../../default/ChannelNameForm.jsx";
 import analyticsLogger from "../../../../util/analyticsLogger";
@@ -10,8 +9,6 @@ import { post } from "../../../../util/rest";
 
 class UbidotsForm extends Component {
   state = {
-    method: "post",
-    headers: {},
     webhookURL: "",
     authToken: "",
     loading: false,
@@ -48,16 +45,14 @@ class UbidotsForm extends Component {
   };
 
   onSubmit = () => {
-    const { method, webhookURL, headers, channelName } = this.state
+    const { webhookURL, channelName } = this.state
 
     let payload = {
       channel: {
         name: channelName,
-        type: getRootType(this.props.type),
+        type: this.props.type,
         credentials: {
-          method: method,
-          endpoint: webhookURL,
-          headers: headers
+          webhook_token: webhookURL.split("/api/web-hook/")[1],
         },
       },
     };

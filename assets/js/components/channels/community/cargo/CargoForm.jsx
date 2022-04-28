@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { IntegrationTypeTileSimple } from "../../IntegrationTypeTileSimple";
-import { getRootType } from "../../../../util/integrationInfo";
 import { Link } from "react-router-dom";
 import ChannelNameForm from "../../default/ChannelNameForm.jsx";
 import analyticsLogger from "../../../../util/analyticsLogger";
@@ -9,9 +8,6 @@ const { Text } = Typography
 
 class CargoForm extends Component {
   state = {
-    method: "post",
-    endpoint: "https://cargo.helium.com/api/payloads",
-    headers: { "Content-Type": "application/json" },
     showNextSteps: false,
     validInput: false,
     channelName: "",
@@ -26,17 +22,13 @@ class CargoForm extends Component {
   };
 
   onSubmit = () => {
-    const { method, endpoint, headers, channelName } = this.state
+    const { channelName } = this.state
 
     let payload = {
       channel: {
         name: channelName,
-        type: getRootType(this.props.type),
-        credentials: {
-          method: method,
-          endpoint: endpoint,
-          headers: headers
-        },
+        type: this.props.type,
+        credentials: {},
       },
     };
 

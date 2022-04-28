@@ -4,7 +4,6 @@ import range from "lodash/range";
 import kebabCase from "lodash/kebabCase";
 import { highlight, languages } from "prismjs/components/prism-core";
 import { IntegrationTypeTileSimple } from "../../IntegrationTypeTileSimple";
-import { getRootType } from "../../../../util/integrationInfo";
 import { codeEditorLineColor, codeEditorBgColor } from "../../../../util/colors";
 import { Link } from "react-router-dom";
 import ChannelNameForm from "../../default/ChannelNameForm.jsx";
@@ -57,8 +56,6 @@ function Serialize(payload) {
 
 class GoogleSheetForm extends Component {
   state = {
-    method: "post",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
     showNextSteps: false,
     validInput: false,
     channelName: "",
@@ -101,16 +98,14 @@ class GoogleSheetForm extends Component {
   }
 
   onSubmit = () => {
-    const { method, formId, headers, channelName, googleFunctionBody } = this.state
+    const { formId, channelName, googleFunctionBody } = this.state
 
     let payload = {
       channel: {
         name: channelName,
-        type: getRootType(this.props.type),
+        type: this.props.type,
         credentials: {
-          method: method,
-          endpoint: `https://docs.google.com/forms/d/e/${formId}/formResponse`,
-          headers: headers
+          form_id: formId,
         },
         payload_template: "{{{decoded.payload}}}",
       },
