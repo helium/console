@@ -800,7 +800,7 @@ export default (props) => {
                   id={device.id}
                   devices={[device]}
                   socket={socket}
-                  onSend={(payload, confirm, port, position) => {
+                  onSend={(payload, confirm, port, position, region) => {
                     analyticsLogger.logEvent("ACTION_DOWNLINK_SEND", {
                       device: device.id,
                     });
@@ -811,7 +811,8 @@ export default (props) => {
                         confirm,
                         position,
                         "device",
-                        device.id
+                        device.id,
+                        region
                       )
                     );
                   }}

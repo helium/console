@@ -256,7 +256,7 @@ class LabelShow extends Component {
                     id={label.id}
                     devices={label.devices}
                     socket={this.props.socket}
-                    onSend={(payload, confirm, port, position) => {
+                    onSend={(payload, confirm, port, position, region) => {
                       analyticsLogger.logEvent("ACTION_DOWNLINK_SEND", {
                         label: label.id,
                       });
@@ -266,7 +266,8 @@ class LabelShow extends Component {
                         confirm,
                         position,
                         "label",
-                        label.id
+                        label.id,
+                        region
                       );
                     }}
                     onClear={() => {
