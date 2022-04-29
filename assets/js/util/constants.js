@@ -7,3 +7,14 @@ export const checkIfDevicesNotInFilter = (label) =>
 
 export const isMobile =
   window.innerWidth < 721 || !store.getState().display.desktopOnly;
+
+export const SUPPORTED_REGIONS = [
+  "US915",
+  "AU915",
+  "EU868",
+  "CN470",
+  "AS923_1",
+  "AS923_2",
+  "AS923_3",
+  "AS923_4",
+];

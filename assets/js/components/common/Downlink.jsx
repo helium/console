@@ -18,6 +18,7 @@ import ClearOutlined from "@ant-design/icons/ClearOutlined";
 import ReloadOutlined from "@ant-design/icons/ReloadOutlined";
 import find from "lodash/find";
 import remove from "lodash/remove";
+import { SUPPORTED_REGIONS } from "../../util/constants";
 
 const { Title, Text } = Typography;
 const { Group, Button } = Radio;
@@ -141,14 +142,9 @@ class Downlink extends Component {
                   onChange={this.handleRegionChange}
                 >
                   <Option value="undefined">Device Default</Option>
-                  <Option value="US915">US915</Option>
-                  <Option value="AU915">AU915</Option>
-                  <Option value="EU868">EU868</Option>
-                  <Option value="CN470">CN470</Option>
-                  <Option value="AS923_1">AS923_1</Option>
-                  <Option value="AS923_1">AS923_2</Option>
-                  <Option value="AS923_1">AS923_3</Option>
-                  <Option value="AS923_1">AS923_4</Option>
+                  {SUPPORTED_REGIONS.map((reg) => (
+                    <Option value={reg}>{reg}</Option>
+                  ))}
                 </Select>
               </Col>
             </Row>
