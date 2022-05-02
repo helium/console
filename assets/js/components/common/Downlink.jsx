@@ -10,12 +10,15 @@ import {
   Checkbox,
   Tooltip,
   Button as RegularButton,
+  Select,
 } from "antd";
+const { Option } = Select;
 import DownlinkImage from "../../../img/downlink.svg";
 import ClearOutlined from "@ant-design/icons/ClearOutlined";
 import ReloadOutlined from "@ant-design/icons/ReloadOutlined";
 import find from "lodash/find";
 import remove from "lodash/remove";
+import { SUPPORTED_REGIONS } from "../../util/constants";
 
 const { Title, Text } = Typography;
 const { Group, Button } = Radio;
@@ -30,6 +33,7 @@ class Downlink extends Component {
     position: "last",
     showRefresh: false,
     queue: [],
+    region: "default",
   };
 
   componentDidMount() {
@@ -87,9 +91,14 @@ class Downlink extends Component {
     );
   };
 
+  handleRegionChange = (region) => {
+    this.setState({ region });
+  };
+
   render() {
     const { src, onSend, onClear, devices } = this.props;
-    const { position, port, confirm, payload, payloadType } = this.state;
+    const { position, port, confirm, payload, payloadType, region } =
+      this.state;
 
     return (
       <div>
@@ -98,7 +107,7 @@ class Downlink extends Component {
             <Title style={{ fontSize: 22 }}>Add Downlink Payload</Title>
 
             <Row gutter={[16, 16]}>
-              <Col span={12}>
+              <Col span={6}>
                 <Text style={{ display: "block", marginBottom: 4 }}>
                   Scheduling
                 </Text>
@@ -113,7 +122,7 @@ class Downlink extends Component {
                   <Button value="last">Last</Button>
                 </Group>
               </Col>
-              <Col span={12}>
+              <Col span={9}>
                 <Text style={{ display: "block", marginBottom: 4 }}>FPort</Text>
                 <InputNumber
                   style={{ width: "100%" }}
@@ -122,6 +131,21 @@ class Downlink extends Component {
                   max={223}
                   onChange={(port) => this.setState({ port })}
                 />
+              </Col>
+              <Col span={9}>
+                <Text style={{ display: "block", marginBottom: 4 }}>
+                  Region
+                </Text>
+                <Select
+                  defaultValue="default"
+                  style={{ width: "100%" }}
+                  onChange={this.handleRegionChange}
+                >
+                  <Option value="default">Device Default</Option>
+                  {SUPPORTED_REGIONS.map((reg) => (
+                    <Option value={reg}>{reg}</Option>
+                  ))}
+                </Select>
               </Col>
             </Row>
 
@@ -191,7 +215,13 @@ class Downlink extends Component {
                   payloadType === "fields"
                     ? Buffer.from(payload).toString("base64")
                     : payload;
-                onSend(message, confirm, port, position);
+                onSend(
+                  message,
+                  confirm,
+                  port,
+                  position,
+                  region === "default" ? undefined : region
+                );
               }}
             >
               <img
@@ -260,13 +290,18 @@ class Downlink extends Component {
                   />
                 </Col>
                 <Col span={12}>
-                  <div style={{ marginBottom: 4, display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                  <div
+                    style={{
+                      marginBottom: 4,
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                    }}
+                  >
                     <Text strong>
                       Status: {q.confirmed ? "Confirmed" : "Unconfirmed"}
                     </Text>
-                    <Text strong>
-                      FPort: {q.port}
-                    </Text>
+                    <Text strong>FPort: {q.port}</Text>
                   </div>
                   <Text>Payload (Text)</Text>
                   <Input
@@ -309,12 +344,17 @@ class Downlink extends Component {
 
 const b64DecodeUnicode = (str) => {
   try {
-    return decodeURIComponent(atob(str).split('').map(function(c) {
-      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-    }).join(''));
-  } catch(err) {
-    return "Cannot decode to Unicode"
+    return decodeURIComponent(
+      atob(str)
+        .split("")
+        .map(function (c) {
+          return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+        })
+        .join("")
+    );
+  } catch (err) {
+    return "Cannot decode to Unicode";
   }
-}
+};
 
 export default Downlink;
