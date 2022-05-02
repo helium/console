@@ -33,7 +33,7 @@ class Downlink extends Component {
     position: "last",
     showRefresh: false,
     queue: [],
-    region: "undefined",
+    region: "default",
   };
 
   componentDidMount() {
@@ -137,11 +137,11 @@ class Downlink extends Component {
                   Region
                 </Text>
                 <Select
-                  defaultValue="undefined"
+                  defaultValue="default"
                   style={{ width: "100%" }}
                   onChange={this.handleRegionChange}
                 >
-                  <Option value="undefined">Device Default</Option>
+                  <Option value="default">Device Default</Option>
                   {SUPPORTED_REGIONS.map((reg) => (
                     <Option value={reg}>{reg}</Option>
                   ))}
@@ -215,7 +215,13 @@ class Downlink extends Component {
                   payloadType === "fields"
                     ? Buffer.from(payload).toString("base64")
                     : payload;
-                onSend(message, confirm, port, position, region);
+                onSend(
+                  message,
+                  confirm,
+                  port,
+                  position,
+                  region === "default" ? undefined : region
+                );
               }}
             >
               <img
