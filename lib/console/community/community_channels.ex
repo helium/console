@@ -9,13 +9,13 @@ defmodule Console.CommunityChannels do
       "adafruit" ->
         channel
         |> Map.put(:credentials, %{
-          endpoint: channel.credentials["endpoint"],
+          endpoint: "mqtts://#{channel.credentials["username"]}:#{channel.credentials["adafruit_key"]}@io.adafruit.com:8883",
           uplink: %{
-            topic: channel.credentials["uplink"]["topic"]
+            topic: "#{channel.credentials["username"]}/groups/#{channel.credentials["group_name"]}/json"
           },
           downlink: %{
-            topic: channel.credentials["downlink"]["topic"]
-          }
+            topic: nil
+          },
         })
         |> Map.put(:endpoint, channel.credentials["endpoint"])
       "akenza" ->
@@ -71,6 +71,13 @@ defmodule Console.CommunityChannels do
         |> Map.put(:type, "http")
       "adafruit" ->
         channel
+        |> Map.put(:credentials, %{
+          endpoint: "mqtts://#{channel.credentials["username"]}:#{channel.credentials["adafruit_key"]}@io.adafruit.com:8883",
+          uplink: %{
+            topic: "#{channel.credentials["username"]}/groups/#{channel.credentials["group_name"]}/json"
+          },
+        })
+        |> Map.put(:type, "mqtt")
       "akenza" ->
         channel
         |> Map.put(:credentials, %{

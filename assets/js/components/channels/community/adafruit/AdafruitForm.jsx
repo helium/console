@@ -27,19 +27,11 @@ class AdafruitForm extends Component {
 
       if (username.length > 0 && adafruitKey.length > 0) {
         this.setState({
-          endpoint: `mqtts://${username}:${adafruitKey}@io.adafruit.com:8883`,
-          uplink: {
-            topic: `${username}/groups/${groupName}/json`
-          },
           showNextSteps: true,
           validInput: true
         })
       } else {
         this.setState({
-          endpoint: "",
-          uplink: {
-            topic: ""
-          },
           validInput: false
         })
       }
@@ -58,15 +50,16 @@ class AdafruitForm extends Component {
   };
 
   onSubmit = () => {
-    const { endpoint, uplink, channelName, templateBody } = this.state
+    const { username, adafruitKey, groupName, channelName, templateBody } = this.state
 
     let payload = {
       channel: {
         name: channelName,
         type: this.props.type,
         credentials: {
-          endpoint,
-          uplink
+          username,
+          adafruit_key: adafruitKey,
+          group_name: groupName,
         },
         payload_template: templateBody
       },
@@ -152,33 +145,6 @@ class AdafruitForm extends Component {
               />
               <Text>{"Default: {{device_id}}"}</Text>
             </Col>
-          </Row>
-          <Row gutter={16} style={{marginBottom: 16, marginTop: 20}}>
-            { type === "update" && (
-            <div>
-              <Col sm={12} style={{marginBottom: 4, display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                <Text>Uplink Topic</Text>
-                <Tooltip title='Topics should follow MQTT topic rules. Templates can be provided using {{template}} format. Valid template tags are: device_id, device_name, device_eui, app_eui, and organization_id.'>
-                  <QuestionCircleFilled style={{ fontSize: 20, color: 'grey', marginLeft: 5 }}/>
-                </Tooltip>
-              </Col>
-              <Col sm={12} style={{marginBottom: 4, display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                <Text>Downlink Topic</Text>
-                <Tooltip title='Topics should follow MQTT topic rules. Templates can be provided using {{template}} format. Valid template tags are: device_id, device_name, device_eui, app_eui, and organization_id.'>
-                  <QuestionCircleFilled style={{ fontSize: 20, color: 'grey', marginLeft: 5 }}/>
-                </Tooltip>
-              </Col>
-              <Col sm={12}>
-                <Input
-                  placeholder="Uplink topic"
-                  name="uplinkTopic"
-                  value={this.state.uplinkTopic}
-                  onChange={this.handleInputUpdate}
-                />
-                <Text>{"Default: " + `${this.state.username !== '' ? this.state.username : '{adafruit username}'}/groups/{{device_id}}/json`}</Text>
-                <br />
-              </Col>
-            </div>) }
           </Row>
         </Card>
 
