@@ -8,6 +8,8 @@ defmodule ConsoleWeb.V1.DownlinkController do
 
   plug CORSPlug, origin: "*"
 
+  @supported_regions ["US915", "AU915", "EU868", "CN470", "AS923_1", "AS923_2", "AS923_3", "AS923_4"]
+
   def down(conn, %{ "channel_id" => channel_id, "downlink_token" => token, "device_id" => device_id }) do
     cond do
       Ecto.UUID.dump(channel_id) == :error ->
@@ -52,6 +54,8 @@ defmodule ConsoleWeb.V1.DownlinkController do
               {:error, :bad_request, "Devices not found on integration"}
             device_id != nil and !Enum.member?(devices, device_id) ->
               {:error, :bad_request, "Device not found on integration"}
+            not is_nil(Map.get(conn.body_params, "region")) and Map.get(conn.body_params, "region") not in @supported_regions ->
+              {:error, :bad_request, "Invalid or unsupported region"}
             device_id != nil and Enum.member?(devices, device_id) ->
               case Map.get(conn.body_params, :aspect) do # body_params errors out with %Plug.Conn.Unfetched{aspect: :body_params}
                 nil ->

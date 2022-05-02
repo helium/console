@@ -33,6 +33,16 @@ defmodule ConsoleWeb.V1DownlinkControllerTest do
 
       resp_conn = build_conn() |> post("/api/v1/down/#{channel.id}/#{channel.downlink_token}/#{device_3.id}")
       assert response(resp_conn, 400) # device not linked downlink does not work
+
+      resp_conn = build_conn() |> post("/api/v1/down/#{channel.id}/#{channel.downlink_token}/#{device_1.id}", %{
+        "region" => "whatever"
+      })
+      assert response(resp_conn, 400) # unsupported/invalid region in downlink payload does not work
+
+      resp_conn = build_conn() |> post("/api/v1/down/#{channel.id}/#{channel.downlink_token}/#{device_1.id}", %{
+        "region" => "AU915"
+      })
+      assert response(resp_conn, 200) # supported region in downlink payload works
     end
   end
 end
