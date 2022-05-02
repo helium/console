@@ -136,7 +136,7 @@ defmodule ConsoleWeb.V1AlertControllerTest do
       })
 
       alert_1 = insert(:alert, %{ organization_id: organization.id, name: "alert name", node_type: "integration", config: %{
-        "device_join_otaa_first_time" => %{"email" => %{"recipient" => "admin"}}
+        "integration_with_devices_deleted" => %{"email" => %{"recipient" => "admin"}}
       } })
       device = insert(:device, %{ organization_id: organization.id, dev_eui: "1111111111111111", app_eui: "1111111111111111", app_key: "11111111111111111111111111111111" })
       integration = insert(:channel, %{ organization_id: organization.id })
@@ -170,6 +170,19 @@ defmodule ConsoleWeb.V1AlertControllerTest do
             "node_type" => "device"
           })
       assert response(resp_conn, 400) #cannot add to an already attached node
+
+      alert_2 = insert(:alert, %{ organization_id: organization.id, name: "alert name 2", node_type: "device/label", config: %{
+        "device_join_otaa_first_time" => %{"email" => %{"recipient" => "admin"}}
+      } })
+      resp_conn =
+        build_conn()
+          |> put_req_header("key", key)
+          |> post("/api/v1/alerts/add_to_node", %{
+            "alert_id" => alert_2.id,
+            "node_id" => device.id,
+            "node_type" => "device"
+          })
+      assert response(resp_conn, 200)
     end
 
     test "removing alert from node works properly", %{conn: _conn} do

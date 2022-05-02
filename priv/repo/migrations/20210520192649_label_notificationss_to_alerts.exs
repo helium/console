@@ -163,7 +163,7 @@ defmodule Console.Repo.Migrations.LabelNotificationssToAlerts do
             Ecto.Multi.new()
             |> Ecto.Multi.run(:alert, fn _repo, _ ->
               Alerts.create_alert(%{
-                "name" => alert_name, # TODO figure out naming
+                "name" => alert_name,
                 "organization_id" => org_id,
                 "node_type" => node_type,
                 "config" => Enum.into(Enum.map(y, fn setting ->
