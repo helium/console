@@ -178,7 +178,6 @@ defmodule ConsoleWeb.Schema do
     field :method, :string
     field :headers, :string
     field :url_params, :string
-    field :inbound_token, :string
     field :aws_region, :string
     field :aws_access_key, :string
     field :topic, :string

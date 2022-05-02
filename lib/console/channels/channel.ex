@@ -150,7 +150,7 @@ defmodule Console.Channels.Channel do
                     if Enum.member?(16..31, byte2) do
                       add_error(changeset, :message, "Must not provide private or link local addresses")
                     else
-                      put_change(changeset, :credentials, Map.merge(creds, %{"inbound_token" => Helpers.generate_token(16)}))
+                      changeset
                     end
                   {:ok, ipv6_addr = {_,_,_,_,_,_,_,_}} ->
                     cond do
@@ -161,10 +161,10 @@ defmodule Console.Channels.Channel do
                       InetCidr.contains?(InetCidr.parse("fc00::/7"), ipv6_addr) ->
                         add_error(changeset, :message, "Must not provide private or link local addresses")
                       true ->
-                        put_change(changeset, :credentials, Map.merge(creds, %{"inbound_token" => Helpers.generate_token(16)}))
+                        changeset
                     end
                   _ ->
-                    put_change(changeset, :credentials, Map.merge(creds, %{"inbound_token" => Helpers.generate_token(16)}))
+                    changeset
                 end
             end
         end
