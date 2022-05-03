@@ -74,7 +74,7 @@ defmodule ConsoleWeb.V1.AlertController do
             nil ->
               {:error, :not_found, "Alert not found"}
             %Alert{} = alert ->
-              if alert.node_type == node_type do # TODO address when it is label or device vs. device/label
+              if alert.node_type == node_type or (alert.node_type == "device/label" and node_type in ["label","device"]) do
                 with {:ok, %AlertNode{}} <- Alerts.add_alert_node(current_organization, alert, node_id, node_type) do
                   conn
                   |> send_resp(:ok, "Alert was successfully added to the #{node_type} node")
