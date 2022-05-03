@@ -36,10 +36,10 @@ npm-debug.log
 
 data/
 
+/allowed-integrations.json
+
 # Files needed for self-hosting on Docker
 /.env
 /.env-router
 docker-compose.yaml
 nginx.conf
-
-allowed-integrations.json

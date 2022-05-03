@@ -29,6 +29,23 @@ import TagoDark from "../../img/channels/community/flows/tago-dark.png";
 import Ubidots from "../../img/channels/community/ubidots.png";
 import UbidotsDark from "../../img/channels/community/flows/ubidots-dark.png";
 
+export const integrationImgMap = {
+  adafruit: AdafruitDark,
+  aws: AwsDark,
+  azure: AzureDark,
+  iot_central: IotCentralDark,
+  cargo: CargoDark,
+  my_devices: MyDevicesDark,
+  datacake: DatacakeDark,
+  http: HttpDark,
+  mqtt: MqttDark,
+  tago: TagoDark,
+  ubidots: UbidotsDark,
+  google_sheets: GoogleSheetDark,
+  microshare: MicroshareDark,
+  akenza: AkenzaDark,
+};
+
 let allowedIntegrations
 try {
   // To customize allowed integrations, copy allowed-integrations.json file from templates folder to root foler
@@ -156,19 +173,5 @@ const community_integrations = [
 ];
 export const COMMUNITY_INTEGRATION_TYPES = allowedIntegrations ? community_integrations.filter(i => allowedIntegrations[i.type]) : community_integrations
 
-export const integrationImgMap = {
-  adafruit: AdafruitDark,
-  aws: AwsDark,
-  azure: AzureDark,
-  iot_central: IotCentralDark,
-  cargo: CargoDark,
-  my_devices: MyDevicesDark,
-  datacake: DatacakeDark,
-  http: HttpDark,
-  mqtt: MqttDark,
-  tago: TagoDark,
-  ubidots: UbidotsDark,
-  google_sheets: GoogleSheetDark,
-  microshare: MicroshareDark,
-  akenza: AkenzaDark,
-};
+export const http_integrations = ["http", "cargo", "my_devices", "akenza", "datacake", "microshare", "tago", "ubidots", "google_sheets", "test"]
+export const mqtt_integrations = ["mqtt", "adafruit"]

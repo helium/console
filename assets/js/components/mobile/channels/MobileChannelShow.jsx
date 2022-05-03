@@ -15,6 +15,7 @@ import MqttDetails from "../../channels//MqttDetails";
 import UserCan, { userCan } from "../../common/UserCan";
 import MobileAddResourceButton from "../../common/MobileAddResourceButton";
 import analyticsLogger from "../../../util/analyticsLogger";
+import { http_integrations, mqtt_integrations } from '../../../util/integrationInfo'
 import { updateChannel } from "../../../actions/channel";
 import CopyIcon from "../../../../img/channels/mobile/copy.svg";
 import DeleteChannelModal from "../../channels/DeleteChannelModal";
@@ -24,7 +25,6 @@ import {
   getDownlinkUrl,
 } from "../../channels/constants";
 import { displayError } from "../../../util/messages";
-import { http_integrations, mqtt_integrations } from '../../channels/ChannelShow'
 
 export default ({ channel }) => {
   const history = useHistory();

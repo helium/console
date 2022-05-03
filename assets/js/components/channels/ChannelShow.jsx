@@ -8,6 +8,7 @@ import UserCan, { userCan } from "../common/UserCan";
 import { MobileDisplay, DesktopDisplay } from "../mobile/MediaQuery";
 import { displayError } from "../../util/messages";
 import { minWidth, isMobile } from "../../util/constants";
+import { http_integrations, mqtt_integrations } from '../../util/integrationInfo'
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import ChannelPayloadTemplate from "./ChannelPayloadTemplate";
 import HttpDetails from "./HttpDetails";
@@ -40,9 +41,6 @@ import {
   getDownlinkUrl,
 } from "./constants";
 import ErrorMessage from "../common/ErrorMessage";
-
-export const http_integrations = ["http", "cargo", "my_devices", "akenza", "datacake", "microshare", "tago", "ubidots", "google_sheets"]
-export const mqtt_integrations = ["mqtt", "adafruit"]
 
 class ChannelShow extends Component {
   state = {
