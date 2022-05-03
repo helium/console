@@ -42,4 +42,4 @@ data/
 docker-compose.yaml
 nginx.conf
 
-/allowed-integrations.json
+allowed-integrations.json

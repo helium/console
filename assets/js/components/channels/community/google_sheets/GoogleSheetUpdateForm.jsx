@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Typography, Input, Button } from 'antd';
 const { Text } = Typography
 
-class DatacakeUpdateForm extends Component {
+class GoogleSheetUpdateForm extends Component {
   state = {
     formId: ""
   };
@@ -43,4 +43,4 @@ class DatacakeUpdateForm extends Component {
   }
 }
 
-export default DatacakeUpdateForm;
+export default GoogleSheetUpdateForm;
