@@ -11,6 +11,7 @@ defmodule ConsoleWeb.V1.ChannelController do
   alias Console.Alerts
   alias Console.AlertEvents
   alias Console.AuditActions
+  alias Console.CommunityChannels
 
   action_fallback(ConsoleWeb.FallbackController)
 
@@ -23,7 +24,9 @@ defmodule ConsoleWeb.V1.ChannelController do
       nil ->
         {:error, :not_found, "Integration not found"}
       %Channel{} = channel ->
-        channel = attach_devices_and_labels(current_organization, channel)
+        channel =
+          attach_devices_and_labels(current_organization, channel)
+          |> CommunityChannels.inject_credentials(false)
 
         render(conn, "show.json", channel: channel)
     end
@@ -33,7 +36,11 @@ defmodule ConsoleWeb.V1.ChannelController do
     current_organization =
       conn.assigns.current_organization |> Organizations.fetch_assoc([:channels])
 
-    channels = Enum.map(current_organization.channels, fn c -> attach_devices_and_labels(current_organization, c) end)
+    channels =
+      Enum.map(current_organization.channels, fn c ->
+        attach_devices_and_labels(current_organization, c)
+        |> CommunityChannels.inject_credentials(false)
+      end)
 
     render(conn, "index.json", channels: channels)
   end
@@ -46,7 +53,9 @@ defmodule ConsoleWeb.V1.ChannelController do
         nil ->
           {:error, :not_found, "Integration not found"}
         %Channel{} = channel ->
-          channel = attach_devices_and_labels(current_organization, channel)
+          channel =
+            attach_devices_and_labels(current_organization, channel)
+            |> CommunityChannels.inject_credentials(false)
 
           render(conn, "show.json", channel: channel)
       end
@@ -56,7 +65,7 @@ defmodule ConsoleWeb.V1.ChannelController do
     end
   end
 
-  def create_prebuilt(conn, %{ "name" => name, "token" => token, "type" => type} = attrs) do
+  def create_community_channel(conn, %{ "name" => name, "token" => token, "type" => type} = attrs) do
     current_organization = conn.assigns.current_organization
 
     channel_params =
@@ -64,12 +73,10 @@ defmodule ConsoleWeb.V1.ChannelController do
         "akenza" ->
           %{
             "credentials" => %{
-              "endpoint" => "https://data-gateway.akenza.io/v3/capture?secret=#{token}",
-              "headers" => %{},
-              "method" => "post"
+              "secret" => token,
             },
             "name" => name,
-            "type" => "http",
+            "type" => type,
             "organization_id" => current_organization.id
           }
         "ubidots" ->
@@ -89,12 +96,10 @@ defmodule ConsoleWeb.V1.ChannelController do
               parsed_body = Jason.decode!(body)
               %{
                 "credentials" => %{
-                  "endpoint" => parsed_body["webhookUrl"],
-                  "headers" => %{},
-                  "method" => "post"
+                  "webhook_token" => String.split(parsed_body["webhookUrl"], "/api/web-hook/") |> Enum.at(1),
                 },
                 "name" => name,
-                "type" => "http",
+                "type" => type,
                 "organization_id" => current_organization.id
               }
             _ ->
@@ -103,23 +108,19 @@ defmodule ConsoleWeb.V1.ChannelController do
         "tago" ->
           %{
             "credentials" => %{
-              "endpoint" => "https://helium.middleware.tago.io/uplink",
-              "headers" => %{"Authorization" => token},
-              "method" => "post"
+              "token" => token,
             },
             "name" => name,
-            "type" => "http",
+            "type" => type,
             "organization_id" => current_organization.id
           }
         "datacake" ->
           %{
             "credentials" => %{
-              "endpoint" => "https://api.datacake.co/integrations/lorawan/helium/",
-              "headers" => %{"Key" => "Authentication", "Value" => "Token #{token}"},
-              "method" => "post"
+              "token" => token,
             },
             "name" => name,
-            "type" => "http",
+            "type" => type,
             "organization_id" => current_organization.id
           }
         _ -> nil
@@ -136,6 +137,7 @@ defmodule ConsoleWeb.V1.ChannelController do
             channel
             |> Map.put(:devices, [])
             |> Map.put(:labels, [])
+            |> CommunityChannels.inject_credentials(false)
 
           AuditActions.create_audit_action(
             current_organization.id,

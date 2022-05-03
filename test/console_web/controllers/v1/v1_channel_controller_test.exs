@@ -35,17 +35,17 @@ defmodule ConsoleWeb.V1ChannelControllerTest do
       assert_error_sent 400, fn ->
         build_conn()
           |> put_req_header("key", key)
-          |> post("/api/v1/integrations/prebuilt", %{ "name" => "test", "token" => "11234556234" })
+          |> post("/api/v1/integrations/community", %{ "name" => "test", "token" => "11234556234" })
       end # missing type attr for channel create
 
       resp_conn = build_conn()
         |> put_req_header("key", key)
-        |> post("/api/v1/integrations/prebuilt", %{ "name" => "test", "token" => "11234556234", "type" => "tago" })
+        |> post("/api/v1/integrations/community", %{ "name" => "test", "token" => "11234556234", "type" => "tago" })
       tago = json_response(resp_conn, 201) # properly create valid channel
 
       resp_conn = build_conn()
         |> put_req_header("key", key)
-        |> post("/api/v1/integrations/prebuilt", %{ "name" => "test2", "token" => "11234sgasdf556234", "type" => "datacake" })
+        |> post("/api/v1/integrations/community", %{ "name" => "test2", "token" => "11234sgasdf556234", "type" => "datacake" })
       datacake = json_response(resp_conn, 201) # properly create valid channel
 
       resp_conn = build_conn() |> put_req_header("key", key) |> get("/api/v1/integrations")

@@ -58,7 +58,7 @@ defmodule Console.CommunityChannels do
     end
   end
 
-  def inject_credentials(channel) do
+  def inject_credentials(channel, show_underlying_type \\ true) do
     case channel.type do
       "cargo" ->
         channel
@@ -68,7 +68,7 @@ defmodule Console.CommunityChannels do
           "method" => "post",
           "url_params" => %{}
         })
-        |> Map.put(:type, "http")
+        |> Map.put(:type, (if show_underlying_type, do: "http", else: channel.type))
       "adafruit" ->
         channel
         |> Map.put(:credentials, %{
@@ -77,7 +77,7 @@ defmodule Console.CommunityChannels do
             topic: "#{channel.credentials["username"]}/groups/#{channel.credentials["group_name"]}/json"
           },
         })
-        |> Map.put(:type, "mqtt")
+        |> Map.put(:type, (if show_underlying_type, do: "mqtt", else: channel.type))
       "akenza" ->
         channel
         |> Map.put(:credentials, %{
@@ -86,7 +86,7 @@ defmodule Console.CommunityChannels do
           "method" => "post",
           "url_params" => %{}
         })
-        |> Map.put(:type, "http")
+        |> Map.put(:type, (if show_underlying_type, do: "http", else: channel.type))
       "datacake" ->
         channel
         |> Map.put(:credentials, %{
@@ -95,7 +95,7 @@ defmodule Console.CommunityChannels do
           "method" => "post",
           "url_params" => %{}
         })
-        |> Map.put(:type, "http")
+        |> Map.put(:type, (if show_underlying_type, do: "http", else: channel.type))
       "google_sheets" ->
         channel
         |> Map.put(:credentials, %{
@@ -104,7 +104,7 @@ defmodule Console.CommunityChannels do
           "method" => "post",
           "url_params" => %{}
         })
-        |> Map.put(:type, "http")
+        |> Map.put(:type, (if show_underlying_type, do: "http", else: channel.type))
       "microshare" ->
         channel
         |> Map.put(:credentials, %{
@@ -113,7 +113,7 @@ defmodule Console.CommunityChannels do
           "method" => "post",
           "url_params" => %{}
         })
-        |> Map.put(:type, "http")
+        |> Map.put(:type, (if show_underlying_type, do: "http", else: channel.type))
       "my_devices" ->
         channel
         |> Map.put(:credentials, %{
@@ -122,7 +122,7 @@ defmodule Console.CommunityChannels do
           "method" => "post",
           "url_params" => %{}
         })
-        |> Map.put(:type, "http")
+        |> Map.put(:type, (if show_underlying_type, do: "http", else: channel.type))
       "tago" ->
         channel
         |> Map.put(:credentials, %{
@@ -131,7 +131,7 @@ defmodule Console.CommunityChannels do
           "method" => "post",
           "url_params" => %{}
         })
-        |> Map.put(:type, "http")
+        |> Map.put(:type, (if show_underlying_type, do: "http", else: channel.type))
       "ubidots" ->
         channel
         |> Map.put(:credentials, %{
@@ -140,7 +140,7 @@ defmodule Console.CommunityChannels do
           "method" => "post",
           "url_params" => %{}
         })
-        |> Map.put(:type, "http")
+        |> Map.put(:type, (if show_underlying_type, do: "http", else: channel.type))
       _ ->
         channel
     end
