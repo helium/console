@@ -46,7 +46,9 @@ export const integrationImgMap = {
   akenza: AkenzaDark,
 };
 
-let allowedIntegrations
+export const http_integrations = ["http", "cargo", "my_devices", "akenza", "datacake", "microshare", "tago", "ubidots", "google_sheets", "test"]
+export const mqtt_integrations = ["mqtt", "adafruit"]
+export let allowedIntegrations
 try {
   // To customize allowed integrations, copy allowed-integrations.json file from templates folder to root foler
   allowedIntegrations = require("../../../allowed-integrations.json");
@@ -172,6 +174,3 @@ const community_integrations = [
   },
 ];
 export const COMMUNITY_INTEGRATION_TYPES = allowedIntegrations ? community_integrations.filter(i => allowedIntegrations[i.type]) : community_integrations
-
-export const http_integrations = ["http", "cargo", "my_devices", "akenza", "datacake", "microshare", "tago", "ubidots", "google_sheets", "test"]
-export const mqtt_integrations = ["mqtt", "adafruit"]

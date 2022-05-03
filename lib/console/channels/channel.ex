@@ -5,8 +5,8 @@ defmodule Console.Channels.Channel do
 
   alias Console.Organizations.Organization
   alias Console.Channels.Channel
+  alias Console.AppConstants
 
-  @allowed_types ~w(http mqtt aws azure google iot_central cargo my_devices akenza datacake microshare tago ubidots google_sheets adafruit)
   @http_types ~w(http cargo my_devices akenza datacake microshare tago ubidots google_sheets)
   @long_type_names %{
     "aws" => "AWS IoT",
@@ -48,11 +48,12 @@ defmodule Console.Channels.Channel do
   @doc false
   def changeset(channel, attrs \\ %{}) do
     attrs = Helpers.sanitize_attrs(attrs, ["type", "name"])
+    allowed_types = AppConstants.get_allowed_integration_types()
 
     channel
     |> cast(attrs, [:name, :type, :active, :credentials, :organization_id, :payload_template])
     |> validate_required([:name, :type, :active, :credentials, :organization_id])
-    |> validate_inclusion(:type, @allowed_types)
+    |> validate_inclusion(:type, allowed_types, message: "This integration type is not allowed on this Console")
     |> validate_length(:name, max: 50, message: "Name cannot be longer than 50 characters")
     |> check_credentials()
     |> put_type_name()
@@ -71,7 +72,7 @@ defmodule Console.Channels.Channel do
     channel
     |> cast(attrs, [:name, :credentials, :downlink_token, :payload_template, :time_first_uplink, :receive_joins, :last_errored])
     |> validate_required([:name, :type, :credentials])
-    |> validate_length(:name, max: 50)
+    |> validate_length(:name, max: 50, message: "Name cannot be longer than 50 characters")
     |> check_credentials_update(channel.type)
     |> put_downlink_token()
     |> unique_constraint(:name, name: :channels_name_organization_id_index, message: "This name has already been used in this organization")

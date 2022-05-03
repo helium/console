@@ -15,7 +15,7 @@ import MqttDetails from "../../channels//MqttDetails";
 import UserCan, { userCan } from "../../common/UserCan";
 import MobileAddResourceButton from "../../common/MobileAddResourceButton";
 import analyticsLogger from "../../../util/analyticsLogger";
-import { http_integrations, mqtt_integrations } from '../../../util/integrationInfo'
+import { http_integrations, mqtt_integrations, allowedIntegrations } from '../../../util/integrationInfo'
 import { updateChannel } from "../../../actions/channel";
 import CopyIcon from "../../../../img/channels/mobile/copy.svg";
 import DeleteChannelModal from "../../channels/DeleteChannelModal";
@@ -119,16 +119,18 @@ export default ({ channel }) => {
           </Text>
         </div>
       </div>
-      <div
-        style={{
-          padding: "25px 15px",
-          backgroundColor: "#ffffff",
-          height: "calc(100% - 100px)",
-          overflowY: "scroll",
-        }}
-      >
-        <Collapse defaultActiveKey={["1", "2"]} expandIconPosition="right">
-          <Panel header={<b>INTEGRATION DETAILS</b>} key="1">
+
+      {
+        allowedIntegrations && !allowedIntegrations[channel.type] && (
+          <div
+            style={{
+              padding: "25px 15px",
+              backgroundColor: "#ffffff",
+              height: "calc(100% - 100px)",
+              overflowY: "scroll",
+            }}
+          >
+            <Text strong style={{ display: 'block', marginBottom: 20 }}>Your Console operator has disabled this integration type. Please contact them for more details.</Text>
             <Paragraph>
               <Text strong>Type: </Text>
               <Text>{channel.type_name}</Text>
@@ -137,127 +139,152 @@ export default ({ channel }) => {
               <Text strong>ID: </Text>
               <Text code>{channel.id}</Text>
             </Paragraph>
-            <Paragraph>
-              <Text strong>Receive Device Joins: </Text>
-              <Switch
-                style={{ marginLeft: 2 }}
-                checked={channel.receive_joins}
-                onChange={handleReceiveJoinsChange}
-                disabled={!userCan({ role: currentRole })}
-              />
-            </Paragraph>
-            <Paragraph>
-              <Text strong># Piped Devices: </Text>
-              <Text>{channel.number_devices}</Text>
-            </Paragraph>
-            {channel.downlink_token && (
-              <UserCan>
-                <Divider />
-                <Text>Downlink URL</Text>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    marginBottom: 16,
-                  }}
-                >
-                  <Input value={downlinkUrl} style={{ marginRight: 10 }} />
-                  <CopyToClipboard text={downlinkUrl}>
-                    <Button
-                      onClick={() => {}}
-                      style={{ marginRight: 0 }}
-                      type="primary"
-                    >
-                      <img src={CopyIcon} />
-                    </Button>
-                  </CopyToClipboard>
-                </div>
-                <Text>Downlink Key</Text>
-                <div style={{ display: "flex", flexDirection: "row" }}>
-                  <Input
-                    value={
-                      showDownlinkToken
-                        ? channel.downlink_token
-                        : "************************"
-                    }
-                    style={{
-                      marginRight: 10,
-                      color: "#38A2FF",
-                      fontFamily: "monospace",
-                    }}
-                    suffix={
-                      showDownlinkToken ? (
-                        <EyeOutlined
-                          onClick={() =>
-                            setShowDownlinkToken(!showDownlinkToken)
-                          }
-                        />
-                      ) : (
-                        <EyeInvisibleOutlined
-                          onClick={() =>
-                            setShowDownlinkToken(!showDownlinkToken)
-                          }
-                        />
-                      )
-                    }
-                  />
-                  <CopyToClipboard text={channel.downlink_token}>
-                    <Button onClick={() => {}} type="primary">
-                      <img src={CopyIcon}></img>
-                    </Button>
-                  </CopyToClipboard>
-                </div>
-                <Button
-                  onClick={handleChangeDownlinkToken}
-                  style={{ marginTop: 10 }}
-                >
-                  Generate New Key
-                </Button>
-              </UserCan>
-            )}
-          </Panel>
-          {includes(http_integrations, channel.type) && (
-            <Panel header={<b>HTTP DETAILS</b>} key="2">
-              <HttpDetails channel={channel} />
-            </Panel>
-          )}
-          {channel.type === "aws" && (
-            <Panel header={<b>AWS DETAILS</b>}>
-              <AwsDetails channel={channel} key="2" />
-            </Panel>
-          )}
-          {includes(mqtt_integrations, channel.type)  && (
-            <Panel header={<b>MQTT DETAILS</b>} key="2">
-              <MqttDetails channel={channel} />
-            </Panel>
-          )}
-        </Collapse>
-
-        <ChannelConnectionDetails
-          channel={channel}
-          handleUpdateDetailsChange={handleUpdateDetailsChange}
-          handleUpdateDetailsInput={handleUpdateDetailsInput}
-          validInput={validInput}
-          mobile
-        />
-
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "flex-end",
-            marginBottom: 60,
-          }}
-        >
-          <Button
-            type="danger"
-            onClick={() => {
-              setShowDeleteChannelModal(true);
+          </div>
+        )
+      }
+      {
+        (!allowedIntegrations || allowedIntegrations[channel.type]) && (
+          <div
+            style={{
+              padding: "25px 15px",
+              backgroundColor: "#ffffff",
+              height: "calc(100% - 100px)",
+              overflowY: "scroll",
             }}
           >
-            Delete Integration
-          </Button>
-        </div>
-      </div>
+            <Collapse defaultActiveKey={["1", "2"]} expandIconPosition="right">
+              <Panel header={<b>INTEGRATION DETAILS</b>} key="1">
+                <Paragraph>
+                  <Text strong>Type: </Text>
+                  <Text>{channel.type_name}</Text>
+                </Paragraph>
+                <Paragraph>
+                  <Text strong>ID: </Text>
+                  <Text code>{channel.id}</Text>
+                </Paragraph>
+                <Paragraph>
+                  <Text strong>Receive Device Joins: </Text>
+                  <Switch
+                    style={{ marginLeft: 2 }}
+                    checked={channel.receive_joins}
+                    onChange={handleReceiveJoinsChange}
+                    disabled={!userCan({ role: currentRole })}
+                  />
+                </Paragraph>
+                <Paragraph>
+                  <Text strong># Piped Devices: </Text>
+                  <Text>{channel.number_devices}</Text>
+                </Paragraph>
+                {channel.downlink_token && (
+                  <UserCan>
+                    <Divider />
+                    <Text>Downlink URL</Text>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        marginBottom: 16,
+                      }}
+                    >
+                      <Input value={downlinkUrl} style={{ marginRight: 10 }} />
+                      <CopyToClipboard text={downlinkUrl}>
+                        <Button
+                          onClick={() => {}}
+                          style={{ marginRight: 0 }}
+                          type="primary"
+                        >
+                          <img src={CopyIcon} />
+                        </Button>
+                      </CopyToClipboard>
+                    </div>
+                    <Text>Downlink Key</Text>
+                    <div style={{ display: "flex", flexDirection: "row" }}>
+                      <Input
+                        value={
+                          showDownlinkToken
+                            ? channel.downlink_token
+                            : "************************"
+                        }
+                        style={{
+                          marginRight: 10,
+                          color: "#38A2FF",
+                          fontFamily: "monospace",
+                        }}
+                        suffix={
+                          showDownlinkToken ? (
+                            <EyeOutlined
+                              onClick={() =>
+                                setShowDownlinkToken(!showDownlinkToken)
+                              }
+                            />
+                          ) : (
+                            <EyeInvisibleOutlined
+                              onClick={() =>
+                                setShowDownlinkToken(!showDownlinkToken)
+                              }
+                            />
+                          )
+                        }
+                      />
+                      <CopyToClipboard text={channel.downlink_token}>
+                        <Button onClick={() => {}} type="primary">
+                          <img src={CopyIcon}></img>
+                        </Button>
+                      </CopyToClipboard>
+                    </div>
+                    <Button
+                      onClick={handleChangeDownlinkToken}
+                      style={{ marginTop: 10 }}
+                    >
+                      Generate New Key
+                    </Button>
+                  </UserCan>
+                )}
+              </Panel>
+              {includes(http_integrations, channel.type) && (
+                <Panel header={<b>HTTP DETAILS</b>} key="2">
+                  <HttpDetails channel={channel} />
+                </Panel>
+              )}
+              {channel.type === "aws" && (
+                <Panel header={<b>AWS DETAILS</b>}>
+                  <AwsDetails channel={channel} key="2" />
+                </Panel>
+              )}
+              {includes(mqtt_integrations, channel.type)  && (
+                <Panel header={<b>MQTT DETAILS</b>} key="2">
+                  <MqttDetails channel={channel} />
+                </Panel>
+              )}
+            </Collapse>
+
+            <ChannelConnectionDetails
+              channel={channel}
+              handleUpdateDetailsChange={handleUpdateDetailsChange}
+              handleUpdateDetailsInput={handleUpdateDetailsInput}
+              validInput={validInput}
+              mobile
+            />
+
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                marginBottom: 60,
+              }}
+            >
+              <Button
+                type="danger"
+                onClick={() => {
+                  setShowDeleteChannelModal(true);
+                }}
+              >
+                Delete Integration
+              </Button>
+            </div>
+          </div>
+        )
+      }
 
       <MobileAddResourceButton />
 

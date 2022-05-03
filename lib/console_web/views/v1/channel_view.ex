@@ -13,12 +13,23 @@ defmodule ConsoleWeb.V1.ChannelView do
   end
 
   def render("channel.json", %{channel: channel}) do
-    channel_attrs = %{
-      id: channel.id,
-      name: channel.name,
-      type: channel.type,
-      credentials: channel.credentials
-    }
+    channel_attrs =
+      if Map.has_key?(channel, :deactivated_by_console_host) do
+        %{
+          id: channel.id,
+          name: channel.name,
+          type: channel.type,
+          credentials: channel.credentials,
+          deactivated_by_console_host: channel.deactivated_by_console_host
+        }
+      else
+        %{
+          id: channel.id,
+          name: channel.name,
+          type: channel.type,
+          credentials: channel.credentials
+        }
+      end
 
     if Map.has_key?(channel, :devices) do
       labels_json = render_many(channel.labels, LabelView, "label-short.json")
