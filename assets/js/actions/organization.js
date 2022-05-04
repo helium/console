@@ -178,6 +178,9 @@ export const exportOrganization = (id, name, deactivate) => {
       link.click();
       document.body.removeChild(link);
     })
+    .then(() => {
+      displayInfo("Your organization has been successfully exported");
+    })
     .catch(() => {
       displayError("Failed to export organization JSON");
     });

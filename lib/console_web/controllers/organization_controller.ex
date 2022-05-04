@@ -444,7 +444,20 @@ defmodule ConsoleWeb.OrganizationController do
     }
 
     if deactivate == "true" do
-      Console.Devices.deactivate_org_devices(conn.assigns.current_organization)
+      org_changeset =
+        Organizations.get_organization!(organization_id)
+        |> Organization.update_changeset(%{ "active" => false })
+
+      Ecto.Multi.new()
+      |> Ecto.Multi.update(:organization, org_changeset)
+      |> Ecto.Multi.run(:devices, fn _repo, _ ->
+        with {count, nil} <- Devices.deactivate_org_devices(conn.assigns.current_organization) do
+          {:ok, count}
+        end
+      end)
+      |> Repo.transaction()
+      
+      ConsoleWeb.Endpoint.broadcast("graphql:orgs_index_table", "graphql:orgs_index_table:#{conn.assigns.current_user.id}:organization_list_update", %{})
     end
 
     conn
