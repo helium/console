@@ -23,7 +23,6 @@ RUN mix deps.get --only $MIX_ENV
 RUN mix deps.compile
 
 # build assets
-COPY allowed-integrations.json allowed-integrations.json
 COPY templates/allowed-integrations.json  templates/allowed-integrations.json
 COPY assets assets
 RUN rm assets/webpack.config.js

@@ -51,7 +51,7 @@ export const mqtt_integrations = ["mqtt", "adafruit"]
 export let allowedIntegrations
 try {
   // To customize allowed integrations, copy allowed-integrations.json file from templates folder to root foler
-  allowedIntegrations = require("../../../allowed-integrations.json");
+  allowedIntegrations = require("../../../config/allowed-integrations.json");
 } catch (err) {}
 
 const core_integrations = [

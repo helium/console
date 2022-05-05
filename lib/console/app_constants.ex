@@ -3,8 +3,8 @@ defmodule Console.AppConstants do
 
   def start_link(_initial_state) do
     allowed_integration_types =
-      if File.exists?("allowed-integrations.json") do
-        {:ok, text} = File.read("allowed-integrations.json")
+      if File.exists?("./config/allowed-integrations.json") do
+        {:ok, text} = File.read("./config/allowed-integrations.json")
         json = Jason.decode!(text)
         json |> Map.keys() |> Enum.filter(fn type -> Map.get(json, type) == true end)
       else
