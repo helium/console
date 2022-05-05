@@ -5,7 +5,8 @@ defmodule Console.AppConstants do
     allowed_integration_types =
       if File.exists?("allowed-integrations.json") do
         {:ok, text} = File.read("allowed-integrations.json")
-        Jason.decode!(text) |> Map.keys() |> Enum.filter(fn type -> Map.get(json, type) == true end)
+        json = Jason.decode!(text)
+        json |> Map.keys() |> Enum.filter(fn type -> Map.get(json, type) == true end)
       else
         {:ok, text} = File.read("./templates/allowed-integrations.json")
         Jason.decode!(text) |> Map.keys()

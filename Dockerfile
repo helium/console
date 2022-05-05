@@ -16,7 +16,6 @@ ENV MIX_ENV=prod
 # install mix dependencies
 COPY mix.lock mix.lock
 COPY mix.exs  mix.exs
-COPY allowed-integrations.json  allowed-integrations.json
 COPY config config
 RUN rm config/prod.exs
 RUN mv config/prod-docker.exs config/prod.exs
@@ -24,6 +23,8 @@ RUN mix deps.get --only $MIX_ENV
 RUN mix deps.compile
 
 # build assets
+COPY allowed-integrations.json allowed-integrations.json
+COPY templates/allowed-integrations.json  templates/allowed-integrations.json
 COPY assets assets
 RUN rm assets/webpack.config.js
 RUN mv assets/webpack-docker.config.js assets/webpack.config.js
