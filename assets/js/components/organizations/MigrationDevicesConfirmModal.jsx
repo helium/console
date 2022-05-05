@@ -5,7 +5,7 @@ const { Text } = Typography;
 export default ({ open, handleExport, close }) => {
   return (
     <Modal
-      title="Confirm Device Deactivation"
+      title="Confirm Deactivation"
       onCancel={close}
       visible={open}
       centered
@@ -39,8 +39,8 @@ export default ({ open, handleExport, close }) => {
         style={{ fontSize: "16px" }}
       />
       <Text style={{ display: "block", margin: "8px 0" }}>
-        <Text strong>Deactivate</Text> - Choose to deactivate devices in this
-        Console to prepare for migration (recommended).
+        <Text strong>Deactivate</Text> - Choose to deactivate organization and
+        devices in this Console to prepare for migration (recommended).
       </Text>
       <Text style={{ display: "block", marginBottom: 8 }}>
         <Text strong>Keep Active</Text> - Choose if you're not ready to
