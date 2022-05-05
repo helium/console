@@ -565,7 +565,8 @@ defmodule ConsoleWeb.Router.DeviceController do
                       "user_id" => "Recurring Charge",
                       "organization_id" => organization.id,
                       "payment_id" => payment_intent["id"],
-                      "receipt_email" => receipt_email
+                      "receipt_email" => receipt_email,
+                      "description" => "Data Credits"
                     }
 
                     with {:ok, %DcPurchase{} = dc_purchase } <- DcPurchases.create_dc_purchase_update_org(attrs, organization) do
