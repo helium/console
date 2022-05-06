@@ -37,10 +37,10 @@ defmodule Console.DcPurchases do
     |> Repo.insert()
   end
 
-  def get_last_dc_purchase(organization) do
+  def get_last_nonrecurring_dc_purchase(organization) do
     from(
       dc in DcPurchase,
-      where: dc.organization_id == ^organization.id,
+      where: dc.organization_id == ^organization.id and dc.user_id != "Recurring Charge",
       order_by: [desc: :inserted_at],
       limit: 1
     )

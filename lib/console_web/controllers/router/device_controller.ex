@@ -543,7 +543,7 @@ defmodule ConsoleWeb.Router.DeviceController do
                   200 <- stripe_response.status_code do
                     card = Poison.decode!(stripe_response.body)
 
-                    last_dc_purchase = DcPurchases.get_last_dc_purchase(organization)
+                    last_dc_purchase = DcPurchases.get_last_nonrecurring_dc_purchase(organization)
                     last_dc_purchaser = if not is_nil(last_dc_purchase) do Organizations.get_membership(last_dc_purchase.user_id, organization) else nil end
 
                     receipt_email = case last_dc_purchaser do
