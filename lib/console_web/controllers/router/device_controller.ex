@@ -543,6 +543,20 @@ defmodule ConsoleWeb.Router.DeviceController do
                   200 <- stripe_response.status_code do
                     card = Poison.decode!(stripe_response.body)
 
+                    last_dc_purchase = DcPurchases.get_last_nonrecurring_dc_purchase(organization)
+                    last_dc_purchaser = if not is_nil(last_dc_purchase) do Organizations.get_membership(last_dc_purchase.user_id, organization) else nil end
+
+                    receipt_email = case last_dc_purchaser do
+                      nil ->
+                        admin = List.first(Organizations.get_administrators(organization))
+                        case admin do
+                          nil -> ""
+                          _ -> admin.email
+                        end
+                      _ ->
+                        last_dc_purchaser.email
+                    end
+
                     attrs = %{
                       "dc_purchased" => payment_intent["amount"] * 1000,
                       "cost" => payment_intent["amount"],
@@ -551,6 +565,8 @@ defmodule ConsoleWeb.Router.DeviceController do
                       "user_id" => "Recurring Charge",
                       "organization_id" => organization.id,
                       "payment_id" => payment_intent["id"],
+                      "receipt_email" => receipt_email,
+                      "description" => "Data Credits"
                     }
 
                     with {:ok, %DcPurchase{} = dc_purchase } <- DcPurchases.create_dc_purchase_update_org(attrs, organization) do

@@ -152,6 +152,12 @@ defmodule Console.Organizations do
     Repo.one(query)
   end
 
+  def get_membership(user_id, organization) do
+    query = from m in Membership,
+      where: m.user_id == ^user_id and m.organization_id == ^organization.id
+    Repo.one(query)
+  end
+
   def get_invitation!(%Organization{} = organization, id) do
     Repo.get_by!(Invitation, [id: id, organization_id: organization.id])
   end
