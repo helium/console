@@ -22,6 +22,7 @@ const { Panel } = Collapse;
 const { Text } = Typography;
 import MobileLayout from "../mobile/MobileLayout";
 import ArrowLeftOutlined from "@ant-design/icons/ArrowLeftOutlined";
+import { CORE_INTEGRATION_TYPES, COMMUNITY_INTEGRATION_TYPES } from "../../util/integrationInfo";
 import { isMobile } from "../../util/constants";
 
 @connect(null, mapDispatchToProps)
@@ -118,33 +119,41 @@ class ChannelNew extends Component {
             >
               {!type && (
                 <div style={{ display: "block" }}>
-                  <Collapse
-                    expandIconPosition="right"
-                    defaultActiveKey={["1"]}
-                    className="channel-new-panels-mobile"
-                  >
-                    <Panel header={<b>ADD A PREBUILT INTEGRATION</b>} key="1">
-                      <ChannelPremadeRow
-                        selectType={this.handleSelectType}
-                        mobile
-                      />
-                    </Panel>
-                  </Collapse>
-                  <Collapse
-                    expandIconPosition="right"
-                    style={{ marginTop: 20 }}
-                  >
-                    <Panel
-                      header={<b>ADD A CUSTOM INTEGRATION</b>}
-                      key="1"
-                      style={{ padding: 0 }}
-                    >
-                      <ChannelCreateRow
-                        selectType={this.handleSelectType}
-                        mobile
-                      />
-                    </Panel>
-                  </Collapse>
+                  {
+                    COMMUNITY_INTEGRATION_TYPES.length > 0 && (
+                      <Collapse
+                        expandIconPosition="right"
+                        defaultActiveKey={["1"]}
+                        className="channel-new-panels-mobile"
+                      >
+                        <Panel header={<b>ADD A PREBUILT INTEGRATION</b>} key="1">
+                          <ChannelPremadeRow
+                            selectType={this.handleSelectType}
+                            mobile
+                          />
+                        </Panel>
+                      </Collapse>
+                    )
+                  }
+                  {
+                    CORE_INTEGRATION_TYPES.length > 0 && (
+                      <Collapse
+                        expandIconPosition="right"
+                        style={{ marginTop: 20 }}
+                      >
+                        <Panel
+                          header={<b>ADD A CUSTOM INTEGRATION</b>}
+                          key="1"
+                          style={{ padding: 0 }}
+                        >
+                          <ChannelCreateRow
+                            selectType={this.handleSelectType}
+                            mobile
+                          />
+                        </Panel>
+                      </Collapse>
+                    )
+                  }
                 </div>
               )}
 
@@ -157,40 +166,48 @@ class ChannelNew extends Component {
             <div style={{ padding: "30px 30px 20px 30px" }}>
               {!type && (
                 <div style={{ display: "block" }}>
-                  <Card
-                    size="small"
-                    title="Add a Prebuilt Integration"
-                    className="integrationcard"
-                    bodyStyle={{ padding: 1 }}
-                  >
-                    <div
-                      style={{
-                        padding: 10,
-                        height: "100%",
-                        width: "100%",
-                        overflowX: "scroll",
-                      }}
-                    >
-                      <ChannelPremadeRow selectType={this.handleSelectType} />
-                    </div>
-                  </Card>
-                  <Card
-                    size="small"
-                    title="Add a Custom Integration"
-                    className="integrationcard"
-                    bodyStyle={{ padding: 1 }}
-                  >
-                    <div
-                      style={{
-                        padding: 10,
-                        height: "100%",
-                        width: "100%",
-                        overflowX: "scroll",
-                      }}
-                    >
-                      <ChannelCreateRow selectType={this.handleSelectType} />
-                    </div>
-                  </Card>
+                  {
+                    COMMUNITY_INTEGRATION_TYPES.length > 0 && (
+                      <Card
+                        size="small"
+                        title="Add a Prebuilt Integration"
+                        className="integrationcard"
+                        bodyStyle={{ padding: 1 }}
+                      >
+                        <div
+                          style={{
+                            padding: 10,
+                            height: "100%",
+                            width: "100%",
+                            overflowX: "scroll",
+                          }}
+                        >
+                          <ChannelPremadeRow selectType={this.handleSelectType} />
+                        </div>
+                      </Card>
+                    )
+                  }
+                  {
+                    CORE_INTEGRATION_TYPES.length > 0 && (
+                      <Card
+                        size="small"
+                        title="Add a Custom Integration"
+                        className="integrationcard"
+                        bodyStyle={{ padding: 1 }}
+                      >
+                        <div
+                          style={{
+                            padding: 10,
+                            height: "100%",
+                            width: "100%",
+                            overflowX: "scroll",
+                          }}
+                        >
+                          <ChannelCreateRow selectType={this.handleSelectType} />
+                        </div>
+                      </Card>
+                    )
+                  }
                 </div>
               )}
 
