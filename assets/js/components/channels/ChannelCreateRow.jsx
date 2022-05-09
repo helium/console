@@ -28,7 +28,7 @@ const styles = {
 
 class ChannelCreateRow extends Component {
   render() {
-    const { mobile } = this.props;
+    const { mobile, allChannels } = this.props;
     return (
       <div
         style={{
@@ -62,6 +62,7 @@ class ChannelCreateRow extends Component {
                 }}
                 img={channel.img}
                 name={channel.name}
+                count={(allChannels && allChannels.filter(c => c.type === channel.type).length) || 0}
               />
             </Link>
             <style jsx>{`

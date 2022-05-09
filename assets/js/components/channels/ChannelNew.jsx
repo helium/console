@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
+import { ALL_CHANNELS } from "../../graphql/channels";
+import withGql from "../../graphql/withGql";
 import ChannelDashboardLayout from "./ChannelDashboardLayout";
 import CommonForm from "./default/CommonForm.jsx";
 import CargoForm from "./community/cargo/CargoForm.jsx";
@@ -70,6 +72,7 @@ class ChannelNew extends Component {
 
   render() {
     const { type } = this.state;
+    const { allChannels } = this.props.allChannelsQuery;
 
     return (
       <>
@@ -134,6 +137,7 @@ class ChannelNew extends Component {
                           <ChannelCreateRow
                             selectType={this.handleSelectType}
                             mobile
+                            allChannels={allChannels}
                           />
                         </Panel>
                       </Collapse>
@@ -150,6 +154,7 @@ class ChannelNew extends Component {
                           <ChannelPremadeRow
                             selectType={this.handleSelectType}
                             mobile
+                            allChannels={allChannels}
                           />
                         </Panel>
                       </Collapse>
@@ -183,7 +188,7 @@ class ChannelNew extends Component {
                             overflowX: "scroll",
                           }}
                         >
-                          <ChannelCreateRow selectType={this.handleSelectType} />
+                          <ChannelCreateRow selectType={this.handleSelectType} allChannels={allChannels} />
                         </div>
                       </Card>
                     )
@@ -204,7 +209,7 @@ class ChannelNew extends Component {
                             overflowX: "scroll",
                           }}
                         >
-                          <ChannelPremadeRow selectType={this.handleSelectType} />
+                          <ChannelPremadeRow selectType={this.handleSelectType} allChannels={allChannels} />
                         </div>
                       </Card>
                     )
@@ -221,8 +226,23 @@ class ChannelNew extends Component {
   }
 }
 
+function mapStateToProps(state) {
+  return {
+    currentOrganizationId: state.organization.currentOrganizationId,
+    socket: state.apollo.socket,
+  };
+}
+
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({ createChannel }, dispatch);
 }
 
-export default ChannelNew;
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(
+  withGql(ChannelNew, ALL_CHANNELS, (props) => ({
+    fetchPolicy: "cache-first",
+    name: "allChannelsQuery",
+  }))
+);

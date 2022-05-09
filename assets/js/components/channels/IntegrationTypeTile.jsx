@@ -1,12 +1,14 @@
 import React from 'react';
-import { Typography } from 'antd';
+import { Typography, Badge } from 'antd';
 const { Text } = Typography
 
 export const IntegrationTypeTile = props => {
-  const { tileStyle, iconStyle, img, name, type } = props;
+  const { tileStyle, iconStyle, img, name, type, count } = props;
   return (
     <div style={tileStyle}>
-      <img style={iconStyle} src={img} />
+      <Badge count={count} color="#12CB9F">
+        <img style={iconStyle} src={img} />
+      </Badge>
       <Text>
         {name}
       </Text>

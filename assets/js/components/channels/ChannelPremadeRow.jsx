@@ -29,7 +29,7 @@ const styles = {
 
 class ChannelPremadeRow extends Component {
   render() {
-    const { mobile } = this.props;
+    const { mobile, allChannels } = this.props;
     return (
       <div
         style={{
@@ -66,6 +66,7 @@ class ChannelPremadeRow extends Component {
                     img={channel.img}
                     name={channel.name}
                     type={channel.name === "Adafruit IO" ? "MQTT" : "HTTP"}
+                    count={(allChannels && allChannels.filter(c => c.type === channel.type).length) || 0}
                   />
                 </Link>
                 <style jsx>{`
