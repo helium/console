@@ -253,7 +253,7 @@ class ChannelShow extends Component {
                       {channel.name}
                     </Text>
                   </div>
-                  <Card title="Integration Disabled" bodyStyle={{ padding: 24 }}>
+                  <Card title="Integration Details" bodyStyle={{ padding: 24 }}>
                     <Text strong style={{ display: 'block', marginBottom: 20 }}>Your Console operator has disabled this integration type. Please contact them for more details.</Text>
                     <Row>
                       <Col span={12}>

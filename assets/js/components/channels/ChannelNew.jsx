@@ -120,14 +120,18 @@ class ChannelNew extends Component {
               {!type && (
                 <div style={{ display: "block" }}>
                   {
-                    COMMUNITY_INTEGRATION_TYPES.length > 0 && (
+                    CORE_INTEGRATION_TYPES.length > 0 && (
                       <Collapse
                         expandIconPosition="right"
                         defaultActiveKey={["1"]}
-                        className="channel-new-panels-mobile"
+                        style={{ marginTop: 20 }}
                       >
-                        <Panel header={<b>ADD A PREBUILT INTEGRATION</b>} key="1">
-                          <ChannelPremadeRow
+                        <Panel
+                          header={<b>ADD A CORE INTEGRATION</b>}
+                          key="1"
+                          style={{ padding: 0 }}
+                        >
+                          <ChannelCreateRow
                             selectType={this.handleSelectType}
                             mobile
                           />
@@ -136,17 +140,14 @@ class ChannelNew extends Component {
                     )
                   }
                   {
-                    CORE_INTEGRATION_TYPES.length > 0 && (
+                    COMMUNITY_INTEGRATION_TYPES.length > 0 && (
                       <Collapse
                         expandIconPosition="right"
-                        style={{ marginTop: 20 }}
+                        defaultActiveKey={["1"]}
+                        className="channel-new-panels-mobile"
                       >
-                        <Panel
-                          header={<b>ADD A CUSTOM INTEGRATION</b>}
-                          key="1"
-                          style={{ padding: 0 }}
-                        >
-                          <ChannelCreateRow
+                        <Panel header={<b>ADD A COMMUNITY INTEGRATION</b>} key="1">
+                          <ChannelPremadeRow
                             selectType={this.handleSelectType}
                             mobile
                           />
@@ -167,31 +168,10 @@ class ChannelNew extends Component {
               {!type && (
                 <div style={{ display: "block" }}>
                   {
-                    COMMUNITY_INTEGRATION_TYPES.length > 0 && (
-                      <Card
-                        size="small"
-                        title="Add a Prebuilt Integration"
-                        className="integrationcard"
-                        bodyStyle={{ padding: 1 }}
-                      >
-                        <div
-                          style={{
-                            padding: 10,
-                            height: "100%",
-                            width: "100%",
-                            overflowX: "scroll",
-                          }}
-                        >
-                          <ChannelPremadeRow selectType={this.handleSelectType} />
-                        </div>
-                      </Card>
-                    )
-                  }
-                  {
                     CORE_INTEGRATION_TYPES.length > 0 && (
                       <Card
                         size="small"
-                        title="Add a Custom Integration"
+                        title="Add a Core Integration"
                         className="integrationcard"
                         bodyStyle={{ padding: 1 }}
                       >
@@ -204,6 +184,27 @@ class ChannelNew extends Component {
                           }}
                         >
                           <ChannelCreateRow selectType={this.handleSelectType} />
+                        </div>
+                      </Card>
+                    )
+                  }
+                  {
+                    COMMUNITY_INTEGRATION_TYPES.length > 0 && (
+                      <Card
+                        size="small"
+                        title="Add a Community Integration"
+                        className="integrationcard"
+                        bodyStyle={{ padding: 1 }}
+                      >
+                        <div
+                          style={{
+                            padding: 10,
+                            height: "100%",
+                            width: "100%",
+                            overflowX: "scroll",
+                          }}
+                        >
+                          <ChannelPremadeRow selectType={this.handleSelectType} />
                         </div>
                       </Card>
                     )
