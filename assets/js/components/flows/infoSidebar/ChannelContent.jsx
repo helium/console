@@ -9,6 +9,7 @@ import moment from "moment";
 import { CHANNEL_SHOW } from "../../../graphql/channels";
 import { updateChannel } from "../../../actions/channel";
 import analyticsLogger from "../../../util/analyticsLogger";
+import { allowedIntegrations } from '../../../util/integrationInfo'
 import UserCan, { userCan } from "../../common/UserCan";
 import HttpDetails from "../../channels/HttpDetails";
 import AwsDetails from "../../channels/AwsDetails";
@@ -170,6 +171,15 @@ class ChannelContent extends Component {
           >
             <React.Fragment>
               <Card title="Integration Details">
+                {
+                  allowedIntegrations && !allowedIntegrations[channel.type] && (
+                    <Paragraph>
+                      <Text strong style={{ display: 'block', marginBottom: 25 }}>
+                        Your Console operator has disabled this integration type, please contact them for more details. Connected devices will not send packets to this integration.
+                      </Text>
+                    </Paragraph>
+                  )
+                }
                 <Paragraph>
                   <Text strong>Type: </Text>
                   <Text>{channel.type_name}</Text>
