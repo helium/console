@@ -20,7 +20,54 @@ const ChannelNewCommunityIntro = (props) => {
     <>
       <MobileDisplay>
         <MobileLayout>
-          <div>agsf</div>
+          <div
+            style={{
+              padding: "10px 15px",
+              boxShadow: "0px 3px 7px 0px #ccc",
+              backgroundColor: "#F5F7F9",
+              height: 100,
+              position: "relative",
+              zIndex: 10,
+            }}
+          >
+            <Button
+              icon={<ArrowLeftOutlined style={{ fontSize: 12 }} />}
+              style={{
+                border: "none",
+                padding: 0,
+                fontSize: 14,
+                color: "#2C79EE",
+                height: 24,
+                boxShadow: "none",
+                background: "none",
+                fontWeight: 600,
+              }}
+              onClick={() => {
+                history.replace("/integrations/new");
+              }}
+            >
+              Back to New Integrations
+            </Button>
+            <div>
+              <Text style={{ fontSize: 27, fontWeight: 600 }}>
+                {integrationType.name}
+              </Text>
+            </div>
+          </div>
+          <div
+            style={{
+              padding: "25px 15px",
+              backgroundColor: "#ffffff",
+              height: "calc(100% - 100px)",
+              overflowY: "scroll",
+            }}
+          >
+            <img style={{ height: 60, width: 60 }} src={integrationType.img} />
+            <div style={{ marginTop: 5, marginBottom: 30 }}>
+              <Text><a href={integrationType.info.externalLink} target="_blank">Developer Website</a></Text>
+            </div>
+            {renderRow(integrationType, history, true)}
+          </div>
         </MobileLayout>
       </MobileDisplay>
       <DesktopDisplay>
@@ -60,29 +107,7 @@ const ChannelNewCommunityIntro = (props) => {
           >
             <div style={{ overflowX: "scroll" }} className="no-scroll-bar">
               <div style={{ padding: "60px 30px 60px 30px", minWidth }}>
-                <Row>
-                  <Col span={12}>
-                    <Text style={{ fontSize: 22, fontWeight: 600, display: 'block' }}>{integrationType.info.title}</Text>
-                    <Text style={{ display: 'block', marginTop: 30 }}>{integrationType.info.desc}</Text>
-                    <div style={{ marginTop: 30 }}>
-                      <Button
-                        icon={<PlusOutlined />}
-                        onClick={() => history.replace(`/integrations/new?type=${type}`)}
-                        type="primary"
-                        style={{ borderRadius: 4 }}
-                      >
-                        Add Integration
-                      </Button>
-                      <a href={integrationType.info.docLink} target="_blank">
-                        <Button
-                          style={{ borderRadius: 4, marginLeft: 16 }}
-                        >
-                          Documentation
-                        </Button>
-                      </a>
-                    </div>
-                  </Col>
-                </Row>
+                {renderRow(integrationType, history)}
               </div>
             </div>
           </div>
@@ -91,5 +116,31 @@ const ChannelNewCommunityIntro = (props) => {
     </>
   )
 }
+
+const renderRow = (integrationType, history, mobile = false) => (
+  <Row>
+    <Col span={mobile ? 24 : 12}>
+      <Text style={{ fontSize: 22, fontWeight: 600, display: 'block' }}>{integrationType.info.title}</Text>
+      <Text style={{ display: 'block', marginTop: 30 }}>{integrationType.info.desc}</Text>
+      <div style={{ marginTop: 30 }}>
+        <Button
+          icon={<PlusOutlined />}
+          onClick={() => history.replace(`/integrations/new?type=${integrationType.type}`)}
+          type="primary"
+          style={{ borderRadius: 4 }}
+        >
+          Add Integration
+        </Button>
+        <a href={integrationType.info.docLink} target="_blank">
+          <Button
+            style={{ borderRadius: 4, marginLeft: 16 }}
+          >
+            Documentation
+          </Button>
+        </a>
+      </div>
+    </Col>
+  </Row>
+)
 
 export default ChannelNewCommunityIntro

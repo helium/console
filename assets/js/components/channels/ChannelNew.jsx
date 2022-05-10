@@ -143,7 +143,6 @@ class ChannelNew extends Component {
                       <Collapse
                         expandIconPosition="right"
                         defaultActiveKey={["1"]}
-                        style={{ marginTop: 20 }}
                       >
                         <Panel
                           header={<b>ADD A CORE INTEGRATION</b>}
