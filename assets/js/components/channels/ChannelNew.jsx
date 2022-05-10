@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
+import find from 'lodash/find'
 import { ALL_CHANNELS } from "../../graphql/channels";
 import withGql from "../../graphql/withGql";
 import ChannelDashboardLayout from "./ChannelDashboardLayout";
@@ -37,10 +38,25 @@ class ChannelNew extends Component {
     analyticsLogger.logEvent(
       isMobile ? "ACTION_NAV_CHANNELS_NEW_MOBILE" : "ACTION_NAV_CHANNELS_NEW"
     );
+
+    const { search } = this.props.history.location
+    const searchParams = search.split("?type=")
+    if ( searchParams[1] && find(COMMUNITY_INTEGRATION_TYPES, {type: searchParams[1]}) ) {
+      this.setState({ type: searchParams[1] })
+    }
   }
 
   handleSelectType = (type) => {
-    this.setState({ type })
+    if (type === "http" || type === "mqtt") {
+      this.setState({ type })
+    } else {
+      this.props.history.replace(`/integrations/new/${type}`)
+    }
+  }
+
+  resetType = (type) => {
+    this.setState({ type: null })
+    this.props.history.replace('/integrations/new')
   }
 
   renderForm = (mobile) => {
@@ -48,25 +64,25 @@ class ChannelNew extends Component {
 
     switch (type) {
       case "cargo":
-        return <CargoForm mobile={mobile} type={type} reset={() => this.handleSelectType(null)} createChannel={this.props.createChannel} />
+        return <CargoForm mobile={mobile} type={type} reset={this.resetType} createChannel={this.props.createChannel} />
       case "my_devices":
-        return <MyDevicesForm mobile={mobile} type={type} reset={() => this.handleSelectType(null)} createChannel={this.props.createChannel} />
+        return <MyDevicesForm mobile={mobile} type={type} reset={this.resetType} createChannel={this.props.createChannel} />
       case "adafruit":
-        return <AdafruitForm mobile={mobile} type={type} reset={() => this.handleSelectType(null)} createChannel={this.props.createChannel} />
+        return <AdafruitForm mobile={mobile} type={type} reset={this.resetType} createChannel={this.props.createChannel} />
       case "ubidots":
-        return <UbidotsForm mobile={mobile} type={type} reset={() => this.handleSelectType(null)} createChannel={this.props.createChannel} />
+        return <UbidotsForm mobile={mobile} type={type} reset={this.resetType} createChannel={this.props.createChannel} />
       case "datacake":
-        return <DatacakeForm mobile={mobile} type={type} reset={() => this.handleSelectType(null)} createChannel={this.props.createChannel} />
+        return <DatacakeForm mobile={mobile} type={type} reset={this.resetType} createChannel={this.props.createChannel} />
       case "tago":
-        return <TagoForm mobile={mobile} type={type} reset={() => this.handleSelectType(null)} createChannel={this.props.createChannel} />
+        return <TagoForm mobile={mobile} type={type} reset={this.resetType} createChannel={this.props.createChannel} />
       case "akenza":
-        return <AkenzaForm mobile={mobile} type={type} reset={() => this.handleSelectType(null)} createChannel={this.props.createChannel} />
+        return <AkenzaForm mobile={mobile} type={type} reset={this.resetType} createChannel={this.props.createChannel} />
       case "google_sheets":
-        return <GoogleSheetForm from="ChannelNew" mobile={mobile} type={type} reset={() => this.handleSelectType(null)} createChannel={this.props.createChannel} />
+        return <GoogleSheetForm from="ChannelNew" mobile={mobile} type={type} reset={this.resetType} createChannel={this.props.createChannel} />
       case "microshare":
-        return <MicroshareForm mobile={mobile} type={type} reset={() => this.handleSelectType(null)} createChannel={this.props.createChannel} />
+        return <MicroshareForm mobile={mobile} type={type} reset={this.resetType} createChannel={this.props.createChannel} />
       default:
-        return <CommonForm mobile={mobile} type={type} reset={() => this.handleSelectType(null)} createChannel={this.props.createChannel} />
+        return <CommonForm mobile={mobile} type={type} reset={this.resetType} createChannel={this.props.createChannel} />
     }
   };
 
