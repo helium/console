@@ -5,7 +5,7 @@ import { CORE_INTEGRATION_TYPES, COMMUNITY_INTEGRATION_TYPES } from '../../util/
 
 export const IntegrationTypeTileSimple = props => {
   const { type } = props;
-  const { img, name, info, docLink } = [...CORE_INTEGRATION_TYPES, ...COMMUNITY_INTEGRATION_TYPES].filter(channel => channel.type === type)[0];
+  const { img, name, info } = [...CORE_INTEGRATION_TYPES, ...COMMUNITY_INTEGRATION_TYPES].filter(channel => channel.type === type)[0];
 
   return (
     <div>
@@ -13,8 +13,9 @@ export const IntegrationTypeTileSimple = props => {
       <Text strong>
         {name}
       </Text>
-      <div style={{ paddingTop: '10px', maxWidth: '500px' }}>
-        <Text>{info} <a href={docLink} target="_blank">Tell me more about setting up this Integration.</a></Text>
+      <div style={{ paddingTop: '10px', maxWidth: 600 }}>
+        <Text style={{ display: 'block' }}>{info.desc}</Text>
+        <Text style={{ display: 'block', marginTop: 10 }}><a href={info.docLink} target="_blank">Tell me more about setting up this Integration.</a></Text>
       </div>
     </div>
   );

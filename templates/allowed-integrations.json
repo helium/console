@@ -1,9 +1,9 @@
 {
+  "http": true,
+  "mqtt": true,
   "aws": true,
   "azure": true,
   "iot_central": true,
-  "http": true,
-  "mqtt": true,
   "cargo": true,
   "my_devices": true,
   "ubidots": true,
