@@ -48,7 +48,6 @@ export const integrationImgMap = {
 
 export const http_integrations = ["http", "cargo", "my_devices", "akenza", "datacake", "microshare", "tago", "ubidots", "google_sheets"]
 export const mqtt_integrations = ["mqtt", "adafruit"]
-const allIntegrations = require("../../../templates/allowed-integrations.json");
 
 export const getAllowedIntegrations = () => {
   const convertToList = (str) => {
@@ -57,15 +56,17 @@ export const getAllowedIntegrations = () => {
       return acc
     }, {})
   }
-  if (window.allowed_integrations === "all" || process.env.ALLOWED_INTEGRATIONS === "all") {
-    return allIntegrations
-  }
-  if (window.allowed_integrations) {
+
+  if (window.allowed_integrations && window.allowed_integrations !== "all") {
     return convertToList(window.allowed_integrations)
   }
-  if (process.env.ALLOWED_INTEGRATIONS) {
+  if (process.env.ALLOWED_INTEGRATIONS && process.env.ALLOWED_INTEGRATIONS !== "all") {
     return convertToList(process.env.ALLOWED_INTEGRATIONS)
   }
+  return [...CORE_INTEGRATION_TYPES, ...COMMUNITY_INTEGRATION_TYPES].reduce((acc, i) => {
+    acc[i.type] = true
+    return acc
+  }, {})
 }
 
 export const CORE_INTEGRATION_TYPES = [

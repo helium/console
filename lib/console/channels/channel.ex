@@ -5,7 +5,6 @@ defmodule Console.Channels.Channel do
 
   alias Console.Organizations.Organization
   alias Console.Channels.Channel
-  alias Console.AppConstants
 
   @http_types ~w(http cargo my_devices akenza datacake microshare tago ubidots google_sheets)
   @long_type_names %{
@@ -48,7 +47,7 @@ defmodule Console.Channels.Channel do
   @doc false
   def changeset(channel, attrs \\ %{}) do
     attrs = Helpers.sanitize_attrs(attrs, ["type", "name"])
-    allowed_types = AppConstants.get_allowed_integration_types()
+    allowed_types = get_allowed_integration_types()
 
     channel
     |> cast(attrs, [:name, :type, :active, :credentials, :organization_id, :payload_template])
@@ -76,6 +75,18 @@ defmodule Console.Channels.Channel do
     |> check_credentials_update(channel.type)
     |> put_downlink_token()
     |> unique_constraint(:name, name: :channels_name_organization_id_index, message: "This name has already been used in this organization")
+  end
+
+  def get_allowed_integration_types() do
+    case Application.get_env(:console, :allowed_integrations) do
+      "all" ->
+        @long_type_names |> Map.keys()
+      value ->
+        value
+        |> String.trim(",")
+        |> String.replace(" ", "")
+        |> String.split(",")
+    end
   end
 
   defp put_type_name(changeset) do

@@ -12,7 +12,6 @@ defmodule ConsoleWeb.V1.ChannelController do
   alias Console.AlertEvents
   alias Console.AuditActions
   alias Console.CommunityChannels
-  alias Console.AppConstants
 
   action_fallback(ConsoleWeb.FallbackController)
 
@@ -73,7 +72,7 @@ defmodule ConsoleWeb.V1.ChannelController do
 
   def create_community_channel(conn, %{ "name" => name, "token" => token, "type" => type} = attrs) do
     current_organization = conn.assigns.current_organization
-    allowed_types = AppConstants.get_allowed_integration_types()
+    allowed_types = Channel.get_allowed_integration_types()
 
     if type in allowed_types do
       channel_params =
@@ -167,7 +166,7 @@ defmodule ConsoleWeb.V1.ChannelController do
 
   def create(conn, %{ "name" => name, "type" => "aws", "topic" => topic, "aws_access_key" => pk, "aws_secret_key" => sk, "aws_region" => region } = attrs) do
     current_organization = conn.assigns.current_organization
-    allowed_types = AppConstants.get_allowed_integration_types()
+    allowed_types = Channel.get_allowed_integration_types()
 
     if "aws" in allowed_types do
       channel_params =
@@ -208,7 +207,7 @@ defmodule ConsoleWeb.V1.ChannelController do
 
   def create(conn, %{ "name" => name, "type" => "azure", "azure_policy_name" => policy_name, "azure_hub_name" => hub_name, "azure_primary_key" => key } = attrs) do
     current_organization = conn.assigns.current_organization
-    allowed_types = AppConstants.get_allowed_integration_types()
+    allowed_types = Channel.get_allowed_integration_types()
 
     if "azure" in allowed_types do
       channel_params =
@@ -248,7 +247,7 @@ defmodule ConsoleWeb.V1.ChannelController do
 
   def create(conn, %{ "name" => name, "type" => "iot_central", "iot_central_api_key" => api_key, "iot_central_scope_id" => scope_id, "iot_central_app_name" => app_name } = attrs) do
     current_organization = conn.assigns.current_organization
-    allowed_types = AppConstants.get_allowed_integration_types()
+    allowed_types = Channel.get_allowed_integration_types()
 
     if "iot_central" in allowed_types do
       channel_params =
@@ -288,7 +287,7 @@ defmodule ConsoleWeb.V1.ChannelController do
 
   def create(conn, %{ "name" => name, "type" => "mqtt", "endpoint" => endpoint, "uplink_topic" => uplink_topic, "downlink_topic" => downlink_topic } = attrs) do
     current_organization = conn.assigns.current_organization
-    allowed_types = AppConstants.get_allowed_integration_types()
+    allowed_types = Channel.get_allowed_integration_types()
 
     if "mqtt" in allowed_types do
       channel_params =
@@ -332,7 +331,7 @@ defmodule ConsoleWeb.V1.ChannelController do
 
   def create(conn, %{ "name" => name, "type" => "http", "endpoint" => endpoint, "method" => method } = attrs) do
     current_organization = conn.assigns.current_organization
-    allowed_types = AppConstants.get_allowed_integration_types()
+    allowed_types = Channel.get_allowed_integration_types()
 
     if "http" in allowed_types do
       credentials =
@@ -516,7 +515,7 @@ defmodule ConsoleWeb.V1.ChannelController do
   end
 
   defp check_allowed_channel(channel) do
-    allowed_types = AppConstants.get_allowed_integration_types()
+    allowed_types = Channel.get_allowed_integration_types()
     if (channel.type in allowed_types) do
       channel
     else

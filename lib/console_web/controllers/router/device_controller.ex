@@ -7,6 +7,7 @@ defmodule ConsoleWeb.Router.DeviceController do
   alias Console.Devices
   alias Console.Devices.Device
   alias Console.Channels
+  alias Console.Channels.Channel
   alias Console.CommunityChannels
   alias Console.Organizations
   alias Console.DeviceStats
@@ -18,7 +19,6 @@ defmodule ConsoleWeb.Router.DeviceController do
   alias Console.Mailer
   alias Console.AlertEvents
   alias ConsoleWeb.Router.DeviceView
-  alias Console.AppConstants
 
   @stripe_api_url "https://api.stripe.com"
   @headers [
@@ -144,7 +144,7 @@ defmodule ConsoleWeb.Router.DeviceController do
             end
           end)
 
-        allowed_types = AppConstants.get_allowed_integration_types()
+        allowed_types = Channel.get_allowed_integration_types()
 
         channels =
           Enum.map(deduped_flows, fn flow ->

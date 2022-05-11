@@ -12,7 +12,6 @@ defmodule Console.Application do
       {Phoenix.PubSub, name: Console.PubSub},
       {Absinthe.Subscription, [ConsoleWeb.Endpoint]},
       {ConsoleWeb.Monitor, %{ address: "", events_state: [], events_error_state: [], amqp_publish_conn: nil, amqp_consume_conn: nil }},
-      {Console.AppConstants, []},
       {ConsoleWeb.MessageQueuePublisher, %{}},
       {ConsoleWeb.MessageQueueConsumer, %{}},
       {Console.EtlWorker, %{}},
