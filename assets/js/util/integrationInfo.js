@@ -46,7 +46,7 @@ export const integrationImgMap = {
   akenza: AkenzaDark,
 };
 
-export const http_integrations = ["http", "cargo", "my_devices", "akenza", "datacake", "microshare", "tago", "ubidots", "google_sheets", "test"]
+export const http_integrations = ["http", "cargo", "my_devices", "akenza", "datacake", "microshare", "tago", "ubidots", "google_sheets"]
 export const mqtt_integrations = ["mqtt", "adafruit"]
 export let allowedIntegrations
 try {
