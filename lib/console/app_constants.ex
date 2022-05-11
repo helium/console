@@ -9,6 +9,7 @@ defmodule Console.AppConstants do
       else
         Application.get_env(:console, :allowed_integrations)
         |> String.trim(",")
+        |> String.replace(" ", "")
         |> String.split(",")
       end
 

@@ -51,20 +51,20 @@ export const mqtt_integrations = ["mqtt", "adafruit"]
 const allIntegrations = require("../../../templates/allowed-integrations.json");
 
 export const getAllowedIntegrations = () => {
+  const convertToList = (str) => {
+    return str.replaceAll(" ", "").replace(/(^,+)|(,+$)/g, '').split(',').reduce((acc, curr) => {
+      acc[curr] = true
+      return acc
+    }, {})
+  }
   if (window.allowed_integrations === "all" || process.env.ALLOWED_INTEGRATIONS === "all") {
     return allIntegrations
   }
   if (window.allowed_integrations) {
-    return window.allowed_integrations.split(',').replace(/(^,+)|(,+$)/g, '').reduce((acc, curr) => {
-      acc[curr] = true
-      return acc
-    }, {})
+    return convertToList(window.allowed_integrations)
   }
   if (process.env.ALLOWED_INTEGRATIONS) {
-    return process.env.ALLOWED_INTEGRATIONS.split(',').replace(/(^,+)|(,+$)/g, '').reduce((acc, curr) => {
-      acc[curr] = true
-      return acc
-    }, {})
+    return convertToList(process.env.ALLOWED_INTEGRATIONS)
   }
 }
 
