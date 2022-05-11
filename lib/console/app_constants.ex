@@ -11,7 +11,6 @@ defmodule Console.AppConstants do
         |> String.trim(",")
         |> String.split(",")
       end
-    IO.inspect allowed_integration_types
 
     Agent.start_link(fn -> allowed_integration_types end, name: __MODULE__)
   end

@@ -55,13 +55,13 @@ export const getAllowedIntegrations = () => {
     return allIntegrations
   }
   if (window.allowed_integrations) {
-    return window.allowed_integrations.split(',').reduce((acc, curr) => {
+    return window.allowed_integrations.split(',').replace(/(^,+)|(,+$)/g, '').reduce((acc, curr) => {
       acc[curr] = true
       return acc
     }, {})
   }
   if (process.env.ALLOWED_INTEGRATIONS) {
-    return process.env.ALLOWED_INTEGRATIONS.split(',').reduce((acc, curr) => {
+    return process.env.ALLOWED_INTEGRATIONS.split(',').replace(/(^,+)|(,+$)/g, '').reduce((acc, curr) => {
       acc[curr] = true
       return acc
     }, {})
