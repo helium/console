@@ -12,6 +12,8 @@ import ArrowLeftOutlined from "@ant-design/icons/ArrowLeftOutlined";
 import HttpDetails from "../../channels/HttpDetails";
 import AwsDetails from "../../channels/AwsDetails";
 import MqttDetails from "../../channels//MqttDetails";
+import Warning from "../../flows/Warning";
+import WarningItem from "../../flows/WarningItem";
 import UserCan, { userCan } from "../../common/UserCan";
 import MobileAddResourceButton from "../../common/MobileAddResourceButton";
 import analyticsLogger from "../../../util/analyticsLogger";
@@ -130,7 +132,12 @@ export default ({ channel }) => {
               overflowY: "scroll",
             }}
           >
-            <Text strong style={{ display: 'block', marginBottom: 20 }}>Your Console operator has disabled this integration type. Please contact them for more details.</Text>
+            <Warning numberWarnings={1} />
+            <WarningItem
+              warningText={
+                "Your Console operator has disabled this integration type, please contact them for more details. Connected devices will not send packets to this integration."
+              }
+            />
             <Paragraph>
               <Text strong>Type: </Text>
               <Text>{channel.type_name}</Text>

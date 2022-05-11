@@ -120,8 +120,8 @@ const ChannelNewCommunityIntro = (props) => {
 const renderRow = (integrationType, history, mobile = false) => (
   <Row>
     <Col span={mobile ? 24 : 12}>
-      <Text style={{ fontSize: 22, fontWeight: 600, display: 'block' }}>{integrationType.info.title}</Text>
-      <Text style={{ display: 'block', marginTop: 30 }}>{integrationType.info.desc}</Text>
+      <Text style={{ fontSize: mobile ? 22 : 28, fontWeight: 600, display: 'block' }}>{integrationType.info.title}</Text>
+      <Text style={{ fontSize: 16, display: 'block', marginTop: 30 }}>{integrationType.info.desc}</Text>
       <div style={{ marginTop: 30 }}>
         <Button
           icon={<PlusOutlined />}

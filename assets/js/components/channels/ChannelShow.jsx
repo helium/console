@@ -36,6 +36,8 @@ import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
 import DeleteChannelModal from "./DeleteChannelModal";
 import MobileLayout from "../mobile/MobileLayout";
 import MobileChannelShow from "../mobile/channels/MobileChannelShow";
+import Warning from "../flows/Warning";
+import WarningItem from "../flows/WarningItem";
 import {
   getDownlinkKey,
   getDownlinkUrl,
@@ -254,7 +256,12 @@ class ChannelShow extends Component {
                     </Text>
                   </div>
                   <Card title="Integration Details" bodyStyle={{ padding: 24 }}>
-                    <Text strong style={{ display: 'block', marginBottom: 20 }}>Your Console operator has disabled this integration type. Please contact them for more details.</Text>
+                    <Warning numberWarnings={1} />
+                    <WarningItem
+                      warningText={
+                        "Your Console operator has disabled this integration type, please contact them for more details. Connected devices will not send packets to this integration."
+                      }
+                    />
                     <Row>
                       <Col span={12}>
                         <Paragraph>

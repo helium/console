@@ -125,6 +125,10 @@ class ChannelContent extends Component {
       downlinkUrl = `https://${process.env.ENV_DOMAIN}/api/v1/down/${channel.id}/${downlinkKey}/{:optional_device_id}`;
     }
 
+    let warningCount = 0
+    if (channel.last_errored === true) warningCount++
+    if (allowedIntegrations && !allowedIntegrations[channel.type]) warningCount++
+
     return (
       <div>
         <div style={{ padding: "40px 40px 0px 40px" }}>
@@ -171,15 +175,6 @@ class ChannelContent extends Component {
           >
             <React.Fragment>
               <Card title="Integration Details">
-                {
-                  allowedIntegrations && !allowedIntegrations[channel.type] && (
-                    <Paragraph>
-                      <Text strong style={{ display: 'block', marginBottom: 25 }}>
-                        Your Console operator has disabled this integration type, please contact them for more details. Connected devices will not send packets to this integration.
-                      </Text>
-                    </Paragraph>
-                  )
-                }
                 <Paragraph>
                   <Text strong>Type: </Text>
                   <Text>{channel.type_name}</Text>
@@ -284,15 +279,22 @@ class ChannelContent extends Component {
                   </UserCan>
                 )}
               </Card>
+              {warningCount > 0 && (
+                  <Warning numberWarnings={warningCount} />
+              )}
+              {allowedIntegrations && !allowedIntegrations[channel.type] && (
+                <WarningItem
+                  warningText={
+                    "Your Console operator has disabled this integration type, please contact them for more details. Connected devices will not send packets to this integration."
+                  }
+                />
+              )}
               {channel.last_errored === true && (
-                <React.Fragment>
-                  <Warning numberWarnings={1} />
-                  <WarningItem
-                    warningText={
-                      "The Integration is unsuccessful. Please check the Debug panel for Devices and/or Labels connected to this Integration."
-                    }
-                  />
-                </React.Fragment>
+                <WarningItem
+                  warningText={
+                    "The Integration is unsuccessful. Please check the Debug panel for Devices and/or Labels connected to this Integration."
+                  }
+                />
               )}
             </React.Fragment>
           </TabPane>
