@@ -99,6 +99,9 @@ config :console,
 config :console,
   dc_cost_multiplier: String.to_integer(System.get_env("DC_COST_MULTIPLIER") || "1")
 
+config :console,
+  allowed_integrations: System.get_env("ALLOWED_INTEGRATIONS") || "all"
+
 config :console, Console.Mailer,
   adapter: Bamboo.MailgunAdapter,
   api_key: System.get_env("MAILGUN_API_KEY"),

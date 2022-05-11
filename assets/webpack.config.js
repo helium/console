@@ -123,7 +123,8 @@ module.exports = function (env) {
         "USE_MAGIC_AUTH",
         "MAGIC_PUBLIC_KEY",
         "USER_INVITE_ONLY",
-        "IMPOSE_HARD_CAP"
+        "IMPOSE_HARD_CAP",
+        "ALLOWED_INTEGRATIONS"
       ]),
       new NodePolyfillPlugin()
     ],
