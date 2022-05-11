@@ -17,7 +17,7 @@ import WarningItem from "../../flows/WarningItem";
 import UserCan, { userCan } from "../../common/UserCan";
 import MobileAddResourceButton from "../../common/MobileAddResourceButton";
 import analyticsLogger from "../../../util/analyticsLogger";
-import { http_integrations, mqtt_integrations, allowedIntegrations } from '../../../util/integrationInfo'
+import { http_integrations, mqtt_integrations, getAllowedIntegrations } from '../../../util/integrationInfo'
 import { updateChannel } from "../../../actions/channel";
 import CopyIcon from "../../../../img/channels/mobile/copy.svg";
 import DeleteChannelModal from "../../channels/DeleteChannelModal";
@@ -40,6 +40,8 @@ export default ({ channel }) => {
 
   const downlinkKey = getDownlinkKey(channel);
   const downlinkUrl = getDownlinkUrl(channel, downlinkKey);
+
+  const allowedIntegrations = getAllowedIntegrations()
 
   const handleReceiveJoinsChange = (value) => {
     analyticsLogger.logEvent("ACTION_UPDATE_CHANNEL_RECEIVE_JOINS_MOBILE", {

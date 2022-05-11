@@ -8,7 +8,7 @@ import UserCan, { userCan } from "../common/UserCan";
 import { MobileDisplay, DesktopDisplay } from "../mobile/MediaQuery";
 import { displayError } from "../../util/messages";
 import { minWidth, isMobile } from "../../util/constants";
-import { http_integrations, mqtt_integrations, allowedIntegrations } from '../../util/integrationInfo'
+import { http_integrations, mqtt_integrations, getAllowedIntegrations } from '../../util/integrationInfo'
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import ChannelPayloadTemplate from "./ChannelPayloadTemplate";
 import HttpDetails from "./HttpDetails";
@@ -237,7 +237,8 @@ class ChannelShow extends Component {
     const downlinkUrl = getDownlinkUrl(channel, downlinkKey);
 
     const { showDownlinkToken, showDeleteChannelModal } = this.state;
-
+    const allowedIntegrations = getAllowedIntegrations()
+    
     return (
       <>
         <MobileDisplay>

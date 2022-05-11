@@ -48,13 +48,27 @@ export const integrationImgMap = {
 
 export const http_integrations = ["http", "cargo", "my_devices", "akenza", "datacake", "microshare", "tago", "ubidots", "google_sheets"]
 export const mqtt_integrations = ["mqtt", "adafruit"]
-export let allowedIntegrations
-try {
-  // To customize allowed integrations, copy allowed-integrations.json file from templates folder to root foler
-  allowedIntegrations = require("../../../config/allowed-integrations.json");
-} catch (err) {}
+const allIntegrations = require("../../../templates/allowed-integrations.json");
 
-const core_integrations = [
+export const getAllowedIntegrations = () => {
+  if (window.allowed_integrations === "all" || process.env.ALLOWED_INTEGRATIONS === "all") {
+    return allIntegrations
+  }
+  if (window.allowed_integrations) {
+    return window.allowed_integrations.split(',').reduce((acc, curr) => {
+      acc[curr] = true
+      return acc
+    }, {})
+  }
+  if (process.env.ALLOWED_INTEGRATIONS) {
+    return process.env.ALLOWED_INTEGRATIONS.split(',').reduce((acc, curr) => {
+      acc[curr] = true
+      return acc
+    }, {})
+  }
+}
+
+export const CORE_INTEGRATION_TYPES = [
   {
     name: "HTTP",
     type: "http",
@@ -76,9 +90,8 @@ const core_integrations = [
     }
   },
 ];
-export const CORE_INTEGRATION_TYPES = allowedIntegrations ? core_integrations.filter(i => allowedIntegrations[i.type]) : core_integrations
 
-const community_integrations = [
+export const COMMUNITY_INTEGRATION_TYPES = [
   {
     name: "Helium Cargo",
     type: "cargo",
@@ -212,4 +225,3 @@ const community_integrations = [
     }
   },
 ];
-export const COMMUNITY_INTEGRATION_TYPES = allowedIntegrations ? community_integrations.filter(i => allowedIntegrations[i.type]) : community_integrations

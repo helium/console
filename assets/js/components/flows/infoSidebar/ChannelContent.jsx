@@ -9,7 +9,7 @@ import moment from "moment";
 import { CHANNEL_SHOW } from "../../../graphql/channels";
 import { updateChannel } from "../../../actions/channel";
 import analyticsLogger from "../../../util/analyticsLogger";
-import { allowedIntegrations } from '../../../util/integrationInfo'
+import { getAllowedIntegrations } from '../../../util/integrationInfo'
 import UserCan, { userCan } from "../../common/UserCan";
 import HttpDetails from "../../channels/HttpDetails";
 import AwsDetails from "../../channels/AwsDetails";
@@ -125,6 +125,7 @@ class ChannelContent extends Component {
       downlinkUrl = `https://${process.env.ENV_DOMAIN}/api/v1/down/${channel.id}/${downlinkKey}/{:optional_device_id}`;
     }
 
+    const allowedIntegrations = getAllowedIntegrations()
     let warningCount = 0
     if (channel.last_errored === true) warningCount++
     if (allowedIntegrations && !allowedIntegrations[channel.type]) warningCount++

@@ -2,7 +2,7 @@ import React from 'react';
 import NavPointTriangle from '../common/NavPointTriangle';
 import BarIcon from '../../../img/channels/channel-bar-icon.svg'
 import Warning from "../../../img/node-warning.svg";
-import { integrationImgMap, allowedIntegrations } from '../../util/integrationInfo'
+import { integrationImgMap, getAllowedIntegrations } from '../../util/integrationInfo'
 import { Typography } from 'antd';
 const { Text } = Typography;
 import { Link } from 'react-router-dom';
@@ -43,7 +43,7 @@ const ChannelButton = ({ id, name, type, selected, warn }) => (
 
 export default ({ channels, shownChannelId }) => {
   const updatedChannels = channels.map(c => Object.assign({}, c, { type: c.type }))
-
+  const allowedIntegrations = getAllowedIntegrations()
   return (
     <div style={{ display: 'flex', flexDirection: 'row' }}>
       {updatedChannels.map(c => (

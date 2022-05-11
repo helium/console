@@ -5,7 +5,7 @@ import find from 'lodash/find'
 import { Link, useHistory } from 'react-router-dom';
 import DashboardLayout from "../common/DashboardLayout";
 import MobileLayout from "../mobile/MobileLayout";
-import { COMMUNITY_INTEGRATION_TYPES } from "../../util/integrationInfo";
+import { COMMUNITY_INTEGRATION_TYPES, getAllowedIntegrations } from "../../util/integrationInfo";
 import ArrowLeftOutlined from "@ant-design/icons/ArrowLeftOutlined";
 import PlusOutlined from "@ant-design/icons/PlusOutlined";
 import { Button, Typography, Row, Col } from "antd";
@@ -14,7 +14,8 @@ const { Text } = Typography;
 const ChannelNewCommunityIntro = (props) => {
   const history = useHistory();
   const { type } = props.match.params
-  const integrationType = find(COMMUNITY_INTEGRATION_TYPES, { type })
+  const allowedIntegrations = getAllowedIntegrations()
+  const integrationType = find(COMMUNITY_INTEGRATION_TYPES.filter(i => allowedIntegrations[i.type]), { type })
 
   return (
     <>

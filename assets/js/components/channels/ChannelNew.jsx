@@ -25,7 +25,7 @@ const { Panel } = Collapse;
 const { Text } = Typography;
 import MobileLayout from "../mobile/MobileLayout";
 import ArrowLeftOutlined from "@ant-design/icons/ArrowLeftOutlined";
-import { CORE_INTEGRATION_TYPES, COMMUNITY_INTEGRATION_TYPES } from "../../util/integrationInfo";
+import { CORE_INTEGRATION_TYPES, COMMUNITY_INTEGRATION_TYPES, getAllowedIntegrations } from "../../util/integrationInfo";
 import { isMobile } from "../../util/constants";
 
 @connect(null, mapDispatchToProps)
@@ -39,9 +39,10 @@ class ChannelNew extends Component {
       isMobile ? "ACTION_NAV_CHANNELS_NEW_MOBILE" : "ACTION_NAV_CHANNELS_NEW"
     );
 
+    const allowedIntegrations = getAllowedIntegrations()
     const { search } = this.props.history.location
     const searchParams = search.split("?type=")
-    if ( searchParams[1] && find(COMMUNITY_INTEGRATION_TYPES, {type: searchParams[1]}) ) {
+    if ( searchParams[1] && find(COMMUNITY_INTEGRATION_TYPES.filter(i => allowedIntegrations[i.type]), {type: searchParams[1]}) ) {
       this.setState({ type: searchParams[1] })
     }
   }
@@ -89,6 +90,7 @@ class ChannelNew extends Component {
   render() {
     const { type } = this.state;
     const { allChannels } = this.props.allChannelsQuery;
+    const allowedIntegrations = getAllowedIntegrations()
 
     return (
       <>
@@ -139,7 +141,7 @@ class ChannelNew extends Component {
               {!type && (
                 <div style={{ display: "block" }}>
                   {
-                    CORE_INTEGRATION_TYPES.length > 0 && (
+                    CORE_INTEGRATION_TYPES.filter(i => allowedIntegrations[i.type]).length > 0 && (
                       <Collapse
                         expandIconPosition="right"
                         defaultActiveKey={["1"]}
@@ -159,7 +161,7 @@ class ChannelNew extends Component {
                     )
                   }
                   {
-                    COMMUNITY_INTEGRATION_TYPES.length > 0 && (
+                    COMMUNITY_INTEGRATION_TYPES.filter(i => allowedIntegrations[i.type]).length > 0 && (
                       <Collapse
                         expandIconPosition="right"
                         defaultActiveKey={["1"]}
@@ -188,7 +190,7 @@ class ChannelNew extends Component {
               {!type && (
                 <div style={{ display: "block" }}>
                   {
-                    CORE_INTEGRATION_TYPES.length > 0 && (
+                    CORE_INTEGRATION_TYPES.filter(i => allowedIntegrations[i.type]).length > 0 && (
                       <Card
                         size="small"
                         title="Add a Core Integration"
@@ -209,7 +211,7 @@ class ChannelNew extends Component {
                     )
                   }
                   {
-                    COMMUNITY_INTEGRATION_TYPES.length > 0 && (
+                    COMMUNITY_INTEGRATION_TYPES.filter(i => allowedIntegrations[i.type]).length > 0 && (
                       <Card
                         size="small"
                         title="Add a Community Integration"

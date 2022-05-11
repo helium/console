@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { IntegrationTypeTile } from "./IntegrationTypeTile";
-import { CORE_INTEGRATION_TYPES } from "../../util/integrationInfo";
+import { CORE_INTEGRATION_TYPES, getAllowedIntegrations } from "../../util/integrationInfo";
 import _JSXStyle from "styled-jsx/style";
 
 const styles = {
@@ -29,6 +29,8 @@ const styles = {
 class ChannelCreateRow extends Component {
   render() {
     const { mobile, allChannels } = this.props;
+    const allowedIntegrations = getAllowedIntegrations()
+
     return (
       <div
         style={{
@@ -36,7 +38,7 @@ class ChannelCreateRow extends Component {
           ...(mobile && { flexWrap: "wrap", justifyContent: "center" }),
         }}
       >
-        {CORE_INTEGRATION_TYPES.map((channel) => (
+        {CORE_INTEGRATION_TYPES.filter(i => allowedIntegrations[i.type]).map((channel) => (
           <div
             className="wrapper"
             style={{
