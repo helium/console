@@ -7,15 +7,6 @@ export const CHANNEL_FRAGMENT = gql`
     type_name
     id
     active
-    credentials {
-      endpoint
-      downlink {
-        topic
-      }
-      uplink {
-        topic
-      }
-    }
     updated_at
     number_devices
   }
@@ -27,8 +18,16 @@ export const CHANNEL_SHOW = gql`
       ...ChannelFragment
       downlink_token
       method
+      credentials {
+        endpoint
+        downlink {
+          topic
+        }
+        uplink {
+          topic
+        }
+      }
       endpoint
-      inbound_token
       headers
       url_params
       aws_region
@@ -71,7 +70,6 @@ export const ALL_CHANNELS = gql`
       type_name
       id
       active
-      endpoint
       last_errored
     }
   }

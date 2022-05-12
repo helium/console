@@ -7,6 +7,8 @@ defmodule ConsoleWeb.Router.DeviceController do
   alias Console.Devices
   alias Console.Devices.Device
   alias Console.Channels
+  alias Console.Channels.Channel
+  alias Console.CommunityChannels
   alias Console.Organizations
   alias Console.DeviceStats
   alias Console.HotspotStats
@@ -142,9 +144,17 @@ defmodule ConsoleWeb.Router.DeviceController do
             end
           end)
 
+        allowed_types = Channel.get_allowed_integration_types()
+
         channels =
           Enum.map(deduped_flows, fn flow ->
             Map.put(flow.channel, :function, flow.function)
+          end)
+          |> Enum.filter(fn channel ->
+            channel.type in allowed_types
+          end)
+          |> Enum.map(fn channel ->
+            CommunityChannels.inject_credentials(channel)
           end)
 
         final_device =

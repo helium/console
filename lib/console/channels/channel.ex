@@ -6,6 +6,25 @@ defmodule Console.Channels.Channel do
   alias Console.Organizations.Organization
   alias Console.Channels.Channel
 
+  @http_types ~w(http cargo my_devices akenza datacake microshare tago ubidots google_sheets)
+  @long_type_names %{
+    "aws" => "AWS IoT",
+    "azure" => "Azure IoT Hub",
+    "iot_central" => "Azure IoT Central",
+    "google" => "Google Cloud IoT Core",
+    "mqtt" => "MQTT",
+    "http" => "HTTP",
+    "cargo" => "Cargo",
+    "my_devices" => "myDevices Cayenne",
+    "akenza" => "Akenza",
+    "datacake" => "Datacake",
+    "microshare" => "Microshare",
+    "tago" => "Tago.IO",
+    "ubidots" => "Ubidots",
+    "google_sheets" => "Google Sheets",
+    "adafruit" => "Adafruit IO",
+  }
+
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "channels" do
@@ -28,11 +47,12 @@ defmodule Console.Channels.Channel do
   @doc false
   def changeset(channel, attrs \\ %{}) do
     attrs = Helpers.sanitize_attrs(attrs, ["type", "name"])
+    allowed_types = get_allowed_integration_types()
 
     channel
     |> cast(attrs, [:name, :type, :active, :credentials, :organization_id, :payload_template])
     |> validate_required([:name, :type, :active, :credentials, :organization_id])
-    |> validate_inclusion(:type, ~w(http mqtt aws azure google iot_central))
+    |> validate_inclusion(:type, allowed_types, message: "This integration type is not allowed on this Console")
     |> validate_length(:name, max: 50, message: "Name cannot be longer than 50 characters")
     |> check_credentials()
     |> put_type_name()
@@ -51,24 +71,28 @@ defmodule Console.Channels.Channel do
     channel
     |> cast(attrs, [:name, :credentials, :downlink_token, :payload_template, :time_first_uplink, :receive_joins, :last_errored])
     |> validate_required([:name, :type, :credentials])
-    |> validate_length(:name, max: 50)
+    |> validate_length(:name, max: 50, message: "Name cannot be longer than 50 characters")
     |> check_credentials_update(channel.type)
     |> put_downlink_token()
     |> unique_constraint(:name, name: :channels_name_organization_id_index, message: "This name has already been used in this organization")
   end
 
+  def get_allowed_integration_types() do
+    case Application.get_env(:console, :allowed_integrations) do
+      "all" ->
+        @long_type_names |> Map.keys()
+      value ->
+        value
+        |> String.trim(",")
+        |> String.replace(" ", "")
+        |> String.split(",")
+    end
+  end
+
   defp put_type_name(changeset) do
     case changeset do
       %Ecto.Changeset{valid?: true, changes: %{type: type}} ->
-        type_name =
-          case type do
-            "aws" -> "AWS IoT"
-            "azure" -> "Azure IoT Hub"
-            "iot_central" -> "Azure IoT Central"
-            "google" -> "Google Cloud IoT Core"
-            "mqtt" -> "MQTT"
-            "http" -> "HTTP"
-          end
+        type_name = @long_type_names[type]
 
         put_change(changeset, :type_name, type_name)
       _ -> changeset
@@ -77,12 +101,20 @@ defmodule Console.Channels.Channel do
 
   def put_downlink_token(changeset) do
     case changeset do
-      %Ecto.Changeset{valid?: true, changes: %{type: "http"}} ->
-        token = Helpers.generate_token(32)
-        put_change(changeset, :downlink_token, token)
-      %Ecto.Changeset{valid?: true, changes: %{downlink_token: "new"}, data: %Channel{type: "http"}} ->
-        token = Helpers.generate_token(32)
-        put_change(changeset, :downlink_token, token)
+      %Ecto.Changeset{valid?: true, changes: %{type: type}} ->
+        if type in @http_types do
+          token = Helpers.generate_token(32)
+          put_change(changeset, :downlink_token, token)
+        else
+          changeset
+        end
+      %Ecto.Changeset{valid?: true, changes: %{downlink_token: "new"}, data: %Channel{type: type}} ->
+        if type in @http_types do
+          token = Helpers.generate_token(32)
+          put_change(changeset, :downlink_token, token)
+        else
+          changeset
+        end
       _ -> changeset
     end
   end
@@ -130,7 +162,7 @@ defmodule Console.Channels.Channel do
                     if Enum.member?(16..31, byte2) do
                       add_error(changeset, :message, "Must not provide private or link local addresses")
                     else
-                      put_change(changeset, :credentials, Map.merge(creds, %{"inbound_token" => Helpers.generate_token(16)}))
+                      changeset
                     end
                   {:ok, ipv6_addr = {_,_,_,_,_,_,_,_}} ->
                     cond do
@@ -141,10 +173,10 @@ defmodule Console.Channels.Channel do
                       InetCidr.contains?(InetCidr.parse("fc00::/7"), ipv6_addr) ->
                         add_error(changeset, :message, "Must not provide private or link local addresses")
                       true ->
-                        put_change(changeset, :credentials, Map.merge(creds, %{"inbound_token" => Helpers.generate_token(16)}))
+                        changeset
                     end
                   _ ->
-                    put_change(changeset, :credentials, Map.merge(creds, %{"inbound_token" => Helpers.generate_token(16)}))
+                    changeset
                 end
             end
         end

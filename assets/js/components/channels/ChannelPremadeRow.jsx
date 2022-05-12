@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { IntegrationTypeTile } from "./IntegrationTypeTile";
-import { PREMADE_CHANNEL_TYPES } from "../../util/integrationInfo";
+import { COMMUNITY_INTEGRATION_TYPES, getAllowedIntegrations } from "../../util/integrationInfo";
 import _JSXStyle from "styled-jsx/style";
 
 const styles = {
@@ -29,7 +29,9 @@ const styles = {
 
 class ChannelPremadeRow extends Component {
   render() {
-    const { mobile } = this.props;
+    const { mobile, allChannels } = this.props;
+    const allowedIntegrations = getAllowedIntegrations()
+
     return (
       <div
         style={{
@@ -37,7 +39,7 @@ class ChannelPremadeRow extends Component {
           ...(mobile && { flexWrap: "wrap", justifyContent: "center" }),
         }}
       >
-        {PREMADE_CHANNEL_TYPES.map((channel, i) => {
+        {COMMUNITY_INTEGRATION_TYPES.filter(i => allowedIntegrations[i.type]).map((channel, i) => {
           if (channel.name)
             return (
               <div
@@ -66,6 +68,7 @@ class ChannelPremadeRow extends Component {
                     img={channel.img}
                     name={channel.name}
                     type={channel.name === "Adafruit IO" ? "MQTT" : "HTTP"}
+                    count={(allChannels && allChannels.filter(c => c.type === channel.type).length) || 0}
                   />
                 </Link>
                 <style jsx>{`

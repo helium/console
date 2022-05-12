@@ -35,6 +35,7 @@ class DashboardLayout extends Component {
       noFooter,
       noAddButton,
       full,
+      underTitle,
     } = this.props;
 
     return (
@@ -107,6 +108,7 @@ class DashboardLayout extends Component {
                   breadCrumbs={breadCrumbs}
                   noHeaderPadding={noHeaderPadding}
                   full={full}
+                  underTitle={underTitle}
                 >
                   <SurveyNotificationContext.Provider value={{ toggleSurveyNotification: this.toggleSurveyNotification }}>
                     {this.props.children}

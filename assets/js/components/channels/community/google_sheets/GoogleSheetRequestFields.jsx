@@ -2,10 +2,10 @@ import React, { Component } from "react";
 import { Typography, Input, Button, Popover } from "antd";
 import InfoCircleOutlined from "@ant-design/icons/InfoCircleOutlined";
 import cheerio from "cheerio";
-import { post } from "../../../util/rest";
+import { post } from "../../../../util/rest";
 const { Text } = Typography;
 
-class GoogleSheetForm extends Component {
+class GoogleSheetRequestFields extends Component {
   state = {
     loading: false,
     formId: "",
@@ -18,7 +18,7 @@ class GoogleSheetForm extends Component {
   };
 
   getFormData = async () => {
-    this.setState({ loading: true, failedToLoadFormData: false });
+    this.setState({ loading: true, failedToLoadFormData: false, fieldsMapping: "" });
 
     post("/api/channels/google_sheets", {
       formId: this.state.formId,
@@ -35,6 +35,7 @@ class GoogleSheetForm extends Component {
 
         if (!script) {
           this.setState({ loading: false, failedToLoadFormData: true });
+          this.props.from === "ChannelNew" && this.props.clearInputs()
         } else {
           const _arr = script
             .replace("var FB_PUBLIC_LOAD_DATA_ = ", "")
@@ -44,6 +45,7 @@ class GoogleSheetForm extends Component {
           const rawQuestions = arr[1][1];
           if (!Array.isArray(rawQuestions)) {
             this.setState({ loading: false, failedToLoadFormData: true });
+            this.props.from === "ChannelNew" && this.props.clearInputs()
           } else {
             const loadData = rawQuestions.filter((q) => q);
             const questions = loadData.map((d) => {
@@ -65,20 +67,8 @@ class GoogleSheetForm extends Component {
       })
       .catch(() => {
         this.setState({ loading: false, failedToLoadFormData: true });
+        this.props.from === "ChannelNew" && this.props.clearInputs()
       });
-  };
-
-  validateInput = () => {
-    const { formId, fieldsMapping } = this.state;
-    if (fieldsMapping.length > 0) {
-      this.props.onValidInput({
-        method: "post",
-        endpoint: `https://docs.google.com/forms/d/e/${formId}/formResponse`,
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      });
-
-      this.props.updateGoogleFieldsMapping(fieldsMapping);
-    }
   };
 
   render() {
@@ -139,8 +129,7 @@ class GoogleSheetForm extends Component {
             </pre>
             {this.props.from === "ChannelNew" && (
               <Button
-                type="primary"
-                onClick={this.validateInput}
+                onClick={() => this.props.validateInput(this.state.formId, this.state.fieldsMapping)}
                 style={{
                   ...(this.props.mobile && { fontSize: 14 }),
                   marginTop: 20,
@@ -156,4 +145,4 @@ class GoogleSheetForm extends Component {
   }
 }
 
-export default GoogleSheetForm;
+export default GoogleSheetRequestFields;

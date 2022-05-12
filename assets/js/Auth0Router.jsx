@@ -25,6 +25,7 @@ import DeviceNew from "./components/devices/DeviceNew";
 import ChannelIndex from "./components/channels/ChannelIndex";
 import ChannelShow from "./components/channels/ChannelShow";
 import ChannelNew from "./components/channels/ChannelNew";
+import ChannelNewCommunityIntro from "./components/channels/ChannelNewCommunityIntro";
 import ChannelHome from "./components/channels/ChannelHome";
 import UserIndex from "./components/organizations/UserIndex";
 import OrganizationIndex from "./components/organizations/OrganizationIndex";
@@ -204,6 +205,11 @@ const Auth0Router = (props) => {
                               component={(props) => (
                                 <ChannelHome user={user} {...props} />
                               )}
+                            />
+                            <Route
+                              exact
+                              path="/integrations/new/:type"
+                              component={(props) => <ChannelNewCommunityIntro user={user} {...props} />}
                             />
                             <Route
                               exact

@@ -81,13 +81,6 @@ class HTTPForm extends Component {
     this.setState({ url_params: newParamsArray });
   };
 
-  removeHeaderRow = (index) => {
-    const newHeadersArray = this.state.headers
-      .slice(0, index)
-      .concat(this.state.headers.slice(index + 1));
-    this.setState({ headers: newHeadersArray }, this.validateInput);
-  };
-
   handleInputUpdate = (e) => {
     const validEndpoint =
       e.target.name == "endpoint" &&
@@ -95,9 +88,7 @@ class HTTPForm extends Component {
       e.target.value.indexOf("{") == -1 &&
       e.target.value.indexOf("}") == -1;
 
-    this.setState({ [e.target.name]: e.target.value, validEndpoint }, () =>
-      this.validateInput(validEndpoint)
-    );
+    this.setState({ [e.target.name]: e.target.value, validEndpoint }, this.validateInput);
   };
 
   handleMethodUpdate = (e) => {
@@ -165,34 +156,31 @@ class HTTPForm extends Component {
       "}"
     );
 
-    this.setState({ url_params: newParamsArray, validUrlParam }, () =>
-      this.validateInput(validUrlParam)
-    );
+    this.setState({ url_params: newParamsArray, validUrlParam }, this.validateInput);
   };
 
   validateInput = (validInput) => {
-    const { method, endpoint, headers, url_params } = this.state;
-    if (method.length > 0 && endpoint.length > 0) {
-      const parsedHeaders = headers.reduce((a, h) => {
-        if (h.header !== "" && h.value !== "") a[h.header] = h.value;
-        return a;
-      }, {});
+    const { method, endpoint, headers, url_params, validEndpoint, validUrlParam } = this.state;
 
-      const parsedUrlParams = url_params.reduce((a, h) => {
-        if (h.key !== "" && h.value !== "") a[h.key] = h.value;
-        return a;
-      }, {});
+    const parsedHeaders = headers.reduce((a, h) => {
+      if (h.header !== "" && h.value !== "") a[h.header] = h.value;
+      return a;
+    }, {});
 
-      this.props.onValidInput(
-        {
-          method,
-          endpoint,
-          headers: parsedHeaders,
-          url_params: parsedUrlParams,
-        },
-        validInput
-      );
-    }
+    const parsedUrlParams = url_params.reduce((a, h) => {
+      if (h.key !== "" && h.value !== "") a[h.key] = h.value;
+      return a;
+    }, {});
+
+    this.props.onValidInput(
+      {
+        method,
+        endpoint,
+        headers: parsedHeaders,
+        url_params: parsedUrlParams,
+      },
+      method.length > 0 && endpoint.length > 0 && validEndpoint && validUrlParam
+    );
   };
 
   render() {

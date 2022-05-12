@@ -48,20 +48,13 @@ class AWSForm extends Component {
   handleInputUpdate = (e) => {
     this.setState({ [e.target.name]: e.target.value }, () => {
       const { accessKey, secretKey, region, topic } = this.state;
-      if (
-        accessKey.length > 0 &&
-        secretKey.length > 0 &&
-        region.length > 0 &&
-        topic.length > 0
-      ) {
-        // check validation, if pass
-        this.props.onValidInput({
-          aws_access_key: accessKey,
-          aws_secret_key: secretKey,
-          aws_region: region,
-          topic,
-        });
-      }
+
+      this.props.onValidInput({
+        aws_access_key: accessKey,
+        aws_secret_key: secretKey,
+        aws_region: region,
+        topic,
+      }, accessKey.length > 0 && secretKey.length > 0 && region.length > 0 && topic.length > 0)
     });
   };
 
@@ -79,7 +72,7 @@ class AWSForm extends Component {
         <div style={{ marginTop: "20px" }}>
           <Input
             addonBefore={
-              <div className={!this.props.mobile && "desktop-form"}>
+              <div className={!this.props.mobile ? "desktop-form" : ""}>
                 Access Key
               </div>
             }
@@ -95,7 +88,7 @@ class AWSForm extends Component {
           <br />
           <Input
             addonBefore={
-              <div className={!this.props.mobile && "desktop-form"}>
+              <div className={!this.props.mobile ? "desktop-form" : ""}>
                 Secret Key
               </div>
             }
@@ -111,7 +104,7 @@ class AWSForm extends Component {
           <br />
           <Input
             addonBefore={
-              <div className={!this.props.mobile && "desktop-form"}>Region</div>
+              <div className={!this.props.mobile ? "desktop-form" : ""}>Region</div>
             }
             placeholder="ie. us-west-1"
             name="region"
@@ -125,7 +118,7 @@ class AWSForm extends Component {
           <br />
           <Input
             addonBefore={
-              <div className={!this.props.mobile && "desktop-form"}>Topic</div>
+              <div className={!this.props.mobile ? "desktop-form" : ""}>Topic</div>
             }
             placeholder="ie. my topic"
             name="topic"

@@ -4,16 +4,21 @@ import { Typography } from "antd";
 const { Text } = Typography;
 import ChannelIcon from "../../../../img/channel-node-icon.svg";
 import SelectedNodeIcon from "./SelectedNodeIcon";
-import { integrationImgMap } from "../../../util/flows";
+import { integrationImgMap, getAllowedIntegrations } from "../../../util/integrationInfo";
 import AlertTag from "../../../../img/alerts/alert-node-tag.svg";
 import Warning from "../Warning";
 
 export default ({ data, fromSidebar, selected }) => {
+  const allowedIntegrations = getAllowedIntegrations()
+  let warningCount = 0
+  if (allowedIntegrations && !allowedIntegrations[data.type]) warningCount++
+  if (data.lastErrored) warningCount++
+
   return (
     <Fragment>
       {selected && <SelectedNodeIcon />}
-      {!fromSidebar && data.lastErrored === true && (
-        <Warning numberWarnings={1} />
+      {!fromSidebar && warningCount > 0 && (
+        <Warning numberWarnings={warningCount} />
       )}
       <div
         style={{

@@ -30,7 +30,7 @@ class AzureHubForm extends Component {
     const { policyName, hubName, primaryKey } = this.state;
     const validCredentials =
       policyName.length > 0 && hubName.length > 0 && primaryKey.length > 0;
-    // check validation, if pass
+
     this.props.onValidInput(
       {
         azure_policy_name: policyName,

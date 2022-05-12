@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { IntegrationTypeTile } from "./IntegrationTypeTile";
-import { NEW_CHANNEL_TYPES } from "../../util/integrationInfo";
+import { CORE_INTEGRATION_TYPES, getAllowedIntegrations } from "../../util/integrationInfo";
 import _JSXStyle from "styled-jsx/style";
 
 const styles = {
@@ -28,7 +28,9 @@ const styles = {
 
 class ChannelCreateRow extends Component {
   render() {
-    const { mobile } = this.props;
+    const { mobile, allChannels } = this.props;
+    const allowedIntegrations = getAllowedIntegrations()
+
     return (
       <div
         style={{
@@ -36,7 +38,7 @@ class ChannelCreateRow extends Component {
           ...(mobile && { flexWrap: "wrap", justifyContent: "center" }),
         }}
       >
-        {NEW_CHANNEL_TYPES.map((channel) => (
+        {CORE_INTEGRATION_TYPES.filter(i => allowedIntegrations[i.type]).map((channel) => (
           <div
             className="wrapper"
             style={{
@@ -62,6 +64,7 @@ class ChannelCreateRow extends Component {
                 }}
                 img={channel.img}
                 name={channel.name}
+                count={(allChannels && allChannels.filter(c => c.type === channel.type).length) || 0}
               />
             </Link>
             <style jsx>{`

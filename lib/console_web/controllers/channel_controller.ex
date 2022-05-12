@@ -33,7 +33,7 @@ defmodule ConsoleWeb.ChannelController do
           "cayenne" ->
             function_params = Map.merge(function_params, %{"name" => channel_params["name"], "type" => "decoder", "organization_id" => current_organization.id })
             Functions.create_function(function_params, current_organization)
-          "googlesheet" ->
+          "google_sheets" ->
             function_params = Map.merge(function_params, %{"name" => channel_params["name"], "type" => "decoder", "organization_id" => current_organization.id, "format" => "custom" })
             Functions.create_function(function_params, current_organization)
         end
@@ -104,7 +104,7 @@ defmodule ConsoleWeb.ChannelController do
   def update(conn, %{"id" => id, "channel" => channel_params} = attrs) do
     current_organization = conn.assigns.current_organization
     channel = Channels.get_channel!(current_organization, id)
-
+    
     affected_flows = Flows.get_flows_with_channel_id(current_organization.id, channel.id)
     all_device_ids = Flows.get_all_flows_associated_device_ids(affected_flows)
 

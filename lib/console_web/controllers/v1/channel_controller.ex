@@ -11,6 +11,7 @@ defmodule ConsoleWeb.V1.ChannelController do
   alias Console.Alerts
   alias Console.AlertEvents
   alias Console.AuditActions
+  alias Console.CommunityChannels
 
   action_fallback(ConsoleWeb.FallbackController)
 
@@ -23,7 +24,10 @@ defmodule ConsoleWeb.V1.ChannelController do
       nil ->
         {:error, :not_found, "Integration not found"}
       %Channel{} = channel ->
-        channel = attach_devices_and_labels(current_organization, channel)
+        channel =
+          attach_devices_and_labels(current_organization, channel)
+          |> CommunityChannels.inject_credentials(false)
+          |> check_allowed_channel()
 
         render(conn, "show.json", channel: channel)
     end
@@ -33,7 +37,14 @@ defmodule ConsoleWeb.V1.ChannelController do
     current_organization =
       conn.assigns.current_organization |> Organizations.fetch_assoc([:channels])
 
-    channels = Enum.map(current_organization.channels, fn c -> attach_devices_and_labels(current_organization, c) end)
+    channels =
+      Enum.map(current_organization.channels, fn c ->
+        attach_devices_and_labels(current_organization, c)
+        |> CommunityChannels.inject_credentials(false)
+      end)
+      |> Enum.map(fn c ->
+        check_allowed_channel(c)
+      end)
 
     render(conn, "index.json", channels: channels)
   end
@@ -46,7 +57,10 @@ defmodule ConsoleWeb.V1.ChannelController do
         nil ->
           {:error, :not_found, "Integration not found"}
         %Channel{} = channel ->
-          channel = attach_devices_and_labels(current_organization, channel)
+          channel =
+            attach_devices_and_labels(current_organization, channel)
+            |> CommunityChannels.inject_credentials(false)
+            |> check_allowed_channel()
 
           render(conn, "show.json", channel: channel)
       end
@@ -56,260 +70,115 @@ defmodule ConsoleWeb.V1.ChannelController do
     end
   end
 
-  def create_prebuilt(conn, %{ "name" => name, "token" => token, "type" => type} = attrs) do
+  def create_community_channel(conn, %{ "name" => name, "token" => token, "type" => type} = attrs) do
     current_organization = conn.assigns.current_organization
+    allowed_types = Channel.get_allowed_integration_types()
 
-    channel_params =
-      case type do
-        "akenza" ->
-          %{
-            "credentials" => %{
-              "endpoint" => "https://data-gateway.akenza.io/v3/capture?secret=#{token}",
-              "headers" => %{},
-              "method" => "post"
-            },
-            "name" => name,
-            "type" => "http",
-            "organization_id" => current_organization.id
-          }
-        "ubidots" ->
-          headers = [{"Content-Type", "application/json"}, {"x-auth-token", token}]
-          body = Jason.encode!(%{
-            name: "Helium Integration",
-            description: "Plugin created using Ubidots APIv2",
-            settings: %{
-              device_type_name: "Helium",
-              helium_labels_as: "tags",
-              token: token
+    if type in allowed_types do
+      channel_params =
+        case type do
+          "akenza" ->
+            %{
+              "credentials" => %{
+                "secret" => token,
+              },
+              "name" => name,
+              "type" => type,
+              "organization_id" => current_organization.id
             }
-          })
-          response = HTTPoison.post "https://industrial.api.ubidots.com/api/v2.0/plugin_types/~helium/plugins/", body, headers
-          case response do
-            {:ok, %{ status_code: 201, body: body }} ->
-              parsed_body = Jason.decode!(body)
-              %{
-                "credentials" => %{
-                  "endpoint" => parsed_body["webhookUrl"],
-                  "headers" => %{},
-                  "method" => "post"
-                },
-                "name" => name,
-                "type" => "http",
-                "organization_id" => current_organization.id
+          "ubidots" ->
+            headers = [{"Content-Type", "application/json"}, {"x-auth-token", token}]
+            body = Jason.encode!(%{
+              name: "Helium Integration",
+              description: "Plugin created using Ubidots APIv2",
+              settings: %{
+                device_type_name: "Helium",
+                helium_labels_as: "tags",
+                token: token
               }
-            _ ->
-              %{ "error" => "Failed to create Ubidots plugin with provided token" }
-          end
-        "tago" ->
-          %{
-            "credentials" => %{
-              "endpoint" => "https://helium.middleware.tago.io/uplink",
-              "headers" => %{"Authorization" => token},
-              "method" => "post"
-            },
-            "name" => name,
-            "type" => "http",
-            "organization_id" => current_organization.id
-          }
-        "datacake" ->
-          %{
-            "credentials" => %{
-              "endpoint" => "https://api.datacake.co/integrations/lorawan/helium/",
-              "headers" => %{"Key" => "Authentication", "Value" => "Token #{token}"},
-              "method" => "post"
-            },
-            "name" => name,
-            "type" => "http",
-            "organization_id" => current_organization.id
-          }
-        _ -> nil
-      end
-
-    case channel_params do
-      nil ->
-        {:error, :bad_request, "Cannot create integration type: #{type}" }
-      %{ "error" => error } ->
-        {:error, :bad_gateway, error }
-      _ ->
-        with {:ok, %Channel{} = channel} <- Channels.create_channel(current_organization, channel_params) do
-          channel =
-            channel
-            |> Map.put(:devices, [])
-            |> Map.put(:labels, [])
-
-          AuditActions.create_audit_action(
-            current_organization.id,
-            "v1_api",
-            "channel_controller_create",
-            channel.id,
-            attrs
-          )
-
-          conn
-          |> put_status(:created)
-          |> render("show.json", channel: channel)
+            })
+            response = HTTPoison.post "https://industrial.api.ubidots.com/api/v2.0/plugin_types/~helium/plugins/", body, headers
+            case response do
+              {:ok, %{ status_code: 201, body: body }} ->
+                parsed_body = Jason.decode!(body)
+                %{
+                  "credentials" => %{
+                    "webhook_token" => String.split(parsed_body["webhookUrl"], "/api/web-hook/") |> Enum.at(1),
+                  },
+                  "name" => name,
+                  "type" => type,
+                  "organization_id" => current_organization.id
+                }
+              _ ->
+                %{ "error" => "Failed to create Ubidots plugin with provided token" }
+            end
+          "tago" ->
+            %{
+              "credentials" => %{
+                "token" => token,
+              },
+              "name" => name,
+              "type" => type,
+              "organization_id" => current_organization.id
+            }
+          "datacake" ->
+            %{
+              "credentials" => %{
+                "token" => token,
+              },
+              "name" => name,
+              "type" => type,
+              "organization_id" => current_organization.id
+            }
+          _ -> nil
         end
+
+      case channel_params do
+        nil ->
+          {:error, :bad_request, "Cannot create integration type: #{type}" }
+        %{ "error" => error } ->
+          {:error, :bad_gateway, error }
+        _ ->
+          with {:ok, %Channel{} = channel} <- Channels.create_channel(current_organization, channel_params) do
+            channel =
+              channel
+              |> Map.put(:devices, [])
+              |> Map.put(:labels, [])
+              |> CommunityChannels.inject_credentials(false)
+
+            AuditActions.create_audit_action(
+              current_organization.id,
+              "v1_api",
+              "channel_controller_create",
+              channel.id,
+              attrs
+            )
+
+            conn
+            |> put_status(:created)
+            |> render("show.json", channel: channel)
+          end
+      end
+    else
+      {:error, :bad_request, "This integration type is not allowed on this Console" }
     end
   end
 
   def create(conn, %{ "name" => name, "type" => "aws", "topic" => topic, "aws_access_key" => pk, "aws_secret_key" => sk, "aws_region" => region } = attrs) do
     current_organization = conn.assigns.current_organization
+    allowed_types = Channel.get_allowed_integration_types()
 
-    channel_params =
-      %{
-        "credentials" => %{
-          "topic" => topic,
-          "aws_access_key" => pk,
-          "aws_secret_key" => sk,
-          "aws_region" => region
-        },
-        "name" => name,
-        "type" => "aws",
-        "organization_id" => current_organization.id
-      }
-
-    with {:ok, %Channel{} = channel} <- Channels.create_channel(current_organization, channel_params) do
-      channel =
-        channel
-        |> Map.put(:devices, [])
-        |> Map.put(:labels, [])
-
-      AuditActions.create_audit_action(
-        current_organization.id,
-        "v1_api",
-        "channel_controller_create",
-        channel.id,
-        attrs
-      )
-
-      conn
-      |> put_status(:created)
-      |> render("show.json", channel: channel)
-    end
-  end
-
-  def create(conn, %{ "name" => name, "type" => "azure", "azure_policy_name" => policy_name, "azure_hub_name" => hub_name, "azure_primary_key" => key } = attrs) do
-    current_organization = conn.assigns.current_organization
-
-    channel_params =
-      %{
-        "credentials" => %{
-          "azure_policy_name" => policy_name,
-          "azure_hub_name" => hub_name,
-          "azure_policy_key" => key
-        },
-        "name" => name,
-        "type" => "azure",
-        "organization_id" => current_organization.id
-      }
-
-    with {:ok, %Channel{} = channel} <- Channels.create_channel(current_organization, channel_params) do
-      channel =
-        channel
-        |> Map.put(:devices, [])
-        |> Map.put(:labels, [])
-
-      AuditActions.create_audit_action(
-        current_organization.id,
-        "v1_api",
-        "channel_controller_create",
-        channel.id,
-        attrs
-      )
-
-      conn
-      |> put_status(:created)
-      |> render("show.json", channel: channel)
-    end
-  end
-
-  def create(conn, %{ "name" => name, "type" => "iot_central", "iot_central_api_key" => api_key, "iot_central_scope_id" => scope_id, "iot_central_app_name" => app_name } = attrs) do
-    current_organization = conn.assigns.current_organization
-
-    channel_params =
-      %{
-        "credentials" => %{
-          "iot_central_api_key" => api_key,
-          "iot_central_scope_id" => scope_id,
-          "iot_central_app_name" => app_name
-        },
-        "name" => name,
-        "type" => "iot_central",
-        "organization_id" => current_organization.id
-      }
-
-    with {:ok, %Channel{} = channel} <- Channels.create_channel(current_organization, channel_params) do
-      channel =
-        channel
-        |> Map.put(:devices, [])
-        |> Map.put(:labels, [])
-
-      AuditActions.create_audit_action(
-        current_organization.id,
-        "v1_api",
-        "channel_controller_create",
-        channel.id,
-        attrs
-      )
-
-      conn
-      |> put_status(:created)
-      |> render("show.json", channel: channel)
-    end
-  end
-
-  def create(conn, %{ "name" => name, "type" => "mqtt", "endpoint" => endpoint, "uplink_topic" => uplink_topic, "downlink_topic" => downlink_topic } = attrs) do
-    current_organization = conn.assigns.current_organization
-
-    channel_params =
-      %{
-        "credentials" => %{
-          "endpoint" => endpoint,
-          "uplink" => %{
-            "topic" => uplink_topic
-          },
-          "downlink" => %{
-            "topic" => downlink_topic
-          },
-        },
-        "name" => name,
-        "type" => "mqtt",
-        "organization_id" => current_organization.id
-      }
-
-    with {:ok, %Channel{} = channel} <- Channels.create_channel(current_organization, channel_params) do
-      channel =
-        channel
-        |> Map.put(:devices, [])
-        |> Map.put(:labels, [])
-
-      AuditActions.create_audit_action(
-        current_organization.id,
-        "v1_api",
-        "channel_controller_create",
-        channel.id,
-        attrs
-      )
-
-      conn
-      |> put_status(:created)
-      |> render("show.json", channel: channel)
-    end
-  end
-
-  def create(conn, %{ "name" => name, "type" => "http", "endpoint" => endpoint, "method" => method } = attrs) do
-    current_organization = conn.assigns.current_organization
-
-    credentials =
-      %{ "endpoint" => endpoint, "method" => method }
-      |> Map.merge(Map.take(attrs, ["headers", "url_params"]))
-
-    if validate_http_headers(credentials["headers"]) and validate_http_url_params(credentials["url_params"]) do
+    if "aws" in allowed_types do
       channel_params =
         %{
-          "credentials" => credentials,
+          "credentials" => %{
+            "topic" => topic,
+            "aws_access_key" => pk,
+            "aws_secret_key" => sk,
+            "aws_region" => region
+          },
           "name" => name,
-          "type" => "http",
+          "type" => "aws",
           "organization_id" => current_organization.id
         }
 
@@ -332,11 +201,179 @@ defmodule ConsoleWeb.V1.ChannelController do
         |> render("show.json", channel: channel)
       end
     else
-      if not validate_http_headers(credentials["headers"]) do
-        {:error, :bad_request, "Integration headers must be in a format of a valid map"}
-      else
-        {:error, :bad_request, "Integration template params must use {{ or {{{ and must be closed properly"}
+      {:error, :bad_request, "This integration type is not allowed on this Console" }
+    end
+  end
+
+  def create(conn, %{ "name" => name, "type" => "azure", "azure_policy_name" => policy_name, "azure_hub_name" => hub_name, "azure_primary_key" => key } = attrs) do
+    current_organization = conn.assigns.current_organization
+    allowed_types = Channel.get_allowed_integration_types()
+
+    if "azure" in allowed_types do
+      channel_params =
+        %{
+          "credentials" => %{
+            "azure_policy_name" => policy_name,
+            "azure_hub_name" => hub_name,
+            "azure_policy_key" => key
+          },
+          "name" => name,
+          "type" => "azure",
+          "organization_id" => current_organization.id
+        }
+
+      with {:ok, %Channel{} = channel} <- Channels.create_channel(current_organization, channel_params) do
+        channel =
+          channel
+          |> Map.put(:devices, [])
+          |> Map.put(:labels, [])
+
+        AuditActions.create_audit_action(
+          current_organization.id,
+          "v1_api",
+          "channel_controller_create",
+          channel.id,
+          attrs
+        )
+
+        conn
+        |> put_status(:created)
+        |> render("show.json", channel: channel)
       end
+    else
+      {:error, :bad_request, "This integration type is not allowed on this Console" }
+    end
+  end
+
+  def create(conn, %{ "name" => name, "type" => "iot_central", "iot_central_api_key" => api_key, "iot_central_scope_id" => scope_id, "iot_central_app_name" => app_name } = attrs) do
+    current_organization = conn.assigns.current_organization
+    allowed_types = Channel.get_allowed_integration_types()
+
+    if "iot_central" in allowed_types do
+      channel_params =
+        %{
+          "credentials" => %{
+            "iot_central_api_key" => api_key,
+            "iot_central_scope_id" => scope_id,
+            "iot_central_app_name" => app_name
+          },
+          "name" => name,
+          "type" => "iot_central",
+          "organization_id" => current_organization.id
+        }
+
+      with {:ok, %Channel{} = channel} <- Channels.create_channel(current_organization, channel_params) do
+        channel =
+          channel
+          |> Map.put(:devices, [])
+          |> Map.put(:labels, [])
+
+        AuditActions.create_audit_action(
+          current_organization.id,
+          "v1_api",
+          "channel_controller_create",
+          channel.id,
+          attrs
+        )
+
+        conn
+        |> put_status(:created)
+        |> render("show.json", channel: channel)
+      end
+    else
+      {:error, :bad_request, "This integration type is not allowed on this Console" }
+    end
+  end
+
+  def create(conn, %{ "name" => name, "type" => "mqtt", "endpoint" => endpoint, "uplink_topic" => uplink_topic, "downlink_topic" => downlink_topic } = attrs) do
+    current_organization = conn.assigns.current_organization
+    allowed_types = Channel.get_allowed_integration_types()
+
+    if "mqtt" in allowed_types do
+      channel_params =
+        %{
+          "credentials" => %{
+            "endpoint" => endpoint,
+            "uplink" => %{
+              "topic" => uplink_topic
+            },
+            "downlink" => %{
+              "topic" => downlink_topic
+            },
+          },
+          "name" => name,
+          "type" => "mqtt",
+          "organization_id" => current_organization.id
+        }
+
+      with {:ok, %Channel{} = channel} <- Channels.create_channel(current_organization, channel_params) do
+        channel =
+          channel
+          |> Map.put(:devices, [])
+          |> Map.put(:labels, [])
+
+        AuditActions.create_audit_action(
+          current_organization.id,
+          "v1_api",
+          "channel_controller_create",
+          channel.id,
+          attrs
+        )
+
+        conn
+        |> put_status(:created)
+        |> render("show.json", channel: channel)
+      end
+    else
+      {:error, :bad_request, "This integration type is not allowed on this Console" }
+    end
+  end
+
+  def create(conn, %{ "name" => name, "type" => "http", "endpoint" => endpoint, "method" => method } = attrs) do
+    current_organization = conn.assigns.current_organization
+    allowed_types = Channel.get_allowed_integration_types()
+
+    if "http" in allowed_types do
+      credentials =
+        %{ "endpoint" => endpoint, "method" => method }
+        |> Map.merge(Map.take(attrs, ["headers", "url_params"]))
+
+      if validate_http_headers(credentials["headers"]) and validate_http_url_params(credentials["url_params"]) do
+        channel_params =
+          %{
+            "credentials" => credentials,
+            "name" => name,
+            "type" => "http",
+            "organization_id" => current_organization.id
+          }
+
+        with {:ok, %Channel{} = channel} <- Channels.create_channel(current_organization, channel_params) do
+          channel =
+            channel
+            |> Map.put(:devices, [])
+            |> Map.put(:labels, [])
+
+          AuditActions.create_audit_action(
+            current_organization.id,
+            "v1_api",
+            "channel_controller_create",
+            channel.id,
+            attrs
+          )
+
+          conn
+          |> put_status(:created)
+          |> render("show.json", channel: channel)
+        end
+      else
+        if not validate_http_headers(credentials["headers"]) do
+          {:error, :bad_request, "Integration headers must be in a format of a valid map"}
+        else
+          {:error, :bad_request, "Integration template params must use {{ or {{{ and must be closed properly"}
+        end
+      end
+    else
+      {:error, :bad_request, "This integration type is not allowed on this Console" }
     end
   end
 
@@ -474,6 +511,15 @@ defmodule ConsoleWeb.V1.ChannelController do
       String.contains?(text, "{") and not String.contains?(text, "{{") -> false
       String.contains?(text, "}") and not String.contains?(text, "}}") -> false
       true -> true
+    end
+  end
+
+  defp check_allowed_channel(channel) do
+    allowed_types = Channel.get_allowed_integration_types()
+    if (channel.type in allowed_types) do
+      channel
+    else
+      Map.put(channel, :deactivated_by_console_host, true)
     end
   end
 

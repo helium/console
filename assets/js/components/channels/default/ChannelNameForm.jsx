@@ -17,7 +17,7 @@ const ChannelNameForm = (props) => (
           />
         </Form.Item>
       </Form>
-      {!props.noName && (
+      {!props.noSubmit && (
         <div style={{ marginTop: 20 }}>
           <Button
             type="primary"

@@ -103,6 +103,9 @@ config :console,
 config :console,
   impose_hard_cap: false
 
+config :console,
+  allowed_integrations: "all"
+
 config :logger, level: :debug
 
 # config :prometheus, App.PrometheusExporter,

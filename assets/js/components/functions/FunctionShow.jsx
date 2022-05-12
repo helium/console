@@ -6,7 +6,7 @@ import { MobileDisplay, DesktopDisplay } from "../mobile/MediaQuery";
 import UserCan from "../common/UserCan";
 import FunctionValidator from "./FunctionValidator";
 import DeleteFunctionModal from "./DeleteFunctionModal";
-import GoogleSheetForm from "../channels/forms/GoogleSheetForm";
+import GoogleSheetRequestFields from "../channels/community/google_sheets/GoogleSheetRequestFields";
 import { FUNCTION_SHOW } from "../../graphql/functions";
 import { updateFunction } from "../../actions/function";
 import analyticsLogger from "../../util/analyticsLogger";
@@ -219,7 +219,7 @@ export default (props) => {
                 {fxn.format === "custom" &&
                   fxn.body.indexOf("Google Form") !== -1 && (
                     <Card title="Google Form Fields">
-                      <GoogleSheetForm />
+                      <GoogleSheetRequestFields />
                     </Card>
                   )}
               </UserCan>

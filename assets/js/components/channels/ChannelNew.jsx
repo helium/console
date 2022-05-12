@@ -1,282 +1,96 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import Editor from "react-simple-code-editor";
-import { highlight, languages } from "prismjs/components/prism-core";
-import { Link } from "react-router-dom";
 import { bindActionCreators } from "redux";
+import find from 'lodash/find'
+import { ALL_CHANNELS } from "../../graphql/channels";
+import withGql from "../../graphql/withGql";
 import ChannelDashboardLayout from "./ChannelDashboardLayout";
-import { codeEditorLineColor, codeEditorBgColor } from "../../util/colors";
-import AzureHubForm from "./forms/AzureHubForm.jsx";
-import AzureCentralForm from "./forms/AzureCentralForm.jsx";
-import AWSForm from "./forms/AWSForm.jsx";
-import GoogleForm from "./forms/GoogleForm.jsx";
-import MQTTForm from "./forms/MQTTForm.jsx";
-import HTTPForm from "./forms/HTTPForm.jsx";
-import CargoForm from "./forms/CargoForm.jsx";
-import MyDevicesForm from "./forms/MyDevicesForm.jsx";
-import AdafruitForm from "./forms/AdafruitForm.jsx";
-import UbidotsForm from "./forms/UbidotsForm.jsx";
-import DatacakeForm from "./forms/DatacakeForm.jsx";
-import TagoForm from "./forms/TagoForm.jsx";
-import GoogleSheetForm from "./forms/GoogleSheetForm.jsx";
-import MicroshareForm from "./forms/MicroshareForm.jsx";
-import ChannelNameForm from "./forms/ChannelNameForm.jsx";
+import CommonForm from "./default/CommonForm.jsx";
+import CargoForm from "./community/cargo/CargoForm.jsx";
+import MyDevicesForm from "./community/my_devices/MyDevicesForm.jsx";
+import AdafruitForm from "./community/adafruit/AdafruitForm.jsx";
+import UbidotsForm from "./community/ubidots/UbidotsForm.jsx";
+import DatacakeForm from "./community/datacake/DatacakeForm.jsx";
+import TagoForm from "./community/tago/TagoForm.jsx";
+import GoogleSheetForm from "./community/google_sheets/GoogleSheetForm.jsx";
+import MicroshareForm from "./community/microshare/MicroshareForm.jsx";
+import AkenzaForm from "./community/akenza/AkenzaForm";
 import ChannelCreateRow from "./ChannelCreateRow";
 import ChannelPremadeRow from "./ChannelPremadeRow";
-import ChannelPayloadTemplate from "./ChannelPayloadTemplate";
-import AdafruitFunctionForm from "./AdafruitFunctionForm";
-import AkenzaForm from "./forms/AkenzaForm";
 import { MobileDisplay, DesktopDisplay } from "../mobile/MediaQuery";
 import { createChannel } from "../../actions/channel";
 import analyticsLogger from "../../util/analyticsLogger";
-import kebabCase from "lodash/kebabCase";
-import range from "lodash/range";
 import { Card, Button, Collapse, Typography } from "antd";
 const { Panel } = Collapse;
 const { Text } = Typography;
-import { IntegrationTypeTileSimple } from "./IntegrationTypeTileSimple";
-import _JSXStyle from "styled-jsx/style";
-import { adafruitTemplate } from "../../util/integrationTemplates";
 import MobileLayout from "../mobile/MobileLayout";
 import ArrowLeftOutlined from "@ant-design/icons/ArrowLeftOutlined";
+import { CORE_INTEGRATION_TYPES, COMMUNITY_INTEGRATION_TYPES, getAllowedIntegrations } from "../../util/integrationInfo";
 import { isMobile } from "../../util/constants";
-
-const slugify = (text) => kebabCase(text.replace(/&/g, "-and-"));
-const makeTemplate = (definition) => {
-  const fields = [];
-  const payloads = [];
-
-  Object.entries(definition).forEach(([fieldName, entry]) => {
-    const name = slugify(fieldName);
-    fields.push(`"${name}": "${entry}"`);
-    payloads.push(`"${name}": "FILL ME IN"`);
-  });
-
-  return `function Decoder(bytes, port) {
-  // TODO: Transform bytes to decoded payload below
-  var decodedPayload = {
-    ${payloads.join(",\n".padEnd(6))}
-  };
-  // END TODO
-
-  return Serialize(decodedPayload)
-}
-
-// Generated: do not touch unless your Google Form fields have changed
-var field_mapping = {
-  ${fields.join(",\n".padEnd(4))}
-};
-// End Generated
-
-function Serialize(payload) {
-  var str = [];
-  for (var key in payload) {
-    if (payload.hasOwnProperty(key)) {
-      var name = encodeURIComponent(field_mapping[key]);
-      var value = encodeURIComponent(payload[key]);
-      str.push(name + "=" + value);
-    }
-  }
-  return str.join("&");
-}
-// DO NOT REMOVE: Google Form Function
-  `;
-};
 
 @connect(null, mapDispatchToProps)
 class ChannelNew extends Component {
   state = {
     type: null,
-    showNextSteps: false,
-    credentials: {},
-    channelName: "",
-    templateBody: "",
-    func: {
-      format: "cayenne",
-    },
-    googleFieldsMapping: null,
-    googleFunctionBody: "",
-    validInput: false,
   };
 
   componentDidMount() {
     analyticsLogger.logEvent(
       isMobile ? "ACTION_NAV_CHANNELS_NEW_MOBILE" : "ACTION_NAV_CHANNELS_NEW"
     );
+
+    const allowedIntegrations = getAllowedIntegrations()
+    const { search } = this.props.history.location
+    const searchParams = search.split("?type=")
+    if ( searchParams[1] && find(COMMUNITY_INTEGRATION_TYPES.filter(i => allowedIntegrations[i.type]), {type: searchParams[1]}) ) {
+      this.setState({ type: searchParams[1] })
+    }
   }
 
-  handleStep2Input = (credentials, validInput = true) => {
-    this.setState({ credentials, showNextSteps: true, validInput });
-  };
-
-  handleStep3Input = (e) => {
-    this.setState({ channelName: e.target.value });
-  };
-
-  getRootType = (type) => {
-    switch (type) {
-      case "cargo":
-      case "mydevices":
-      case "ubidots":
-      case "datacake":
-      case "tago":
-      case "googlesheet":
-      case "akenza":
-      case "microshare":
-        return "http";
-      case "adafruit":
-        return "mqtt";
-      default:
-        return type;
-    }
-  };
-
-  handleStep3Submit = (e) => {
-    e.preventDefault();
-    const {
-      channelName,
-      type,
-      credentials,
-      labels,
-      func,
-      templateBody,
-      googleFieldsMapping,
-      googleFunctionBody,
-    } = this.state;
-
-    analyticsLogger.logEvent(
-      isMobile ? "ACTION_CREATE_CHANNEL_MOBILE" : "ACTION_CREATE_CHANNEL",
-      {
-        name: channelName,
-        type: type,
-      }
-    );
-    let payload = {
-      channel: {
-        name: channelName,
-        type: this.getRootType(type),
-        credentials,
-      },
-    };
-    if (type === "http" || type === "mqtt" || type === "adafruit") {
-      payload.channel.payload_template = templateBody;
-    }
-    if (type === "googlesheet") {
-      payload.channel.payload_template = "{{{decoded.payload}}}";
-    }
-
-    if (type === "adafruit") {
-      this.props.createChannel(payload, func);
-    } else if (type === "googlesheet") {
-      this.props.createChannel(payload, {
-        format: "googlesheet",
-        body: googleFunctionBody,
-      });
+  handleSelectType = (type) => {
+    if (type === "http" || type === "mqtt") {
+      this.setState({ type })
     } else {
-      this.props.createChannel(payload);
+      this.props.history.replace(`/integrations/new/${type}`)
     }
-  };
+  }
 
-  handleTemplateUpdate = (templateBody) => {
-    this.setState({ templateBody });
-  };
-
-  handleGoogleFieldsMappingUpdate = (googleFieldsMapping) => {
-    this.setState({
-      googleFieldsMapping,
-      googleFunctionBody: makeTemplate(JSON.parse(googleFieldsMapping)),
-    });
-  };
-
-  handleGoogleFunctionBodyUpdate = (googleFunctionBody) => {
-    this.setState({ googleFunctionBody });
-  };
-
-  handleAdafruitFunctionSelect = (func) => {
-    this.setState({
-      func,
-      templateBody: func.format === "cayenne" ? adafruitTemplate : "",
-    });
-  };
-
-  onClickEditor = () => {
-    const editor = document.getElementsByClassName(
-      "npm__react-simple-code-editor__textarea"
-    )[0];
-    editor.focus();
-  };
+  resetType = (type) => {
+    this.setState({ type: null })
+    this.props.history.replace('/integrations/new')
+  }
 
   renderForm = (mobile) => {
-    switch (this.state.type) {
-      case "aws":
-        return <AWSForm onValidInput={this.handleStep2Input} mobile={mobile} />;
-      case "google":
-        return <GoogleForm onValidInput={this.handleStep2Input} />;
-      case "mqtt":
-        return (
-          <MQTTForm onValidInput={this.handleStep2Input} mobile={mobile} />
-        );
-      case "http":
-        return (
-          <HTTPForm onValidInput={this.handleStep2Input} mobile={mobile} />
-        );
-      case "azure":
-        return <AzureHubForm onValidInput={this.handleStep2Input} />;
-      case "iot_central":
-        return <AzureCentralForm onValidInput={this.handleStep2Input} />;
-      case "mydevices":
-        return <MyDevicesForm onValidInput={this.handleStep2Input} />;
+    const { type } = this.state
+
+    switch (type) {
+      case "cargo":
+        return <CargoForm mobile={mobile} type={type} reset={this.resetType} createChannel={this.props.createChannel} />
+      case "my_devices":
+        return <MyDevicesForm mobile={mobile} type={type} reset={this.resetType} createChannel={this.props.createChannel} />
       case "adafruit":
-        return <AdafruitForm onValidInput={this.handleStep2Input} />;
+        return <AdafruitForm mobile={mobile} type={type} reset={this.resetType} createChannel={this.props.createChannel} />
       case "ubidots":
-        return (
-          <UbidotsForm onValidInput={this.handleStep2Input} mobile={mobile} />
-        );
+        return <UbidotsForm mobile={mobile} type={type} reset={this.resetType} createChannel={this.props.createChannel} />
       case "datacake":
-        return (
-          <DatacakeForm onValidInput={this.handleStep2Input} mobile={mobile} />
-        );
+        return <DatacakeForm mobile={mobile} type={type} reset={this.resetType} createChannel={this.props.createChannel} />
       case "tago":
-        return (
-          <TagoForm onValidInput={this.handleStep2Input} mobile={mobile} />
-        );
+        return <TagoForm mobile={mobile} type={type} reset={this.resetType} createChannel={this.props.createChannel} />
       case "akenza":
-        return (
-          <AkenzaForm onValidInput={this.handleStep2Input} mobile={mobile} />
-        );
-      case "googlesheet":
-        return (
-          <GoogleSheetForm
-            onValidInput={this.handleStep2Input}
-            updateGoogleFieldsMapping={this.handleGoogleFieldsMappingUpdate}
-            from="ChannelNew"
-            mobile={mobile}
-          />
-        );
+        return <AkenzaForm mobile={mobile} type={type} reset={this.resetType} createChannel={this.props.createChannel} />
+      case "google_sheets":
+        return <GoogleSheetForm from="ChannelNew" mobile={mobile} type={type} reset={this.resetType} createChannel={this.props.createChannel} />
       case "microshare":
-        return (
-          <MicroshareForm
-            onValidInput={this.handleStep2Input}
-            mobile={mobile}
-          />
-        );
+        return <MicroshareForm mobile={mobile} type={type} reset={this.resetType} createChannel={this.props.createChannel} />
       default:
-        return <CargoForm onValidInput={this.handleStep2Input} />;
-    }
-  };
-
-  handleSelectType = (type) => {
-    this.setState({ type });
-
-    if (type === "adafruit") {
-      this.setState({ templateBody: adafruitTemplate });
-    } else {
-      this.setState({ templateBody: "" });
+        return <CommonForm mobile={mobile} type={type} reset={this.resetType} createChannel={this.props.createChannel} />
     }
   };
 
   render() {
-    const { showNextSteps, type } = this.state;
+    const { type } = this.state;
+    const { allChannels } = this.props.allChannelsQuery;
+    const allowedIntegrations = getAllowedIntegrations()
 
     return (
       <>
@@ -326,162 +140,47 @@ class ChannelNew extends Component {
             >
               {!type && (
                 <div style={{ display: "block" }}>
-                  <Collapse
-                    expandIconPosition="right"
-                    defaultActiveKey={["1"]}
-                    className="channel-new-panels-mobile"
-                  >
-                    <Panel header={<b>ADD A PREBUILT INTEGRATION</b>} key="1">
-                      <ChannelPremadeRow
-                        selectType={this.handleSelectType}
-                        mobile
-                      />
-                    </Panel>
-                  </Collapse>
-                  <Collapse
-                    expandIconPosition="right"
-                    style={{ marginTop: 20 }}
-                  >
-                    <Panel
-                      header={<b>ADD A CUSTOM INTEGRATION</b>}
-                      key="1"
-                      style={{ padding: 0 }}
-                    >
-                      <ChannelCreateRow
-                        selectType={this.handleSelectType}
-                        mobile
-                      />
-                    </Panel>
-                  </Collapse>
+                  {
+                    CORE_INTEGRATION_TYPES.filter(i => allowedIntegrations[i.type]).length > 0 && (
+                      <Collapse
+                        expandIconPosition="right"
+                        defaultActiveKey={["1"]}
+                      >
+                        <Panel
+                          header={<b>ADD A CORE INTEGRATION</b>}
+                          key="1"
+                          style={{ padding: 0 }}
+                        >
+                          <ChannelCreateRow
+                            selectType={this.handleSelectType}
+                            mobile
+                            allChannels={allChannels}
+                          />
+                        </Panel>
+                      </Collapse>
+                    )
+                  }
+                  {
+                    COMMUNITY_INTEGRATION_TYPES.filter(i => allowedIntegrations[i.type]).length > 0 && (
+                      <Collapse
+                        expandIconPosition="right"
+                        defaultActiveKey={["1"]}
+                        className="channel-new-panels-mobile"
+                      >
+                        <Panel header={<b>ADD A COMMUNITY INTEGRATION</b>} key="1">
+                          <ChannelPremadeRow
+                            selectType={this.handleSelectType}
+                            mobile
+                            allChannels={allChannels}
+                          />
+                        </Panel>
+                      </Collapse>
+                    )
+                  }
                 </div>
               )}
 
-              {type && (
-                <Card title="Step 1 – Choose an Integration Type">
-                  <div>
-                    <IntegrationTypeTileSimple type={type} />
-                    <Link
-                      to="#"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        this.setState({ type: null, showNextSteps: false });
-                      }}
-                    >
-                      <Button style={{ marginTop: 15 }}>Change</Button>
-                    </Link>
-                  </div>
-                </Card>
-              )}
-
-              {type && (
-                <Card title="Step 2 - Endpoint Details">
-                  {this.renderForm(true)}
-                </Card>
-              )}
-              {showNextSteps && (
-                <ChannelNameForm
-                  channelName={this.state.channelName}
-                  onInputUpdate={this.handleStep3Input}
-                  validInput={this.state.validInput}
-                  submit={this.handleStep3Submit}
-                  noName={type === "adafruit" || type === "googlesheet"}
-                  mobile
-                />
-              )}
-              {showNextSteps && type === "adafruit" && (
-                <AdafruitFunctionForm
-                  handleFunctionUpdate={this.handleAdafruitFunctionSelect}
-                >
-                  <div style={{ marginTop: 20 }}>
-                    <Button
-                      type="primary"
-                      htmlType="submit"
-                      onClick={this.handleStep3Submit}
-                      disabled={!this.state.validInput}
-                    >
-                      Add Integration
-                    </Button>
-                  </div>
-                </AdafruitFunctionForm>
-              )}
-              {showNextSteps && type === "googlesheet" && (
-                <Card
-                  title={"Step 4 - Update Function Body"}
-                  bodyStyle={{ padding: 0 }}
-                >
-                  <div style={{ height: 303, overflowY: "scroll" }}>
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        cursor: "text",
-                      }}
-                      onClick={this.onClickEditor}
-                    >
-                      <div
-                        style={{
-                          backgroundColor: codeEditorBgColor,
-                          paddingTop: 9,
-                          marginTop: 1,
-                          paddingBottom: 9,
-                        }}
-                      >
-                        {range(301).map((i) => (
-                          <p
-                            key={i}
-                            style={{
-                              textAlign: "right",
-                              fontFamily: "monospace",
-                              color: codeEditorLineColor,
-                              fontSize: 14,
-                              marginBottom: 0,
-                              paddingLeft: 10,
-                              paddingRight: 10,
-                              backgroundColor: codeEditorBgColor,
-                            }}
-                          >
-                            {i}
-                          </p>
-                        ))}
-                      </div>
-
-                      <Editor
-                        value={this.state.googleFunctionBody}
-                        onValueChange={this.handleGoogleFunctionBodyUpdate}
-                        highlight={(code) => highlight(code, languages.js)}
-                        padding={10}
-                        style={{
-                          fontFamily: "monospace",
-                          fontSize: 14,
-                        }}
-                      />
-                    </div>
-                  </div>
-                  <Button
-                    type="primary"
-                    htmlType="submit"
-                    onClick={this.handleStep3Submit}
-                  >
-                    Add Integration
-                  </Button>
-                </Card>
-              )}
-              {showNextSteps && (type === "http" || type === "mqtt") && (
-                <ChannelPayloadTemplate
-                  templateBody={this.state.templateBody}
-                  handleTemplateUpdate={this.handleTemplateUpdate}
-                  from="channelNew"
-                />
-              )}
-              <style jsx>{`
-                .flexwrapper {
-                  display: flex;
-                  flex-wrap: wrap;
-                }
-                .integrationcard {
-                  flex-grow: 1;
-                }
-              `}</style>
+              {type && this.renderForm(true)}
             </div>
           </MobileLayout>
         </MobileDisplay>
@@ -490,176 +189,52 @@ class ChannelNew extends Component {
             <div style={{ padding: "30px 30px 20px 30px" }}>
               {!type && (
                 <div style={{ display: "block" }}>
-                  <Card
-                    size="small"
-                    title="Add a Prebuilt Integration"
-                    className="integrationcard"
-                    bodyStyle={{ padding: 1 }}
-                  >
-                    <div
-                      style={{
-                        padding: 10,
-                        height: "100%",
-                        width: "100%",
-                        overflowX: "scroll",
-                      }}
-                    >
-                      <ChannelPremadeRow selectType={this.handleSelectType} />
-                    </div>
-                  </Card>
-                  <Card
-                    size="small"
-                    title="Add a Custom Integration"
-                    className="integrationcard"
-                    bodyStyle={{ padding: 1 }}
-                  >
-                    <div
-                      style={{
-                        padding: 10,
-                        height: "100%",
-                        width: "100%",
-                        overflowX: "scroll",
-                      }}
-                    >
-                      <ChannelCreateRow selectType={this.handleSelectType} />
-                    </div>
-                  </Card>
+                  {
+                    CORE_INTEGRATION_TYPES.filter(i => allowedIntegrations[i.type]).length > 0 && (
+                      <Card
+                        size="small"
+                        title="Add a Core Integration"
+                        className="integrationcard"
+                        bodyStyle={{ padding: 1 }}
+                      >
+                        <div
+                          style={{
+                            padding: 10,
+                            height: "100%",
+                            width: "100%",
+                            overflowX: "scroll",
+                          }}
+                        >
+                          <ChannelCreateRow selectType={this.handleSelectType} allChannels={allChannels} />
+                        </div>
+                      </Card>
+                    )
+                  }
+                  {
+                    COMMUNITY_INTEGRATION_TYPES.filter(i => allowedIntegrations[i.type]).length > 0 && (
+                      <Card
+                        size="small"
+                        title="Add a Community Integration"
+                        className="integrationcard"
+                        bodyStyle={{ padding: 1 }}
+                      >
+                        <div
+                          style={{
+                            padding: 10,
+                            height: "100%",
+                            width: "100%",
+                            overflowX: "scroll",
+                          }}
+                        >
+                          <ChannelPremadeRow selectType={this.handleSelectType} allChannels={allChannels} />
+                        </div>
+                      </Card>
+                    )
+                  }
                 </div>
               )}
 
-              {type && (
-                <Card title="Step 1 – Choose an Integration Type">
-                  <div
-                    className="flexwrapper"
-                    style={{
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
-                  >
-                    <IntegrationTypeTileSimple type={type} />
-                    <Link
-                      to="#"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        this.setState({ type: null, showNextSteps: false });
-                      }}
-                    >
-                      <Button size="small">Change</Button>
-                    </Link>
-                  </div>
-                </Card>
-              )}
-
-              {type && (
-                <Card title="Step 2 - Endpoint Details">
-                  {this.renderForm()}
-                </Card>
-              )}
-              {showNextSteps && (
-                <ChannelNameForm
-                  channelName={this.state.channelName}
-                  onInputUpdate={this.handleStep3Input}
-                  validInput={this.state.validInput}
-                  submit={this.handleStep3Submit}
-                  noName={type === "adafruit" || type === "googlesheet"}
-                />
-              )}
-              {showNextSteps && type === "adafruit" && (
-                <AdafruitFunctionForm
-                  handleFunctionUpdate={this.handleAdafruitFunctionSelect}
-                >
-                  <div style={{ marginTop: 20 }}>
-                    <Button
-                      type="primary"
-                      htmlType="submit"
-                      onClick={this.handleStep3Submit}
-                      disabled={!this.state.validInput}
-                    >
-                      Add Integration
-                    </Button>
-                  </div>
-                </AdafruitFunctionForm>
-              )}
-              {showNextSteps && type === "googlesheet" && (
-                <Card
-                  title={"Step 4 - Update Function Body"}
-                  bodyStyle={{ padding: 0 }}
-                  extra={
-                    <Button
-                      type="primary"
-                      htmlType="submit"
-                      onClick={this.handleStep3Submit}
-                    >
-                      Add Integration
-                    </Button>
-                  }
-                >
-                  <div style={{ height: 303, overflowY: "scroll" }}>
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        cursor: "text",
-                      }}
-                      onClick={this.onClickEditor}
-                    >
-                      <div
-                        style={{
-                          backgroundColor: codeEditorBgColor,
-                          paddingTop: 9,
-                          marginTop: 1,
-                          paddingBottom: 9,
-                        }}
-                      >
-                        {range(301).map((i) => (
-                          <p
-                            key={i}
-                            style={{
-                              textAlign: "right",
-                              fontFamily: "monospace",
-                              color: codeEditorLineColor,
-                              fontSize: 14,
-                              marginBottom: 0,
-                              paddingLeft: 10,
-                              paddingRight: 10,
-                              backgroundColor: codeEditorBgColor,
-                            }}
-                          >
-                            {i}
-                          </p>
-                        ))}
-                      </div>
-
-                      <Editor
-                        value={this.state.googleFunctionBody}
-                        onValueChange={this.handleGoogleFunctionBodyUpdate}
-                        highlight={(code) => highlight(code, languages.js)}
-                        padding={10}
-                        style={{
-                          fontFamily: "monospace",
-                          fontSize: 14,
-                        }}
-                      />
-                    </div>
-                  </div>
-                </Card>
-              )}
-              {showNextSteps && (type === "http" || type === "mqtt") && (
-                <ChannelPayloadTemplate
-                  templateBody={this.state.templateBody}
-                  handleTemplateUpdate={this.handleTemplateUpdate}
-                  from="channelNew"
-                />
-              )}
-              <style jsx>{`
-                .flexwrapper {
-                  display: flex;
-                  flex-wrap: wrap;
-                }
-                .integrationcard {
-                  flex-grow: 1;
-                }
-              `}</style>
+              {type && this.renderForm()}
             </div>
           </ChannelDashboardLayout>
         </DesktopDisplay>
@@ -668,8 +243,23 @@ class ChannelNew extends Component {
   }
 }
 
+function mapStateToProps(state) {
+  return {
+    currentOrganizationId: state.organization.currentOrganizationId,
+    socket: state.apollo.socket,
+  };
+}
+
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({ createChannel }, dispatch);
 }
 
-export default ChannelNew;
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(
+  withGql(ChannelNew, ALL_CHANNELS, (props) => ({
+    fetchPolicy: "cache-first",
+    name: "allChannelsQuery",
+  }))
+);

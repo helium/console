@@ -95,6 +95,9 @@ config :console,
   max_devices_in_org: String.to_integer(System.get_env("MAX_DEVICES_IN_ORG") || "10000")
 
 config :console,
+  allowed_integrations: System.get_env("ALLOWED_INTEGRATIONS") || "all"
+
+config :console,
   socket_check_origin: System.get_env("SOCKET_CHECK_ORIGIN")
 
 # config :prometheus, App.PrometheusExporter,
