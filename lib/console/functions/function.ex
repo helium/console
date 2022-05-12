@@ -26,7 +26,8 @@ defmodule Console.Functions.Function do
     function
     |> cast(attrs, [:name, :body, :type, :format, :organization_id, :active])
     |> put_native_decoder_body()
-    |> validate_required([:name, :body, :type, :format, :organization_id])
+    |> validate_required([:name], message: "Name cannot be blank")
+    |> validate_required([:body, :type, :format, :organization_id])
     |> validate_length(:name, max: 50, message: "Name cannot be longer than 50 characters")
     |> validate_inclusion(:type, ~w(decoder))
     |> validate_inclusion(:format, ~w(custom cayenne browan_object_locator))
