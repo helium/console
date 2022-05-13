@@ -27,7 +27,8 @@ defmodule Console.Labels.Label do
 
     label
     |> cast(attrs, [:name, :organization_id, :creator, :multi_buy_id, :config_profile_id])
-    |> validate_required([:name, :organization_id])
+    |> validate_required([:name], message: "Name cannot be blank")
+    |> validate_required([:organization_id])
     |> validate_length(:name, max: 50, message: "Name cannot be longer than 50 characters")
     |> unique_constraint(:name, name: :labels_name_organization_id_index, message: "This label name has already been used in this organization")
   end

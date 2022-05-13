@@ -14,7 +14,11 @@ defmodule Console.Jobs do
 
   def refresh_materialized_views do
     Task.Supervisor.async_nolink(ConsoleWeb.TaskSupervisor, fn ->
-      Ecto.Adapters.SQL.query!(Repo, "REFRESH MATERIALIZED VIEW device_stats_view", [], timeout: :infinity)
+      with {:ok, _} <- Ecto.Adapters.SQL.query(Repo, "REFRESH MATERIALIZED VIEW device_stats_view", [], timeout: :infinity) do
+        with {:ok, _} <- Ecto.Adapters.SQL.query(Repo, "DROP TABLE IF EXISTS device_stats_view_copy", [], timeout: :infinity) do
+          Ecto.Adapters.SQL.query(Repo, "CREATE TABLE device_stats_view_copy AS SELECT * FROM device_stats_view;", [], timeout: :infinity)
+        end
+      end
     end)
   end
 

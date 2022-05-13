@@ -51,7 +51,8 @@ defmodule Console.Channels.Channel do
 
     channel
     |> cast(attrs, [:name, :type, :active, :credentials, :organization_id, :payload_template])
-    |> validate_required([:name, :type, :active, :credentials, :organization_id])
+    |> validate_required([:name], message: "Name cannot be blank")
+    |> validate_required([:type, :active, :credentials, :organization_id])
     |> validate_inclusion(:type, allowed_types, message: "This integration type is not allowed on this Console")
     |> validate_length(:name, max: 50, message: "Name cannot be longer than 50 characters")
     |> check_credentials()
