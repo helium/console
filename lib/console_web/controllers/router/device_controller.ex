@@ -675,10 +675,13 @@ defmodule ConsoleWeb.Router.DeviceController do
             end
 
           { _, time } = Timex.format(reported_at_naive, "%H:%M:%S UTC", :strftime)
+          device = Devices.get_device!(event.device_id)
           details = %{
             channel_name: event_integration.name,
             channel_id: event_integration.id,
-            time: time
+            time: time,
+            device_name: device.name,
+            device_id: device.id
           }
           limit = %{ time_buffer: Timex.shift(Timex.now, hours: -1) }
           AlertEvents.notify_alert_event(event_integration.id, "integration", "integration_stops_working", details, nil, limit)
