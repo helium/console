@@ -26,7 +26,7 @@ defmodule Console.Labels.Label do
     attrs = Helpers.sanitize_attrs(attrs, ["name", "creator"])
 
     label
-    |> cast(attrs, [:name, :organization_id, :creator, :multi_buy_id, :config_profile_id])
+    |> cast(attrs, [:name, :organization_id, :creator, :packet_config_id, :config_profile_id])
     |> validate_required([:name], message: "Name cannot be blank")
     |> validate_required([:organization_id])
     |> validate_length(:name, max: 50, message: "Name cannot be longer than 50 characters")
