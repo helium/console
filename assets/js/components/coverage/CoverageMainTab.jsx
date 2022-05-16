@@ -2,13 +2,16 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Table, Typography, Row, Col, Pagination } from "antd";
 import {
-  updateOrganizationHotspot,
-  updateOrganizationHotspots,
+  followHotspot,
+  preferHotspot,
+  followHotspots,
 } from "../../actions/coverage";
-import { ClaimButton, UnclaimButton, getColumns } from "./Constants";
+import { getColumns, ActionButton } from "./Constants";
 const { Text } = Typography;
 import SelectedFlag from "../../../img/coverage/selected-flag.svg";
+import PreferredFlag from "../../../img/coverage/preferred-flag.svg";
 import UserCan from "../common/UserCan";
+import ConfirmHotspotUnfollowModal from "./ConfirmHotspotUnfollowModal";
 
 export default (props) => {
   const [page, setPage] = useState(1);
@@ -17,12 +20,22 @@ export default (props) => {
   const [order, setOrder] = useState("desc");
   const [selectedRows, setSelectedRows] = useState([]);
   const [allSelected, setAllSelected] = useState(false);
+  const [showConfirmUnfollowModal, setShowConfirmUnfollowModal] =
+    useState(false);
+  const [hotspotsToUnfollow, setHotspotsToUnfollow] = useState([]);
+
+  const warnUnfollow = (hotspotsToUnfollow) => {
+    setShowConfirmUnfollowModal(true);
+    setHotspotsToUnfollow(hotspotsToUnfollow);
+  };
 
   const columns = getColumns(
     props,
-    updateOrganizationHotspot,
+    followHotspot,
+    preferHotspot,
     props.selectHotspotAddress,
-    props.tab
+    props.tab,
+    warnUnfollow
   );
 
   const handleSort = (pagi, filter, sorter) => {
@@ -70,13 +83,13 @@ export default (props) => {
   };
 
   return (
-    <div>
-      <div style={{ padding: 25 }}>
+    <>
+      <div style={{ padding: "25px 25px 40px 25px" }}>
         <div style={{ marginBottom: 12 }}>
           <Text style={{ fontSize: 22, fontWeight: 600 }}>Device Coverage</Text>
         </div>
         <Row gutter={24}>
-          <Col sm={12}>
+          <Col sm={10}>
             <div style={{ marginBottom: 12 }}>
               <Text style={{ fontSize: 15 }}>
                 The hotspots listed below provided coverage for
@@ -104,78 +117,85 @@ export default (props) => {
                 Learn More about Coverage
               </a>
             </div>
+            <UserCan>
+              <div style={{ marginTop: 18 }}>
+                {selectedRows.length !== 0 && (
+                  <ActionButton
+                    selectedAddresses={selectedRows.map(
+                      (r) => r.hotspot_address
+                    )}
+                    warnUnfollow={warnUnfollow}
+                    preferredHotspotAddresses={props.preferredHotspotAddresses}
+                  />
+                )}
+              </div>
+            </UserCan>
           </Col>
-          <Col sm={12}>
+          <Col sm={14}>
             <div
               style={{
                 backgroundColor: "#F5F7F9",
                 borderRadius: 10,
                 padding: 16,
+                height: "100%",
               }}
             >
-              <div style={{ marginBottom: 4 }}>
-                <img
-                  draggable="false"
-                  src={SelectedFlag}
-                  style={{
-                    height: 18,
-                    marginRight: 10,
-                  }}
-                />
-                <Text
-                  style={{ fontWeight: 400, fontSize: 16, color: "#2C79EE" }}
-                >
-                  Follow
-                </Text>
-              </div>
-              <div>
-                <Text style={{ color: "#2C79EE" }}>
-                  Following a Hotspot allows you to mark which Hotspots to
-                  monitor in your Organization, which adds it to your
-                  Organization’s ‘My Hotspots’ Tab.
-                </Text>
-              </div>
+              <Row gutter={16}>
+                <Col sm={12}>
+                  <div style={{ marginBottom: 4 }}>
+                    <img
+                      draggable="false"
+                      src={SelectedFlag}
+                      style={{
+                        height: 18,
+                        marginRight: 10,
+                      }}
+                    />
+                    <Text
+                      style={{
+                        fontWeight: 400,
+                        fontSize: 16,
+                        color: "#232528",
+                      }}
+                    >
+                      Follow
+                    </Text>
+                  </div>
+                  <Text style={{ color: "#748697" }}>
+                    Follow Hotspots you wish to keep track of in your
+                    organization's 'My Hotspots' tab.
+                  </Text>
+                </Col>
+                <Col span={12}>
+                  <div style={{ marginBottom: 4 }}>
+                    <img
+                      draggable="false"
+                      src={PreferredFlag}
+                      style={{
+                        height: 18,
+                        marginRight: 10,
+                      }}
+                    />
+                    <Text
+                      style={{
+                        fontWeight: 400,
+                        fontSize: 16,
+                        color: "#232528",
+                      }}
+                    >
+                      Prefer
+                    </Text>
+                  </div>
+                  <Text style={{ color: "#748697" }}>
+                    Hotspots marked as Preferred will be chosen to deliver
+                    packets before others.
+                  </Text>
+                </Col>
+              </Row>
             </div>
           </Col>
         </Row>
       </div>
-
-      <UserCan>
-        <div className="hotspot-claim">
-          {
-            selectedRows.length !== 0 &&
-            !selectedRows.find(
-              (r) =>
-                props.orgHotspotsMap[r.hotspot_address] &&
-                props.orgHotspotsMap[r.hotspot_address].claimed === true
-            ) &&
-            <ClaimButton
-              onClick={() => {
-                updateOrganizationHotspots(
-                  selectedRows.map((r) => r.hotspot_address),
-                  true
-                );
-              }}
-            />
-          }
-          {
-            selectedRows.length !== 0 &&
-            selectedRows.find(
-              (r) =>
-                props.orgHotspotsMap[r.hotspot_address] &&
-                props.orgHotspotsMap[r.hotspot_address].claimed === true
-            ) &&
-            <UnclaimButton
-              onClick={() => {
-                updateOrganizationHotspots(
-                  selectedRows.map((r) => r.hotspot_address),
-                  false
-                );
-              }}
-            />
-          }
-        </div>
-      </UserCan>
       {props.hotspotStats && (
         <div
           style={{ overflowX: "scroll", overflowY: "hidden" }}
@@ -225,6 +245,20 @@ export default (props) => {
           </div>
         </div>
       )}
-    </div>
+      <ConfirmHotspotUnfollowModal
+        open={showConfirmUnfollowModal}
+        close={() => {
+          setShowConfirmUnfollowModal(false);
+          setHotspotsToUnfollow([]);
+        }}
+        submit={() => {
+          followHotspots(hotspotsToUnfollow, false).then(() => {
+            setShowConfirmUnfollowModal(false);
+            setHotspotsToUnfollow([]);
+          });
+        }}
+        multiple={hotspotsToUnfollow.length > 1}
+      />
+    </>
   );
 };

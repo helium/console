@@ -16,6 +16,12 @@ defmodule Console.OrganizationHotspots do
     |> Repo.all()
   end
 
+  def all_preferred(organization) do
+    OrganizationHotspot
+    |> where([oh], oh.organization_id == ^organization.id and oh.preferred == true)
+    |> Repo.all()
+  end
+
   def get_org_hotspot(hotspot_address, organization) do
     Repo.get_by(OrganizationHotspot, [hotspot_address: hotspot_address, organization_id: organization.id])
   end
@@ -76,5 +82,23 @@ defmodule Console.OrganizationHotspots do
 
       Groups.delete_hotspot_groups(hotspot_addresses, organization)
     end)
+  end
+
+  def prefer_hotspots(hotspot_addresses, organization) do
+    org_hotspots = Enum.map(hotspot_addresses, fn address ->
+        %{ hotspot_address: address, organization_id: organization.id, claimed: true, preferred: true }
+      end)
+    with {:ok, :ok} <- Repo.transaction(fn ->
+      Enum.each(org_hotspots, fn attrs ->
+        Repo.insert!(
+          OrganizationHotspot.changeset(
+            %OrganizationHotspot{},
+            attrs
+          ), on_conflict: {:replace, [:preferred]}, conflict_target: [:hotspot_address, :organization_id])
+      end)
+    end)
+      do
+        {:ok, length(hotspot_addresses), org_hotspots}
+      end
   end
 end

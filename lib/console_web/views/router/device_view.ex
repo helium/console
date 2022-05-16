@@ -29,7 +29,8 @@ defmodule ConsoleWeb.Router.DeviceView do
       adr_allowed: device.adr_allowed,
       multi_buy: device.multi_buy,
       cf_list_enabled: device.cf_list_enabled,
-      rx_delay: device.rx_delay
+      rx_delay: device.rx_delay,
+      preferred_hotspots: device.preferred_hotspots
     }
     |> ChannelView.append_channels(device.channels)
     |> LabelView.append_labels(device.labels)

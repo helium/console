@@ -285,7 +285,7 @@ const generateInitialElementsMap = (data, flowPositions, activeResources) => {
       data: {
         label: device.name,
         id: `device-${device.id}`,
-        multi_buy_id: device.multi_buy_id,
+        packet_config_id: device.packet_config_id,
         hasAlerts: device.alerts.length > 0,
         inXORFilter: device.in_xor_filter,
         config_profile_id: device.config_profile_id,
@@ -307,7 +307,7 @@ const generateInitialElementsMap = (data, flowPositions, activeResources) => {
         label: label.name,
         id: `label-${label.id}`,
         deviceCount: label.device_count,
-        multi_buy_id: label.multi_buy_id,
+        packet_config_id: label.packet_config_id,
         hasAlerts: label.alerts.length > 0,
         devicesNotInFilter: checkIfDevicesNotInFilter(label),
         config_profile_id: label.config_profile_id,

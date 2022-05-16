@@ -4,7 +4,7 @@ const { Text } = Typography;
 import ArrowLeftOutlined from "@ant-design/icons/ArrowLeftOutlined";
 import EditFilled from "@ant-design/icons/EditFilled";
 import DeleteFilled from "@ant-design/icons/DeleteFilled";
-import { updateOrganizationHotspot } from "../../actions/coverage";
+import { followHotspot, preferHotspot } from "../../actions/coverage";
 import { getColumns } from "./Constants";
 import DeleteGroupModal from "./DeleteGroupModal";
 import EditGroupModal from "./EditGroupModal";
@@ -35,7 +35,8 @@ export default (props) => {
 
   const columns = getColumns(
     props,
-    updateOrganizationHotspot,
+    followHotspot,
+    preferHotspot,
     props.selectHotspotAddress,
     props.tab
   );

@@ -16,14 +16,17 @@ import CoverageHotspotShowStatsTab from "./CoverageHotspotShowStatsTab";
 import startCase from "lodash/startCase";
 import { renderStatusLabel } from "./Constants";
 import {
-  updateOrganizationHotspot,
+  followHotspot,
+  preferHotspot,
   updateHotspotAlias,
 } from "../../actions/coverage";
 import SelectedFlag from "../../../img/coverage/selected-flag.svg";
+import PreferredFlag from "../../../img/coverage/preferred-flag.svg";
 import UnselectedFlag from "../../../img/coverage/unselected-flag.svg";
 import LocationIcon from "../../../img/coverage/hotspot-show-location-icon.svg";
 import AliasIcon from "../../../img/coverage/hotspot-show-alias-icon.svg";
 import { debugSidebarBackgroundColor } from "../../util/colors";
+import ConfirmHotspotUnfollowModal from "./ConfirmHotspotUnfollowModal";
 
 export default (props) => {
   const [getHotspot, { error, loading, data, refetch }] =
@@ -32,6 +35,14 @@ export default (props) => {
   const [showAliasInput, toggleAliasInput] = useState(false);
   const [showDebugSidebar, setShowDebugSidebar] = useState(false);
   const [activeTab, setActiveTab] = useState("stats");
+  const [showConfirmUnfollowModal, setShowConfirmUnfollowModal] =
+    useState(false);
+  const [hotspotToUnfollow, setHotspotToUnfollow] = useState([]);
+
+  const warnUnfollow = (hotspotToUnfollow) => {
+    setShowConfirmUnfollowModal(true);
+    setHotspotToUnfollow(hotspotToUnfollow);
+  };
 
   useEffect(() => {
     getHotspot({
@@ -46,6 +57,7 @@ export default (props) => {
   const hotspot = data.hotspot;
   const orgHotspot = props.orgHotspotsMap[hotspot.hotspot_address];
   const hotspotClaimed = orgHotspot ? orgHotspot.claimed : false;
+  const hotspotPreferred = orgHotspot ? orgHotspot.preferred : false;
   const hotspotAlias = orgHotspot ? orgHotspot.alias : null;
 
   const handleToggleDebug = () => {
@@ -195,15 +207,31 @@ export default (props) => {
                 <Link
                   to="#"
                   onClick={() => {
-                    updateOrganizationHotspot(
-                      hotspot.hotspot_address,
-                      !hotspotClaimed
-                    );
+                    if (hotspotClaimed && !hotspotPreferred) {
+                      preferHotspot(hotspot.hotspot_address, true);
+                    } else {
+                      if (
+                        hotspotClaimed &&
+                        props.preferredHotspotAddresses.filter(
+                          (pha) => pha !== hotspot.hotspot_address
+                        ).length === 0
+                      ) {
+                        warnUnfollow(hotspot.hotspot_address);
+                      } else {
+                        followHotspot(hotspot.hotspot_address, !hotspotClaimed);
+                      }
+                    }
                   }}
                 >
                   <img
                     draggable="false"
-                    src={hotspotClaimed ? SelectedFlag : UnselectedFlag}
+                    src={
+                      hotspotClaimed
+                        ? hotspotPreferred
+                          ? PreferredFlag
+                          : SelectedFlag
+                        : UnselectedFlag
+                    }
                     style={{
                       height: 20,
                       marginBottom: 8,
@@ -212,13 +240,31 @@ export default (props) => {
                 </Link>
                 <div
                   style={{
-                    backgroundColor: "#F5F7F9",
+                    backgroundColor: hotspotClaimed
+                      ? hotspotPreferred
+                        ? "#2BCC4F26"
+                        : "#2C79EE26"
+                      : "#F5F7F9",
                     borderRadius: 10,
                     padding: "4px 8px 4px 8px",
                   }}
                 >
-                  <Text style={{ fontSize: 16, color: "#2C79EE", whiteSpace: 'nowrap' }}>
-                    {hotspotClaimed ? "Followed!" : "Not Followed"}
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      color: hotspotClaimed
+                        ? hotspotPreferred
+                          ? "#2BCC4F"
+                          : "#2C79EE"
+                        : "#acbccc",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {hotspotClaimed
+                      ? hotspotPreferred
+                        ? "Preferred"
+                        : "Followed!"
+                      : "Not Followed"}
                   </Text>
                 </div>
               </div>
@@ -259,6 +305,18 @@ export default (props) => {
       >
         <Debug hotspotAddress={hotspot.hotspot_address} entryWidth={600} />
       </Sidebar>
+      <ConfirmHotspotUnfollowModal
+        open={showConfirmUnfollowModal}
+        close={() => {
+          setShowConfirmUnfollowModal(false);
+        }}
+        submit={() => {
+          followHotspot(hotspotToUnfollow, false).then(() => {
+            setShowConfirmUnfollowModal(false);
+          });
+        }}
+        multiple={false}
+      />
     </Fragment>
   );
 };

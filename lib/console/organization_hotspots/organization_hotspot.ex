@@ -11,6 +11,7 @@ defmodule Console.OrganizationHotspots.OrganizationHotspot do
   schema "organization_hotspots" do
     field :hotspot_address, :string
     field :claimed, :boolean
+    field :preferred, :boolean
     field :alias, :string
 
     belongs_to :organization, Organization
@@ -25,6 +26,7 @@ defmodule Console.OrganizationHotspots.OrganizationHotspot do
     |> cast(attrs, [
       :hotspot_address,
       :claimed,
+      :preferred,
       :alias,
       :organization_id
     ])

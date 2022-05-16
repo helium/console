@@ -137,11 +137,11 @@ defmodule ConsoleWeb.GraphqlChannel do
     {:ok, socket}
   end
 
-  def join("graphql:multi_buys_index_table", _message, socket) do
+  def join("graphql:packet_configs_index_table", _message, socket) do
     {:ok, socket}
   end
 
-  def join("graphql:multi_buy_show", _message, socket) do
+  def join("graphql:packet_config_show", _message, socket) do
     {:ok, socket}
   end
 

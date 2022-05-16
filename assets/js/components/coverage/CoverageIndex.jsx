@@ -107,6 +107,15 @@ export default (props) => {
       }, {})
     : null;
 
+  const preferredHotspotAddresses = allOrganizationHotspotsData
+    ? allOrganizationHotspotsData.allOrganizationHotspots.reduce((acc, hs) => {
+        if (hs.preferred) {
+          acc.push(hs.hotspot_address);
+        }
+        return acc;
+      }, [])
+    : [];
+
   const socket = useSelector((state) => state.apollo.socket);
   const currentOrganizationId = useSelector(
     (state) => state.organization.currentOrganizationId
@@ -267,12 +276,14 @@ export default (props) => {
             selectHotspotAddress={selectHotspotAddress}
             refetch={hotspotStatsRefetch}
             tab="main"
+            preferredHotspotAddresses={preferredHotspotAddresses}
           />
         ) : (
           <CoverageHotspotShow
             hotspotAddress={hotspotAddressSelected}
             orgHotspotsMap={orgHotspotsMap}
             selectHotspotAddress={selectHotspotAddress}
+            preferredHotspotAddresses={preferredHotspotAddresses}
           />
         )}
       </TabPane>
@@ -287,12 +298,14 @@ export default (props) => {
             selectHotspotAddress={selectHotspotAddress}
             refetch={followedHotspotStatsRefetch}
             tab="followed"
+            preferredHotspotAddresses={preferredHotspotAddresses}
           />
         ) : (
           <CoverageHotspotShow
             hotspotAddress={hotspotAddressSelected}
             orgHotspotsMap={orgHotspotsMap}
             selectHotspotAddress={selectHotspotAddress}
+            preferredHotspotAddresses={preferredHotspotAddresses}
           />
         )}
       </TabPane>
@@ -332,6 +345,7 @@ export default (props) => {
             hotspotAddress={hotspotAddressSelected}
             orgHotspotsMap={orgHotspotsMap}
             selectHotspotAddress={selectHotspotAddress}
+            preferredHotspotAddresses={preferredHotspotAddresses}
           />
         )}
       </TabPane>
@@ -345,12 +359,14 @@ export default (props) => {
             error={searchHotspotsError}
             searchHotspots={searchHotspots}
             tab="search"
+            preferredHotspotAddresses={preferredHotspotAddresses}
           />
         ) : (
           <CoverageHotspotShow
             hotspotAddress={hotspotAddressSelected}
             orgHotspotsMap={orgHotspotsMap}
             selectHotspotAddress={selectHotspotAddress}
+            preferredHotspotAddresses={preferredHotspotAddresses}
           />
         )}
       </TabPane>
