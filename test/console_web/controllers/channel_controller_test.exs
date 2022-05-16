@@ -19,7 +19,7 @@ defmodule ConsoleWeb.ChannelControllerTest do
       resp_conn = post conn, channel_path(conn, :create), %{
         "channel" => %{ "credentials" => %{}, "type" => "http" }
       }
-      assert json_response(resp_conn, 422) == %{"errors" => %{ "name" => ["can't be blank"] }} # no required attrs
+      assert json_response(resp_conn, 422) == %{"errors" => %{ "name" => ["Name cannot be blank"] }} # no required attrs
 
       resp_conn = post conn, channel_path(conn, :create), %{
         "channel" => %{ "credentials" => %{}, "name" => "channel" }

@@ -32,3 +32,6 @@ config :console,
     "1524243720:2JD3juUA9RGaOf3Fpj7fNOylAgZ/jAalgOe45X6+jW4sy9gyCy1ELJrIWKvrgMx/"
   ],
   blockchain_api_retry: 1
+
+config :console,
+  allowed_integrations: "all"
