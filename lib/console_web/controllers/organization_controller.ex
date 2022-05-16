@@ -418,7 +418,7 @@ defmodule ConsoleWeb.OrganizationController do
       |> Enum.map(&(Map.take(&1, [:id, :organization_id, :device_id, :label_id, :function_id, :channel_id])))
     organization_hotspots =
       Console.OrganizationHotspots.all(organization)
-      |> Enum.map(&(Map.take(&1, [:id, :hotspot_address, :organization_id, :claimed, :alias])))
+      |> Enum.map(&(Map.take(&1, [:id, :hotspot_address, :organization_id, :claimed, :alias, :preferred])))
     
     devices = case deactivate do
       "false" -> Enum.map(devices, fn device ->
