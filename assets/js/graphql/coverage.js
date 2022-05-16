@@ -74,7 +74,16 @@ export const ALL_ORGANIZATION_HOTSPOTS = gql`
       hotspot_address
       organization_id
       claimed
+      preferred
       alias
+    }
+  }
+`;
+
+export const ALL_PREFERRED_HOTSPOTS = gql`
+  query AllPreferredHotspotsQuery {
+    allPreferredHotspots {
+      hotspot_address
     }
   }
 `;

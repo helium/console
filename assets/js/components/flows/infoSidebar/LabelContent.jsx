@@ -7,7 +7,7 @@ import moment from "moment";
 import UserCan, { userCan } from "../../common/UserCan";
 import analyticsLogger from "../../../util/analyticsLogger";
 import AlertNodeSettings from "./AlertNodeSettings";
-import MultiBuyNodeSettings from "./MultiBuyNodeSettings";
+import PacketConfigSettings from "./PacketConfigSettings";
 import { redForTablesDeleteText } from "../../../util/colors";
 import { updateDevice, setDevicesActive } from "../../../actions/device";
 import { updateLabel, addDevicesToLabels } from "../../../actions/label";
@@ -402,7 +402,7 @@ class LabelContent extends Component {
             <ConfigProfileSettings currentNode={label} nodeType="label" />
           </TabPane>
           <TabPane tab="Packets" key="5">
-            <MultiBuyNodeSettings currentNode={label} />
+            <PacketConfigSettings currentNode={label} />
           </TabPane>
         </Tabs>
 

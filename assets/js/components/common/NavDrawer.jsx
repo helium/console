@@ -32,7 +32,7 @@ class NavDrawer extends Component {
           justifyContent: "center",
           alignItems: "flex-end",
           paddingRight: 40,
-          overflowY: 'scroll',
+          overflowY: "scroll",
         }}
       >
         <div style={{ marginBottom: 30, position: "relative" }}>
@@ -164,13 +164,13 @@ class NavDrawer extends Component {
         <div style={{ marginBottom: 30, position: "relative" }}>
           <NavLink
             draggable="false"
-            to={"/multi_buys"}
+            to={"/packets"}
             activeClassName="is-active"
             className="menu-link"
           >
-            Multiple Packets
+            Packets
           </NavLink>
-          {history.location.pathname.indexOf("/multi_buys") !== -1 && (
+          {history.location.pathname.indexOf("/packets") !== -1 && (
             <img
               draggable="false"
               src={Caret}

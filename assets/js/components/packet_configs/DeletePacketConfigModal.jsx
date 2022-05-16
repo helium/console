@@ -2,7 +2,7 @@ import React from "react";
 import { Modal, Button, Typography } from "antd";
 const { Text } = Typography;
 import { useDispatch } from "react-redux";
-import { deleteMultiBuy } from "../../actions/multiBuy";
+import { deletePacketConfig } from "../../actions/packetConfig";
 import { useHistory } from "react-router-dom";
 
 export default ({ open, selected, close }) => {
@@ -10,15 +10,15 @@ export default ({ open, selected, close }) => {
   const history = useHistory();
 
   const handleSubmit = () => {
-    dispatch(deleteMultiBuy(selected.id)).then(() => {
+    dispatch(deletePacketConfig(selected.id)).then(() => {
       close();
-      history.push("/multi_buys");
+      history.push("/packets");
     });
   };
 
   return (
     <Modal
-      title="Delete Multiple Packet"
+      title="Delete Packet Config"
       visible={open}
       onCancel={close}
       centered

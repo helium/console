@@ -4,7 +4,7 @@ import { Typography, Tooltip } from "antd";
 const { Text } = Typography;
 import DeviceIcon from "../../../../img/device-node-icon.svg";
 import ProfileTag from "../../../../img/config_profile/profile_small_white.svg";
-import MultiBuyTag from "../../../../img/multi_buy/multi-buy-node-tag.svg";
+import PacketConfigTag from "../../../../img/packet_config/packet-config-node-tag.svg";
 import SelectedNodeIcon from "./SelectedNodeIcon";
 import AlertTag from "../../../../img/alerts/alert-node-tag.svg";
 import inXORFilterDeviceTag from "../../../../img/in_xor_filter/in-xor-filter-device-tag.svg";
@@ -72,10 +72,10 @@ export default ({ data, fromSidebar, selected }) => {
             </div>
           </span>
           <div>
-            {data.multi_buy_id && (
+            {data.packet_config_id && (
               <img
                 draggable="false"
-                src={MultiBuyTag}
+                src={PacketConfigTag}
                 style={{
                   height: 20,
                   marginLeft: 4,

@@ -19,6 +19,7 @@ defmodule ConsoleWeb.Router.DeviceController do
   alias Console.Mailer
   alias Console.AlertEvents
   alias ConsoleWeb.Router.DeviceView
+  alias Console.OrganizationHotspots
 
   @stripe_api_url "https://api.stripe.com"
   @headers [
@@ -55,7 +56,7 @@ defmodule ConsoleWeb.Router.DeviceController do
   end
 
   def show(conn, %{"id" => id}) do
-    case Devices.get_device(id) |> Repo.preload([:multi_buy, :config_profile, labels: [:multi_buy, :config_profile]]) do
+    case Devices.get_device(id) |> Repo.preload([:packet_config, :config_profile, labels: [:packet_config, :config_profile]]) do
       %Device{} = device ->
         config_profile_to_use =
           case device.config_profile do
@@ -81,32 +82,51 @@ defmodule ConsoleWeb.Router.DeviceController do
         cf_list_enabled = config_profile_to_use.cf_list_enabled
         rx_delay = config_profile_to_use.rx_delay
 
-        multi_buy_value =
-          case length(device.labels) do
-            0 ->
-              case device.multi_buy_id do
-                nil -> 1
-                _ -> if device.multi_buy.value == 21, do: 9999, else: device.multi_buy.value
+        packet_config_to_use =
+          case device.packet_config do
+            nil ->
+              labels_with_packet_configs = Enum.filter(device.labels, fn l -> l.packet_config_id != nil end)
+              case length(labels_with_packet_configs) do
+                0 ->
+                  %{
+                    multi_buy_value: 1,
+                    preferred_hotspots: []
+                  }
+                _ ->
+                  device_label = Labels.get_latest_applied_device_label(device.id, Enum.map(labels_with_packet_configs, fn l -> l.id end))
+                  label = Enum.find(labels_with_packet_configs, fn l -> l.id == device_label.label_id end)
+                  cond do
+                    label.packet_config.multi_active and not label.packet_config.preferred_active ->
+                      multi_buy_value = if label.packet_config.multi_buy_value == 21, do: 9999, else: label.packet_config.multi_buy_value
+                      %{
+                        multi_buy_value: multi_buy_value,
+                        preferred_hotspots: []
+                      }
+                    label.packet_config.preferred_active and not label.packet_config.multi_active ->
+                      organization = Organizations.get_organization!(device.organization_id)
+                      preferred_hotspots_addresses = OrganizationHotspots.all_preferred(organization) |> Enum.map(fn oh -> oh.hotspot_address end)
+                      %{
+                        multi_buy_value: 1,
+                        preferred_hotspots: preferred_hotspots_addresses
+                      }
+                  end
               end
             _ ->
-              label_multi_buys =
-                device.labels
-                |> Enum.map(fn l -> l.multi_buy end)
-                |> Enum.filter(fn mb -> mb != nil end)
-                |> Enum.map(fn mb -> mb.value end)
-
-              case length(label_multi_buys) do
-                0 ->
-                  case device.multi_buy_id do
-                    nil -> 1
-                    _ -> if device.multi_buy.value == 21, do: 9999, else: device.multi_buy.value
-                  end
-                _ ->
-                  max_value = Enum.max(label_multi_buys)
-                  case device.multi_buy_id do
-                    nil -> if max_value == 21, do: 9999, else: max_value
-                    _ -> if device.multi_buy.value == 21, do: 9999, else: device.multi_buy.value
-                  end
+              device.packet_config
+              cond do
+                device.packet_config.multi_active and not device.packet_config.preferred_active ->
+                  multi_buy_value = if device.packet_config.multi_buy_value == 21, do: 9999, else: device.packet_config.multi_buy_value
+                  %{
+                    multi_buy_value: multi_buy_value,
+                    preferred_hotspots: []
+                  }
+                device.packet_config.preferred_active and not device.packet_config.multi_active ->
+                  organization = Organizations.get_organization!(device.organization_id)
+                  preferred_hotspots_addresses = OrganizationHotspots.all_preferred(organization) |> Enum.map(fn oh -> oh.hotspot_address end)
+                  %{
+                    multi_buy_value: 1,
+                    preferred_hotspots: preferred_hotspots_addresses
+                  }
               end
           end
 
@@ -162,7 +182,8 @@ defmodule ConsoleWeb.Router.DeviceController do
           |> Map.put(:adr_allowed, adr_allowed)
           |> Map.put(:cf_list_enabled, cf_list_enabled)
           |> Map.put(:rx_delay, rx_delay)
-          |> Map.put(:multi_buy, multi_buy_value)
+          |> Map.put(:multi_buy, packet_config_to_use.multi_buy_value)
+          |> Map.put(:preferred_hotspots, packet_config_to_use.preferred_hotspots)
           |> Map.put(:channels, channels)
 
         render(conn, "show.json", device: final_device)

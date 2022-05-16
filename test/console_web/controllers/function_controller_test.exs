@@ -10,7 +10,7 @@ defmodule ConsoleWeb.FunctionControllerTest do
 
     test "creates functions properly", %{conn: conn} do
       resp_conn = post conn, function_path(conn, :create), %{ "function" => %{ "type" => "decoder", "format" => "cayenne" }}
-      assert json_response(resp_conn, 422) == %{"errors" => %{"name" => ["can't be blank"]}}
+      assert json_response(resp_conn, 422) == %{"errors" => %{"name" => ["Name cannot be blank"]}}
 
       resp_conn = post conn, function_path(conn, :create), %{ "function" => %{ "name" => "function", "format" => "cayenne" }}
       assert json_response(resp_conn, 422) == %{"errors" => %{"type" => ["can't be blank"]}}

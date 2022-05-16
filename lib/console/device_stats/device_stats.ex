@@ -4,6 +4,7 @@ defmodule Console.DeviceStats do
 
   alias Console.DeviceStats.DeviceStat
   alias Console.DeviceStats.DeviceStatsView
+  alias Console.DeviceStats.DeviceStatsViewCopy
 
   def create_stat(attrs \\ %{}) do
     %DeviceStat{}
@@ -18,6 +19,10 @@ defmodule Console.DeviceStats do
   end
 
   def get_stats_view_for_device(id) do
-    Repo.get(DeviceStatsView, id)
+    try do
+      Repo.get(DeviceStatsViewCopy, id)
+    rescue
+      _ -> Repo.get(DeviceStatsView, id)
+    end
   end
 end
