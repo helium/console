@@ -5,12 +5,7 @@ const { Text } = Typography;
 import FunctionIcon from "../../../../img/function-node-icon.svg";
 import SelectedNodeIcon from "./SelectedNodeIcon";
 import AlertTag from "../../../../img/alerts/alert-node-tag.svg";
-
-const functionFormats = {
-  cayenne: "Cayenne LPP",
-  browan_object_locator: "Browan Object Locator",
-  custom: "Custom",
-};
+import { functionFormats } from '../../../util/functionInfo';
 
 export default ({ data, fromSidebar, selected }) => {
   return (

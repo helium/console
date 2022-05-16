@@ -16,7 +16,7 @@ import moment from "moment";
 import { Link } from "react-router-dom";
 const { TabPane } = Tabs;
 import { SkeletonLayout } from "../../common/SkeletonLayout";
-import { functionTypes, functionFormats } from "../../functions/constants";
+import { functionTypes, functionFormats } from "../../../util/functionInfo";
 import ErrorMessage from "../../common/ErrorMessage";
 
 class FunctionContent extends Component {

@@ -6,6 +6,7 @@ import FunctionDashboardLayout from "./FunctionDashboardLayout";
 import UserCan from "../common/UserCan";
 import FunctionValidator from "./FunctionValidator";
 import { createFunction } from "../../actions/function";
+import { functionTypes, functionFormats } from "../../util/functionInfo";
 import analyticsLogger from "../../util/analyticsLogger";
 import { minWidth } from "../../util/constants";
 import { Button, Input, Select, Card } from "antd";
@@ -106,7 +107,9 @@ class FunctionNew extends Component {
                       onSelect={this.handleSelectFunctionType}
                       style={{ width: 220, marginLeft: 8 }}
                     >
-                      <Option value="decoder">Decoder</Option>
+                      {Object.keys(functionTypes).map(key => {
+                        return <Option key={key} value={key}>{functionTypes[key]}</Option>
+                      })}
                     </Select>
                     <Select
                       placeholder="Choose Format"
@@ -114,11 +117,9 @@ class FunctionNew extends Component {
                       style={{ width: 220, marginLeft: 8 }}
                       disabled={!type}
                     >
-                      <Option value="browan_object_locator">
-                        Browan Object Locator
-                      </Option>
-                      <Option value="cayenne">Cayenne LPP</Option>
-                      <Option value="custom">Custom Script</Option>
+                      {Object.keys(functionFormats).map(key => {
+                        return <Option key={key} value={key}>{functionFormats[key]}</Option>
+                      })}
                     </Select>
                   </div>
                   {format === "custom" && (

@@ -6,7 +6,7 @@ import ClearOutlined from "@ant-design/icons/ClearOutlined";
 import SaveOutlined from "@ant-design/icons/SaveOutlined";
 const { Text } = Typography;
 const { Option } = Select;
-import { functionTypes, functionFormats } from "./constants";
+import { functionTypes, functionFormats } from "../../util/functionInfo";
 
 export default ({
   fxn,
@@ -58,7 +58,9 @@ export default ({
             value={type}
             disabled={!userCan({ role: currentRole })}
           >
-            <Option value="decoder">Decoder</Option>
+            {Object.keys(functionTypes).map(key => {
+              return <Option key={key} value={key}>{functionTypes[key]}</Option>
+            })}
           </Select>
           <Select
             placeholder={functionFormats[fxn.format]}
@@ -71,9 +73,9 @@ export default ({
             value={format}
             disabled={!userCan({ role: currentRole })}
           >
-            <Option value="browan_object_locator">Browan Object Locator</Option>
-            <Option value="cayenne">Cayenne LPP</Option>
-            <Option value="custom">Custom Script</Option>
+            {Object.keys(functionFormats).map(key => {
+              return <Option key={key} value={key}>{functionFormats[key]}</Option>
+            })}
           </Select>
         </div>
         <UserCan>
