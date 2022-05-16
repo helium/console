@@ -2,10 +2,10 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useQuery } from "@apollo/client";
 import {
-  addMultiBuyToNode,
-  removeMultiBuyFromNode,
-} from "../../../actions/multiBuy";
-import { ALL_MULTI_BUYS } from "../../../graphql/multiBuys";
+  addPacketConfigToNode,
+  removePacketConfigFromNode,
+} from "../../../actions/packetConfig";
+import { ALL_PACKET_CONFIGS } from "../../../graphql/packetConfigs";
 import { SkeletonLayout } from "../../common/SkeletonLayout";
 import { Switch, Table } from "antd";
 import { Link } from "react-router-dom";
@@ -17,7 +17,7 @@ export default ({ currentNode }) => {
   const currentRole = useSelector((state) => state.organization.currentRole);
   const dispatch = useDispatch();
 
-  const { loading, error, data } = useQuery(ALL_MULTI_BUYS, {
+  const { loading, error, data } = useQuery(ALL_PACKET_CONFIGS, {
     fetchPolicy: "cache-first",
   });
   if (loading)
@@ -31,7 +31,7 @@ export default ({ currentNode }) => {
   return (
     <div>
       <Table
-        dataSource={data.allMultiBuys}
+        dataSource={data.allPacketConfigs}
         rowKey={(record) => record.id}
         pagination={false}
         columns={[
@@ -39,7 +39,7 @@ export default ({ currentNode }) => {
             title: "",
             dataIndex: "name",
             render: (data, record) => (
-              <Link to={`/multi_buys/${record.id}`}>{data}</Link>
+              <Link to={`/packets/${record.id}`}>{data}</Link>
             ),
           },
           {
@@ -56,24 +56,11 @@ export default ({ currentNode }) => {
               >
                 <Switch
                   disabled={!userCan({ role: currentRole })}
-                  checked={currentNode.multi_buy_id === record.id}
+                  checked={currentNode.packet_config_id === record.id}
                   onChange={(checked) => {
                     if (checked) {
-                      analyticsLogger.logEvent("ACTION_ADD_MULTIBUY_TO_NODE", {
-                        id: record.id,
-                        nodeId: currentNode.id,
-                        nodeType: currentNode.__typename,
-                      });
-                      dispatch(
-                        addMultiBuyToNode(
-                          record.id,
-                          currentNode.id,
-                          currentNode.__typename
-                        )
-                      );
-                    } else {
                       analyticsLogger.logEvent(
-                        "ACTION_REMOVE_MULTIBUY_FROM_NODE",
+                        "ACTION_ADD_PACKET_CONFIG_TO_NODE",
                         {
                           id: record.id,
                           nodeId: currentNode.id,
@@ -81,7 +68,23 @@ export default ({ currentNode }) => {
                         }
                       );
                       dispatch(
-                        removeMultiBuyFromNode(
+                        addPacketConfigToNode(
+                          record.id,
+                          currentNode.id,
+                          currentNode.__typename
+                        )
+                      );
+                    } else {
+                      analyticsLogger.logEvent(
+                        "ACTION_REMOVE_PACKET_CONFIG_FROM_NODE",
+                        {
+                          id: record.id,
+                          nodeId: currentNode.id,
+                          nodeType: currentNode.__typename,
+                        }
+                      );
+                      dispatch(
+                        removePacketConfigFromNode(
                           currentNode.id,
                           currentNode.__typename
                         )

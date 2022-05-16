@@ -12,7 +12,7 @@ export const DEVICE_FRAGMENT = gql`
     total_packets
     dc_usage
     active
-    multi_buy_id
+    packet_config_id
     in_xor_filter
     updated_at
     config_profile_id

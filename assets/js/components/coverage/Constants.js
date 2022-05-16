@@ -1,13 +1,16 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Tooltip, Button } from "antd";
+import { Tooltip, Button, Dropdown, Menu } from "antd";
 import Icon from "@ant-design/icons/lib/components/Icon";
 import InfoCircleOutlined from "@ant-design/icons/InfoCircleOutlined";
 import startCase from "lodash/startCase";
 import SelectedFlag from "../../../img/coverage/selected-flag.svg";
 import UnselectedFlag from "../../../img/coverage/unselected-flag.svg";
+import PreferredFlag from "../../../img/coverage/preferred-flag.svg";
 import SignalIcon from "./SignalIcon";
 import GroupColumnDropdown from "./GroupColumnDropdown";
+import DownOutlined from "@ant-design/icons/DownOutlined";
+import { followHotspots, preferHotspots } from "../../actions/coverage";
 
 const RedStatusSvg = () => (
   <svg height="11" width="10">
@@ -59,9 +62,11 @@ export const renderStatusLabel = (status) => {
 
 export const getColumns = (
   props,
-  updateOrganizationHotspot,
+  followHotspot,
+  preferHotspot,
   selectHotspotAddress,
-  tab
+  tab,
+  warnUnfollow
 ) => {
   const columns = [
     {
@@ -72,20 +77,41 @@ export const getColumns = (
           props.orgHotspotsMap[record.hotspot_address] &&
           props.orgHotspotsMap[record.hotspot_address].claimed;
 
+        const hotspot_preferred =
+          hotspot_claimed &&
+          props.orgHotspotsMap[record.hotspot_address].preferred;
+
         return (
           <Link
             to="#"
             onClick={(e) => {
               e.preventDefault();
-              updateOrganizationHotspot(
-                record.hotspot_address,
-                !hotspot_claimed
-              );
+              if (hotspot_claimed && !hotspot_preferred) {
+                preferHotspot(record.hotspot_address, true);
+              } else {
+                if (
+                  warnUnfollow &&
+                  !!hotspot_claimed &&
+                  props.preferredHotspotAddresses.filter(
+                    (pha) => pha !== record.hotspot_address
+                  ).length === 0
+                ) {
+                  warnUnfollow([record.hotspot_address]);
+                } else {
+                  followHotspot(record.hotspot_address, !hotspot_claimed);
+                }
+              }
             }}
           >
             <img
               draggable="false"
-              src={hotspot_claimed ? SelectedFlag : UnselectedFlag}
+              src={
+                hotspot_claimed
+                  ? hotspot_preferred
+                    ? PreferredFlag
+                    : SelectedFlag
+                  : UnselectedFlag
+              }
               style={{
                 height: 14,
               }}
@@ -241,7 +267,10 @@ export const getColumns = (
   switch (tab) {
     case "search":
       return columns.filter(
-        (c) => c.dataIndex !== "alias" && c.dataIndex !== "group_ids" && c.dataIndex !== "avg_rssi"
+        (c) =>
+          c.dataIndex !== "alias" &&
+          c.dataIndex !== "group_ids" &&
+          c.dataIndex !== "avg_rssi"
       );
     case "main":
       return columns.filter((c) => c.dataIndex !== "group_ids");
@@ -250,30 +279,73 @@ export const getColumns = (
   }
 };
 
-export const ClaimButton = ({ onClick }) => (
-  <Button style={{ borderRadius: 4 }} onClick={onClick}>
-    <img
-      draggable="false"
-      src={SelectedFlag}
-      style={{
-        height: 18,
-        marginRight: 10,
+export const ActionButton = ({
+  selectedAddresses,
+  warnUnfollow,
+  preferredHotspotAddresses,
+}) => {
+  const menu = () => (
+    <Menu
+      onClick={(e) => {
+        if (e.key === "follow") {
+          followHotspots(selectedAddresses, true);
+        } else if (e.key === "prefer") {
+          preferHotspots(selectedAddresses, true);
+        } else {
+          if (
+            warnUnfollow &&
+            preferredHotspotAddresses.filter(
+              (pha) => !selectedAddresses.includes(pha)
+            ).length === 0
+          ) {
+            warnUnfollow(selectedAddresses);
+          } else {
+            followHotspots(selectedAddresses, false);
+          }
+        }
       }}
-    />
-    Follow Selected Hotspots
-  </Button>
-);
+    >
+      <Menu.Item key="follow">
+        <img
+          draggable="false"
+          src={SelectedFlag}
+          style={{
+            height: 14,
+            marginRight: 5,
+          }}
+        />
+        Followed Hotspot
+      </Menu.Item>
+      <Menu.Item key="prefer">
+        <img
+          draggable="false"
+          src={PreferredFlag}
+          style={{
+            height: 14,
+            marginRight: 5,
+          }}
+        />
+        Preferred Hotspot
+      </Menu.Item>
+      <Menu.Item key="unfollow">
+        <img
+          draggable="false"
+          src={UnselectedFlag}
+          style={{
+            height: 14,
+            marginRight: 5,
+          }}
+        />
+        Unfollowed Hotspot
+      </Menu.Item>
+    </Menu>
+  );
 
-export const UnclaimButton = ({ onClick }) => (
-  <Button style={{ borderRadius: 4 }} onClick={onClick}>
-    <img
-      draggable="false"
-      src={UnselectedFlag}
-      style={{
-        height: 18,
-        marginRight: 10,
-      }}
-    />
-    Unfollow Selected Hotspots
-  </Button>
-);
+  return (
+    <Dropdown overlay={menu}>
+      <Button style={{ borderRadius: 6, color: "#C6C6C6" }}>
+        Mark Selected As <DownOutlined />
+      </Button>
+    </Dropdown>
+  );
+};

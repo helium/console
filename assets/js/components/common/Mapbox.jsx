@@ -24,6 +24,11 @@ export default ({ orgHotspotsMap, data }) => {
           orgHotspotsMap[h.hotspot_address] &&
           orgHotspotsMap[h.hotspot_address].alias) ||
         "";
+      const isPreferred =
+        (orgHotspotsMap &&
+          orgHotspotsMap[h.hotspot_address] &&
+          orgHotspotsMap[h.hotspot_address].preferred) ||
+        "";
       const isEitherCoordNaN =
         isNaN(parseFloat(h.longitude)) || isNaN(parseFloat(h.latitude));
       results.push({
@@ -39,9 +44,13 @@ export default ({ orgHotspotsMap, data }) => {
           name: `${h.hotspot_name}`,
           alias: hotspot_alias,
           packetCount: h.packet_count,
-          isFollowed: String(
-            orgHotspotsMap ? h.hotspot_address in orgHotspotsMap : false
-          ),
+          colorLabel:
+            orgHotspotsMap && h.hotspot_address in orgHotspotsMap
+              ? isPreferred
+                ? "preferred"
+                : "followed"
+              : "unfollowed",
+          isPreferred,
           ...(isEitherCoordNaN && { invalid_coordinates: true }),
         },
       });
@@ -168,10 +177,12 @@ export default ({ orgHotspotsMap, data }) => {
         paint: {
           "circle-color": [
             "match",
-            ["get", "isFollowed"],
-            "true",
+            ["get", "colorLabel"],
+            "followed",
             "#2C79EE",
-            "false",
+            "preferred",
+            "#2BCC4F",
+            "unfollowed",
             "#ACB9CD",
             "#ACB9CD",
           ],

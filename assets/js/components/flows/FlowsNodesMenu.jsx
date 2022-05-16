@@ -39,7 +39,10 @@ export default ({ devices, labels, functions, channels }) => {
         node.data.deviceCount
       );
       event.dataTransfer.setData("node/has_alerts", node.data.hasAlerts);
-      event.dataTransfer.setData("node/multi_buy_id", node.data.multi_buy_id);
+      event.dataTransfer.setData(
+        "node/packet_config_id",
+        node.data.packet_config_id
+      );
       event.dataTransfer.setData(
         "node/config_profile_id",
         node.data.config_profile_id
@@ -52,7 +55,10 @@ export default ({ devices, labels, functions, channels }) => {
 
     if (node.type === "deviceNode") {
       event.dataTransfer.setData("node/has_alerts", node.data.hasAlerts);
-      event.dataTransfer.setData("node/multi_buy_id", node.data.multi_buy_id);
+      event.dataTransfer.setData(
+        "node/packet_config_id",
+        node.data.packet_config_id
+      );
       event.dataTransfer.setData(
         "node/config_profile_id",
         node.data.config_profile_id
