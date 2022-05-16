@@ -9,6 +9,7 @@ defmodule ConsoleWeb.Router.DeviceController do
   alias Console.Channels
   alias Console.Channels.Channel
   alias Console.CommunityChannels
+  alias Console.CommunityFunctions
   alias Console.Organizations
   alias Console.DeviceStats
   alias Console.HotspotStats
@@ -178,7 +179,14 @@ defmodule ConsoleWeb.Router.DeviceController do
 
         channels =
           Enum.map(deduped_flows, fn flow ->
-            Map.put(flow.channel, :function, flow.function)
+            function =
+              if is_nil(flow.function) do
+                flow.function
+              else
+                CommunityFunctions.inject_body(flow.function, false)
+              end
+              
+            Map.put(flow.channel, :function, function)
           end)
           |> Enum.filter(fn channel ->
             channel.type in allowed_types

@@ -5,6 +5,8 @@ defmodule Console.Functions.Function do
   alias Console.Organizations.Organization
   alias Console.Helpers
 
+  @all_formats ["custom", "cayenne", "browan_object_locator"]
+
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "functions" do
@@ -30,7 +32,7 @@ defmodule Console.Functions.Function do
     |> validate_required([:body, :type, :format, :organization_id])
     |> validate_length(:name, max: 50, message: "Name cannot be longer than 50 characters")
     |> validate_inclusion(:type, ~w(decoder))
-    |> validate_inclusion(:format, ~w(custom cayenne browan_object_locator))
+    |> validate_inclusion(:format, @all_formats)
     |> unique_constraint(:name, name: :functions_name_organization_id_index, message: "This function name has already been used in this organization")
   end
 
@@ -38,9 +40,8 @@ defmodule Console.Functions.Function do
     case changeset do
       %Ecto.Changeset{valid?: true, changes: %{ format: format }} ->
         case format do
-          "cayenne" -> put_change(changeset, :body, "Default Cayenne Function")
-          "browan_object_locator" -> put_change(changeset, :body, "Default Browan Object Locator Function")
-          _ -> changeset
+          "custom" -> changeset
+          _ -> put_change(changeset, :body, "default #{format} body")
         end
       _ -> changeset
     end
