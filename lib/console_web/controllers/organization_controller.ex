@@ -394,7 +394,7 @@ defmodule ConsoleWeb.OrganizationController do
       |> Enum.map(&(Map.take(&1, [:id, :name, :adr_allowed, :cf_list_enabled, :rx_delay, :organization_id])))
     devices =
       Console.Devices.get_devices(organization_id)
-      |> Enum.map(&(Map.take(&1, [:id, :name, :oui, :dev_eui, :app_eui, :app_key, :packet_config_id, :config_profile_id, :organization_id])))
+      |> Enum.map(&(Map.take(&1, [:id, :name, :oui, :dev_eui, :app_eui, :app_key, :packet_config_id, :config_profile_id, :organization_id, :active])))
     functions = Console.Functions.get_all_organization_functions(organization_id)
       |> Enum.map(&(Map.take(&1, [:id, :name, :body, :type, :format, :organization_id])))
     channels = Console.Channels.get_all_organization_channels(organization_id)
@@ -418,7 +418,6 @@ defmodule ConsoleWeb.OrganizationController do
       |> Enum.map(&(Map.take(&1, [:id, :organization_id, :device_id, :label_id, :function_id, :channel_id])))
     organization_hotspots =
       Console.OrganizationHotspots.all(organization)
-<<<<<<< HEAD
       |> Enum.map(&(Map.take(&1, [:id, :hotspot_address, :organization_id, :claimed, :alias])))
     
     devices = case deactivate do
@@ -427,9 +426,6 @@ defmodule ConsoleWeb.OrganizationController do
       end)
       "true" -> devices
     end
-=======
-      |> Enum.map(&(Map.take(&1, [:id, :hotspot_address, :organization_id, :claimed, :alias, :preferred])))
->>>>>>> 12c48390a54da283d377541f6bb97dac4e66109b
 
     result = %{
       organization: organization,
