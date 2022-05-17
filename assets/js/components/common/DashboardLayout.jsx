@@ -19,7 +19,9 @@ class DashboardLayout extends Component {
     this.setState({ showNav: !this.state.showNav });
   };
   toggleSurveyNotification = () => {
-    this.setState({ showSurveyNotification: !this.state.showSurveyNotification });
+    this.setState({
+      showSurveyNotification: !this.state.showSurveyNotification,
+    });
   };
 
   render() {
@@ -90,7 +92,9 @@ class DashboardLayout extends Component {
             </Sider>
           )}
           <Layout>
-            <Content style={{ height: "calc(100vh - 55px)", overflowY: 'scroll' }}>
+            <Content
+              style={{ height: "calc(100vh - 55px)", overflowY: "scroll" }}
+            >
               {fullHeightWidth ? (
                 <div
                   style={{
@@ -110,7 +114,11 @@ class DashboardLayout extends Component {
                   full={full}
                   underTitle={underTitle}
                 >
-                  <SurveyNotificationContext.Provider value={{ toggleSurveyNotification: this.toggleSurveyNotification }}>
+                  <SurveyNotificationContext.Provider
+                    value={{
+                      toggleSurveyNotification: this.toggleSurveyNotification,
+                    }}
+                  >
                     {this.props.children}
                   </SurveyNotificationContext.Provider>
                 </ContentLayout>
@@ -171,7 +179,7 @@ class DashboardLayout extends Component {
                       </a>
                     ))}
                     <div style={{ marginLeft: "auto" }}>
-                      © 2021 Helium Systems Inc.
+                      © 2022 Helium Systems Inc.
                     </div>
                   </div>
                 </Footer>
