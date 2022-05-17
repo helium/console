@@ -264,8 +264,11 @@ defmodule ConsoleWeb.OrganizationController do
         end)
         |> Ecto.Multi.run(:devices, fn _repo, _ ->
           Enum.each(attrs["devices"], fn device ->
+            binary_key = device["ecc_key_pair"] |> :base64.decode()
+
             %Console.Devices.Device{}
-            |> Ecto.Changeset.cast(device, [:id, :name, :oui, :dev_eui, :app_eui, :app_key, :packet_config_id, :config_profile_id, :organization_id])
+            |> Ecto.Changeset.cast(device, [:id, :name, :oui, :dev_eui, :app_eui, :app_key, :packet_config_id, :config_profile_id, :organization_id, :ecc_key_pair])
+            |> Ecto.Changeset.put_change(:ecc_key_pair, binary_key)
             |> Console.Repo.insert!()
           end)
 
@@ -394,7 +397,8 @@ defmodule ConsoleWeb.OrganizationController do
       |> Enum.map(&(Map.take(&1, [:id, :name, :adr_allowed, :cf_list_enabled, :rx_delay, :organization_id])))
     devices =
       Console.Devices.get_devices(organization_id)
-      |> Enum.map(&(Map.take(&1, [:id, :name, :oui, :dev_eui, :app_eui, :app_key, :packet_config_id, :config_profile_id, :organization_id, :active])))
+      |> Enum.map(&(Map.take(&1, [:id, :name, :oui, :dev_eui, :app_eui, :app_key, :packet_config_id, :config_profile_id, :organization_id, :active, :ecc_key_pair])))
+      |> Enum.map(&(Map.put(&1, :ecc_key_pair, :base64.encode(&1.ecc_key_pair))))
     functions = Console.Functions.get_all_organization_functions(organization_id)
       |> Enum.map(&(Map.take(&1, [:id, :name, :body, :type, :format, :organization_id])))
     channels = Console.Channels.get_all_organization_channels(organization_id)
@@ -419,7 +423,7 @@ defmodule ConsoleWeb.OrganizationController do
     organization_hotspots =
       Console.OrganizationHotspots.all(organization)
       |> Enum.map(&(Map.take(&1, [:id, :hotspot_address, :organization_id, :claimed, :alias, :preferred])))
-    
+
     devices = case deactivate do
       "false" -> Enum.map(devices, fn device ->
         Map.update!(device, :active, fn _ -> false end)
@@ -456,7 +460,7 @@ defmodule ConsoleWeb.OrganizationController do
         end
       end)
       |> Repo.transaction()
-      
+
       ConsoleWeb.Endpoint.broadcast("graphql:orgs_index_table", "graphql:orgs_index_table:#{conn.assigns.current_user.id}:organization_list_update", %{})
     end
 
