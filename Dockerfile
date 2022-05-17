@@ -14,6 +14,15 @@ WORKDIR /app
 # install Hex + Rebar
 RUN mix do local.hex --force, local.rebar --force
 
+# Alpine Linux uses MUSL libc instead of the more common GNU libc
+# (glibc). MUSL is generally meant for static linking, and rustc
+# follows that convention. However, rustc cannot compile crates into
+# dylibs when statically linking to MUSL. Rust NIFs are .so's
+# (dylibs), therefore we force the compiler to dynamically link to
+# MUSL by telling it to not statically link (the minus sign before
+# crt-static means negate the following option).
+ENV CARGO_BUILD_RUSTFLAGS="-C target-feature=-crt-static"
+
 # set build ENV
 ENV MIX_ENV=prod
 
