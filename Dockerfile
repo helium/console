@@ -1,8 +1,12 @@
 FROM elixir:1.12-alpine
 
 # install build dependencies
-RUN apk add --update git build-base nodejs npm yarn python3 bash openssl postgresql-client openssl-dev libsodium-dev
+RUN apk add --update git build-base nodejs npm yarn python3 bash openssl postgresql-client openssl-dev libsodium-dev curl
 RUN apk --no-cache --update add gmp-dev automake libtool inotify-tools autoconf
+
+RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain stable
+ENV PATH="/root/.cargo/bin:${PATH}"
+RUN rustup update
 
 RUN mkdir /app
 WORKDIR /app

@@ -69,6 +69,7 @@ defmodule Console.Mixfile do
       {:timex, "~> 3.7.7"},
       {:magic_admin, "~> 0.5.0"},
       {:amqp, "~> 3.1.1"},
+      {:libp2p_crypto, "~>1.4.1"}
     ]
   end
 

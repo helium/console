@@ -27,6 +27,7 @@ defmodule Console.Devices.Device do
     field :hotspot_address, :string
     field :in_xor_filter, :boolean
     field :hide_from_xor, :boolean
+    field :ecc_key_pair, :binary
 
     belongs_to :organization, Organization
     belongs_to :packet_config, PacketConfig
@@ -41,15 +42,18 @@ defmodule Console.Devices.Device do
     attrs = Helpers.sanitize_attrs(attrs, ["name", "dev_eui", "app_eui", "app_key"])
     attrs = Helpers.upcase_attrs(attrs, ["dev_eui", "app_eui", "app_key"])
 
-    device
-      |> cast(attrs, [:name, :dev_eui, :app_eui, :app_key, :organization_id, :config_profile_id])
-      |> put_change(:oui, Application.fetch_env!(:console, :oui))
-      |> check_attrs_format()
-      |> validate_required([:name], message: "Name cannot be blank")
-      |> validate_required([:dev_eui, :app_eui, :app_key, :organization_id], message: "Device Credentials cannot be blank")
-      |> validate_length(:name, max: 50, message: "Name cannot be longer than 50 characters")
-      |> unique_constraint(:dev_eui, name: :devices_dev_eui_app_eui_app_key_index, message: "An unexpected error has occurred, please refresh the page and try again")
-      |> unique_constraint(:hotspot_address, name: :devices_hotspot_address_index, message: "This hotspot address is already used")
+    with %{ public: _, secret: _ } = keys <- :libp2p_crypto.generate_keys(:ecc_compact) do
+      device
+        |> cast(attrs, [:name, :dev_eui, :app_eui, :app_key, :organization_id, :config_profile_id])
+        |> put_change(:oui, Application.fetch_env!(:console, :oui))
+        |> put_change(:ecc_key_pair, :libp2p_crypto.keys_to_bin(keys))
+        |> check_attrs_format()
+        |> validate_required([:name], message: "Name cannot be blank")
+        |> validate_required([:dev_eui, :app_eui, :app_key, :organization_id], message: "Device Credentials cannot be blank")
+        |> validate_length(:name, max: 50, message: "Name cannot be longer than 50 characters")
+        |> unique_constraint(:dev_eui, name: :devices_dev_eui_app_eui_app_key_index, message: "An unexpected error has occurred, please refresh the page and try again")
+        |> unique_constraint(:hotspot_address, name: :devices_hotspot_address_index, message: "This hotspot address is already used")
+    end
   end
 
   def update_changeset(device, attrs) do

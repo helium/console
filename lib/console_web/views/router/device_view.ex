@@ -30,7 +30,8 @@ defmodule ConsoleWeb.Router.DeviceView do
       multi_buy: device.multi_buy,
       cf_list_enabled: device.cf_list_enabled,
       rx_delay: device.rx_delay,
-      preferred_hotspots: device.preferred_hotspots
+      preferred_hotspots: device.preferred_hotspots,
+      ecc_key_pair: :base64.encode(device.ecc_key_pair),
     }
     |> ChannelView.append_channels(device.channels)
     |> LabelView.append_labels(device.labels)
