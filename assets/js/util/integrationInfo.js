@@ -4,12 +4,12 @@ import Mqtt from "../../img/channels/mqtt-channel.svg";
 import MqttDark from "../../img/channels/mqtt-dark.png";
 
 // Community integration images
-import Aws from "../../img/channels/aws-channel.svg";
-import AwsDark from "../../img/channels/aws-dark.png";
-import Azure from "../../img/channels/azure-channel.svg";
-import AzureDark from "../../img/channels/azure-dark.svg";
-import IotCentral from "../../img/channels/iot-central-channel.svg";
-import IotCentralDark from "../../img/channels/iot-central-dark.svg";
+import Aws from "../../img/channels/community/aws-channel.svg";
+import AwsDark from "../../img/channels/community/flows/aws-dark.png";
+import Azure from "../../img/channels/community/azure-channel.svg";
+import AzureDark from "../../img/channels/community/flows/azure-dark.svg";
+import IotCentral from "../../img/channels/community/iot-central-channel.svg";
+import IotCentralDark from "../../img/channels/community/flows/iot-central-dark.svg";
 import Adafruit from "../../img/channels/community/adafruit.png";
 import AdafruitDark from "../../img/channels/community/flows/adafruit-dark.png";
 import Akenza from "../../img/channels/community/akenza.png";
@@ -18,7 +18,7 @@ import Cargo from "../../img/channels/community/cargo.svg";
 import CargoDark from "../../img/channels/community/flows/cargo-dark.png";
 import Datacake from "../../img/channels/community/datacake.png";
 import DatacakeDark from "../../img/channels/community/flows/datacake-dark.png";
-import GoogleSheet from "../../img/channels/community/google-sheet-channel.svg";
+import GoogleSheet from "../../img/channels/community/google-sheet.svg";
 import GoogleSheetDark from "../../img/channels/community/flows/google-sheet-dark.svg";
 import Microshare from "../../img/channels/community/microshare.png";
 import MicroshareDark from "../../img/channels/community/flows/microshare-dark.png";
