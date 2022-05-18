@@ -8,6 +8,7 @@ import Aws from "../../img/channels/community/aws-channel.svg";
 import AwsDark from "../../img/channels/community/flows/aws-dark.png";
 import Azure from "../../img/channels/community/azure-channel.svg";
 import AzureDark from "../../img/channels/community/flows/azure-dark.svg";
+import AzureIntro from "../../img/channels/community/intro_screens/azure.png";
 import IotCentral from "../../img/channels/community/iot-central-channel.svg";
 import IotCentralDark from "../../img/channels/community/flows/iot-central-dark.svg";
 import Adafruit from "../../img/channels/community/adafruit.png";
@@ -18,6 +19,7 @@ import Cargo from "../../img/channels/community/cargo.svg";
 import CargoDark from "../../img/channels/community/flows/cargo-dark.png";
 import Datacake from "../../img/channels/community/datacake.png";
 import DatacakeDark from "../../img/channels/community/flows/datacake-dark.png";
+import DatacakeIntro from "../../img/channels/community/intro_screens/datacake.png";
 import GoogleSheet from "../../img/channels/community/google-sheet.svg";
 import GoogleSheetDark from "../../img/channels/community/flows/google-sheet-dark.svg";
 import Microshare from "../../img/channels/community/microshare.png";
@@ -135,7 +137,8 @@ export const COMMUNITY_INTEGRATION_TYPES = [
       desc: "Microsoft Azure IoT Hub enables highly secure and reliable communication between your Internet of Things (IoT) application and the devices it manages.",
       docLink: "https://docs.helium.com/use-the-network/console/integrations/azure/",
       externalLink: "https://azure.microsoft.com/en-us/services/iot-hub/#overview"
-    }
+    },
+    introImg: `${AzureIntro}`
   },
   {
     name: "Azure IoT Central",
@@ -179,7 +182,8 @@ export const COMMUNITY_INTEGRATION_TYPES = [
       desc: "Datacake is a multi-purpose, low-code IoT platform that requires no programming skills and minimal time to create custom IoT applications.",
       docLink: "https://docs.helium.com/use-the-network/console/integrations/datacake/",
       externalLink: "https://docs.datacake.de/"
-    }
+    },
+    introImg: `${DatacakeIntro}`
   },
   {
     name: "Google Sheets",

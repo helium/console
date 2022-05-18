@@ -119,9 +119,9 @@ const ChannelNewCommunityIntro = (props) => {
 }
 
 const renderRow = (integrationType, history, mobile = false) => (
-  <Row>
+  <Row gutter={15}>
     <Col span={mobile ? 24 : 12}>
-      <Text style={{ fontSize: mobile ? 22 : 28, fontWeight: 600, display: 'block' }}>{integrationType.info.title}</Text>
+      <Text style={{ fontSize: mobile ? 22 : 28, fontWeight: 600, display: 'block', marginTop: mobile ? 0 : 20 }}>{integrationType.info.title}</Text>
       <Text style={{ fontSize: 16, display: 'block', marginTop: 30 }}>{integrationType.info.desc}</Text>
       <div style={{ marginTop: 30 }}>
         <Button
@@ -140,6 +140,9 @@ const renderRow = (integrationType, history, mobile = false) => (
           </Button>
         </a>
       </div>
+    </Col>
+    <Col span={mobile ? 24 : 12}>
+      <img style={{ width: '100%', paddingTop: mobile ? 50 : 0 }} src={integrationType.introImg} />
     </Col>
   </Row>
 )
