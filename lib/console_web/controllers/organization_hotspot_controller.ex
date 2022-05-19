@@ -32,6 +32,7 @@ defmodule ConsoleWeb.OrganizationHotspotController do
         else
           with {:ok, {hotspot_groups_count, nil}} <- OrganizationHotspots.unclaim_org_hotspot(org_hotspot, hotspot_address, current_organization) do
             ConsoleWeb.Endpoint.broadcast("graphql:coverage_index_org_hotspots", "graphql:coverage_index_org_hotspots:#{current_organization.id}:org_hotspots_update", %{})
+            broadcast_router_devices_with_preferred_hotspots(current_organization)
 
             preferred_hotspots = OrganizationHotspots.all_preferred(current_organization)
             if length(preferred_hotspots) == 0 do
@@ -62,6 +63,7 @@ defmodule ConsoleWeb.OrganizationHotspotController do
       _ ->
         with {:ok, _} <- OrganizationHotspots.update_org_hotspot(org_hotspot, %{ "preferred" => preferred }) do
           ConsoleWeb.Endpoint.broadcast("graphql:coverage_index_org_hotspots", "graphql:coverage_index_org_hotspots:#{current_organization.id}:org_hotspots_update", %{})
+          broadcast_router_devices_with_preferred_hotspots(current_organization)
 
           conn
           |> put_resp_header("message", "Hotspot preferred successfully")
@@ -126,6 +128,7 @@ defmodule ConsoleWeb.OrganizationHotspotController do
       else
         with {:ok, {hotspot_groups_count, nil}} <- OrganizationHotspots.unclaim_org_hotspots(hotspot_addresses, current_organization) do
           ConsoleWeb.Endpoint.broadcast("graphql:coverage_index_org_hotspots", "graphql:coverage_index_org_hotspots:#{current_organization.id}:org_hotspots_update", %{})
+          broadcast_router_devices_with_preferred_hotspots(current_organization)
           
           preferred_hotspots = OrganizationHotspots.all_preferred(current_organization)
           if length(preferred_hotspots) == 0 do
@@ -157,5 +160,10 @@ defmodule ConsoleWeb.OrganizationHotspotController do
           |> send_resp(:ok, "")
       end
     end
+  end
+
+  defp broadcast_router_devices_with_preferred_hotspots(organization) do
+    device_ids = PacketConfigs.get_device_ids_associated_with_preferred_active_packet_configs(organization)
+    ConsoleWeb.Endpoint.broadcast("device:all", "device:all:refetch:devices", %{ "devices" => device_ids })
   end
 end

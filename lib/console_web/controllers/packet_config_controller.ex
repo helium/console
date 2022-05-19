@@ -32,7 +32,7 @@ defmodule ConsoleWeb.PacketConfigController do
     current_organization = conn.assigns.current_organization
     packet_config = PacketConfigs.get_packet_config!(current_organization, id)
 
-    affected_device_ids = PacketConfigs.get_all_packet_config_associated_device_ids(id)
+    affected_device_ids = PacketConfigs.get_all_packet_config_associated_device_ids([id])
 
     with {:ok, %PacketConfig{} = packet_config} <- PacketConfigs.delete_packet_config(packet_config) do
       ConsoleWeb.Endpoint.broadcast("graphql:packet_configs_index_table", "graphql:packet_configs_index_table:#{current_organization.id}:packet_config_list_update", %{})
@@ -48,7 +48,7 @@ defmodule ConsoleWeb.PacketConfigController do
     current_organization = conn.assigns.current_organization
     packet_config = PacketConfigs.get_packet_config!(current_organization, id)
 
-    affected_device_ids = PacketConfigs.get_all_packet_config_associated_device_ids(id)
+    affected_device_ids = PacketConfigs.get_all_packet_config_associated_device_ids([id])
 
     with {:ok, %PacketConfig{} = packet_config} <- PacketConfigs.update_packet_config(packet_config, packet_config_params) do
       ConsoleWeb.Endpoint.broadcast("graphql:packet_config_show", "graphql:packet_config_show:#{packet_config.id}:packet_config_update", %{})
