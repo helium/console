@@ -30,6 +30,7 @@ import Tago from "../../img/channels/community/tago.png";
 import TagoDark from "../../img/channels/community/flows/tago-dark.png";
 import Ubidots from "../../img/channels/community/ubidots.png";
 import UbidotsDark from "../../img/channels/community/flows/ubidots-dark.png";
+import UbidotsIntro from "../../img/channels/community/intro_screens/ubidots.png";
 
 export const integrationImgMap = {
   adafruit: AdafruitDark,
@@ -227,6 +228,7 @@ export const COMMUNITY_INTEGRATION_TYPES = [
       desc: "Ubidots allows you to rapidly assemble and launch Internet of Things (IoT) applications without having to write code or hire a software development team.",
       docLink: "https://docs.helium.com/use-the-network/console/integrations/ubidots/",
       externalLink: "https://ubidots.com/docs/"
-    }
+    },
+    introImg: `${UbidotsIntro}`
   },
 ];
