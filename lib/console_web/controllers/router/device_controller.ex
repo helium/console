@@ -109,6 +109,11 @@ defmodule ConsoleWeb.Router.DeviceController do
                         multi_buy_value: 1,
                         preferred_hotspots: preferred_hotspots_addresses
                       }
+                    true ->
+                      %{
+                        multi_buy_value: 1,
+                        preferred_hotspots: []
+                      }
                   end
               end
             _ ->
