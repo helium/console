@@ -169,22 +169,6 @@ function Decoder(bytes, port, uplink_info) {
       )
     }
 
-    if (bytes[1] == HUMIDITY && bytes.length >= 3) {
-      const value = bytes[2]
-      const nextBytes = bytes.slice(3)
-      return parseBytes(
-        nextBytes,
-        acc.concat({
-          channel: bytes[0],
-          type: HUMIDITY,
-          value: value / 2,
-          unit: "percent",
-          name: "humidity",
-          last: nextBytes.length == 0 ? true : undefined
-        })
-      )
-    }
-
     if (bytes[1] == ACCELEROMETER && bytes.length >= 8) {
       const x = (bytes[2] << 8 | bytes[3]) << 16 >> 16
       const y = (bytes[4] << 8 | bytes[5]) << 16 >> 16
