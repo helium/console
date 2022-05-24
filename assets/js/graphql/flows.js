@@ -83,10 +83,12 @@ export const GET_RESOURCES_NAMES = gql`
     channelNames(channelIds: $channelIds) {
       id
       name
+      type
     }
     functionNames(functionIds: $functionIds) {
       id
       name
+      format
     }
     labelNames(labelIds: $labelIds) {
       id
