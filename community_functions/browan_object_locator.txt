@@ -23,7 +23,7 @@ function Decoder(bytes, port, uplink_info) {
     }
   }
 
-  if (port == 204 && bytes[0] == 0 && bytes[3] == 1 && bytes[6] == 2) {
+  if (port == 204 && bytes[0] == 0 && bytes[3] == 1 && bytes[6] == 2 && bytes.length >= 9) {
     return {
       update_interval_moving: (bytes[2] << 8) | bytes[1],
       keepalive_interval_stationary: (bytes[5] << 8) | bytes[4],
