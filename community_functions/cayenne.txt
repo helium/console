@@ -28,7 +28,7 @@ function Decoder(bytes, port, uplink_info) {
   const parseBytes = (bytes, acc) => {
     if (bytes.length == 0) return acc
     if (bytes[0] > 99) {
-      return "LPP reserved channel"
+      return [{ error: "LPP reserved channel" }]
     }
 
     if (bytes[1] == DIGITAL_IN && bytes.length >= 3) {
@@ -430,7 +430,7 @@ function Decoder(bytes, port, uplink_info) {
       )
     }
 
-    return "LPP decoder failure"
+    return [{ error: "LPP decoder failure" }]
   }
 
   return parseBytes(bytes, [])

@@ -31,5 +31,5 @@ function Decoder(bytes, port, uplink_info) {
     }
   }
 
-  return "Invalid arguments passed to decoder"
+  return { error: "Invalid arguments passed to decoder" }
 }
