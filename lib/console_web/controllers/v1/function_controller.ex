@@ -20,6 +20,7 @@ defmodule ConsoleWeb.V1.FunctionController do
       current_organization.functions
       |> Enum.map(fn func ->
         CommunityFunctions.inject_body(func)
+        |> check_allowed_function()
       end)
 
     render(conn, "index.json", functions: functions)
@@ -33,7 +34,7 @@ defmodule ConsoleWeb.V1.FunctionController do
         nil ->
           {:error, :not_found, "Function not found"}
         %Function{} = function ->
-          render(conn, "show.json", function: CommunityFunctions.inject_body(function))
+          render(conn, "show.json", function: CommunityFunctions.inject_body(function) |> check_allowed_function())
       end
     else
       :error ->
@@ -107,6 +108,15 @@ defmodule ConsoleWeb.V1.FunctionController do
   #       {:error, :bad_request, "integration_id param must be a valid UUID"}
   #   end
   # end
+
+  defp check_allowed_function(function) do
+    allowed_formats = Function.get_allowed_function_formats()
+    if (function.format in allowed_formats) do
+      function
+    else
+      Map.put(function, :deactivated_by_console_host, true)
+    end
+  end
 
   # defp broadcast_router_update_devices(device_ids) do
   #   ConsoleWeb.Endpoint.broadcast("device:all", "device:all:refetch:devices", %{ "devices" => device_ids })

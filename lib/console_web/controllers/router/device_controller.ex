@@ -8,6 +8,7 @@ defmodule ConsoleWeb.Router.DeviceController do
   alias Console.Devices.Device
   alias Console.Channels
   alias Console.Channels.Channel
+  alias Console.Functions.Function
   alias Console.CommunityChannels
   alias Console.CommunityFunctions
   alias Console.Organizations
@@ -175,21 +176,25 @@ defmodule ConsoleWeb.Router.DeviceController do
             end
           end)
 
-        allowed_types = Channel.get_allowed_integration_types()
+        allowed_integration_types = Channel.get_allowed_integration_types()
+        allowed_function_formats = Function.get_allowed_function_formats()
 
         channels =
           Enum.map(deduped_flows, fn flow ->
             function =
-              if is_nil(flow.function) do
-                flow.function
-              else
-                CommunityFunctions.inject_body(flow.function, false)
+              cond do
+                is_nil(flow.function) ->
+                  nil
+                flow.function.format not in allowed_function_formats ->
+                  nil
+                true ->
+                  CommunityFunctions.inject_body(flow.function, false)
               end
-              
+
             Map.put(flow.channel, :function, function)
           end)
           |> Enum.filter(fn channel ->
-            channel.type in allowed_types
+            channel.type in allowed_integration_types
           end)
           |> Enum.map(fn channel ->
             CommunityChannels.inject_credentials(channel)
