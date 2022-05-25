@@ -9,7 +9,7 @@ export const getAllowedFunctions = () => {
   }
 
   if (window.allowed_functions && window.allowed_functions !== "all") {
-    return convertToList(window.functions)
+    return convertToList(window.allowed_functions)
   }
   if (process.env.ALLOWED_FUNCTIONS && process.env.ALLOWED_FUNCTIONS !== "all") {
     return convertToList(process.env.ALLOWED_FUNCTIONS)

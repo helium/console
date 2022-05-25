@@ -98,6 +98,9 @@ config :console,
   allowed_integrations: System.get_env("ALLOWED_INTEGRATIONS") || "all"
 
 config :console,
+  allowed_functions: System.get_env("ALLOWED_FUNCTIONS") || "all"
+
+config :console,
   socket_check_origin: System.get_env("SOCKET_CHECK_ORIGIN")
 
 # config :prometheus, App.PrometheusExporter,

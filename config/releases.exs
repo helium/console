@@ -102,6 +102,9 @@ config :console,
 config :console,
   allowed_integrations: System.get_env("ALLOWED_INTEGRATIONS") || "all"
 
+config :console,
+  allowed_functions: System.get_env("ALLOWED_FUNCTIONS") || "all"
+
 config :console, Console.Mailer,
   adapter: Bamboo.MailgunAdapter,
   api_key: System.get_env("MAILGUN_API_KEY"),

@@ -32,6 +32,7 @@
       window.stripe_minimum_purchase = "<%= Application.get_env(:console, :stripe_minimum_purchase) %>"
       window.dc_cost_multiplier = "<%= Application.get_env(:console, :dc_cost_multiplier) %>"
       window.allowed_integrations = "<%= Application.get_env(:console, :allowed_integrations) %>"
+      window.allowed_functions = "<%= Application.get_env(:console, :allowed_functions) %>"
     </script>
     <div class="mainContainer">
       <main role="main">
