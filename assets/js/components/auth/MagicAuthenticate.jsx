@@ -47,12 +47,32 @@ const MagicAuthenticate = () => {
     <AuthLayout>
       <Card style={{padding: 30, borderRadius: 20, boxShadow: '0 52px 64px -50px #001529'}}>
         <img src={Logo} style={{width: 70, display: "block", margin:'0 auto', marginBottom: 20}} />
-        <div style={{textAlign: 'center', marginBottom: 30}}>
-          <Title>
-            Helium Console
-          </Title>
-          <Text style={{color:'#38A2FF'}}>Submit your email address to receive a login link</Text>
-        </div>
+        {
+          process.env.ENV_DOMAIN === 'console.helium.com' ? (
+            <div style={{textAlign: 'center', marginBottom: 30}}>
+              <Title>
+                Helium Console: Foundation
+              </Title>
+              <Text style={{ display: 'block' }}>
+                Submit your email address to receive a login link and learn about the network (10 device limit).
+              </Text>
+              <Text style={{ display: 'block', marginTop: 4 }}>
+                For larger deployments,{' '}
+                <a target="_blank" href="https://docs.helium.com/use-the-network/console/hosting-providers/">
+                  check providers here
+                </a>
+                .
+              </Text>
+            </div>
+          ) : (
+            <div style={{textAlign: 'center', marginBottom: 30}}>
+              <Title>
+                Helium Console
+              </Title>
+              <Text style={{color:'#38A2FF'}}>Submit your email address to receive a login link</Text>
+            </div>
+          )
+        }
 
         <Form onSubmit={handleSubmit}>
           <Form.Item style={{marginBottom: 4}}>
