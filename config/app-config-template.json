@@ -1,0 +1,19 @@
+{
+  "footer": {
+    "mainLink": {
+      "text": "Console Home",
+      "url": "https://console.helium.com"
+    },
+    "links": [
+      {
+        "text": "Documentation & Tutorials",
+        "url": "https://docs.helium.com/use-the-network/console"
+      },
+      {
+        "text": "How-to Videos",
+        "url": "https://www.youtube.com/playlist?list=PLtKQNefsR5zNjWkXqdRXeBbSmYWRJFCuo"
+      }
+    ],
+    "copyright": "© 2022 Nova Labs."
+  }
+}
