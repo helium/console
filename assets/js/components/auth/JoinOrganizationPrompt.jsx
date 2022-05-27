@@ -41,6 +41,7 @@ class JoinOrganizationPrompt extends Component {
   render() {
     const { invite } = this.state;
     const { logOut } = this.props;
+
     return (
       <AuthLayout>
         <div>
@@ -52,7 +53,7 @@ class JoinOrganizationPrompt extends Component {
             }}
           >
             <img
-              src={Logo}
+              src={this.props.mainLogo || Logo}
               style={{
                 width: 70,
                 display: "block",
@@ -113,11 +114,11 @@ class JoinOrganizationPrompt extends Component {
 
 function mapStateToProps(state, ownProps) {
   let queryParams = parse(ownProps.location.search);
-  if (queryParams.invitation !== undefined) {
-    return {
-      invitationToken: queryParams.invitation,
-    };
-  }
+
+  return {
+    invitationToken: queryParams.invitation || undefined,
+    mainLogo: state.appConfig.mainLogo
+  };
 }
 
 function mapDispatchToProps(dispatch) {

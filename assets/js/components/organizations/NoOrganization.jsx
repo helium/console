@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import {
   createOrganization,
@@ -26,6 +27,8 @@ const { Text, Title } = Typography;
 
 export default ({ user }) => {
   const dispatch = useDispatch();
+  const mainLogo = useSelector((state) => state.appConfig.mainLogo);
+
   const [name, setName] = useState("");
   const [invitationsLoading, setInvitationsLoading] = useState(true);
   const [invitations, setInvitations] = useState([]);
@@ -75,7 +78,7 @@ export default ({ user }) => {
           }}
         >
           <img
-            src={Logo}
+            src={mainLogo || Logo}
             style={{
               width: 70,
               display: "block",

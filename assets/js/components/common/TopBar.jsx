@@ -213,7 +213,7 @@ class TopBar extends Component {
             <Link to="/welcome" draggable="false">
               <img
                 draggable="false"
-                src={Logo}
+                src={this.props.headerLogo || Logo}
                 style={{
                   height: 30,
                   position: "relative",
@@ -471,6 +471,7 @@ function mapStateToProps(state, ownProps) {
     socket: state.apollo.socket,
     pathname: state.router.location.pathname,
     desktopOnly: state.display.desktopOnly,
+    headerLogo: state.appConfig.headerLogo
   };
 }
 

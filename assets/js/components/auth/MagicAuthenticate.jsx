@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { Button, Card, Typography, Input, Form } from 'antd';
 import GoogleOutlined from "@ant-design/icons/GoogleOutlined";
@@ -43,10 +44,12 @@ const MagicAuthenticate = () => {
     setEmail(event.target.value);
   };
 
+  const mainLogo = useSelector((state) => state.appConfig.mainLogo);
+
   return (
     <AuthLayout>
       <Card style={{padding: 30, borderRadius: 20, boxShadow: '0 52px 64px -50px #001529'}}>
-        <img src={Logo} style={{width: 70, display: "block", margin:'0 auto', marginBottom: 20}} />
+        <img src={mainLogo || Logo} style={{width: 70, display: "block", margin:'0 auto', marginBottom: 20}} />
         {
           process.env.ENV_DOMAIN === 'console.helium.com' ? (
             <div style={{textAlign: 'center', marginBottom: 30}}>
@@ -108,4 +111,5 @@ const MagicAuthenticate = () => {
     </AuthLayout>
   )
 };
-export default MagicAuthenticate;
+
+export default MagicAuthenticate
