@@ -29,6 +29,9 @@ const { Text, Title } = Typography;
 export default ({ user }) => {
   const dispatch = useDispatch();
   const mainLogo = useSelector((state) => state.appConfig.mainLogo);
+  const termsLink = useSelector((state) => state.appConfig.termsLink);
+  const useAppDefaults = useSelector((state) => state.appConfig.useDefaults);
+  const initialTermsAcceptedState = useAppDefaults ? false : !termsLink
 
   const [name, setName] = useState("");
   const [invitationsLoading, setInvitationsLoading] = useState(true);
@@ -37,7 +40,7 @@ export default ({ user }) => {
   const [showImportOrg, setShowImportOrg] = useState(false);
   const [importing, setImporting] = useState(false);
   const [importFailed, setImportFailed] = useState(false);
-  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(initialTermsAcceptedState);
 
   const fetchInvitations = async () => {
     getInvitations(user.email)
@@ -157,10 +160,14 @@ export default ({ user }) => {
                 (usually your company name). This Organization name is used when
                 inviting other users to your Console.
               </Text>
-              <Checkbox style={{ marginTop: 3 }} onChange={e => setTermsAccepted(e.target.checked)}>
-                I have read and agree to the
-                <a target="_blank" href="/terms"> terms and conditions</a>
-              </Checkbox>
+              {
+                (useAppDefaults || termsLink) && (
+                  <Checkbox style={{ marginTop: 3 }} onChange={e => setTermsAccepted(e.target.checked)}>
+                    I have read and agree to the
+                    <a target="_blank" href={termsLink || "/terms"}> terms and conditions</a>
+                  </Checkbox>
+                )
+              }
               <div style={{ textAlign: "center" }}>
                 <Input
                   placeholder="New Organization Name"

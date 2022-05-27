@@ -1,4 +1,4 @@
-let initialState = {}
+let initialState = { useDefaults: true }
 
 try {
   initialState = require('../../../config/app-config.json')
