@@ -21,6 +21,7 @@ import {
   Form,
   Spin,
   Alert,
+  Checkbox
 } from "antd";
 import LoadingOutlined from "@ant-design/icons/LoadingOutlined";
 const { Text, Title } = Typography;
@@ -36,6 +37,7 @@ export default ({ user }) => {
   const [showImportOrg, setShowImportOrg] = useState(false);
   const [importing, setImporting] = useState(false);
   const [importFailed, setImportFailed] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
 
   const fetchInvitations = async () => {
     getInvitations(user.email)
@@ -88,7 +90,7 @@ export default ({ user }) => {
           />
           {!showImportOrg && invitations.length > 0 && (
             <>
-              <div style={{ textAlign: "center", marginBottom: 40 }}>
+              <div style={{ textAlign: "center", marginBottom: 30 }}>
                 <Title>Helium Console</Title>
                 <Text
                   style={{
@@ -138,7 +140,7 @@ export default ({ user }) => {
           )}
           {!showImportOrg && invitations.length == 0 && (
             <>
-              <div style={{ textAlign: "center", marginBottom: 40 }}>
+              <div style={{ textAlign: "center", marginBottom: 30 }}>
                 <Title>Helium Console</Title>
                 <Text
                   style={{
@@ -155,6 +157,10 @@ export default ({ user }) => {
                 (usually your company name). This Organization name is used when
                 inviting other users to your Console.
               </Text>
+              <Checkbox style={{ marginTop: 3 }} onChange={e => setTermsAccepted(e.target.checked)}>
+                I have read and agree to the
+                <a target="_blank" href="/terms"> terms and conditions</a>
+              </Checkbox>
               <div style={{ textAlign: "center" }}>
                 <Input
                   placeholder="New Organization Name"
@@ -162,13 +168,14 @@ export default ({ user }) => {
                   value={name}
                   onChange={handleInputUpdate}
                   style={{ marginTop: 20 }}
+                  disabled={!termsAccepted}
                 />
               </div>
               <Form onSubmit={handleSubmit}>
                 <Row
                   gutter={16}
                   style={{
-                    marginTop: 20,
+                    marginTop: 10,
                     display: "flex",
                     justifyContent: "center",
                   }}
@@ -178,6 +185,7 @@ export default ({ user }) => {
                       type="primary"
                       onClick={handleSubmit}
                       style={{ width: "100%", marginBottom: 4 }}
+                      disabled={!termsAccepted}
                     >
                       Add Organization
                     </Button>
@@ -276,6 +284,7 @@ export default ({ user }) => {
           <Button
             onClick={() => setShowImportOrg(!showImportOrg)}
             style={{ width: "100%", marginTop: 20 }}
+            disabled={!termsAccepted}
           >
             {showImportOrg
               ? "Take me back"
