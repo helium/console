@@ -224,7 +224,7 @@
 	            <tr>
 	                <td align="center" style="padding: 55px 0;">
                   <!-- Helium Logo Image -->
-                      <a target="_blank" href="#"><img width="54" border="0" height="54" style="display:block; border:none; outline:none; text-decoration:none;" src="<%= @url <> "/images/logo.png" %>"></a>
+                      <a target="_blank" href="#"><img width="54" border="0" height="54" style="display:block; border:none; outline:none; text-decoration:none;" src="<%= @top_grey_logo %>"></a>
                   </td>
 	            </tr>
 		        <!-- Email Header : END -->
@@ -245,7 +245,7 @@
                                       Hi there,
                                       <br />
                                       <br />
-                                      An administrator of <%= @organization_name %> performed a data credit transfer on Helium Console.
+                                      An administrator of <%= @organization_name %> performed a data credit transfer on <%= @app_name %>.
                                       <br/><br/>
                                       This email is to inform you that <%= @transferer_email %> transfered <%= @transfer_amount %> data credits from <%= @source_organization %> to <%= @destination_organization %> at <%=  @date_time %>.
                                       Your current balance is <%= @balance %> data credits.
@@ -280,7 +280,7 @@
                 <tr>
                     <td align="center"  style="padding: 20px 0;">
                   <!-- Helium Console Logo -->
-                      <a target="_blank" href="#"><img alt="helium_console_logo" width="240" border="0" height="29" alt="" style="display:block; border:none; outline:none; text-decoration:none;" src="<%= @url <> "/images/greysignoff.png" %>"></a>
+                      <a target="_blank" href="#"><img alt="helium_console_logo" width="240" border="0" height="29" alt="" style="display:block; border:none; outline:none; text-decoration:none;" src="<%= @bottom_grey_logo %>"></a>
                   </td>
                 </tr>
             </table>

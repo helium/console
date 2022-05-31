@@ -1,5 +1,5 @@
 Hi there,
 
-An administrator of <%= @organization_name %> purchased data credits on Helium Console.
+An administrator of <%= @organization_name %> purchased data credits on <%= @app_name %>.
 
 <%= @purchaser_email %> purchased <%= @dc_purchased %> data credits for $<%= @cost %> at <%= @date_time %>.

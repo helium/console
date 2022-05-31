@@ -102,6 +102,12 @@ config :console,
 config :console,
   allowed_integrations: System.get_env("ALLOWED_INTEGRATIONS") || "all"
 
+config :console,
+  app_title: System.get_env("APP_TITLE")
+
+config :console,
+  app_favicon_url: System.get_env("APP_FAVICON_URL")
+
 config :console, Console.Mailer,
   adapter: Bamboo.MailgunAdapter,
   api_key: System.get_env("MAILGUN_API_KEY"),

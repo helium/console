@@ -2,6 +2,8 @@
   "appName": "My Custom Console",
   "mainLogo": "https://nova-labs.com/images/novasq.svg",
   "headerLogo": "https://nova-labs.com/images/novasq.svg",
+  "emailTopGreyLogo": "https://nova-labs.com/images/novasq.svg",
+  "emailBottomGreyLogo": "https://nova-labs.com/images/novasq.svg",
   "termsLink": "https://console.helium.com/terms",
   "footer": {
     "mainLink": {

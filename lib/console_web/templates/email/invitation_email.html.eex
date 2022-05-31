@@ -8,7 +8,7 @@
     <meta name="format-detection" content="telephone=no,address=no,email=no,date=no,url=no"> <!-- Tell iOS not to automatically link certain text strings. -->
     <meta name="color-scheme" content="light">
     <meta name="supported-color-schemes" content="light">
-    <title>Helium Console Invite</title> <!-- The title tag shows in email notifications, like Android 4.4. -->
+    <title><%= @app_name %> Invite</title> <!-- The title tag shows in email notifications, like Android 4.4. -->
 
     <!-- What it does: Makes background images in 72ppi Outlook render at correct size. -->
     <!--[if gte mso 9]>
@@ -224,7 +224,7 @@
 	            <tr>
 	                <td align="center" style="padding: 55px 0 85px 0;">
                   <!-- Helium Logo Image -->
-                      <a target="_blank" href="#"><img width="54" border="0" height="54" style="display:block; border:none; outline:none; text-decoration:none;" src="<%= @url <> "/images/logo.png" %>"></a>
+                      <a target="_blank" href="#"><img width="54" border="0" height="54" style="display:block; border:none; outline:none; text-decoration:none;" src="<%= @top_grey_logo %>"></a>
                   </td>
 	            </tr>
 		        <!-- Email Header : END -->
@@ -243,13 +243,6 @@
                                 <td width="100%" height="65"></td>
                               </tr>
                             <!-- Spacing -->
-                            <tr>
-                              <td align="center"  style="padding: 20px 0;">
-                            <!-- Helium Console Logo -->
-                                <a target="_blank" href="#"><img alt="helium_console_logo" width="240" border="0" height="29" alt="" style="display:block; border:none; outline:none; text-decoration:none;" src="<%= @url <> "/images/console.png" %>"></a>
-                            </td>
-                          </tr>
-                            <!-- Spacing -->
                               <tr>
                                 <td width="100%" height="20"></td>
                               </tr>
@@ -260,7 +253,7 @@
                                       Hi there,
                                       <br />
                                       <br />
-                                      <b><%= @inviter_email %></b> at <b><%= @organization_name %></b> organization has added you as <%= if @role == "Administrator" do "an" else "a" end %> <%= @role %> user to the Helium Console.
+                                      <b><%= @inviter_email %></b> at <b><%= @organization_name %></b> organization has added you as <%= if @role == "Administrator" do "an" else "a" end %> <%= @role %> user to the <%= @app_name %>.
                                       <br />
                                       <br />
                                       Click the button below to complete registration of your account.
@@ -310,7 +303,7 @@
                 <tr>
                     <td align="center"  style="padding: 20px 0;">
                   <!-- Helium Console Logo -->
-                      <a target="_blank" href="#"><img alt="helium_console_logo" width="240" border="0" height="29" alt="" style="display:block; border:none; outline:none; text-decoration:none;" src="<%= @url <> "/images/greysignoff.png" %>"></a>
+                      <a target="_blank" href="#"><img alt="helium_console_logo" width="240" border="0" height="29" alt="" style="display:block; border:none; outline:none; text-decoration:none;" src="<%= @bottom_grey_logo %>"></a>
                   </td>
                 </tr>
             </table>
