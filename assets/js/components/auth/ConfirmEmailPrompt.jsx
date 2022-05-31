@@ -21,7 +21,7 @@ class ConfirmEmailPrompt extends Component {
           <img src={this.props.mainLogo || Logo} style={{width: 70, display: "block", margin:'0 auto', marginBottom: 20}} />
           <div style={{textAlign: 'center', marginBottom: 40}}>
             <Title>
-              Helium Console
+              {this.props.appName || "Helium Console"}
             </Title>
             <Text style={{color:primaryBlue, fontSize: 18, fontWeight: 300}}>Registration Successful</Text>
             <Text style={{display: 'block'}}>
@@ -47,7 +47,8 @@ class ConfirmEmailPrompt extends Component {
 
 function mapStateToProps(state, ownProps) {
   return {
-    mainLogo: state.appConfig.mainLogo
+    mainLogo: state.appConfig.mainLogo,
+    appName: state.appConfig.appName
   };
 }
 

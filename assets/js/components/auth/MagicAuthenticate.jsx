@@ -44,6 +44,7 @@ const MagicAuthenticate = () => {
     setEmail(event.target.value);
   };
 
+  const appName = useSelector((state) => state.appConfig.appName);
   const mainLogo = useSelector((state) => state.appConfig.mainLogo);
 
   return (
@@ -70,7 +71,7 @@ const MagicAuthenticate = () => {
           ) : (
             <div style={{textAlign: 'center', marginBottom: 30}}>
               <Title>
-                Helium Console
+                { appName || "Helium Console" }
               </Title>
               <Text style={{color:'#38A2FF'}}>Submit your email address to receive a login link</Text>
             </div>

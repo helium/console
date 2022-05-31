@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { connect } from 'react-redux';
 import { Link } from "react-router-dom";
 import DashboardLayout from "./common/DashboardLayout";
 import MobileLayout from "./mobile/MobileLayout";
@@ -13,6 +14,7 @@ import WelcomeImg from "../../img/welcome-image.png";
 import _JSXStyle from "styled-jsx/style";
 const { Text } = Typography;
 
+@connect(mapStateToProps, null)
 class Welcome extends Component {
   state = {
     hideWelcomeScreen: localStorage.getItem("hideWelcomeScreen"),
@@ -64,7 +66,7 @@ class Welcome extends Component {
                     top: -16,
                   }}
                 >
-                  Helium Console
+                  {this.props.appName || "Helium Console"}
                 </Text>
               </span>
               <div
@@ -185,7 +187,7 @@ class Welcome extends Component {
                           top: -16,
                         }}
                       >
-                        Helium Console
+                        {this.props.appName || "Helium Console"}
                       </Text>
                     </span>
 
@@ -348,5 +350,11 @@ export const getStartedLinks = (noFunction = false) => (
     </Link>
   </React.Fragment>
 );
+
+function mapStateToProps(state, ownProps) {
+  return {
+    appName: state.appConfig.appName
+  };
+}
 
 export default Welcome;

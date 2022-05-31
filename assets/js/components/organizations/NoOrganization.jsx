@@ -29,6 +29,7 @@ const { Text, Title } = Typography;
 export default ({ user }) => {
   const dispatch = useDispatch();
   const mainLogo = useSelector((state) => state.appConfig.mainLogo);
+  const appName = useSelector((state) => state.appConfig.appName);
   const termsLink = useSelector((state) => state.appConfig.termsLink);
   const useAppDefaults = useSelector((state) => state.appConfig.useDefaults);
   const initialTermsAcceptedState = useAppDefaults ? false : !termsLink
@@ -94,7 +95,7 @@ export default ({ user }) => {
           {!showImportOrg && invitations.length > 0 && (
             <>
               <div style={{ textAlign: "center", marginBottom: 30 }}>
-                <Title>Helium Console</Title>
+                <Title>{ appName || "Helium Console" }</Title>
                 <Text
                   style={{
                     color: primaryBlue,
@@ -144,7 +145,7 @@ export default ({ user }) => {
           {!showImportOrg && invitations.length == 0 && (
             <>
               <div style={{ textAlign: "center", marginBottom: 30 }}>
-                <Title>Helium Console</Title>
+                <Title>{ appName || "Helium Console" }</Title>
                 <Text
                   style={{
                     color: primaryBlue,
@@ -213,7 +214,7 @@ export default ({ user }) => {
 
           {showImportOrg && (
             <div style={{ textAlign: "center", marginBottom: 10 }}>
-              <Title>Helium Console</Title>
+              <Title>{ appName || "Helium Console" }</Title>
               <Text
                 style={{
                   color: primaryBlue,

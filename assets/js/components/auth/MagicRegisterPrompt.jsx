@@ -10,6 +10,8 @@ const { Text, Title } = Typography
 const MagicRegisterPrompt = () => {
   const dispatch = useDispatch();
   const mainLogo = useSelector((state) => state.appConfig.mainLogo);
+  const appName =
+    process.env.SELF_HOSTED ? useSelector((state) => state.appConfig.appName) : "Helium Dedicated Console"
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -22,9 +24,9 @@ const MagicRegisterPrompt = () => {
         <img src={mainLogo || Logo} style={{width: 70, display: "block", margin:'0 auto', marginBottom: 20}} />
         <div style={{textAlign: 'center', marginBottom: 30}}>
           <Title>
-            Helium {!process.env.SELF_HOSTED && "Dedicated"} Console
+            {appName}
           </Title>
-          <Text>Helium {!process.env.SELF_HOSTED && "Dedicated"} Console is by invite only. Please contact {process.env.SELF_HOSTED ? "the admin" : "our sales team"} to complete your registration.</Text>
+          <Text>{appName} is by invite only. Please contact {process.env.SELF_HOSTED ? "the admin" : "our sales team"} to complete your registration.</Text>
         </div>
 
         <Button
