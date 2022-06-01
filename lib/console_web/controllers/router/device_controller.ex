@@ -566,6 +566,20 @@ defmodule ConsoleWeb.Router.DeviceController do
         case updated_org_pending_result do
           nil -> nil
           organization ->
+            last_dc_purchase = DcPurchases.get_last_nonrecurring_dc_purchase(organization)
+            last_dc_purchaser = if not is_nil(last_dc_purchase) do Organizations.get_membership(last_dc_purchase.user_id, organization) else nil end
+
+            receipt_email = case last_dc_purchaser do
+              nil ->
+                admin = List.first(Organizations.get_administrators(organization))
+                case admin do
+                  nil -> ""
+                  _ -> admin.email
+                end
+              _ ->
+                last_dc_purchaser.email
+            end
+
             request_body = URI.encode_query(%{
               "customer" => organization.stripe_customer_id,
               "amount" => organization.automatic_charge_amount,
@@ -573,6 +587,7 @@ defmodule ConsoleWeb.Router.DeviceController do
               "payment_method" => organization.automatic_payment_method,
               "off_session" => "true",
               "confirm" => "true",
+              "receipt_email" => receipt_email,
             })
 
             with {:ok, stripe_response} <- HTTPoison.post("#{@stripe_api_url}/v1/payment_intents", request_body, @headers) do
@@ -584,20 +599,6 @@ defmodule ConsoleWeb.Router.DeviceController do
                   200 <- stripe_response.status_code do
                     card = Poison.decode!(stripe_response.body)
 
-                    last_dc_purchase = DcPurchases.get_last_nonrecurring_dc_purchase(organization)
-                    last_dc_purchaser = if not is_nil(last_dc_purchase) do Organizations.get_membership(last_dc_purchase.user_id, organization) else nil end
-
-                    receipt_email = case last_dc_purchaser do
-                      nil ->
-                        admin = List.first(Organizations.get_administrators(organization))
-                        case admin do
-                          nil -> ""
-                          _ -> admin.email
-                        end
-                      _ ->
-                        last_dc_purchaser.email
-                    end
-
                     attrs = %{
                       "dc_purchased" => payment_intent["amount"] * 1000,
                       "cost" => payment_intent["amount"],
@@ -606,7 +607,6 @@ defmodule ConsoleWeb.Router.DeviceController do
                       "user_id" => "Recurring Charge",
                       "organization_id" => organization.id,
                       "payment_id" => payment_intent["id"],
-                      "receipt_email" => receipt_email,
                       "description" => "Data Credits"
                     }
 
