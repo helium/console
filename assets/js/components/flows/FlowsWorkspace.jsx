@@ -187,23 +187,25 @@ export default ({
         type_name: event.dataTransfer.getData("node/channel_type_name"),
         type: event.dataTransfer.getData("node/channel_type"),
         hasAlerts: event.dataTransfer.getData("node/has_alerts") === "true",
+        lastErrored: event.dataTransfer.getData("node/last_errored") === "true",
       });
     }
 
     if (type === "functionNode") {
       data = Object.assign({}, data, {
         format: event.dataTransfer.getData("node/function_format"),
+        hasAlerts: event.dataTransfer.getData("node/has_alerts") === "true",
       });
     }
 
     if (type === "labelNode") {
       data = Object.assign({}, data, {
-        deviceCount: event.dataTransfer.getData("node/label_device_count"),
+        deviceCount: parseInt(event.dataTransfer.getData("node/label_device_count")),
         hasAlerts: event.dataTransfer.getData("node/has_alerts") === "true",
         packet_config_id:
-          event.dataTransfer.getData("node/packet_config_id") !== "null",
+          event.dataTransfer.getData("node/packet_config_id") !== "null" ? event.dataTransfer.getData("node/packet_config_id") : null,
         config_profile_id:
-          event.dataTransfer.getData("node/config_profile_id") !== "null",
+          event.dataTransfer.getData("node/config_profile_id") !== "null" ? event.dataTransfer.getData("node/config_profile_id") : null,
         devicesNotInFilter:
           event.dataTransfer.getData("node/devices_not_in_filter") === "true",
       });
@@ -211,12 +213,11 @@ export default ({
 
     if (type === "deviceNode") {
       data = Object.assign({}, data, {
-        deviceCount: event.dataTransfer.getData("node/label_device_count"),
         hasAlerts: event.dataTransfer.getData("node/has_alerts") === "true",
         packet_config_id:
-          event.dataTransfer.getData("node/packet_config_id") !== "null",
+          event.dataTransfer.getData("node/packet_config_id") !== "null" ? event.dataTransfer.getData("node/packet_config_id") : null,
         config_profile_id:
-          event.dataTransfer.getData("node/config_profile_id") !== "null",
+          event.dataTransfer.getData("node/config_profile_id") !== "null" ? event.dataTransfer.getData("node/config_profile_id") : null,
         inXORFilter:
           event.dataTransfer.getData("node/in_xor_filter") === "true",
       });
@@ -354,7 +355,6 @@ export default ({
               selectedNodeId.split(/-(.+)/)[0].replace("-", ""))
           }
           elementsMap={elementsMap}
-          hasChanges={hasChanges}
           hasConnectedEdges={
             Object.values(elementsMap).filter(
               (el) =>
