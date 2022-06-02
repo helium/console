@@ -51,7 +51,7 @@ class Welcome extends Component {
                   marginBottom: 30,
                 }}
               >
-                <img src={WelcomeImg} style={{ height: 68 }} />
+                <img src={this.props.welcomePageIcon || WelcomeImg} style={{ height: 68 }} />
               </div>
               <span>
                 <Text style={{ fontSize: 30, display: "block" }}>
@@ -91,7 +91,7 @@ class Welcome extends Component {
                 >
                   Looking for some guidance to get started?
                 </Text>
-                <a href="https://docs.helium.com/" target="_blank">
+                <a href="https://docs.helium.com/use-the-network/console/" target="_blank">
                   <Text
                     style={{ fontSize: 16, fontWeight: 500, color: "#2C79EE" }}
                   >
@@ -191,7 +191,7 @@ class Welcome extends Component {
                       </Text>
                     </span>
 
-                    <img src={WelcomeImg} style={{ height: 68 }} />
+                    <img src={this.props.welcomePageIcon || WelcomeImg} style={{ height: 68 }} />
                   </Row>
 
                   <Checkbox
@@ -229,7 +229,7 @@ class Welcome extends Component {
                         Looking for some guidance to get started?
                       </Text>
                     </span>
-                    <a href="https://docs.helium.com/" target="_blank">
+                    <a href="https://docs.helium.com/use-the-network/console/" target="_blank">
                       <Text
                         style={{
                           fontSize: 16,
@@ -353,7 +353,8 @@ export const getStartedLinks = (noFunction = false) => (
 
 function mapStateToProps(state, ownProps) {
   return {
-    appName: state.appConfig.appName
+    appName: state.appConfig.appName,
+    welcomePageIcon: state.appConfig.welcomePageIcon,
   };
 }
 
