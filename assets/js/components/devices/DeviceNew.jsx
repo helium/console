@@ -107,7 +107,7 @@ export default (props) => {
       ).then(() => {
         if (USING_CAP && deviceCount === 9) {
           displayInfo(
-            "The device cap has been met. To add devices for commercial use cases, reach out to sales@nova.xyz."
+            "The device cap has been met. To add devices for commercial use cases, reach out to sales@nova-labs.com."
           );
         }
         history.push("/devices");
