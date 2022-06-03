@@ -329,7 +329,6 @@ const generateInitialElementsMap = (data, flowPositions, activeResources) => {
         label: func.name,
         id: `function-${func.id}`,
         format: func.format,
-        hasAlerts: func.alerts.length > 0,
       },
       position: [0, 0],
     };
