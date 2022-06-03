@@ -194,7 +194,6 @@ export default ({
     if (type === "functionNode") {
       data = Object.assign({}, data, {
         format: event.dataTransfer.getData("node/function_format"),
-        hasAlerts: event.dataTransfer.getData("node/has_alerts") === "true",
       });
     }
 
