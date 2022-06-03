@@ -7,7 +7,7 @@ defmodule Console.Repo.Migrations.MigrateLabelCentricConnectionsToFlows do
   alias Console.Labels
   alias Console.Labels.Label
   alias Console.Flows.Flow
-  alias Console.MultiBuys.MultiBuy
+  # alias Console.MultiBuys.MultiBuy
 
   def up do
     Ecto.Multi.new()
@@ -58,49 +58,49 @@ defmodule Console.Repo.Migrations.MigrateLabelCentricConnectionsToFlows do
       end
     end)
     |> Ecto.Multi.run(:multi_buys, fn _repo, %{ flows: _ } ->
-      all_labels_with_mbs_sql = """
-        SELECT id, multi_buy, organization_id FROM labels WHERE multi_buy > 1
-      """
-      all_labels_with_mbs = Ecto.Adapters.SQL.query!(Console.Repo, all_labels_with_mbs_sql, []).rows
-
-      Enum.each(all_labels_with_mbs, fn label ->
-        {:ok, label_id} = Enum.at(label, 0) |> Ecto.UUID.load
-        {:ok, organization_id} = Enum.at(label, 2) |> Ecto.UUID.load
-        multi_buy_value = Enum.at(label, 1)
-
-        label_to_update = Labels.get_label!(label_id)
-        existing_mb_in_org = Repo.get_by(MultiBuy, [value: multi_buy_value, organization_id: organization_id])
-
-        case existing_mb_in_org do
-          nil ->
-            name =
-              case multi_buy_value do
-                10 -> "All Available"
-                _ -> "Up to " <> to_string(multi_buy_value)
-              end
-
-            new_multi_buy =
-              %MultiBuy{}
-              |> MultiBuy.changeset(%{
-                name: name,
-                organization_id: organization_id,
-                value: multi_buy_value
-              })
-              |> Repo.insert!()
-
-            label_to_update
-            |> Label.changeset(%{
-              multi_buy_id: new_multi_buy.id
-            })
-            |> Repo.update!()
-          multi_buy ->
-            label_to_update
-            |> Label.changeset(%{
-              multi_buy_id: multi_buy.id
-            })
-            |> Repo.update!()
-        end
-      end)
+      # all_labels_with_mbs_sql = """
+      #   SELECT id, multi_buy, organization_id FROM labels WHERE multi_buy > 1
+      # """
+      # all_labels_with_mbs = Ecto.Adapters.SQL.query!(Console.Repo, all_labels_with_mbs_sql, []).rows
+      #
+      # Enum.each(all_labels_with_mbs, fn label ->
+      #   {:ok, label_id} = Enum.at(label, 0) |> Ecto.UUID.load
+      #   {:ok, organization_id} = Enum.at(label, 2) |> Ecto.UUID.load
+      #   multi_buy_value = Enum.at(label, 1)
+      #
+      #   label_to_update = Labels.get_label!(label_id)
+      #   existing_mb_in_org = Repo.get_by(MultiBuy, [value: multi_buy_value, organization_id: organization_id])
+      #
+      #   case existing_mb_in_org do
+      #     nil ->
+      #       name =
+      #         case multi_buy_value do
+      #           10 -> "All Available"
+      #           _ -> "Up to " <> to_string(multi_buy_value)
+      #         end
+      #
+      #       new_multi_buy =
+      #         %MultiBuy{}
+      #         |> MultiBuy.changeset(%{
+      #           name: name,
+      #           organization_id: organization_id,
+      #           value: multi_buy_value
+      #         })
+      #         |> Repo.insert!()
+      #
+      #       label_to_update
+      #       |> Label.changeset(%{
+      #         multi_buy_id: new_multi_buy.id
+      #       })
+      #       |> Repo.update!()
+      #     multi_buy ->
+      #       label_to_update
+      #       |> Label.changeset(%{
+      #         multi_buy_id: multi_buy.id
+      #       })
+      #       |> Repo.update!()
+      #   end
+      # end)
 
       {:ok, "Success"}
     end)
@@ -204,7 +204,7 @@ defmodule Console.Repo.Migrations.MigrateLabelCentricConnectionsToFlows do
 
   def down do
     Repo.delete_all(Flow)
-    Repo.delete_all(MultiBuy)
+    # Repo.delete_all(MultiBuy)
   end
 
   defp put_timestamps(struct) do
