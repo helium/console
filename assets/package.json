@@ -4,8 +4,7 @@
   "scripts": {
     "deploy": "webpack --mode production",
     "start": "yarn run watch",
-    "watch": "webpack --mode development --watch --watch-options-stdin",
-    "test": "mocha"
+    "watch": "webpack --mode development --watch --watch-options-stdin"
   },
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
@@ -68,7 +67,6 @@
     "babel-plugin-import": "^1.13.3",
     "css-loader": "^6.7.1",
     "file-loader": "^6.2.0",
-    "mocha": "^10.0.0",
     "style-loader": "^3.3.0",
     "webpack": "^5.72.0",
     "webpack-bundle-analyzer": "^4.5.0",

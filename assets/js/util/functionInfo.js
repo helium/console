@@ -1,4 +1,4 @@
-import Http from "../../img/channels/http-channel.svg";
+import FilledFunctionIcon from "../../img/filled-function-node-icon.svg";
 
 export const getAllowedFunctions = () => {
   const convertToList = (str) => {
@@ -24,7 +24,7 @@ export const CORE_FUNCTION_FORMATS = [
   {
     name: "Custom",
     format: "custom",
-    img: `${Http}`,
+    img: `${FilledFunctionIcon}`,
   }
 ];
 
@@ -32,12 +32,12 @@ export const COMMUNITY_FUNCTION_FORMATS = [
   {
     name: "Cayenne LPP",
     format: "cayenne",
-    img: `${Http}`,
+    img: `${FilledFunctionIcon}`,
   },
   {
     name: "Browan Object Locator",
     format: "browan_object_locator",
-    img: `${Http}`,
+    img: `${FilledFunctionIcon}`,
   }
 ];
 
