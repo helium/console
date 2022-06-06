@@ -35,3 +35,6 @@ config :console,
 
 config :console,
   allowed_integrations: "all"
+
+config :console,
+  allowed_functions: "all"
