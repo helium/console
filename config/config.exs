@@ -69,7 +69,8 @@ config :console, Console.Scheduler,
     ],
     refresh_materialized_views: [
       schedule: "0 * * * *", # every hour @ 0 mins
-      task: {Console.Jobs, :refresh_materialized_views, []}
+      task: {Console.Jobs, :refresh_materialized_views, []},
+      state: (if System.get_env("USE_SCHEDULER_FOR_REFRESH_MAT_VIEW"), do: :inactive, else: :active)
     ],
     trigger_device_stops_transmitting: [
       schedule: "*/15 * * * *", # every 15th min
