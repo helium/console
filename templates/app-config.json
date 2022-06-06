@@ -1,10 +1,10 @@
 {
   "appName": "My Custom Console",
-  "mainLogo": "https://nova-labs.com/images/novasq.svg",
-  "headerLogo": "https://nova-labs.com/images/novasq.svg",
-  "welcomePageIcon": "https://nova-labs.com/images/novasq.svg",
-  "emailTopGreyLogo": "https://nova-labs.com/images/novasq.svg",
-  "emailBottomGreyLogo": "https://nova-labs.com/images/novasq.svg",
+  "mainLogo": "https://www.helium.com/static/images/new/heliumblue.svg",
+  "headerLogo": "https://www.helium.com/static/images/new/heliumblue.svg",
+  "welcomePageIcon": "https://www.helium.com/static/images/new/heliumblue.svg",
+  "emailTopGreyLogo": "https://www.helium.com/static/images/new/heliumblue.svg",
+  "emailBottomGreyLogo": "https://www.helium.com/static/images/new/heliumblue.svg",
   "termsLink": "https://console.helium.com/terms",
   "footer": {
     "mainLink": {
