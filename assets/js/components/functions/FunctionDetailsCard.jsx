@@ -6,7 +6,7 @@ import ClearOutlined from "@ant-design/icons/ClearOutlined";
 import SaveOutlined from "@ant-design/icons/SaveOutlined";
 const { Text } = Typography;
 const { Option } = Select;
-import { functionTypes, functionFormats } from "../../util/functionInfo";
+import { functionTypes, functionFormats, getAllowedFunctions } from "../../util/functionInfo";
 
 export default ({
   fxn,
@@ -22,6 +22,7 @@ export default ({
   horizontal,
 }) => {
   const currentRole = useSelector((state) => state.organization.currentRole);
+  const allowedFunctions = getAllowedFunctions()
   return (
     <Card title="Function Details">
       <Text>Update Function</Text>
@@ -73,7 +74,7 @@ export default ({
             value={format}
             disabled={!userCan({ role: currentRole })}
           >
-            {Object.keys(functionFormats).map(key => {
+            {Object.keys(allowedFunctions).map(key => {
               return <Option key={key} value={key}>{functionFormats[key]}</Option>
             })}
           </Select>

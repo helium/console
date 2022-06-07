@@ -3,12 +3,12 @@ import NavPointTriangle from '../common/NavPointTriangle';
 import BarIcon from '../../../img/functions/function-bar-icon.svg'
 import Warning from "../../../img/node-warning.svg";
 import capitalize from 'lodash/capitalize'
-import { getAllowedFunctions } from '../../util/functionInfo'
+import { getAllowedFunctions, functionFormats } from '../../util/functionInfo'
 import { Typography } from 'antd';
 const { Text } = Typography;
 import { Link } from 'react-router-dom';
 
-const FunctionButton = ({ id, name, type, selected, warn }) => (
+const FunctionButton = ({ id, name, format, selected, warn }) => (
   <React.Fragment>
     <Link to={`/functions/${id}`}>
       <div
@@ -30,7 +30,7 @@ const FunctionButton = ({ id, name, type, selected, warn }) => (
           <img src={BarIcon} style={{ height: 12, marginRight: 4 }} />
           <Text style={{ color: '#FFFFFF', fontWeight: 500, whiteSpace: 'nowrap' }}>{name}</Text>
         </div>
-        <Text style={{ color: '#FFFFFF', fontSize: 10, whiteSpace: 'nowrap' }}>{capitalize(type)}</Text>
+        <Text style={{ color: '#FFFFFF', fontSize: 10, whiteSpace: 'nowrap' }}>{functionFormats[format]}</Text>
         {
           selected && <NavPointTriangle />
         }
@@ -44,7 +44,7 @@ export default ({ functions, shownFunctionId }) => {
   return (
     <div style={{ display: 'flex', flexDirection: 'row' }}>
       {functions.map(f => (
-        <FunctionButton warn={allowedFunctions && !allowedFunctions[f.format]} key={f.id} id={f.id} type={f.type} name={f.name} selected={f.id === shownFunctionId} />
+        <FunctionButton warn={allowedFunctions && !allowedFunctions[f.format]} key={f.id} id={f.id} format={f.format} name={f.name} selected={f.id === shownFunctionId} />
       ))}
     </div>
   );
