@@ -108,7 +108,7 @@ defmodule ConsoleWeb.V1.DeviceController do
             if profile_id == nil do
               with {:ok, device} <- Devices.update_device(device, %{ config_profile_id: nil }) do
                 device = device |> Repo.preload([[labels: :config_profile], :config_profile])
-                broadcast_router_update_devices(device)
+                broadcast_router_update_device(device)
 
                 render(conn, "show.json", device: put_config_settings_on_device(device))
               end
@@ -120,7 +120,7 @@ defmodule ConsoleWeb.V1.DeviceController do
                 _ ->
                   with {:ok, device} <- Devices.update_device(device, %{ config_profile_id: config_profile.id }) do
                     device = device |> Repo.preload([[labels: :config_profile], :config_profile])
-                    broadcast_router_update_devices(device)
+                    broadcast_router_update_device(device)
 
                     render(conn, "show.json", device: put_config_settings_on_device(device))
                   end
@@ -140,7 +140,7 @@ defmodule ConsoleWeb.V1.DeviceController do
         %Device{} = device ->
           with {:ok, device} <- Devices.update_device(device, %{ active: active }) do
             device = device |> Repo.preload([[labels: :config_profile], :config_profile])
-            broadcast_router_update_devices(device)
+            broadcast_router_update_device(device)
 
             render(conn, "show.json", device: put_config_settings_on_device(device))
           end
@@ -163,7 +163,7 @@ defmodule ConsoleWeb.V1.DeviceController do
           deleted_device = %{ device_id: id, labels: Enum.map(device.labels, fn l -> l.id end), device_name: device.name }
 
           with {:ok, _} <- Devices.delete_device(device) do
-            broadcast_router_update_devices(device)
+            broadcast_router_update_device(device)
 
             { _, time } = Timex.format(Timex.now, "%H:%M:%S UTC", :strftime)
             details = %{
@@ -259,7 +259,7 @@ defmodule ConsoleWeb.V1.DeviceController do
 
     case result do
       {:ok, %{ device: device }} ->
-        broadcast_router_update_devices(device)
+        broadcast_router_update_device(device)
 
         device =
           Devices.get_device!(current_organization, device.id)
@@ -287,6 +287,67 @@ defmodule ConsoleWeb.V1.DeviceController do
     end
   end
 
+  @doc """
+  Batch device creation, limited to 1,000 per request
+  Using a stream to transparently parallelize the inserts over all CPU cores
+  and every operation is independent and isolated.
+  """
+  def create(conn, params = %{ "devices" => devices }) when is_list(devices) do
+    cond do
+      length(devices) == 0 ->
+        {:error, :bad_request, "Must create at least one device."}
+      length(devices) > 1000 ->
+        {:error, :bad_request, "Batch limit of 1,000 devices exceeded. Please try again with a smaller batch size."}
+      length(devices) <= 1000 ->
+        current_organization = conn.assigns.current_organization
+
+        device_attrs =
+          Enum.map(devices, fn device_params ->
+            Map.merge(device_params, %{
+              "organization_id" => current_organization.id,
+              "oui" => Application.fetch_env!(:console, :oui)
+            })
+            |> Map.drop(["hotspot_address"]) # prevent accidental creation of discovery mode device
+          end)
+        
+        stream = Task.async_stream(device_attrs, fn d ->
+          # TODO if config_profile_id is provided, check that it exists in the org
+          Devices.create_device(d, current_organization)
+          # TODO add labels if provided?
+        end)
+
+        results = Enum.reduce(Enum.to_list(stream), %{ success: [], failure: [] }, fn {_, result}, acc ->
+          case result do
+            {:ok, device} ->
+              short_device = %{
+                id: device.id,
+                name: device.name,
+                dev_eui: device.dev_eui,
+                app_eui: device.app_eui,
+                app_key: device.app_key,
+                config_profile_id: device.config_profile_id,
+                # labels?
+              }
+              %{
+                success: [short_device | acc.success],
+                failure: acc.failure
+              }
+            {:error, %Ecto.Changeset{valid?: false, changes: changes, errors: errors}} ->
+              # TODO include error?
+              %{
+                success: acc.success,
+                failure: [changes | acc.failure]
+              }
+          end
+        end)
+
+        new_device_ids = Enum.map(results.success, fn d -> d.id end)
+        broadcast_router_update_devices(new_device_ids)
+
+        render(conn, "results.json", results: results)
+    end    
+  end
+
   def set_devices_active(conn, %{"app_key" => app_key, "dev_eui" => dev_eui, "app_eui" => app_eui, "active" => active}) do
     current_organization = conn.assigns.current_organization
     devices = Devices.get_by_device_attrs(dev_eui, app_eui, app_key, current_organization.id)
@@ -298,7 +359,7 @@ defmodule ConsoleWeb.V1.DeviceController do
         device = List.first(devices)
         with {:ok, device} <- Devices.update_device(device, %{ active: active }) do
           device = device |> Repo.preload([[labels: :config_profile], :config_profile])
-          broadcast_router_update_devices(device)
+          broadcast_router_update_device(device)
 
           render(conn, "show.json", device: put_config_settings_on_device(device))
         end
@@ -320,7 +381,7 @@ defmodule ConsoleWeb.V1.DeviceController do
             |> Repo.preload([[labels: :config_profile], :config_profile])
             |> Enum.map(fn d -> put_config_settings_on_device(d) end)
 
-          Enum.each(parsed_devices, fn d -> broadcast_router_update_devices(d) end)
+          Enum.each(parsed_devices, fn d -> broadcast_router_update_device(d) end)
 
           render(conn, "index.json", devices: parsed_devices)
         end
@@ -342,7 +403,7 @@ defmodule ConsoleWeb.V1.DeviceController do
             |> Repo.preload([[labels: :config_profile], :config_profile])
             |> Enum.map(fn d -> put_config_settings_on_device(d) end)
 
-          Enum.each(parsed_devices, fn d -> broadcast_router_update_devices(d) end)
+          Enum.each(parsed_devices, fn d -> broadcast_router_update_device(d) end)
 
           render(conn, "index.json", devices: parsed_devices)
         end
@@ -395,8 +456,12 @@ defmodule ConsoleWeb.V1.DeviceController do
     end
   end
 
-  defp broadcast_router_update_devices(%Device{} = device) do
+  defp broadcast_router_update_device(%Device{} = device) do
     ConsoleWeb.Endpoint.broadcast("device:all", "device:all:refetch:devices", %{ "devices" => [device.id] })
+  end
+
+  defp broadcast_router_update_devices(device_ids) do
+    ConsoleWeb.Endpoint.broadcast("device:all", "device:all:refetch:devices", %{ "devices" => device_ids })
   end
 
   defp put_config_settings_on_device(device) do
