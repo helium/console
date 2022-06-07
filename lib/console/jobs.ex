@@ -60,12 +60,14 @@ defmodule Console.Jobs do
       Task.Supervisor.async_nolink(ConsoleWeb.TaskSupervisor, fn ->
         send_specific_event_email(identifiers, events)
       end)
+      |> Task.await(:infinity)
     end)
 
     Enum.each(Enum.group_by(alertable_webhook_events, &Map.take(&1, [:alert_id, :event])), fn {identifiers, events} ->
       Task.Supervisor.async_nolink(ConsoleWeb.TaskSupervisor, fn ->
         send_webhook(identifiers, events)
       end)
+      |> Task.await(:infinity)
     end)
   end
 
@@ -148,6 +150,7 @@ defmodule Console.Jobs do
           Task.Supervisor.async_nolink(ConsoleWeb.TaskSupervisor, fn ->
             check_device_stop_transmitting(an.node_id, an.node_type, Timex.shift(Timex.now, minutes: -buffer), buffer)
           end)
+          |> Task.await(:infinity)
         end
 
         if webhook_config_value != nil && webhook_config_value != email_config_value do
@@ -155,6 +158,7 @@ defmodule Console.Jobs do
           Task.Supervisor.async_nolink(ConsoleWeb.TaskSupervisor, fn ->
             check_device_stop_transmitting(an.node_id, an.node_type, Timex.shift(Timex.now, minutes: -buffer), buffer)
           end)
+          |> Task.await(:infinity)
         end
       end)
     end)
