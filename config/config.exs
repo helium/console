@@ -68,7 +68,7 @@ config :console, Console.Scheduler,
       task: {Console.Jobs, :send_survey_tokens, []}
     ],
     refresh_materialized_views: [
-      schedule: "0 * * * *", # every hour @ 0 mins
+      schedule: "36 * * * *", # every hour @ 36 mins to skip 
       task: {Console.Jobs, :refresh_materialized_views, []},
       state: (if System.get_env("USE_SCHEDULER_FOR_REFRESH_MAT_VIEW"), do: :inactive, else: :active)
     ],
