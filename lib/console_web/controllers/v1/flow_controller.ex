@@ -118,7 +118,7 @@ defmodule ConsoleWeb.V1.FlowController do
                     |> send_resp(:ok, "Flow with integration created successfully")
                   _ ->
                     Appsignal.send_error(%CaseClauseError{ term: Kernel.inspect(result) }, "Failed to save flows", ["v1/flows_controller.ex"])
-                    {:error, :bad_request, "Could not save flows changes properly. Certain underlying nodes may have been deleted. Please refresh the page and try again."}
+                    {:error, :bad_request, "Could not save flows changes properly. Certain underlying nodes may have been deleted. Please try again."}
                 end
               Map.has_key?(params, "label_id") ->
                 label = Labels.get_label!(current_organization, Map.get(params, "label_id"))
@@ -197,7 +197,7 @@ defmodule ConsoleWeb.V1.FlowController do
                     |> send_resp(:ok, "Flow with integration created successfully")
                   _ ->
                     Appsignal.send_error(%CaseClauseError{ term: Kernel.inspect(result) }, "Failed to save flows", ["v1/flows_controller.ex"])
-                    {:error, :bad_request, "Could not save flows changes properly. Certain underlying nodes may have been deleted. Please refresh the page and try again."}
+                    {:error, :bad_request, "Could not save flows changes properly. Certain underlying nodes may have been deleted. Please try again."}
                 end
               true ->
                 {:error, :bad_request, "Flow must contain either device_id or label_id"}
