@@ -61,7 +61,7 @@ defmodule ConsoleWeb.FunctionControllerTest do
       resp_conn = put conn, function_path(conn, :update, function["id"]), %{ "function" => %{ "format" => "custom" }}
       function = json_response(resp_conn, 200)
       assert function["format"] == "custom" # updating format from cayenne
-      assert function["body"] == "Default Cayenne Function"
+      assert function["body"] == "default cayenne body"
     end
 
     test "delete functions properly", %{conn: conn} do

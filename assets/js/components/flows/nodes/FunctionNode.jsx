@@ -5,17 +5,20 @@ const { Text } = Typography;
 import FunctionIcon from "../../../../img/function-node-icon.svg";
 import SelectedNodeIcon from "./SelectedNodeIcon";
 import AlertTag from "../../../../img/alerts/alert-node-tag.svg";
-
-const functionFormats = {
-  cayenne: "Cayenne LPP",
-  browan_object_locator: "Browan Object Locator",
-  custom: "Custom",
-};
+import { functionFormats, getAllowedFunctions } from '../../../util/functionInfo';
+import Warning from "../Warning";
 
 export default ({ data, fromSidebar, selected }) => {
+  const allowedFunctions = getAllowedFunctions()
+  let warningCount = 0
+  if (allowedFunctions && !allowedFunctions[data.format]) warningCount++
+
   return (
     <Fragment>
       {selected && <SelectedNodeIcon />}
+      {!fromSidebar && warningCount > 0 && (
+        <Warning numberWarnings={warningCount} />
+      )}
       <div
         style={{
           background: "#9E59F6",

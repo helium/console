@@ -106,6 +106,9 @@ config :console,
 config :console,
   allowed_integrations: "all"
 
+config :console,
+  allowed_functions: "all"
+
 config :logger, level: :debug
 
 # config :prometheus, App.PrometheusExporter,

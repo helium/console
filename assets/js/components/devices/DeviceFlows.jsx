@@ -8,6 +8,8 @@ import { FLOWS_BY_DEVICE, GET_RESOURCES_NAMES } from "../../graphql/flows";
 import FlowsLayout from "../common/FlowsLayout";
 import ErrorMessage from "../common/ErrorMessage";
 import { useQuery } from "@apollo/client";
+import { getAllowedFunctions } from '../../util/functionInfo'
+import { getAllowedIntegrations } from '../../util/integrationInfo'
 
 const FETCH_POLICY = "cache-and-network";
 
@@ -58,22 +60,35 @@ export default ({ deviceId, mobile }) => {
     fetchPolicy: FETCH_POLICY,
   });
 
+  const allowedFunctions = getAllowedFunctions()
+  const allowedIntegrations = getAllowedIntegrations()
+
   const deviceNameMap = {};
   const channelNameMap = {};
   const functionNameMap = {};
   const labelNameMap = {};
   if (getResourcesNamesData) {
     getResourcesNamesData.deviceNames.forEach((dn) => {
-      deviceNameMap[dn.id] = dn.name;
+      deviceNameMap[dn.id] = {
+        name: dn.name
+      }
     });
     getResourcesNamesData.channelNames.forEach((cn) => {
-      channelNameMap[cn.id] = cn.name;
+      channelNameMap[cn.id] = {
+        name: cn.name,
+        type: cn.type
+      }
     });
     getResourcesNamesData.functionNames.forEach((fn) => {
-      functionNameMap[fn.id] = fn.name;
+      functionNameMap[fn.id] = {
+        name: fn.name,
+        format: fn.format
+      }
     });
     getResourcesNamesData.labelNames.forEach((ln) => {
-      labelNameMap[ln.id] = ln.name;
+      labelNameMap[ln.id] = {
+        name: ln.name
+      }
     });
   }
 
@@ -149,7 +164,8 @@ export default ({ deviceId, mobile }) => {
       elements[channelNodeId] = {
         id: channelNodeId,
         data: {
-          label: channelNameMap[channelId],
+          label: channelNameMap[channelId].name,
+          warn: !allowedIntegrations[channelNameMap[channelId].type]
         },
         position: [0, 0],
         type: "channelNode",
@@ -159,7 +175,8 @@ export default ({ deviceId, mobile }) => {
         elements[functionNodeId] = {
           id: functionNodeId,
           data: {
-            label: functionNameMap[functionId] || "",
+            label: functionNameMap[functionId].name || "",
+            warn: !allowedFunctions[functionNameMap[functionId].format]
           },
           position: [0, 0],
           type: "functionNode",
@@ -176,7 +193,7 @@ export default ({ deviceId, mobile }) => {
         elements[deviceNodeId] = {
           id: deviceNodeId,
           data: {
-            label: deviceNameMap[deviceId],
+            label: deviceNameMap[deviceId].name,
           },
           position: [0, 0],
           type: "deviceNode",
@@ -184,7 +201,7 @@ export default ({ deviceId, mobile }) => {
         elements[labelNodeId] = {
           id: labelNodeId,
           data: {
-            label: labelNameMap[labelId],
+            label: labelNameMap[labelId].name,
           },
           position: [0, 0],
           type: "labelNode",
@@ -216,7 +233,7 @@ export default ({ deviceId, mobile }) => {
         elements[deviceNodeId] = {
           id: deviceNodeId,
           data: {
-            label: deviceNameMap[deviceId],
+            label: deviceNameMap[deviceId].name,
           },
           position: [0, 0],
           type: "deviceNode",

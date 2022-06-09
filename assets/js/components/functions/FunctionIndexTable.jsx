@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import UserCan, { userCan } from "../common/UserCan";
 import { updateFunction } from "../../actions/function";
 import analyticsLogger from "../../util/analyticsLogger";
+import { functionFormats } from "../../util/functionInfo";
 import { minWidth } from "../../util/constants";
 import {
   Table,
@@ -17,12 +18,6 @@ import {
 } from "antd";
 import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
 const { Text } = Typography;
-
-const functionFormats = {
-  cayenne: "Cayenne LPP",
-  browan_object_locator: "Browan Object Locator",
-  custom: "Custom",
-};
 
 class FunctionIndexTable extends Component {
   render() {
