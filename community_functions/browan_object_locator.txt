@@ -1,0 +1,35 @@
+function Decoder(bytes, port, uplink_info) {
+  if (port == 136 && bytes.length == 11) {
+    const positionLat = ((bytes[6] << 24 | bytes[5] << 16) | bytes[4] << 8) | bytes[3]
+
+    const accuracy = Math.trunc(Math.pow((bytes[10] >> 5) + 2, 2))
+    bytes[10] &= 0x1f;
+    if ((bytes[10] & 0x10) !== 0) {
+      bytes[10] |= 0xe0;
+    }
+    const positionLon = ((bytes[10] << 24 | bytes[9] << 16) | bytes[8] << 8) | bytes[7]
+
+    return {
+      gns_error: (bytes[0] & 0x10) >>> 4 == 1,
+      gns_fix: (bytes[0] & 0x08) >>> 3 == 1,
+      moving: (bytes[0] & 0x02) >>> 1 == 1,
+      button: (bytes[0] & 0x01) == 1,
+      battery_percent: 100 * ((bytes[1] >>> 4) / 15),
+      battery: ((bytes[1] & 0x0f) + 25) / 10,
+      temperature: bytes[2] & 0x7f - 32,
+      latitude: positionLat / 1000000,
+      longitude: positionLon / 1000000,
+      accuracy
+    }
+  }
+
+  if (port == 204 && bytes[0] == 0 && bytes[3] == 1 && bytes[6] == 2 && bytes.length >= 9) {
+    return {
+      update_interval_moving: (bytes[2] << 8) | bytes[1],
+      keepalive_interval_stationary: (bytes[5] << 8) | bytes[4],
+      gsensor_timeout_moving: (bytes[8] << 8) | bytes[7]
+    }
+  }
+
+  return { error: "Invalid arguments passed to decoder" }
+}

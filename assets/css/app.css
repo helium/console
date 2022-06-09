@@ -291,6 +291,10 @@ h1 {
   flex-grow: 1;
 }
 
+.functioncard {
+  flex-grow: 1;
+}
+
 .ant-modal-mask {
   background: rgba(20, 20, 20, 0.9);
 }

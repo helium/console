@@ -220,7 +220,7 @@ class DebugEntry extends Component {
               {JSON.stringify(
                 Object.assign(
                   {},
-                  omit(event, ["data", "frame_up", "frame_down", "reported_at_epoch", "serial"]),
+                  omit(event, ["data", "frame_up", "frame_down", "reported_at_epoch"]),
                   {
                     ...(event.category === "uplink" && {
                       fcnt_up: event.data.fcnt,

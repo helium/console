@@ -16,8 +16,7 @@ export default ({
   deleteNode,
   hasConnectedEdges,
   elementsMap,
-  orgId,
-  hasChanges
+  orgId
 }) => {
   const [openNodeDeleteModal, setOpenNodeDeleteModal] = useState(false);
 
@@ -49,7 +48,6 @@ export default ({
             id={id}
             type={type}
             onNodeDelete={onNodeDelete}
-            hasChanges={hasChanges}
           />
         );
       case "device":
@@ -58,7 +56,6 @@ export default ({
             id={id}
             type={type}
             onNodeDelete={onNodeDelete}
-            hasChanges={hasChanges}
           />
         );
       case "utility":
@@ -70,7 +67,6 @@ export default ({
             orgId={orgId}
             type={type}
             onNodeDelete={onNodeDelete}
-            hasChanges={hasChanges}
           />
         );
       case "channel":
@@ -79,7 +75,6 @@ export default ({
             id={id}
             type={type}
             onNodeDelete={onNodeDelete}
-            hasChanges={hasChanges}
           />
         );
       case "edge":

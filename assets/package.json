@@ -30,7 +30,7 @@
     "moment": "^2.29.2",
     "mustache": "^4.2.0",
     "node-polyfill-webpack-plugin": "^1.1.4",
-    "npm": "^8.6.0",
+    "npm": "^8.11.0",
     "numeral": "^2.0.6",
     "phoenix": "file:../deps/phoenix",
     "phoenix_html": "file:../deps/phoenix_html",

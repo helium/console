@@ -11,13 +11,26 @@ defmodule ConsoleWeb.V1.FunctionView do
   end
 
   def render("function.json", %{function: function}) do
-    %{
-      id: function.id,
-      name: function.name,
-      body: function.body,
-      type: function.type,
-      format: function.format,
-      active: function.active
-    }
+    if Map.has_key?(function, :deactivated_by_console_host) do
+      %{
+        id: function.id,
+        name: function.name,
+        body: function.body,
+        type: function.type,
+        format: function.format,
+        active: function.active,
+        deactivated_by_console_host: function.deactivated_by_console_host
+      }
+    else
+      %{
+        id: function.id,
+        name: function.name,
+        body: function.body,
+        type: function.type,
+        format: function.format,
+        active: function.active
+      }
+    end
+
   end
 end
