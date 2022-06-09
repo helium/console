@@ -101,9 +101,15 @@ config :console,
 
 config :console,
   allowed_integrations: System.get_env("ALLOWED_INTEGRATIONS") || "all"
-
+  
 config :console,
   allowed_functions: System.get_env("ALLOWED_FUNCTIONS") || "all"
+    
+config :console,
+  app_title: System.get_env("APP_TITLE")
+
+config :console,
+  app_favicon_url: System.get_env("APP_FAVICON_URL")
 
 config :console, Console.Mailer,
   adapter: Bamboo.MailgunAdapter,

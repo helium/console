@@ -6,6 +6,8 @@ import { Button } from "antd";
 import _JSXStyle from "styled-jsx/style";
 
 export default ({ organization, onClick }) => {
+  const costMultiplier = window.dc_cost_multiplier || 1
+
   return (
     <div className="blankstateWrapper" style={{ paddingTop: "80px" }}>
       <div className="message">
@@ -39,7 +41,7 @@ export default ({ organization, onClick }) => {
           <h2>What are Data Credits?</h2>
           <p>
             Data Credits are used by devices to send data via the Helium
-            Network. The cost per fragment is $0.00001 USD (fragments are 24
+            Network. The cost per fragment is ${0.00001 * costMultiplier} USD (fragments are 24
             bytes) which is equivalent to 1 Data Credit (DC).
           </p>
           <p>

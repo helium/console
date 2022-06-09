@@ -103,7 +103,7 @@ class DataCreditPurchasesTable extends Component {
             return (
               <Text>
                 <CaretLeftOutlined style={styles.greenIcon} />
-                Helium, Inc
+                Payment Card 
               </Text>
             );
           }

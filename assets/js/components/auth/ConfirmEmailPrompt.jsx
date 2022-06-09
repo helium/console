@@ -8,7 +8,7 @@ import Logo from '../../../img/symbol.svg'
 import { primaryBlue } from '../../util/colors'
 const { Text, Title } = Typography
 
-@connect(null, mapDispatchToProps)
+@connect(mapStateToProps, mapDispatchToProps)
 class ConfirmEmailPrompt extends Component {
   componentDidMount() {
     this.props.subscribeNewUser(this.props.user.email)
@@ -18,10 +18,10 @@ class ConfirmEmailPrompt extends Component {
     return (
       <AuthLayout>
         <Card style={{padding: 30, paddingTop: 20, borderRadius: 20, boxShadow: '0 52px 64px -50px #001529'}}>
-          <img src={Logo} style={{width: 70, display: "block", margin:'0 auto', marginBottom: 20}} />
+          <img src={this.props.mainLogo || Logo} style={{width: 70, display: "block", margin:'0 auto', marginBottom: 20}} />
           <div style={{textAlign: 'center', marginBottom: 40}}>
             <Title>
-              Helium Console
+              {this.props.appName || "Helium Console"}
             </Title>
             <Text style={{color:primaryBlue, fontSize: 18, fontWeight: 300}}>Registration Successful</Text>
             <Text style={{display: 'block'}}>
@@ -43,6 +43,13 @@ class ConfirmEmailPrompt extends Component {
       </AuthLayout>
     )
   }
+}
+
+function mapStateToProps(state, ownProps) {
+  return {
+    mainLogo: state.appConfig.mainLogo,
+    appName: state.appConfig.appName
+  };
 }
 
 function mapDispatchToProps(dispatch) {

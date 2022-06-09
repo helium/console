@@ -9,6 +9,12 @@ defmodule Console.Email do
   alias Console.Organizations.Organization
   alias DateTime
 
+  @config (if(File.exists?("config/app-config.json")) do
+      File.read!("config/app-config.json") |> Jason.decode!()
+    else
+      %{}
+    end)
+
   def dc_transfer_source_notification(from_org, to_org, dc_transferred, user, recipient) do
     dc_transfer_notification_email(from_org.name, from_org.name, to_org.name, dc_transferred, from_org.dc_balance, user, recipient)
   end
@@ -21,7 +27,7 @@ defmodule Console.Email do
     formatted_credits = dc_format(dc_purchased)
     base_email()
     |> to(recipient)
-    |> subject("Data credit automatic renewal")
+    |> subject("#{Map.get(@config, "appName", "Helium Console")}: Data credit automatic renewal")
     |> assign(:dc_purchased, formatted_credits)
     |> assign(:date_time, current_time())
     |> assign(:organization_name, organization_name)
@@ -32,7 +38,7 @@ defmodule Console.Email do
   def delete_org_notification_email(%Organization{name: organization_name}, recipient, deleted_by) do
     base_email()
     |> to(recipient)
-    |> subject("An organization was deleted from Helium Console")
+    |> subject("#{Map.get(@config, "appName", "Helium Console")}: An organization was deleted")
     |> assign(:organization_name, organization_name)
     |> assign(:deleted_by_name, deleted_by)
     |> assign(:date_time, current_time())
@@ -42,7 +48,7 @@ defmodule Console.Email do
   def dc_balance_notification_email(%Organization{name: organization_name}, recipient, dc_balance) do
     base_email()
     |> to(recipient)
-    |> subject("Data credit low balance notification")
+    |> subject("#{Map.get(@config, "appName", "Helium Console")}: Data credit low balance notification")
     |> assign(:balance, dc_balance)
     |> assign(:organization_name, organization_name)
     |> assign(:date_time, current_time())
@@ -52,7 +58,7 @@ defmodule Console.Email do
   def payment_method_updated_email(%User{email: updater_email}, %Organization{name: organization_name}, recipient, action) do
     base_email()
     |> to(recipient)
-    |> subject("Payment method change notification")
+    |> subject("#{Map.get(@config, "appName", "Helium Console")}: Payment method change notification")
     |> assign(:updater_email, updater_email)
     |> assign(:organization_name, organization_name)
     |> assign(:date_time, current_time())
@@ -65,7 +71,7 @@ defmodule Console.Email do
 
     base_email()
     |> to(recipient)
-    |> subject("Data credit purchase notification")
+    |> subject("#{Map.get(@config, "appName", "Helium Console")}: Data credit purchase notification")
     |> assign(:purchaser_email, purchaser_email)
     |> assign(:organization_name, organization_name)
     |> assign(:dc_purchased, formatted_credits)
@@ -79,7 +85,7 @@ defmodule Console.Email do
 
     base_email()
     |> to(email)
-    |> subject("You've been invited to join Helium")
+    |> subject("#{Map.get(@config, "appName", "Helium Console")}: You've been invited to join an organization")
     |> assign(:token, token)
     |> assign(:inviter_email, inviter_email)
     |> assign(:role, Map.fetch!(role_hash, role))
@@ -92,7 +98,7 @@ defmodule Console.Email do
 
     base_email()
     |> to(email)
-    |> subject("You've been invited to join Helium")
+    |> subject("#{Map.get(@config, "appName", "Helium Console")}: You've been invited to join an organization")
     |> assign(:token, token)
     |> assign(:inviter_email, inviter_email)
     |> assign(:role, Map.fetch!(role_hash, role))
@@ -103,7 +109,7 @@ defmodule Console.Email do
   def api_key_email(%User{email: email}, %ApiKey{token: token, name: name}) do
     base_email()
     |> to(email)
-    |> subject("Activate your new Helium API Key")
+    |> subject("#{Map.get(@config, "appName", "Helium Console")}: Activate your new API Key")
     |> assign(:token, token)
     |> assign(:key_name, name)
     |> render(:api_key_email)
@@ -112,9 +118,122 @@ defmodule Console.Email do
   def survey_token_email(%Membership{email: email}, %{token: token}) do
     base_email()
     |> to(email)
-    |> subject("Claim your Free Data Credits on Helium Console")
+    |> subject("#{Map.get(@config, "appName", "Helium Console")}: Claim your Free Data Credits")
     |> assign(:token, token)
     |> render(:survey_token_email)
+  end
+
+  def dc_transfer_notification_email(organization_name, source_organization_name, destination_organization_name, dc_transfered, balance, %User{email: transferer_email}, recipient) do
+    formatted_credits = dc_format(dc_transfered)
+    base_email()
+    |> to(recipient)
+    |> subject("#{Map.get(@config, "appName", "Helium Console")}: Data credit transfer notification")
+    |> assign(:organization_name, organization_name)
+    |> assign(:source_organization, source_organization_name)
+    |> assign(:destination_organization, destination_organization_name)
+    |> assign(:transferer_email, transferer_email)
+    |> assign(:transfer_amount, formatted_credits)
+    |> assign(:balance, dc_format(balance))
+    |> assign(:date_time, current_time())
+    |> render(:data_credit_transfer)
+  end
+
+  def device_deleted_notification_email(recipients, alert_name, details, organization_name, alert_id) do
+    base_email()
+    |> to(recipients)
+    |> subject("#{Map.get(@config, "appName", "Helium Console")}: One or more devices have been deleted.")
+    |> assign(:alert_name, alert_name)
+    |> assign(:num_devices, length(details))
+    |> assign(:organization_name, organization_name)
+    |> assign(:details, details)
+    |> assign(:alert_id, alert_id)
+    |> render(:device_deleted_notification_email)
+  end
+
+  def integration_with_devices_deleted_notification_email(recipients, alert_name, details, organization_name, alert_id) do
+    base_email()
+    |> to(recipients)
+    |> subject("#{Map.get(@config, "appName", "Helium Console")}: One or more integrations with device(s) have been deleted.")
+    |> assign(:alert_name, alert_name)
+    |> assign(:num_channels, length(details))
+    |> assign(:organization_name, organization_name)
+    |> assign(:details, details)
+    |> assign(:alert_id, alert_id)
+    |> render(:integration_with_devices_deleted_notification_email)
+  end
+
+  def integration_with_devices_updated_notification_email(recipients, alert_name, details, organization_name, alert_id) do
+    base_email()
+    |> to(recipients)
+    |> subject("#{Map.get(@config, "appName", "Helium Console")}: One or more integrations with device(s) have been updated.")
+    |> assign(:alert_name, alert_name)
+    |> assign(:num_channels, length(details))
+    |> assign(:organization_name, organization_name)
+    |> assign(:details, details)
+    |> assign(:alert_id, alert_id)
+    |> render(:integration_with_devices_updated_notification_email)
+  end
+
+  def device_join_otaa_first_time_notification_email(recipients, alert_name, details, organization_name, alert_id, has_hotspot_info) do
+    base_email()
+    |> to(recipients)
+    |> subject("#{Map.get(@config, "appName", "Helium Console")}: One or more devices have joined via OTAA for the first time.")
+    |> assign(:alert_name, alert_name)
+    |> assign(:num_devices, length(details))
+    |> assign(:organization_name, organization_name)
+    |> assign(:details, details)
+    |> assign(:alert_id, alert_id)
+    |> assign(:has_hotspot_info, has_hotspot_info)
+    |> render(:device_join_otaa_first_time_notification_email)
+  end
+
+  def integration_stops_working_notification_email(recipients, alert_name, details, organization_name, alert_id) do
+    base_email()
+    |> to(recipients)
+    |> subject("#{Map.get(@config, "appName", "Helium Console")}: One or more integrations have stopped working.")
+    |> assign(:alert_name, alert_name)
+    |> assign(:num_channels, length(details))
+    |> assign(:organization_name, organization_name)
+    |> assign(:details, details)
+    |> assign(:alert_id, alert_id)
+    |> render(:integration_stops_working_notification_email)
+  end
+
+  def device_stops_transmitting_notification_email(recipients, alert_name, details, organization_name, alert_id, has_hotspot_info) do
+    base_email()
+    |> to(recipients)
+    |> subject("#{Map.get(@config, "appName", "Helium Console")}: One or more devices have stopped transmitting.")
+    |> assign(:alert_name, alert_name)
+    |> assign(:num_devices, length(details))
+    |> assign(:organization_name, organization_name)
+    |> assign(:details, details)
+    |> assign(:alert_id, alert_id)
+    |> assign(:has_hotspot_info, has_hotspot_info)
+    |> render(:device_stops_transmitting_notification_email)
+  end
+
+  def downlink_unsuccessful_notification_email(recipients, alert_name, details, organization_name, alert_id) do
+    base_email()
+    |> to(recipients)
+    |> subject("#{Map.get(@config, "appName", "Helium Console")}: One or more devices have experienced downlink issues.")
+    |> assign(:alert_name, alert_name)
+    |> assign(:num_devices, length(details))
+    |> assign(:organization_name, organization_name)
+    |> assign(:details, details)
+    |> assign(:alert_id, alert_id)
+    |> render(:downlink_unsuccessful_notification_email)
+  end
+
+  def integration_receives_first_event_notification_email(recipients, alert_name, details, organization_name, alert_id) do
+    base_email()
+    |> to(recipients)
+    |> subject("#{Map.get(@config, "appName", "Helium Console")}: One or more integrations received the first packet(s).")
+    |> assign(:alert_name, alert_name)
+    |> assign(:num_channels, length(details))
+    |> assign(:organization_name, organization_name)
+    |> assign(:details, details)
+    |> assign(:alert_id, alert_id)
+    |> render(:integration_receives_first_event_notification_email)
   end
 
   defp base_email do
@@ -130,6 +249,9 @@ defmodule Console.Email do
     |> put_header("Reply-To", System.get_env("MAIL_REPLY_TO") || "console@helium.com")
     |> put_html_layout({ConsoleWeb.LayoutView, "email.html"})
     |> assign(:url, url)
+    |> assign(:app_name, Map.get(@config, "appName", "Helium Console"))
+    |> assign(:top_grey_logo, Map.get(@config, "emailTopGreyLogo", url <> "/images/logo.png"))
+    |> assign(:bottom_grey_logo, Map.get(@config, "emailBottomGreyLogo", url <> "/images/greysignoff.png"))
   end
 
   defp current_time do
@@ -145,118 +267,5 @@ defmodule Console.Email do
     |> Enum.chunk_every(3, 3, [])
     |> Enum.join(",")
     |> String.reverse
-  end
-
-  defp dc_transfer_notification_email(organization_name, source_organization_name, destination_organization_name, dc_transfered, balance, %User{email: transferer_email}, recipient) do
-    formatted_credits = dc_format(dc_transfered)
-    base_email()
-    |> to(recipient)
-    |> subject("Data credit transfer notification")
-    |> assign(:organization_name, organization_name)
-    |> assign(:source_organization, source_organization_name)
-    |> assign(:destination_organization, destination_organization_name)
-    |> assign(:transferer_email, transferer_email)
-    |> assign(:transfer_amount, formatted_credits)
-    |> assign(:balance, dc_format(balance))
-    |> assign(:date_time, current_time())
-    |> render(:data_credit_transfer)
-  end
-
-  def device_deleted_notification_email(recipients, alert_name, details, organization_name, alert_id) do
-    base_email()
-    |> to(recipients)
-    |> subject("Helium Console: One or more devices have been deleted.")
-    |> assign(:alert_name, alert_name)
-    |> assign(:num_devices, length(details))
-    |> assign(:organization_name, organization_name)
-    |> assign(:details, details)
-    |> assign(:alert_id, alert_id)
-    |> render(:device_deleted_notification_email)
-  end
-
-  def integration_with_devices_deleted_notification_email(recipients, alert_name, details, organization_name, alert_id) do
-    base_email()
-    |> to(recipients)
-    |> subject("Helium Console: One or more integrations with device(s) have been deleted.")
-    |> assign(:alert_name, alert_name)
-    |> assign(:num_channels, length(details))
-    |> assign(:organization_name, organization_name)
-    |> assign(:details, details)
-    |> assign(:alert_id, alert_id)
-    |> render(:integration_with_devices_deleted_notification_email)
-  end
-
-  def integration_with_devices_updated_notification_email(recipients, alert_name, details, organization_name, alert_id) do
-    base_email()
-    |> to(recipients)
-    |> subject("Helium Console: One or more integrations with device(s) have been updated.")
-    |> assign(:alert_name, alert_name)
-    |> assign(:num_channels, length(details))
-    |> assign(:organization_name, organization_name)
-    |> assign(:details, details)
-    |> assign(:alert_id, alert_id)
-    |> render(:integration_with_devices_updated_notification_email)
-  end
-
-  def device_join_otaa_first_time_notification_email(recipients, alert_name, details, organization_name, alert_id, has_hotspot_info) do
-    base_email()
-    |> to(recipients)
-    |> subject("Helium Console: One or more devices have joined via OTAA for the first time.")
-    |> assign(:alert_name, alert_name)
-    |> assign(:num_devices, length(details))
-    |> assign(:organization_name, organization_name)
-    |> assign(:details, details)
-    |> assign(:alert_id, alert_id)
-    |> assign(:has_hotspot_info, has_hotspot_info)
-    |> render(:device_join_otaa_first_time_notification_email)
-  end
-
-  def integration_stops_working_notification_email(recipients, alert_name, details, organization_name, alert_id) do
-    base_email()
-    |> to(recipients)
-    |> subject("Helium Console: One or more integrations have stopped working.")
-    |> assign(:alert_name, alert_name)
-    |> assign(:num_channels, length(details))
-    |> assign(:organization_name, organization_name)
-    |> assign(:details, details)
-    |> assign(:alert_id, alert_id)
-    |> render(:integration_stops_working_notification_email)
-  end
-
-  def device_stops_transmitting_notification_email(recipients, alert_name, details, organization_name, alert_id, has_hotspot_info) do
-    base_email()
-    |> to(recipients)
-    |> subject("Helium Console: One or more devices have stopped transmitting.")
-    |> assign(:alert_name, alert_name)
-    |> assign(:num_devices, length(details))
-    |> assign(:organization_name, organization_name)
-    |> assign(:details, details)
-    |> assign(:alert_id, alert_id)
-    |> assign(:has_hotspot_info, has_hotspot_info)
-    |> render(:device_stops_transmitting_notification_email)
-  end
-
-  def downlink_unsuccessful_notification_email(recipients, alert_name, details, organization_name, alert_id) do
-    base_email()
-    |> to(recipients)
-    |> subject("Helium Console: One or more devices have experienced downlink issues.")
-    |> assign(:alert_name, alert_name)
-    |> assign(:num_devices, length(details))
-    |> assign(:organization_name, organization_name)
-    |> assign(:details, details)
-    |> assign(:alert_id, alert_id)
-    |> render(:downlink_unsuccessful_notification_email)
-  end
-
-  def integration_receives_first_event_notification_email(recipients, alert_name, details, organization_name, alert_id) do
-    base_email()
-    |> to(recipients)
-    |> subject("Helium Console: One or more integrations received the first packet(s).")
-    |> assign(:alert_name, alert_name)
-    |> assign(:num_channels, length(details))
-    |> assign(:organization_name, organization_name)
-    |> assign(:details, details)
-    |> assign(:alert_id, alert_id)
-    |> render(:integration_receives_first_event_notification_email)
   end
 end

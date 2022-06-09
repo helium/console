@@ -1,5 +1,5 @@
 Hi there,
 
-You have added a new API Key <%= @key_name %> on Helium Console. Please activate it by visiting the link below.
+You have added a new API Key <%= @key_name %> on <%= @app_name %>. Please activate it by visiting the link below.
 
 Visit <%= @url <> "/api_keys/accept/" <> @token %> to activate your key

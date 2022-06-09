@@ -1,6 +1,6 @@
 Hi there,
 
-An administrator of <%= @organization_name %> performed a data credit transfer on Helium Console.
+An administrator of <%= @organization_name %> performed a data credit transfer on <%= @app_name %>.
 
 This email is to inform you that <%= @transferer_email %> transfered <%= @transfer_amount %> Data Credits from <%= @source_organization %> to <%= @destination_organization %> at <%=  @date_time %>.
 Your current balance is <%= @balance %> data credits.

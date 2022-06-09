@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { connect } from 'react-redux';
 import { Link } from "react-router-dom";
 import DashboardLayout from "./common/DashboardLayout";
 import MobileLayout from "./mobile/MobileLayout";
@@ -13,6 +14,7 @@ import WelcomeImg from "../../img/welcome-image.png";
 import _JSXStyle from "styled-jsx/style";
 const { Text } = Typography;
 
+@connect(mapStateToProps, null)
 class Welcome extends Component {
   state = {
     hideWelcomeScreen: localStorage.getItem("hideWelcomeScreen"),
@@ -49,7 +51,7 @@ class Welcome extends Component {
                   marginBottom: 30,
                 }}
               >
-                <img src={WelcomeImg} style={{ height: 68 }} />
+                <img src={this.props.welcomePageIcon || WelcomeImg} style={{ height: 68 }} />
               </div>
               <span>
                 <Text style={{ fontSize: 30, display: "block" }}>
@@ -64,7 +66,7 @@ class Welcome extends Component {
                     top: -16,
                   }}
                 >
-                  Helium Console
+                  {this.props.appName || "Helium Console"}
                 </Text>
               </span>
               <div
@@ -89,7 +91,7 @@ class Welcome extends Component {
                 >
                   Looking for some guidance to get started?
                 </Text>
-                <a href="https://docs.helium.com/" target="_blank">
+                <a href="https://docs.helium.com/use-the-network/console/" target="_blank">
                   <Text
                     style={{ fontSize: 16, fontWeight: 500, color: "#2C79EE" }}
                   >
@@ -185,11 +187,11 @@ class Welcome extends Component {
                           top: -16,
                         }}
                       >
-                        Helium Console
+                        {this.props.appName || "Helium Console"}
                       </Text>
                     </span>
 
-                    <img src={WelcomeImg} style={{ height: 68 }} />
+                    <img src={this.props.welcomePageIcon || WelcomeImg} style={{ height: 68 }} />
                   </Row>
 
                   <Checkbox
@@ -227,7 +229,7 @@ class Welcome extends Component {
                         Looking for some guidance to get started?
                       </Text>
                     </span>
-                    <a href="https://docs.helium.com/" target="_blank">
+                    <a href="https://docs.helium.com/use-the-network/console/" target="_blank">
                       <Text
                         style={{
                           fontSize: 16,
@@ -348,5 +350,12 @@ export const getStartedLinks = (noFunction = false) => (
     </Link>
   </React.Fragment>
 );
+
+function mapStateToProps(state, ownProps) {
+  return {
+    appName: state.appConfig.appName,
+    welcomePageIcon: state.appConfig.welcomePageIcon,
+  };
+}
 
 export default Welcome;
