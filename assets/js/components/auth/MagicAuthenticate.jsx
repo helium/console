@@ -14,7 +14,8 @@ const MagicAuthenticate = () => {
   const history = useHistory()
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState('');
-  const recaptcha_site_key = process.env.RECAPTCHA_SITE_KEY || '6Len2logAAAAALaqL5cECU0Vl7JJqqbIQX6IgWz6'
+  const recaptchaSiteKey = process.env.RECAPTCHA_SITE_KEY || '6Len2logAAAAALaqL5cECU0Vl7JJqqbIQX6IgWz6'
+  const useRecaptchaForAuth = process.env.USE_RECAPTCHA_FOR_AUTH === 'true'  // set to true here to test recaptcha in dev
 
   useEffect(() => {
     const loadScriptByURL = (id, url, callback) => {
@@ -35,10 +36,12 @@ const MagicAuthenticate = () => {
       if (isScriptExist && callback) return callback();
     }
 
-    loadScriptByURL("recaptcha-key", `https://www.google.com/recaptcha/api.js?render=${recaptcha_site_key}`);
+    if (useRecaptchaForAuth) {
+      loadScriptByURL("recaptcha-key", `https://www.google.com/recaptcha/api.js?render=${recaptchaSiteKey}`);
+    }
   }, []);
 
-  const handleSubmit = (type) => {
+  const handleSubmit = (event, type) => {
     event.preventDefault();
     setLoading(true);
 
@@ -48,14 +51,14 @@ const MagicAuthenticate = () => {
       return;
     }
 
-    if (!window.recaptcha) {
+    if (!window.grecaptcha || (useRecaptchaForAuth && !recaptchaSiteKey)) {
       setLoading(false);
       displayError('Google Recaptcha failed to load properly, please refresh the page and try again');
       return;
     }
 
     window.grecaptcha.ready(() => {
-      window.grecaptcha.execute(recaptcha_site_key, { action: 'submit' }).then(token => {
+      window.grecaptcha.execute(recaptchaSiteKey, { action: 'submit' }).then(token => {
         return fetch('/api/sessions/verify_recaptcha', {
           method: 'POST',
           headers: {
@@ -66,19 +69,9 @@ const MagicAuthenticate = () => {
         .then(data => data.json())
         .then(data => {
           if (data.success && data.score > 0.7 && type === "email") {
-            try {
-              loginUser(email);
-            } catch (error) {
-              displayError('Unable to log in');
-              console.error(error);
-            }
+            handleEmailSubmit()
           } else if (data.success && data.score > 0.7 && type === "g-auth") {
-            const { pathname, search } = history.location
-
-            if (pathname === '/join_organization' && search.substring(0, 12) === '?invitation=') {
-              localStorage.setItem('post-google-auth-redirect', pathname + search);
-            }
-            loginGoogleUser()
+            handleGoogleSubmit()
           } else {
             displayError('Unable to log in, please contact the admin');
           }
@@ -86,10 +79,28 @@ const MagicAuthenticate = () => {
       })
       .catch(() => {
         setLoading(false);
-        displayError('Google Recaptcha failed to load properly, please refresh the page and try again');
+        displayError('Google Recaptcha failed to verify properly, please refresh the page and try again');
       })
     })
   }
+
+  const handleEmailSubmit = () => {
+    try {
+      loginUser(email);
+    } catch (error) {
+      setError('Unable to log in');
+      console.error(error);
+    }
+  };
+
+  const handleGoogleSubmit = () => {
+    const { pathname, search } = history.location
+
+    if (pathname === '/join_organization' && search.substring(0, 12) === '?invitation=') {
+      localStorage.setItem('post-google-auth-redirect', pathname + search);
+    }
+    loginGoogleUser()
+  };
 
   const handleChange = (event) => {
     setEmail(event.target.value);
@@ -129,7 +140,15 @@ const MagicAuthenticate = () => {
           )
         }
 
-        <Form onSubmit={handleSubmit}>
+        <Form
+          onSubmit={e => {
+            if (useRecaptchaForAuth) {
+              handleSubmit(e, "email")
+            } else {
+              handleEmailSubmit()
+            }
+          }}
+        >
           <Form.Item style={{marginBottom: 4}}>
             <Input
               autoFocus
@@ -145,7 +164,13 @@ const MagicAuthenticate = () => {
             type="primary"
             htmlType="submit"
             style={{ width: '100%' }}
-            onClick={() => handleSubmit("email")}
+            onClick={e => {
+              if (useRecaptchaForAuth) {
+                handleSubmit(e, "email")
+              } else {
+                handleEmailSubmit()
+              }
+            }}
           >
             {loading ? 'Loading...' : 'Submit'}
           </Button>
@@ -154,7 +179,13 @@ const MagicAuthenticate = () => {
         <Button
           htmlType="submit"
           style={{ width: '100%', marginTop: 12 }}
-          onClick={() => handleSubmit("g-auth")}
+          onClick={e => {
+            if (useRecaptchaForAuth) {
+              handleSubmit(e, "g-auth")
+            } else {
+              handleEmailSubmit()
+            }
+          }}
         >
           <GoogleOutlined />
           <span style={{ marginLeft: 6 }}>Continue with Google</span>
