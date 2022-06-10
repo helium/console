@@ -710,4 +710,18 @@ defmodule ConsoleWeb.Router.DeviceController do
       end
     end
   end
+
+  def update_device_ecc_pair(conn, %{"id" => id, "key" => key}) do
+    case Devices.get_device(id) do
+      %Device{} = device ->
+        key_bin = key |> :base64.decode
+        with {:ok, _} <- Devices.update_device(device, %{ "ecc_key_pair" => key_bin }, "router") do
+          conn
+          |> send_resp(200, "Device ecc key updated")
+        end
+      _ ->
+        conn
+        |> send_resp(404, "")
+    end
+  end
 end

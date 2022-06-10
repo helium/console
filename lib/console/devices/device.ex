@@ -71,7 +71,7 @@ defmodule Console.Devices.Device do
 
   def router_update_changeset(device, attrs) do
     device
-      |> cast(attrs, [:frame_up, :frame_down, :last_connected, :total_packets, :dc_usage, :in_xor_filter])
+      |> cast(attrs, [:frame_up, :frame_down, :last_connected, :total_packets, :dc_usage, :in_xor_filter, :ecc_key_pair])
   end
 
   def create_discovery_changeset(device, device_params = %{ "name" => _name, "hotspot_address" => _hotspot_address, "organization_id" => _organization_id }) do
