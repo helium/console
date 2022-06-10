@@ -38,6 +38,7 @@ defmodule ConsoleWeb.Router do
     post "/subscribe_new_user", Auth0Controller, :subscribe_new_user
     post "/sessions", SessionController, :create
     post "/sessions/check_user", SessionController, :check_user
+    post "/sessions/verify_recaptcha", SessionController, :verify_recaptcha
     post "/resend_invitation/:email", InvitationController, :resend_invitation
   end
 
