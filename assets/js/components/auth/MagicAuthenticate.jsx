@@ -15,7 +15,7 @@ const MagicAuthenticate = () => {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState('');
   const recaptchaSiteKey = process.env.RECAPTCHA_SITE_KEY || '6Len2logAAAAALaqL5cECU0Vl7JJqqbIQX6IgWz6'
-  const useRecaptchaForAuth = process.env.USE_RECAPTCHA_FOR_AUTH === 'true'  // set to true here to test recaptcha in dev
+  const useRecaptchaForAuth = true  // set to true here to test recaptcha in dev
 
   useEffect(() => {
     const loadScriptByURL = (id, url, callback) => {
@@ -41,7 +41,7 @@ const MagicAuthenticate = () => {
     }
   }, []);
 
-  const handleSubmit = (event, type) => {
+  const handleRecaptchaSubmit = (event) => {
     event.preventDefault();
     setLoading(true);
 
@@ -68,10 +68,8 @@ const MagicAuthenticate = () => {
         })
         .then(data => data.json())
         .then(data => {
-          if (data.success && data.score > 0.7 && type === "email") {
+          if (data.success && data.score >= 0.9) {
             handleEmailSubmit()
-          } else if (data.success && data.score > 0.7 && type === "g-auth") {
-            handleGoogleSubmit()
           } else {
             displayError('Unable to log in, please contact the admin');
           }
@@ -143,7 +141,7 @@ const MagicAuthenticate = () => {
         <Form
           onSubmit={e => {
             if (useRecaptchaForAuth) {
-              handleSubmit(e, "email")
+              handleRecaptchaSubmit(e)
             } else {
               handleEmailSubmit()
             }
@@ -166,7 +164,7 @@ const MagicAuthenticate = () => {
             style={{ width: '100%' }}
             onClick={e => {
               if (useRecaptchaForAuth) {
-                handleSubmit(e, "email")
+                handleRecaptchaSubmit(e)
               } else {
                 handleEmailSubmit()
               }
@@ -179,13 +177,7 @@ const MagicAuthenticate = () => {
         <Button
           htmlType="submit"
           style={{ width: '100%', marginTop: 12 }}
-          onClick={e => {
-            if (useRecaptchaForAuth) {
-              handleSubmit(e, "g-auth")
-            } else {
-              handleEmailSubmit()
-            }
-          }}
+          onClick={handleGoogleSubmit}
         >
           <GoogleOutlined />
           <span style={{ marginLeft: 6 }}>Continue with Google</span>
