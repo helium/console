@@ -10,10 +10,23 @@ import * as rest from '../../util/rest';
 import { displayError } from '../../util/messages';
 const { Text, Title } = Typography
 
+const styles = {
+  none: {
+    opacity: 0,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    height: 0,
+    width: 0,
+    zIndex: -1,
+  }
+}
+
 const MagicAuthenticate = () => {
   const history = useHistory()
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState('');
+  const [name, setName] = useState('')
   const recaptchaSiteKey = process.env.RECAPTCHA_SITE_KEY || '6Len2logAAAAALaqL5cECU0Vl7JJqqbIQX6IgWz6'
   const useRecaptchaForAuth = true  // set to true here to test recaptcha in dev
 
@@ -44,6 +57,11 @@ const MagicAuthenticate = () => {
   const handleRecaptchaSubmit = (event) => {
     event.preventDefault();
     setLoading(true);
+
+    if (name !== '') {
+      displayError('Unable to log in, please contact the admin');
+      return
+    }
 
     if (!email) {
       setLoading(false);
@@ -83,16 +101,26 @@ const MagicAuthenticate = () => {
   }
 
   const handleEmailSubmit = () => {
+    if (name !== '') {
+      displayError('Unable to log in, please contact the admin');
+      return
+    }
+
     try {
       loginUser(email);
     } catch (error) {
-      setError('Unable to log in');
+      displayError('Unable to log in, please try again');
       console.error(error);
     }
   };
 
   const handleGoogleSubmit = () => {
     const { pathname, search } = history.location
+
+    if (name !== '') {
+      displayError('Unable to log in, please contact the admin');
+      return
+    }
 
     if (pathname === '/join_organization' && search.substring(0, 12) === '?invitation=') {
       localStorage.setItem('post-google-auth-redirect', pathname + search);
@@ -172,6 +200,18 @@ const MagicAuthenticate = () => {
           >
             {loading ? 'Loading...' : 'Submit'}
           </Button>
+
+          <label style={styles.none} htmlFor="name" />
+          <input
+            style={styles.none}
+            autoComplete="off"
+            tabIndex="-1"
+            type="text"
+            id="name"
+            name="name"
+            placeholder="Your name here"
+            onChange={e => setName(e.target.value)}
+          />
         </Form>
 
         <Button
