@@ -146,6 +146,13 @@ function Decoder(bytes, port, uplink_info) {
           channel: bytes[0],
           type: TEMPERATURE,
           value: value / 10,
+          unit: "celcius",
+          name: "temperature"
+        })
+        .concat({
+          channel: bytes[0],
+          type: TEMPERATURE,
+          value: value / 10,
           unit: "celsius",
           name: "temperature",
           last: nextBytes.length == 0 ? true : undefined
