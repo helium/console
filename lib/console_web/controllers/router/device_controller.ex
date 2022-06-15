@@ -188,7 +188,8 @@ defmodule ConsoleWeb.Router.DeviceController do
                 flow.function.format not in allowed_function_formats ->
                   nil
                 true ->
-                  CommunityFunctions.inject_body(flow.function, false)
+                  # CommunityFunctions.inject_body(flow.function, false) swap out for this when js decoders are tested
+                  flow.function
               end
 
             Map.put(flow.channel, :function, function)
