@@ -109,6 +109,9 @@ config :console,
 config :console,
   allowed_functions: "all"
 
+config :console,
+  recaptcha_secret_key: "6Len2logAAAAAJMuljKEX6LrQqe7RWdfNqPDapU5"
+
 config :logger, level: :debug
 
 # config :prometheus, App.PrometheusExporter,

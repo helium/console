@@ -78,4 +78,15 @@ defmodule ConsoleWeb.SessionController do
       end
     end
   end
+
+  def verify_recaptcha(conn, %{"token" => token}) do
+    body = URI.encode_query(%{
+      "secret" => Application.get_env(:console, :recaptcha_secret_key),
+      "response" => token
+    })
+
+    response = HTTPoison.post!("https://www.google.com/recaptcha/api/siteverify", body, %{"Content-Type" => "application/x-www-form-urlencoded"})
+    conn
+    |> send_resp(:ok, response.body)
+  end
 end

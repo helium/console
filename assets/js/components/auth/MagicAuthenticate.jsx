@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { Button, Card, Typography, Input, Form } from 'antd';
@@ -6,33 +6,121 @@ import GoogleOutlined from "@ant-design/icons/GoogleOutlined";
 import { loginUser, loginGoogleUser } from '../../actions/magic';
 import AuthLayout from '../common/AuthLayout'
 import Logo from '../../../img/symbol.svg'
+import * as rest from '../../util/rest';
+import { displayError } from '../../util/messages';
 const { Text, Title } = Typography
+
+const styles = {
+  none: {
+    opacity: 0,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    height: 0,
+    width: 0,
+    zIndex: -1,
+  }
+}
 
 const MagicAuthenticate = () => {
   const history = useHistory()
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState('');
-  const [error, setError] = useState(null);
+  const [name, setName] = useState('')
+  const recaptchaSiteKey = process.env.RECAPTCHA_SITE_KEY || '6Len2logAAAAALaqL5cECU0Vl7JJqqbIQX6IgWz6'
+  const useRecaptchaForAuth = process.env.USE_RECAPTCHA_FOR_AUTH === 'true' // set to true here to test recaptcha in dev
 
-  const handleSubmit = async (event) => {
+  useEffect(() => {
+    const loadScriptByURL = (id, url, callback) => {
+      const isScriptExist = document.getElementById(id);
+
+      if (!isScriptExist) {
+        var script = document.createElement("script");
+        script.type = "text/javascript";
+        script.src = url;
+        script.id = id;
+        script.onload = function () {
+          if (callback) callback();
+        };
+        document.body.appendChild(script);
+        return
+      }
+
+      if (isScriptExist && callback) return callback();
+    }
+
+    if (useRecaptchaForAuth) {
+      loadScriptByURL("recaptcha-key", `https://www.google.com/recaptcha/api.js?render=${recaptchaSiteKey}`);
+    }
+  }, []);
+
+  const handleRecaptchaSubmit = (event) => {
     event.preventDefault();
     setLoading(true);
+
+    if (name !== '') {
+      displayError('Unable to log in, please contact the admin');
+      return
+    }
+
     if (!email) {
       setLoading(false);
-      setError('Email is Invalid');
+      displayError('Email is Invalid');
       return;
     }
+
+    if (!window.grecaptcha || (useRecaptchaForAuth && !recaptchaSiteKey)) {
+      setLoading(false);
+      displayError('Google Recaptcha failed to load properly, please refresh the page and try again');
+      return;
+    }
+
+    window.grecaptcha.ready(() => {
+      window.grecaptcha.execute(recaptchaSiteKey, { action: 'submit' }).then(token => {
+        return fetch('/api/sessions/verify_recaptcha', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: `{"token":"${token}"}`
+        })
+        .then(data => data.json())
+        .then(data => {
+          if (data.success && data.score >= 0.9) {
+            handleEmailSubmit()
+          } else {
+            displayError('Unable to log in, please contact the admin');
+          }
+        })
+      })
+      .catch(() => {
+        setLoading(false);
+        displayError('Google Recaptcha failed to verify properly, please refresh the page and try again');
+      })
+    })
+  }
+
+  const handleEmailSubmit = () => {
+    if (name !== '') {
+      displayError('Unable to log in, please contact the admin');
+      return
+    }
+
     try {
       loginUser(email);
     } catch (error) {
-      setError('Unable to log in');
+      displayError('Unable to log in, please try again');
       console.error(error);
     }
   };
 
-  const handleGoogleSubmit = async (event) => {
-    event.preventDefault();
+  const handleGoogleSubmit = () => {
     const { pathname, search } = history.location
+
+    if (name !== '') {
+      displayError('Unable to log in, please contact the admin');
+      return
+    }
 
     if (pathname === '/join_organization' && search.substring(0, 12) === '?invitation=') {
       localStorage.setItem('post-google-auth-redirect', pathname + search);
@@ -78,7 +166,15 @@ const MagicAuthenticate = () => {
           )
         }
 
-        <Form onSubmit={handleSubmit}>
+        <Form
+          onSubmit={e => {
+            if (useRecaptchaForAuth) {
+              handleRecaptchaSubmit(e)
+            } else {
+              handleEmailSubmit()
+            }
+          }}
+        >
           <Form.Item style={{marginBottom: 4}}>
             <Input
               autoFocus
@@ -94,10 +190,28 @@ const MagicAuthenticate = () => {
             type="primary"
             htmlType="submit"
             style={{ width: '100%' }}
-            onClick={handleSubmit}
+            onClick={e => {
+              if (useRecaptchaForAuth) {
+                handleRecaptchaSubmit(e)
+              } else {
+                handleEmailSubmit()
+              }
+            }}
           >
             {loading ? 'Loading...' : 'Submit'}
           </Button>
+
+          <label style={styles.none} htmlFor="name" />
+          <input
+            style={styles.none}
+            autoComplete="off"
+            tabIndex="-1"
+            type="text"
+            id="name"
+            name="name"
+            placeholder="Your name here"
+            onChange={e => setName(e.target.value)}
+          />
         </Form>
 
         <Button
