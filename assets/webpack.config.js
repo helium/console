@@ -125,7 +125,9 @@ module.exports = function (env) {
         "USER_INVITE_ONLY",
         "IMPOSE_HARD_CAP",
         "ALLOWED_INTEGRATIONS",
-        "ALLOWED_FUNCTIONS"
+        "ALLOWED_FUNCTIONS",
+        "RECAPTCHA_SITE_KEY",
+        "USE_RECAPTCHA_FOR_AUTH"
       ]),
       new NodePolyfillPlugin()
     ],

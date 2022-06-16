@@ -778,3 +778,7 @@ a.version-link {
   border-color: #40a9ff;
   background: #40a9ff;
 }
+
+.grecaptcha-badge {
+  z-index: 100;
+}
