@@ -28,7 +28,7 @@ const MagicAuthenticate = () => {
   const [loading, setLoading] = useState('');
   const [name, setName] = useState('')
   const recaptchaSiteKey = process.env.RECAPTCHA_SITE_KEY || '6Len2logAAAAALaqL5cECU0Vl7JJqqbIQX6IgWz6'
-  const useRecaptchaForAuth = true  // set to true here to test recaptcha in dev
+  const useRecaptchaForAuth = process.env.USE_RECAPTCHA_FOR_AUTH === 'true' // set to true here to test recaptcha in dev
 
   useEffect(() => {
     const loadScriptByURL = (id, url, callback) => {
