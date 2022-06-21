@@ -16,6 +16,12 @@ defmodule ConsoleWeb.Plug.RateLimit do
     if Application.get_env(:console, :env) == :test or Application.get_env(:console, :env) == :dev do
       conn
     else
+      limit =
+        case Application.get_env(:console, :socket_check_origin) do
+          "https://console.helium.com" -> 600
+          _ -> limit
+        end
+
       case Hammer.check_rate("#{action}:#{ip_address}", 60_000, limit) do
         {:allow, _count} ->
           conn
