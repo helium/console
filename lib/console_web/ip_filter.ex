@@ -18,14 +18,19 @@ defmodule ConsoleWeb.IPFilter do
   def check_ip_restriction(ip) do
     ip_location = Geolix.lookup(ip, where: :geolite2_city)
 
-    cond do
-      ip_location.country.iso_code in @unsupported_countries ->
-        true
-      ip_location.country.iso_code == "UA" and List.first(ip_location.subdivisions).iso_code in @unsupported_ukr_subdivisions ->
-        true
-      ip_location.city.name in @unsupported_cities ->
-        true
-      true -> false
+    if is_nil(ip_location) do # in case of failing db, ip not found
+      Appsignal.send_error(%RuntimeError{ message: ip }, "Unable to find IP in database", ["ip_filter.ex"])
+      false
+    else
+      cond do
+        ip_location.country.iso_code in @unsupported_countries ->
+          true
+        ip_location.country.iso_code == "UA" and List.first(ip_location.subdivisions).iso_code in @unsupported_ukr_subdivisions ->
+          true
+        ip_location.city.name in @unsupported_cities ->
+          true
+        true -> false
+      end
     end
   end
 end

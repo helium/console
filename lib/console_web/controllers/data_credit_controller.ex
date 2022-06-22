@@ -15,12 +15,12 @@ defmodule ConsoleWeb.DataCreditController do
 
   def create_customer_id_and_charge(conn, params = %{ "amountUSD" => amountUSD }) do
     { amount, _ } = Float.parse(amountUSD)
-    is_ip_restricted = ConsoleWeb.IPFilter.check_ip_restriction(ConsoleWeb.IPFilter.get_ip(conn))
+    ip_restricted = ConsoleWeb.IPFilter.check_ip_restriction(ConsoleWeb.IPFilter.get_ip(conn))
 
     cond do
       amount < Application.get_env(:console, :stripe_minimum_purchase) ->
         {:error, :bad_request, "Credit card charges cannot be less than $#{Application.get_env(:console, :stripe_minimum_purchase)}"}
-      is_ip_restricted ->
+      ip_restricted ->
         {:error, :forbidden, "Our payment processor doesn't currently support transactions in your area."}
       true ->
         current_organization = conn.assigns.current_organization
@@ -64,12 +64,12 @@ defmodule ConsoleWeb.DataCreditController do
 
   def create_charge(conn, params = %{ "amountUSD" => amountUSD }) do
     { amount, _ } = Float.parse(amountUSD)
-    is_ip_restricted = ConsoleWeb.IPFilter.check_ip_restriction(ConsoleWeb.IPFilter.get_ip(conn))
+    ip_restricted = ConsoleWeb.IPFilter.check_ip_restriction(ConsoleWeb.IPFilter.get_ip(conn))
 
     cond do
       amount < Application.get_env(:console, :stripe_minimum_purchase) ->
         {:error, :bad_request, "Credit card charges cannot be less than $#{Application.get_env(:console, :stripe_minimum_purchase)}"}
-      is_ip_restricted ->
+      ip_restricted ->
         {:error, :forbidden, "Our payment processor doesn't currently support transactions in your area."}
       true ->
         current_organization = conn.assigns.current_organization
@@ -97,9 +97,9 @@ defmodule ConsoleWeb.DataCreditController do
   end
 
   def get_payment_methods(conn, _) do
-    is_ip_restricted = ConsoleWeb.IPFilter.check_ip_restriction(ConsoleWeb.IPFilter.get_ip(conn))
+    ip_restricted = ConsoleWeb.IPFilter.check_ip_restriction(ConsoleWeb.IPFilter.get_ip(conn))
 
-    if is_ip_restricted do
+    if ip_restricted do
       {:error, :forbidden, "Our payment processor doesn't currently support transactions in your area."}
     else
       current_organization = conn.assigns.current_organization
@@ -117,9 +117,9 @@ defmodule ConsoleWeb.DataCreditController do
   end
 
   def get_setup_payment_method(conn, _) do
-    is_ip_restricted = ConsoleWeb.IPFilter.check_ip_restriction(ConsoleWeb.IPFilter.get_ip(conn))
+    ip_restricted = ConsoleWeb.IPFilter.check_ip_restriction(ConsoleWeb.IPFilter.get_ip(conn))
 
-    if is_ip_restricted do
+    if ip_restricted do
       {:error, :forbidden, "Our payment processor doesn't currently support transactions in your area."}
     else
       current_organization = conn.assigns.current_organization
@@ -208,9 +208,9 @@ defmodule ConsoleWeb.DataCreditController do
   end
 
   def create_dc_purchase(conn, params = %{"cost" => cost, "cardType" => card_type, "last4" => last_4, "paymentId" => payment_id}) do
-    is_ip_restricted = ConsoleWeb.IPFilter.check_ip_restriction(ConsoleWeb.IPFilter.get_ip(conn))
+    ip_restricted = ConsoleWeb.IPFilter.check_ip_restriction(ConsoleWeb.IPFilter.get_ip(conn))
 
-    if is_ip_restricted do
+    if ip_restricted do
       {:error, :forbidden, "Our payment processor doesn't currently support transactions in your area."}
     else
       current_organization = conn.assigns.current_organization
