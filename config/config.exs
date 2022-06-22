@@ -101,6 +101,15 @@ config :console, Console.Scheduler,
     ],
   ]
 
+  config :geolix,
+  databases: [
+    %{
+      id: :geolite2_city,
+      adapter: Geolix.Adapter.MMDB2,
+      source: "/app/GeoLite2-City.mmdb"
+    }
+  ]
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env}.exs"
