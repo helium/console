@@ -42,7 +42,7 @@ defmodule ConsoleWeb.DataCreditController do
                 "receipt_email" => conn.assigns.current_user.email,
                 "description" => "Data Credits" <> description
              })
-              
+
 
              with {:ok, stripe_response} <- HTTPoison.post("#{@stripe_api_url}/v1/payment_intents", request_body, headers) do
                with 200 <- stripe_response.status_code do
@@ -102,25 +102,26 @@ defmodule ConsoleWeb.DataCreditController do
   def get_setup_payment_method(conn, _) do
     current_organization = conn.assigns.current_organization
 
-    request_body = URI.encode_query(%{
-      "customer" => current_organization.stripe_customer_id,
-    })
-    headers = [
-      {"Authorization", "Bearer #{Application.get_env(:console, :stripe_secret_key)}"},
-      {"Content-Type", "application/x-www-form-urlencoded"}
-    ]
-
-    with {:ok, stripe_response} <- HTTPoison.post("#{@stripe_api_url}/v1/setup_intents", request_body, headers) do
-      with 200 <- stripe_response.status_code do
-        setup_intent = Poison.decode!(stripe_response.body)
-        # Send email about payment method added
-        Organizations.get_administrators(current_organization)
-        |> Enum.each(fn administrator ->
-          conn.assigns.current_user
-          |> Email.payment_method_updated_email(current_organization, administrator.email, "added") |> Mailer.deliver_later()
-        end)
-        conn |> send_resp(:ok, Poison.encode!(%{ setup_intent_secret: setup_intent["client_secret"] }))
+    if is_nil(current_organization.stripe_customer_id) do
+      request_body = URI.encode_query(%{
+        "name" => current_organization.name,
+        "description" => current_organization.id,
+      })
+      headers = [
+        {"Authorization", "Bearer #{Application.get_env(:console, :stripe_secret_key)}"},
+        {"Content-Type", "application/x-www-form-urlencoded"}
+      ]
+      # create a customer id in stripe
+      with {:ok, stripe_response} <- HTTPoison.post("#{@stripe_api_url}/v1/customers", request_body, headers) do
+        with 200 <- stripe_response.status_code do
+          customer = Poison.decode!(stripe_response.body)
+          with {:ok, %Organization{} = organization} <- Organizations.update_organization(current_organization, %{ "stripe_customer_id" => customer["id"]}) do
+            create_stripe_payment_card(conn, organization, customer["id"])
+          end
+        end
       end
+    else
+      create_stripe_payment_card(conn, current_organization, current_organization.stripe_customer_id)
     end
   end
 
@@ -362,6 +363,29 @@ defmodule ConsoleWeb.DataCreditController do
     else {:error, _} ->
       conn
       |> send_resp(502, "")
+    end
+  end
+
+  defp create_stripe_payment_card(conn, current_organization, stripe_customer_id) do
+    request_body = URI.encode_query(%{
+      "customer" => stripe_customer_id,
+    })
+    headers = [
+      {"Authorization", "Bearer #{Application.get_env(:console, :stripe_secret_key)}"},
+      {"Content-Type", "application/x-www-form-urlencoded"}
+    ]
+
+    with {:ok, stripe_response} <- HTTPoison.post("#{@stripe_api_url}/v1/setup_intents", request_body, headers) do
+      with 200 <- stripe_response.status_code do
+        setup_intent = Poison.decode!(stripe_response.body)
+        # Send email about payment method added
+        Organizations.get_administrators(current_organization)
+        |> Enum.each(fn administrator ->
+          conn.assigns.current_user
+          |> Email.payment_method_updated_email(current_organization, administrator.email, "added") |> Mailer.deliver_later()
+        end)
+        conn |> send_resp(:ok, Poison.encode!(%{ setup_intent_secret: setup_intent["client_secret"] }))
+      end
     end
   end
 

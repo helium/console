@@ -229,22 +229,24 @@ class DataCreditsIndex extends Component {
               </div>
             </Card>
           </Col>
-          {!process.env.SELF_HOSTED || window.stripe_public_key && (
+          {(!process.env.SELF_HOSTED || window.stripe_public_key) && (
             <Col span={8}>
               <UserCan noManager>
                 <Card
                   title="Default Payment Method"
                   extra={
-                    this.state.paymentMethods.length > 0 && (
-                      <Link
-                        to="#"
-                        onClick={() =>
-                          this.openModal("showDefaultPaymentModal")
+                    <Link
+                      to="#"
+                      onClick={() =>
+                        this.openModal("showDefaultPaymentModal")
+                      }
+                    >
+                      <Text style={styles.tipText}>
+                        {
+                          this.state.paymentMethods.length > 0 ? "Change" : "Add Card"
                         }
-                      >
-                        <Text style={styles.tipText}>Change</Text>
-                      </Link>
-                    )
+                      </Text>
+                    </Link>
                   }
                   bodyStyle={{ height: 90, padding: 0 }}
                 >
