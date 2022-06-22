@@ -69,7 +69,6 @@ defmodule Console.Mixfile do
       {:timex, "~> 3.7.7"},
       {:magic_admin, "~> 0.5.0"},
       {:amqp, "~> 3.1.1"},
-      {:geolix_adapter_mmdb2, "~> 0.6.0"},
     ]
   end
 

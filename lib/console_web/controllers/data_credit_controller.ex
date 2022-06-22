@@ -12,8 +12,6 @@ defmodule ConsoleWeb.DataCreditController do
   action_fallback(ConsoleWeb.FallbackController)
 
   @stripe_api_url "https://api.stripe.com"
-  @unsupported_countries ["CU", "IR", "KP", "SY", "RU"]
-  @unsupported_subdivisions [43]
 
   def create_customer_id_and_charge(conn, params = %{ "amountUSD" => amountUSD }) do
     { amount, _ } = Float.parse(amountUSD)
@@ -343,13 +341,6 @@ defmodule ConsoleWeb.DataCreditController do
   end
 
   def get_hnt_price(conn, _) do
-    # TESTING -->
-    IO.puts "\n\n\n\n\n\n\n\n\n\n-----------------\n\n\n\n\n\n\n\n\n\n"
-    IO.inspect get_ip(conn)
-    IO.inspect Geolix.lookup(get_ip(conn), where: :geolite2_city)
-    IO.inspect Geolix.lookup("176.108.191.20", where: :geolite2_city)
-    IO.puts "\n\n\n\n\n\n\n\n\n\n-----------------\n\n\n\n\n\n\n\n\n\n"
-    # <-- TESTING
     with {:ok, current_price_resp} <- HTTPoison.get("https://api.helium.io/v1/oracle/prices/current"),
       200 <- current_price_resp.status_code,
       {:ok, predictions_resp} <- HTTPoison.get("https://api.helium.io/v1/oracle/predictions"),
@@ -371,18 +362,6 @@ defmodule ConsoleWeb.DataCreditController do
     else {:error, _} ->
       conn
       |> send_resp(502, "")
-    end
-  end
-
-  defp get_ip(conn) do
-    forwarded_for = List.first(Plug.Conn.get_req_header(conn, "x-forwarded-for"))
-
-    if forwarded_for do
-      String.split(forwarded_for, ",")
-      |> Enum.map(&String.trim/1)
-      |> List.first()
-    else
-      to_string(:inet_parse.ntoa(conn.remote_ip))
     end
   end
 
