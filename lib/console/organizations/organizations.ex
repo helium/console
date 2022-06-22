@@ -125,7 +125,7 @@ defmodule Console.Organizations do
 
     from(
       o in Organization,
-      where: o.survey_token_used == false and is_nil(o.survey_token_sent_at) and o.survey_token_inserted_at < ^ago_25_mins and o.first_packet_received_at < ^ago_25_mins and o.inserted_at > ^ago_30_days
+      where: o.survey_token_used == false and not is_nil(o.default_payment_id) and is_nil(o.survey_token_sent_at) and o.survey_token_inserted_at < ^ago_25_mins and o.first_packet_received_at < ^ago_25_mins and o.inserted_at > ^ago_30_days
     )
     |> Repo.all()
   end

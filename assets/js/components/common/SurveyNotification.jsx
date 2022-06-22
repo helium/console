@@ -55,10 +55,10 @@ export default ({ organization, toggleSurveyNotification, mobile }) => {
             </Text>
             <Text style={styles.text}>
               {
-                organization && organization.survey_token_inserted_at && organization.first_packet_received_at ? (
-                  "Thank you for completing the survey and adding an active device. Within the next 30 minutes an email will be sent with a token to claim remaining Data Credits."
+                organization && organization.survey_token_inserted_at && organization.first_packet_received_at && organization.default_payment_id ? (
+                  "Thank you for completing the survey, submitting a payment card and adding an active device. Within the next 30 minutes an email will be sent with a token to claim remaining Data Credits."
                 ) : (
-                  `To claim more DC (total 10,000), complete the survey (2 minutes) and add an active device within 30 days of ${organization && moment(organization.inserted_at).format("LL")}.`
+                  `To claim more DC (total 10,000), complete the survey (2 minutes), submit a payment card on file and add an active device within 30 days of ${organization && moment(organization.inserted_at).format("LL")}. Your payment card will only be stored and will not be charged unless you specifically submit a purchase order.`
                 )
               }
             </Text>
@@ -73,6 +73,17 @@ export default ({ organization, toggleSurveyNotification, mobile }) => {
                 >
                   Take Survey
                 </PopupButton>
+              )}
+              { organization && !organization.default_payment_id && (
+                <Button
+                  type="primary"
+                  style={{ marginLeft: mobile ? 0 : 10, marginTop: 4 }}
+                  onClick={toggleSurveyNotification}
+                >
+                  <Link to={`/datacredits`}>
+                    Add Payment Card
+                  </Link>
+                </Button>
               )}
               { organization && !organization.has_device && (
                 <Button
