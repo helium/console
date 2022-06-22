@@ -127,7 +127,7 @@ export default ({
             <p>
               <a
                 className="help-link"
-                href="https://docs.helium.com/use-the-network/console/packets"
+                href="https://docs.helium.com/use-the-network/console/multi-packets/"
                 target="_blank"
               >
                 Learn more about Packet Configurations
