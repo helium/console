@@ -375,7 +375,15 @@ defmodule ConsoleWeb.DataCreditController do
   end
 
   defp get_ip(conn) do
-    conn.remote_ip |> :inet_parse.ntoa |> to_string()
+    forwarded_for = List.first(Plug.Conn.get_req_header(conn, "x-forwarded-for"))
+
+    if forwarded_for do
+      String.split(forwarded_for, ",")
+      |> Enum.map(&String.trim/1)
+      |> List.first()
+    else
+      to_string(:inet_parse.ntoa(conn.remote_ip))
+    end
   end
 
   def broadcast_router_refill_dc_balance(%Organization{} = organization) do
