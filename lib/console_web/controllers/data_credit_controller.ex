@@ -86,6 +86,28 @@ defmodule ConsoleWeb.DataCreditController do
     end
   end
 
+  def check_payment_method(conn, %{ "pm_id" => pm_id }) do
+    headers = [
+      {"Authorization", "Bearer #{Application.get_env(:console, :stripe_secret_key)}"},
+      {"Content-Type", "application/x-www-form-urlencoded"}
+    ]
+
+    with {:ok, stripe_response} <- HTTPoison.get("#{@stripe_api_url}/v1/payment_methods/#{pm_id}", headers),
+      200 <- stripe_response.status_code do
+        payment_method = Poison.decode!(stripe_response.body)
+        case CardFingerprints.get_card_fingerprint(payment_method["card"]["fingerprint"]) do
+          nil ->
+            Task.Supervisor.async_nolink(ConsoleWeb.TaskSupervisor, fn ->
+              CardFingerprints.create_card_fingerprint(payment_method["card"]["fingerprint"])
+            end)
+
+            conn |> send_resp(:ok, Poison.encode!(%{ duplicate_card: false }))
+          _ ->
+            conn |> send_resp(:ok, Poison.encode!(%{ duplicate_card: true }))
+        end
+    end
+  end
+
   def get_payment_methods(conn, _) do
     current_organization = conn.assigns.current_organization
     headers = [

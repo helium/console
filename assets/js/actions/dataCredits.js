@@ -16,6 +16,13 @@ export const createCharge = (amountUSD, description) => () =>
     })
     .then(({ data }) => data);
 
+export const checkPaymentMethod = (pmId) => () =>
+  rest
+    .post("/api/data_credits/check_payment_method", {
+      pm_id: pmId
+    })
+    .then(({ data }) => data);
+
 export const getPaymentMethods = () => () =>
   rest.get("/api/data_credits/payment_methods").then(({ data }) => data.data);
 

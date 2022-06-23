@@ -3,7 +3,7 @@ import stripe from '../../config/stripe'
 import { connect } from 'react-redux'
 import { displayError } from '../../util/messages'
 import { bindActionCreators } from 'redux'
-import { setDefaultPaymentMethod, getSetupPaymentMethod, removePaymentMethod } from '../../actions/dataCredits'
+import { setDefaultPaymentMethod, getSetupPaymentMethod, removePaymentMethod, checkPaymentMethod } from '../../actions/dataCredits'
 import ExistingPaymentCards from './ExistingPaymentCards'
 import StripeCardElement from './StripeCardElement'
 import { Modal, Button, Typography } from 'antd';
@@ -76,15 +76,18 @@ class DefaultPaymentModal extends Component {
         if (result.error) {
           displayError(result.error.message)
         } else {
-          // check if card already exists
-          // if exists stop
-          // else go on
-
-
-          this.props.fetchPaymentMethods(() => {
-            this.props.setDefaultPaymentMethod(result.setupIntent.payment_method)
+          return this.props.checkPaymentMethod(result.setupIntent.payment_method)
+          .then(data => {
+            if (data.duplicate_card) {
+              displayError("This payment method could not be added successfully, please try another payment method.")
+              this.removePaymentMethod(result.setupIntent.payment_method)
+            } else {
+              this.props.fetchPaymentMethods(() => {
+                this.props.setDefaultPaymentMethod(result.setupIntent.payment_method)
+              })
+            }
+            this.props.onClose()
           })
-          this.props.onClose()
         }
       })
       .catch(() => {
@@ -160,7 +163,7 @@ class DefaultPaymentModal extends Component {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ setDefaultPaymentMethod, getSetupPaymentMethod, removePaymentMethod }, dispatch)
+  return bindActionCreators({ setDefaultPaymentMethod, getSetupPaymentMethod, removePaymentMethod, checkPaymentMethod }, dispatch)
 }
 
 export default DefaultPaymentModal

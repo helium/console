@@ -87,6 +87,7 @@ defmodule ConsoleWeb.Router do
     post "/data_credits/create_customer_and_charge", DataCreditController, :create_customer_id_and_charge
     post "/data_credits/create_charge", DataCreditController, :create_charge
     get "/data_credits/payment_methods", DataCreditController, :get_payment_methods
+    post "/data_credits/check_payment_method", DataCreditController, :check_payment_method
     get "/data_credits/setup_payment_method", DataCreditController, :get_setup_payment_method
     post "/data_credits/set_default_payment_method", DataCreditController, :set_default_payment_method
     post "/data_credits/remove_payment_method", DataCreditController, :remove_payment_method
