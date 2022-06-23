@@ -76,6 +76,11 @@ class DefaultPaymentModal extends Component {
         if (result.error) {
           displayError(result.error.message)
         } else {
+          // check if card already exists
+          // if exists stop
+          // else go on
+
+
           this.props.fetchPaymentMethods(() => {
             this.props.setDefaultPaymentMethod(result.setupIntent.payment_method)
           })

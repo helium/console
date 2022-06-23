@@ -329,6 +329,7 @@ class PurchaseCreditModal extends Component {
         result.paymentIntent.amount,
         paymentMethod.card.brand,
         paymentMethod.card.last4,
+        paymentMethod.id,
         result.paymentIntent.id,
         this.state.description
       )

@@ -36,12 +36,13 @@ export const removePaymentMethod = (paymentId, latestAddedCardId) => () =>
     .then(() => {});
 
 export const createDCPurchase =
-  (cost, cardType, last4, paymentId, description) => () =>
+  (cost, cardType, last4, cardId, paymentId, description) => () =>
     rest
       .post("/api/data_credits/create_dc_purchase", {
         cost,
         cardType,
         last4,
+        cardId,
         paymentId,
         description,
       })

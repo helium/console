@@ -3,6 +3,7 @@ defmodule ConsoleWeb.DataCreditController do
   alias Console.Email
   alias Console.Memos
   alias Console.Organizations
+  alias Console.CardFingerprints
   alias Console.DcPurchases
   alias Console.DcPurchases.DcPurchase
   alias Console.Organizations.Organization
@@ -185,7 +186,7 @@ defmodule ConsoleWeb.DataCreditController do
     end
   end
 
-  def create_dc_purchase(conn, params = %{"cost" => cost, "cardType" => card_type, "last4" => last_4, "paymentId" => payment_id}) do
+  def create_dc_purchase(conn, params = %{"cost" => cost, "cardType" => card_type, "last4" => last_4, "cardId" => card_id, "paymentId" => payment_id}) do
     current_organization = conn.assigns.current_organization
     current_user = conn.assigns.current_user
     # Refactor out conversion rates between USD, DC, Bytes later
@@ -225,6 +226,8 @@ defmodule ConsoleWeb.DataCreditController do
             |> Enum.each(fn admin ->
               Email.data_credit_purchase_email(dc_purchase, current_user, current_organization, admin.email) |> Mailer.deliver_later()
             end)
+
+            insert_card_fingerprint(card_id)
 
             conn
             |> put_resp_header("message", "Payment successful, your Data Credits balance has been refreshed.")
@@ -387,6 +390,20 @@ defmodule ConsoleWeb.DataCreditController do
         conn |> send_resp(:ok, Poison.encode!(%{ setup_intent_secret: setup_intent["client_secret"] }))
       end
     end
+  end
+
+  defp insert_card_fingerprint(card_id) do
+    Task.Supervisor.async_nolink(ConsoleWeb.TaskSupervisor, fn ->
+      headers = [
+        {"Authorization", "Bearer #{Application.get_env(:console, :stripe_secret_key)}"},
+        {"Content-Type", "application/x-www-form-urlencoded"}
+      ]
+      with {:ok, stripe_response} <- HTTPoison.get("#{@stripe_api_url}/v1/payment_methods/#{card_id}", headers),
+        200 <- stripe_response.status_code do
+          payment_method = Poison.decode!(stripe_response.body)
+          CardFingerprints.create_card_fingerprint(payment_method["card"]["fingerprint"])
+      end
+    end)
   end
 
   def broadcast_router_refill_dc_balance(%Organization{} = organization) do
