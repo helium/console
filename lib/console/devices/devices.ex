@@ -216,7 +216,7 @@ defmodule Console.Devices do
     |> Repo.all()
   end
 
-  defp get_organization_device_count(organization) do
+  def get_organization_device_count(organization) do
     devices = from(d in Device, where: d.organization_id == ^organization.id) |> Repo.all()
     length(devices)
   end

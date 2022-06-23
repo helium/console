@@ -108,7 +108,7 @@ defmodule ConsoleWeb.V1.DeviceController do
             if profile_id == nil do
               with {:ok, device} <- Devices.update_device(device, %{ config_profile_id: nil }) do
                 device = device |> Repo.preload([[labels: :config_profile], :config_profile])
-                broadcast_router_update_devices(device)
+                broadcast_router_update_device(device)
 
                 render(conn, "show.json", device: put_config_settings_on_device(device))
               end
@@ -120,7 +120,7 @@ defmodule ConsoleWeb.V1.DeviceController do
                 _ ->
                   with {:ok, device} <- Devices.update_device(device, %{ config_profile_id: config_profile.id }) do
                     device = device |> Repo.preload([[labels: :config_profile], :config_profile])
-                    broadcast_router_update_devices(device)
+                    broadcast_router_update_device(device)
 
                     render(conn, "show.json", device: put_config_settings_on_device(device))
                   end
@@ -140,7 +140,7 @@ defmodule ConsoleWeb.V1.DeviceController do
         %Device{} = device ->
           with {:ok, device} <- Devices.update_device(device, %{ active: active }) do
             device = device |> Repo.preload([[labels: :config_profile], :config_profile])
-            broadcast_router_update_devices(device)
+            broadcast_router_update_device(device)
 
             render(conn, "show.json", device: put_config_settings_on_device(device))
           end
@@ -163,7 +163,7 @@ defmodule ConsoleWeb.V1.DeviceController do
           deleted_device = %{ device_id: id, labels: Enum.map(device.labels, fn l -> l.id end), device_name: device.name }
 
           with {:ok, _} <- Devices.delete_device(device) do
-            broadcast_router_update_devices(device)
+            broadcast_router_update_device(device)
 
             { _, time } = Timex.format(Timex.now, "%H:%M:%S UTC", :strftime)
             details = %{
@@ -262,7 +262,7 @@ defmodule ConsoleWeb.V1.DeviceController do
 
       case result do
         {:ok, %{ device: device }} ->
-          broadcast_router_update_devices(device)
+          broadcast_router_update_device(device)
 
           device =
             Devices.get_device!(current_organization, device.id)
@@ -291,6 +291,157 @@ defmodule ConsoleWeb.V1.DeviceController do
     end
   end
 
+  @doc """
+  Batch device creation, limited to 1,000 per request
+  Using a stream to transparently parallelize the inserts over all CPU cores
+  and every operation is independent and isolated.
+  """
+  def create(conn, %{ "devices" => devices }) when is_list(devices) do
+    current_org = conn.assigns.current_organization
+    num_devices_to_add = length(devices)
+    num_existing_devices = Devices.get_organization_device_count(current_org)
+    hard_cap = Application.get_env(:console, :max_devices_in_org)
+
+    cond do
+      Application.get_env(:console, :socket_check_origin) == "https://console.helium.com" ->
+        {:error, :forbidden, "Action not allowed on Helium Foundation Console"}
+      Application.get_env(:console, :impose_hard_cap) == true and num_devices_to_add > hard_cap - num_existing_devices ->
+        {:error, :forbidden, "Failed to create devices. Adding #{num_devices_to_add} would surpass hard cap of #{hard_cap}. You may add up to #{hard_cap - num_existing_devices} devices."}
+      true ->
+        cond do
+          length(devices) == 0 ->
+            {:error, :bad_request, "Must create at least one device."}
+          length(devices) > 1000 ->
+            {:error, :bad_request, "Batch limit of 1,000 devices exceeded. Please try again with a smaller batch size."}
+          length(devices) <= 1000 ->
+            current_organization = conn.assigns.current_organization
+
+            device_attrs =
+              Enum.map(devices, fn device_params ->
+                Map.merge(device_params, %{
+                  "organization_id" => current_organization.id,
+                  "oui" => Application.fetch_env!(:console, :oui)
+                })
+                |> Map.drop(["hotspot_address"]) # prevent accidental creation of discovery mode device
+              end)
+            
+            stream = Task.async_stream(device_attrs, fn d ->
+              result =
+                Ecto.Multi.new()
+                |> Ecto.Multi.run(:labels, fn _repo, _ ->
+                  label_ids = Map.get(d, "label_ids", nil)
+                  if label_ids != nil do
+                    labels = Labels.get_labels(current_organization, label_ids)
+
+                    if length(labels) == length(label_ids) do
+                      {:ok, labels}
+                    else
+                      {:error, "Could not find all attached label ids in organization"}
+                    end
+                  else
+                    {:ok, nil}
+                  end
+                end)
+                |> Ecto.Multi.run(:config_profile, fn _repo, _ ->
+                  profile_id = Map.get(d, "config_profile_id", nil)
+                  if profile_id != nil do
+                    config_profile = ConfigProfiles.get_config_profile(current_organization, profile_id)
+                    if config_profile != nil do
+                      {:ok, config_profile}
+                    else
+                      {:error, "Could not find config_profile in organization"}
+                    end
+                  else
+                    {:ok, nil}
+                  end
+                end)
+                |> Ecto.Multi.run(:device, fn _repo, %{ config_profile: config_profile } ->
+                  device_attrs =
+                    if config_profile != nil do
+                      d
+                    else
+                      d |> Map.drop(["config_profile_id"])
+                    end
+                  Devices.create_device(device_attrs, current_organization)
+                end)
+                |> Ecto.Multi.run(:add_labels, fn _repo, %{ device: device, labels: labels } ->
+                  if labels == nil do
+                    {:ok, "No labels to attach"}
+                  else
+                    add_labels_result =
+                      labels
+                      |> Enum.map(fn l -> l.id end)
+                      |> Labels.add_labels_to_device(device, current_organization)
+                    case add_labels_result do
+                      {:ok, _, _} -> {:ok, "Successfully added to labels"}
+                      _ -> {:error, "Could not add all labels to device, please try creating device again"}
+                    end
+                  end
+                end)
+                |> Repo.transaction()
+
+              case result do
+                {:ok, %{ device: device }} ->
+                  broadcast_router_update_device(device)
+
+                  device =
+                    Devices.get_device!(current_organization, device.id)
+                    |> Repo.preload([[labels: :config_profile], :config_profile])
+
+                  AuditActions.create_audit_action(
+                    current_organization.id,
+                    "v1_api",
+                    "device_controller_batch_create",
+                    device.id,
+                    d
+                  )
+
+                  {:ok, put_config_settings_on_device(device)}
+                {:error, _, error = %Ecto.Changeset{}, _} ->
+                  {:error, error}
+                {:error, _, error, _} ->
+                  {:error, d, error}
+                {:error, "Device limit reached"} ->
+                  {:error, d, "The device/organization cap has been met. To add devices or organizations for commercial use cases, check docs for Console Hosting Providers."}
+                {:error, error} ->
+                  {:error, d, error}
+              end
+            end, max_concurrency: 10)
+
+            results = Enum.reduce(Enum.to_list(stream), %{ success: [], failure: [] }, fn {_, result}, acc ->
+              case result do
+                {:ok, device} ->
+                  short_device = %{
+                    id: device.id,
+                    name: device.name,
+                    dev_eui: device.dev_eui,
+                    app_eui: device.app_eui,
+                    app_key: device.app_key,
+                    config_profile_id: device.config_profile_id,
+                    labels: Enum.map(device.labels, fn l -> %{ id: l.id, name: l.name } end)
+                  }
+                  %{
+                    success: [short_device | acc.success],
+                    failure: acc.failure
+                  }
+                {:error, %Ecto.Changeset{valid?: false, changes: changes, errors: errors}} ->
+                  %{
+                    success: acc.success,
+                    failure: [Map.put(changes, :error,"#{elem(List.first(errors), 0)}: #{elem(elem(List.first(errors), 1), 0)}") | acc.failure]
+                  }
+                {:error, attrs, error} ->
+                  %{
+                    success: acc.success,
+                    failure: [Map.put(attrs, :error, error) | acc.failure]
+                  }
+              end
+            end)
+
+            render(conn, "results.json", results: results)
+        end
+    end    
+  end
+
   def set_devices_active(conn, %{"app_key" => app_key, "dev_eui" => dev_eui, "app_eui" => app_eui, "active" => active}) do
     current_organization = conn.assigns.current_organization
     devices = Devices.get_by_device_attrs(dev_eui, app_eui, app_key, current_organization.id)
@@ -302,7 +453,7 @@ defmodule ConsoleWeb.V1.DeviceController do
         device = List.first(devices)
         with {:ok, device} <- Devices.update_device(device, %{ active: active }) do
           device = device |> Repo.preload([[labels: :config_profile], :config_profile])
-          broadcast_router_update_devices(device)
+          broadcast_router_update_device(device)
 
           render(conn, "show.json", device: put_config_settings_on_device(device))
         end
@@ -324,7 +475,7 @@ defmodule ConsoleWeb.V1.DeviceController do
             |> Repo.preload([[labels: :config_profile], :config_profile])
             |> Enum.map(fn d -> put_config_settings_on_device(d) end)
 
-          Enum.each(parsed_devices, fn d -> broadcast_router_update_devices(d) end)
+          Enum.each(parsed_devices, fn d -> broadcast_router_update_device(d) end)
 
           render(conn, "index.json", devices: parsed_devices)
         end
@@ -346,7 +497,7 @@ defmodule ConsoleWeb.V1.DeviceController do
             |> Repo.preload([[labels: :config_profile], :config_profile])
             |> Enum.map(fn d -> put_config_settings_on_device(d) end)
 
-          Enum.each(parsed_devices, fn d -> broadcast_router_update_devices(d) end)
+          Enum.each(parsed_devices, fn d -> broadcast_router_update_device(d) end)
 
           render(conn, "index.json", devices: parsed_devices)
         end
@@ -399,7 +550,7 @@ defmodule ConsoleWeb.V1.DeviceController do
     end
   end
 
-  defp broadcast_router_update_devices(%Device{} = device) do
+  defp broadcast_router_update_device(%Device{} = device) do
     ConsoleWeb.Endpoint.broadcast("device:all", "device:all:refetch:devices", %{ "devices" => [device.id] })
   end
 
