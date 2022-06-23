@@ -199,7 +199,7 @@ class AutomaticRenewalModal extends Component {
           />
           <Text style={{ color: '#8C8C8C' }}>
             I authorize the use of the payment method above to be
-            automatically charged according to Helium's Terms & Conditions.
+            automatically charged according to the Terms & Conditions.
           </Text>
         </div>
       </Modal>

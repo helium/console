@@ -3,9 +3,10 @@ import TopBar from "./TopBar";
 import NavDrawer from "./NavDrawer";
 import ContentLayout from "./ContentLayout";
 import AddResourceButton from "./AddResourceButton";
+import Footer from "./Footer";
 import { Layout, Popover, Button } from "antd";
 import ToolOutlined from "@ant-design/icons/ToolOutlined";
-const { Header, Footer, Sider, Content } = Layout;
+const { Header, Sider, Content } = Layout;
 
 export const SurveyNotificationContext = React.createContext();
 
@@ -124,65 +125,7 @@ class DashboardLayout extends Component {
                 </ContentLayout>
               )}
               {!noFooter && (
-                <Footer
-                  className="no-scroll-bar"
-                  style={{
-                    flexShrink: "0",
-                    padding: "10px 10px",
-                    marginBottom: "-150px",
-                    overflowX: "scroll",
-                  }}
-                >
-                  <div
-                    style={{
-                      flexDirection: "row",
-                      display: "flex",
-                      minWidth: 700,
-                    }}
-                  >
-                    <a
-                      href="http://console.helium.com"
-                      style={{
-                        color: "#556B8C",
-                        marginRight: "25px",
-                        fontWeight: "bold",
-                      }}
-                    >
-                      console.helium.com
-                    </a>
-                    {[
-                      {
-                        title: "Documentation & Tutorials",
-                        url: "https://docs.helium.com/use-the-network/console",
-                      },
-                      {
-                        title: "How-to Videos",
-                        url: "https://www.youtube.com/playlist?list=PLtKQNefsR5zNjWkXqdRXeBbSmYWRJFCuo",
-                      },
-                      {
-                        title: "Community Discord",
-                        url: "http://chat.helium.com",
-                      },
-                      {
-                        title: "Engineering Blog",
-                        url: "http://engineering.helium.com",
-                      },
-                      { title: "Terms & Conditions", url: "/terms" },
-                    ].map((link) => (
-                      <a
-                        key={link.title}
-                        href={link.url}
-                        target="_blank"
-                        style={{ color: "#556B8C", marginRight: "20px" }}
-                      >
-                        {link.title}
-                      </a>
-                    ))}
-                    <div style={{ marginLeft: "auto" }}>
-                      © 2022 Helium Systems Inc.
-                    </div>
-                  </div>
-                </Footer>
+                <Footer />
               )}
             </Content>
             {!noAddButton && <AddResourceButton />}

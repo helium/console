@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Typography } from "antd";
-import { functionFormats } from "../functions/constants";
+import { functionFormats } from "../../util/functionInfo";
 import EnterOutlined from "@ant-design/icons/EnterOutlined";
 import AppstoreOutlined from "@ant-design/icons/AppstoreOutlined";
 import ApiOutlined from "@ant-design/icons/ApiOutlined";

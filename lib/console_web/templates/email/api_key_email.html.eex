@@ -224,7 +224,7 @@
 	            <tr>
 	                <td align="center" style="padding: 55px 0 85px 0;">
                   <!-- Helium Logo Image -->
-                      <a target="_blank" href="#"><img width="54" border="0" height="54" style="display:block; border:none; outline:none; text-decoration:none;" src="<%= @url <> "/images/logo.png" %>"></a>
+                      <a target="_blank" href="#"><img width="54" border="0" height="54" style="display:block; border:none; outline:none; text-decoration:none;" src="<%= @top_grey_logo %>"></a>
                   </td>
 	            </tr>
 		        <!-- Email Header : END -->
@@ -250,7 +250,7 @@
                                       Hi there,
                                       <br />
                                       <br />
-                                      You have added a new API Key  <%= @key_name %> on Helium Console. Please activate it by visiting the link below.
+                                      You have added a new API Key  <%= @key_name %> on <%= @app_name %>. Please activate it by visiting the link below.
                                     </p>
                                 </td>
                             </tr>
@@ -291,7 +291,7 @@
                 <tr>
                     <td align="center"  style="padding: 20px 0;">
                   <!-- Helium Console Logo -->
-                      <a target="_blank" href="#"><img alt="helium_console_logo" width="240" border="0" height="29" alt="" style="display:block; border:none; outline:none; text-decoration:none;" src="<%= @url <> "/images/greysignoff.png" %>"></a>
+                      <a target="_blank" href="#"><img alt="helium_console_logo" width="240" border="0" height="29" alt="" style="display:block; border:none; outline:none; text-decoration:none;" src="<%= @bottom_grey_logo %>"></a>
                   </td>
                 </tr>
             </table>

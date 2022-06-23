@@ -7,8 +7,8 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Helium Console</title>
-    <link rel="icon" href="https://console.helium.com/favicon.png" >
+    <title><%= Application.get_env(:console, :app_title, "Helium Console") %></title>
+    <link rel="icon" href="<%= Application.get_env(:console, :app_favicon_url, "https://console.helium.com/favicon.png") %>" >
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
     <script src="https://js.stripe.com/v3/"></script>
   </head>
@@ -32,6 +32,7 @@
       window.stripe_minimum_purchase = "<%= Application.get_env(:console, :stripe_minimum_purchase) %>"
       window.dc_cost_multiplier = "<%= Application.get_env(:console, :dc_cost_multiplier) %>"
       window.allowed_integrations = "<%= Application.get_env(:console, :allowed_integrations) %>"
+      window.allowed_functions = "<%= Application.get_env(:console, :allowed_functions) %>"
     </script>
     <div class="mainContainer">
       <main role="main">

@@ -3,6 +3,7 @@ import { PopupButton } from '@typeform/embed-react'
 import moment from 'moment'
 import numeral from 'numeral'
 import { Link } from 'react-router-dom';
+import { useSelector } from "react-redux";
 import { submittedOrganizationSurvey } from "../../actions/organization";
 import { minWidth } from '../../util/constants'
 import { Typography, Button } from 'antd';
@@ -13,6 +14,8 @@ const styles = {
 }
 
 export default ({ organization, toggleSurveyNotification, mobile }) => {
+  const appName = useSelector((state) => state.appConfig.appName);
+
   return (
     <div
       style={{
@@ -42,7 +45,7 @@ export default ({ organization, toggleSurveyNotification, mobile }) => {
                 marginBottom: 16
               }}
             >
-              Helium Console
+              { appName || "Helium Console" }
             </Text>
             <Text style={styles.text}>
               Thank you for creating an account. Devices need Data Credits (DC) to send data.

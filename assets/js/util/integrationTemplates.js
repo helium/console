@@ -6,7 +6,7 @@ export const defaultPayload = {
     },
     "dev_eui": "ED9196B2424BF383",
     "devaddr": "07040048",
-    "downlink_url": "https://staging-console.helium.com/api/v1/down/46fe16d8-bb37-4fc7-8f66-d722aa86a995/L-RZrP2oxYQ150phzndQ-O5LKlXjRb17/91c9b41c-acb6-4887-93a1-dea80d13e92f",
+    "downlink_url": "https://console.helium.com/api/v1/down/46fe16d8-bb37-4fc7-8f66-d722aa86a995/L-RZrP2oxYQ150phzndQ-O5LKlXjRb17/91c9b41c-acb6-4887-93a1-dea80d13e92f",
     "fcnt": 412,
     "hotspots": [
         {
@@ -81,7 +81,7 @@ export const browanPayload = {
     },
     "dev_eui": "58A0CB0000202323",
     "devaddr": "01040048",
-    "downlink_url": "https://staging-console.helium.com/api/v1/down/5ad2a56b-bd1f-4c9e-bf16-cd54e2d692be/jVQaJ1yfdbOqYFwEar_14_zWXVOKpezQ/5e651b66-1bb1-46dd-b0e5-d72356c0f5e3",
+    "downlink_url": "https://console.helium.com/api/v1/down/5ad2a56b-bd1f-4c9e-bf16-cd54e2d692be/jVQaJ1yfdbOqYFwEar_14_zWXVOKpezQ/5e651b66-1bb1-46dd-b0e5-d72356c0f5e3",
     "fcnt": 114,
     "hotspots": [
         {
@@ -158,7 +158,7 @@ export const cayennePayload = {
       },
       "dev_eui": "ED9196B2424BF383",
       "devaddr": "13040048",
-      "downlink_url": "https://staging-console.helium.com/api/v1/down/76c46dea-45dd-4d47-924a-67a7ec234e2b/yQIQUAqE_-rpS18pxjUbIUYNBl3kf6oi/91c9b41c-acb6-4887-93a1-dea80d13e92f",
+      "downlink_url": "https://console.helium.com/api/v1/down/76c46dea-45dd-4d47-924a-67a7ec234e2b/yQIQUAqE_-rpS18pxjUbIUYNBl3kf6oi/91c9b41c-acb6-4887-93a1-dea80d13e92f",
       "fcnt": 87,
       "hotspots": [
         {

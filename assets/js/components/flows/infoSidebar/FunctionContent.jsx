@@ -16,7 +16,9 @@ import moment from "moment";
 import { Link } from "react-router-dom";
 const { TabPane } = Tabs;
 import { SkeletonLayout } from "../../common/SkeletonLayout";
-import { functionTypes, functionFormats } from "../../functions/constants";
+import { functionTypes, functionFormats, getAllowedFunctions } from "../../../util/functionInfo";
+import Warning from "../Warning";
+import WarningItem from "../WarningItem";
 import ErrorMessage from "../../common/ErrorMessage";
 
 class FunctionContent extends Component {
@@ -53,6 +55,10 @@ class FunctionContent extends Component {
         </div>
       );
     if (error) return <ErrorMessage />;
+
+    const allowedFunctions = getAllowedFunctions()
+    let warningCount = 0
+    if (allowedFunctions && !allowedFunctions[fxn.format]) warningCount++
 
     return (
       <div>
@@ -130,6 +136,16 @@ class FunctionContent extends Component {
                 </Paragraph>
               </Fragment>
             </Card>
+            {warningCount > 0 && (
+                <Warning numberWarnings={warningCount} />
+            )}
+            {allowedFunctions && !allowedFunctions[fxn.format] && (
+              <WarningItem
+                warningText={
+                  "Your Console operator has disabled this function format, please contact them for more details. This function will not process data from connected devices."
+                }
+              />
+            )}
           </TabPane>
         </Tabs>
       </div>

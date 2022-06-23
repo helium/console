@@ -32,6 +32,7 @@ RUN mix phx.digest
 # build project
 COPY priv priv
 COPY lib lib
+COPY community_functions community_functions
 RUN mix compile
 
 RUN mix release

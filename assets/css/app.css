@@ -291,6 +291,10 @@ h1 {
   flex-grow: 1;
 }
 
+.functioncard {
+  flex-grow: 1;
+}
+
 .ant-modal-mask {
   background: rgba(20, 20, 20, 0.9);
 }
@@ -773,4 +777,8 @@ a.version-link {
   color: #fff;
   border-color: #40a9ff;
   background: #40a9ff;
+}
+
+.grecaptcha-badge {
+  z-index: 100;
 }

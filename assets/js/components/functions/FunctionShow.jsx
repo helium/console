@@ -11,12 +11,15 @@ import { FUNCTION_SHOW } from "../../graphql/functions";
 import { updateFunction } from "../../actions/function";
 import analyticsLogger from "../../util/analyticsLogger";
 import { minWidth } from "../../util/constants";
-import { Typography, Card, Button } from "antd";
+import { getAllowedFunctions, functionFormats } from '../../util/functionInfo'
+import { Typography, Card, Button, Row, Col } from "antd";
 import PauseOutlined from "@ant-design/icons/PauseOutlined";
 import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
 import CaretRightOutlined from "@ant-design/icons/CaretRightOutlined";
 import { SkeletonLayout } from "../common/SkeletonLayout";
-const { Text } = Typography;
+const { Text, Paragraph } = Typography;
+import Warning from "../flows/Warning";
+import WarningItem from "../flows/WarningItem";
 import FunctionDetailsCard from "./FunctionDetailsCard";
 import { customFunctionBody } from "./FunctionNew";
 import ErrorMessage from "../common/ErrorMessage";
@@ -24,6 +27,7 @@ import ErrorMessage from "../common/ErrorMessage";
 export default (props) => {
   const functionId = props.match.params.id;
   const dispatch = useDispatch();
+  const allowedFunctions = getAllowedFunctions()
 
   const [name, setName] = useState("");
   const [type, setType] = useState(undefined);
@@ -143,6 +147,40 @@ export default (props) => {
         </DesktopDisplay>
       </>
     );
+  }
+
+  if (allowedFunctions && !allowedFunctions[fxn.format]) {
+    return (
+      <FunctionDashboardLayout {...props}>
+        <div className="show-page">
+          <div className="show-header">
+            <Text style={{ fontSize: 24, fontWeight: 600 }}>
+              {fxn.name}
+            </Text>
+          </div>
+          <Card title="Function Details" bodyStyle={{ padding: 24 }}>
+            <Warning numberWarnings={1} />
+            <WarningItem
+              warningText={
+                "Your Console operator has disabled this function format, please contact them for more details. This function will not process data from connected devices."
+              }
+            />
+            <Row>
+              <Col span={12}>
+                <Paragraph>
+                  <Text strong>Format: </Text>
+                  <Text>{functionFormats[fxn.format]}</Text>
+                </Paragraph>
+                <Paragraph>
+                  <Text strong>ID: </Text>
+                  <Text code>{fxn.id}</Text>
+                </Paragraph>
+              </Col>
+            </Row>
+          </Card>
+        </div>
+      </FunctionDashboardLayout>
+    )
   }
 
   return (

@@ -4,9 +4,10 @@ defmodule ConsoleWeb.V1.FunctionController do
 
   alias Console.Organizations
   # alias Console.Flows
+  alias Console.CommunityFunctions
   alias Console.Functions
   alias Console.Functions.Function
-  
+
   action_fallback(ConsoleWeb.FallbackController)
 
   plug CORSPlug, origin: "*"
@@ -15,7 +16,14 @@ defmodule ConsoleWeb.V1.FunctionController do
     current_organization =
       conn.assigns.current_organization |> Organizations.fetch_assoc([:functions])
 
-    render(conn, "index.json", functions: current_organization.functions)
+    functions =
+      current_organization.functions
+      |> Enum.map(fn func ->
+        CommunityFunctions.inject_body(func)
+        |> check_allowed_function()
+      end)
+
+    render(conn, "index.json", functions: functions)
   end
 
   def show(conn, %{ "id" => id }) do
@@ -26,7 +34,7 @@ defmodule ConsoleWeb.V1.FunctionController do
         nil ->
           {:error, :not_found, "Function not found"}
         %Function{} = function ->
-          render(conn, "show.json", function: function)
+          render(conn, "show.json", function: CommunityFunctions.inject_body(function) |> check_allowed_function())
       end
     else
       :error ->
@@ -53,13 +61,13 @@ defmodule ConsoleWeb.V1.FunctionController do
   # def update(conn, %{ "id" => id } = attrs) do
   #   with {:ok, _id} <- Ecto.UUID.dump(id) do
   #     current_organization = conn.assigns.current_organization
-    
+
   #     case Functions.get_function(current_organization, id) do
   #       nil ->
   #         {:error, :not_found, "Function not found"}
   #       %Function{} = function ->
   #         function_attrs = Map.take(attrs, ["name", "active"])
-    
+
   #         if length(Map.keys(function_attrs)) == 0 do
   #           {:error, :bad_request, "Only function name or active status can be updated"}
   #         else
@@ -67,7 +75,7 @@ defmodule ConsoleWeb.V1.FunctionController do
   #             affected_flows = Flows.get_flows_with_function_id(current_organization.id, function.id)
   #             all_device_ids = Flows.get_all_flows_associated_device_ids(affected_flows)
   #             broadcast_router_update_devices(all_device_ids)
-    
+
   #             render(conn, "show.json", function: function)
   #           end
   #         end
@@ -81,7 +89,7 @@ defmodule ConsoleWeb.V1.FunctionController do
   # def delete(conn, %{ "id" => id }) do
   #   with {:ok, _id} <- Ecto.UUID.dump(id) do
   #     current_organization = conn.assigns.current_organization
-    
+
   #     case Functions.get_function(current_organization, id) do
   #       nil ->
   #         {:error, :not_found, "Function not found"}
@@ -90,7 +98,7 @@ defmodule ConsoleWeb.V1.FunctionController do
   #           affected_flows = Flows.get_flows_with_function_id(current_organization.id, function.id)
   #           all_device_ids = Flows.get_all_flows_associated_device_ids(affected_flows)
   #           broadcast_router_update_devices(all_device_ids)
-    
+
   #           conn
   #           |> send_resp(:ok, "Function deleted")
   #         end
@@ -100,6 +108,15 @@ defmodule ConsoleWeb.V1.FunctionController do
   #       {:error, :bad_request, "integration_id param must be a valid UUID"}
   #   end
   # end
+
+  defp check_allowed_function(function) do
+    allowed_formats = Function.get_allowed_function_formats()
+    if (function.format in allowed_formats) do
+      function
+    else
+      Map.put(function, :deactivated_by_console_host, true)
+    end
+  end
 
   # defp broadcast_router_update_devices(device_ids) do
   #   ConsoleWeb.Endpoint.broadcast("device:all", "device:all:refetch:devices", %{ "devices" => device_ids })

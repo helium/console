@@ -124,7 +124,10 @@ module.exports = function (env) {
         "MAGIC_PUBLIC_KEY",
         "USER_INVITE_ONLY",
         "IMPOSE_HARD_CAP",
-        "ALLOWED_INTEGRATIONS"
+        "ALLOWED_INTEGRATIONS",
+        "ALLOWED_FUNCTIONS",
+        "RECAPTCHA_SITE_KEY",
+        "USE_RECAPTCHA_FOR_AUTH"
       ]),
       new NodePolyfillPlugin()
     ],
