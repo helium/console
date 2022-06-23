@@ -297,11 +297,16 @@ defmodule ConsoleWeb.V1.DeviceController do
   and every operation is independent and isolated.
   """
   def create(conn, %{ "devices" => devices }) when is_list(devices) do
+    current_org = conn.assigns.current_organization
+    num_devices_to_add = length(devices)
+    num_existing_devices = Devices.get_organization_device_count(current_org)
+    hard_cap = Application.get_env(:console, :max_devices_in_org)
+
     cond do
       Application.get_env(:console, :socket_check_origin) == "https://console.helium.com" ->
         {:error, :forbidden, "Action not allowed on Helium Foundation Console"}
       Application.get_env(:console, :impose_hard_cap) == true ->
-        {:error, :forbidden, "Action not allowed when a device cap exists"}
+        {:error, :forbidden, "Failed to create devices. Adding #{num_devices_to_add} would surpass hard cap of #{hard_cap}. You may add up to #{hard_cap - num_existing_devices} devices."}
       true ->
         cond do
           length(devices) == 0 ->
