@@ -305,7 +305,7 @@ defmodule ConsoleWeb.V1.DeviceController do
     cond do
       Application.get_env(:console, :socket_check_origin) == "https://console.helium.com" ->
         {:error, :forbidden, "Action not allowed on Helium Foundation Console"}
-      Application.get_env(:console, :impose_hard_cap) == true ->
+      Application.get_env(:console, :impose_hard_cap) == true and num_devices_to_add > hard_cap - num_existing_devices ->
         {:error, :forbidden, "Failed to create devices. Adding #{num_devices_to_add} would surpass hard cap of #{hard_cap}. You may add up to #{hard_cap - num_existing_devices} devices."}
       true ->
         cond do
@@ -406,7 +406,7 @@ defmodule ConsoleWeb.V1.DeviceController do
                 {:error, error} ->
                   {:error, d, error}
               end
-            end)
+            end, max_concurrency: 10)
 
             results = Enum.reduce(Enum.to_list(stream), %{ success: [], failure: [] }, fn {_, result}, acc ->
               case result do
