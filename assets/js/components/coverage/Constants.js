@@ -270,7 +270,9 @@ export const getColumns = (
         (c) =>
           c.dataIndex !== "alias" &&
           c.dataIndex !== "group_ids" &&
-          c.dataIndex !== "avg_rssi"
+          c.dataIndex !== "avg_rssi" &&
+          c.dataIndex !== "packet_count" &&
+          c.dataIndex !== "device_count"
       );
     case "main":
       return columns.filter((c) => c.dataIndex !== "group_ids");
