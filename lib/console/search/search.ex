@@ -384,7 +384,7 @@ defmodule Console.Search do
   end
 
   # running for owner wallet address search
-  def run_for_hotspots(query, page, page_size, column, order) when byte_size(query) > 50 and byte_size(query) < 53 do
+  def run_for_hotspots(query, page, page_size, column, order) when String.match?(query, ~r/^[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{51,52}$/) do
     order_by = case [column, order] do
       [nil, nil] -> [desc: :name]
       _ -> [String.to_existing_atom(Helpers.order_with_nulls(order)), String.to_existing_atom(column)]
