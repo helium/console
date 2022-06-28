@@ -49,4 +49,8 @@ defmodule ConsoleWeb.V1.DeviceView do
   def render("show_events.json", %{device: device}) do
     EventView.show_events(device.events)
   end
+
+  def render("results.json", %{results: results}) do
+    results
+  end
 end

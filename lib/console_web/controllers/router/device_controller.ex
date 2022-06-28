@@ -601,6 +601,7 @@ defmodule ConsoleWeb.Router.DeviceController do
               "off_session" => "true",
               "confirm" => "true",
               "receipt_email" => receipt_email,
+              "description" => "Data Credits"
             })
 
             with {:ok, stripe_response} <- HTTPoison.post("#{@stripe_api_url}/v1/payment_intents", request_body, @headers) do
@@ -620,7 +621,6 @@ defmodule ConsoleWeb.Router.DeviceController do
                       "user_id" => "Recurring Charge",
                       "organization_id" => organization.id,
                       "payment_id" => payment_intent["id"],
-                      "description" => "Data Credits"
                     }
 
                     with {:ok, %DcPurchase{} = dc_purchase } <- DcPurchases.create_dc_purchase_update_org(attrs, organization) do

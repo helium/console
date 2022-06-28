@@ -311,5 +311,115 @@ defmodule ConsoleWeb.V1DeviceControllerTest do
       })
       assert response(resp_conn, 403)
     end
+
+    test "batch device creation works properly", %{conn: _conn} do
+      key = "upWpTb/J1mCsZupZTFL52tB27QJ2hFNWtT6PvwriQgs"
+      organization = insert(:organization)
+      insert(:api_key, %{
+        organization_id: organization.id,
+        key: :crypto.hash(:sha256, key),
+        active: true
+      })
+
+      resp_conn = build_conn()
+        |> put_req_header("key", key)
+        |> post("/api/v1/devices", %{ devices: [%{ "name" => "device", "dev_eui" => "1", "app_eui" => "2" }] })
+      results = json_response(resp_conn, 200)
+      assert results["success"] == [] # not all device attrs in body
+
+      resp_conn = build_conn()
+        |> put_req_header("key", key)
+        |> post("/api/v1/devices", %{ devices: [%{
+          "name" => "device",
+          "dev_eui" => "1",
+          "app_eui" => "2",
+          "app_key" => "3"
+        }]})
+      results = json_response(resp_conn, 200)
+      assert results["success"] == [] # attrs must be valid, lengths need to be respected
+
+      resp_conn = build_conn()
+        |> put_req_header("key", key)
+        |> post("/api/v1/devices", %{ devices: [
+          %{
+            "name" => "device1",
+            "dev_eui" => "1111111111111111",
+            "app_eui" => "1111111111111111",
+            "app_key" => "11111111111111111111111111111111"
+          },
+          %{
+            "name" => "device2",
+            "dev_eui" => "2111111111111111",
+            "app_eui" => "2111111111111111",
+            "app_key" => "21111111111111111111111111111111"
+          }
+        ]})
+      results = json_response(resp_conn, 200)
+      assert length(results["success"]) == 2 # devices created
+
+      config_profile = insert(:config_profile, %{ name: "new pf", organization_id: organization.id})
+      resp_conn = build_conn()
+        |> put_req_header("key", key)
+        |> post("/api/v1/devices", %{ devices: [%{
+          dev_eui: "a222222222222222",
+          app_eui: "a222222222222222",
+          app_key: "a2222222222222222222222222222222",
+          config_profile_id: config_profile.id,
+          name: "test device"
+        }]})
+      results = json_response(resp_conn, 200)
+      assert List.first(results["success"])["config_profile_id"] == config_profile.id # device created with config_profile
+
+      label1 = insert(:label, %{ name: "l1", organization_id: organization.id})
+      label2 = insert(:label, %{ name: "l2", organization_id: organization.id})
+
+      resp_conn = build_conn()
+        |> put_req_header("key", key)
+        |> post("/api/v1/devices", %{ devices: [%{
+          dev_eui: "b222222222222222",
+          app_eui: "b222222222222222",
+          app_key: "b2222222222222222222222222222222",
+          config_profile_id: config_profile.id,
+          label_ids: [label1.id, label2.id],
+          name: "test device"
+        }]})
+      results = json_response(resp_conn, 200)
+      # device created with labels
+      assert %{ "id" => label1.id, "name" => "l1" } in List.first(results["success"])["labels"] 
+      assert %{ "id" => label2.id, "name" => "l2" } in List.first(results["success"])["labels"]
+
+      not_my_organization = insert(:organization)
+      not_my_label = insert(:label, %{ name: "not_my_label1", organization_id: not_my_organization.id})
+      not_my_config_profile = insert(:config_profile, %{ name: "new pf", organization_id: not_my_organization.id})
+      resp_conn = build_conn()
+        |> put_req_header("key", key)
+        |> post("/api/v1/devices", %{ devices: [
+          %{
+            dev_eui: "c222222222222222",
+            app_eui: "c222222222222222",
+            app_key: "c2222222222222222222222222222222",
+            config_profile_id: config_profile.id,
+            label_ids: [not_my_label.id],
+            name: "test failing device"
+          },
+          %{
+            dev_eui: "d222222222222222",
+            app_eui: "d222222222222222",
+            app_key: "d2222222222222222222222222222222",
+            label_ids: [label1.id],
+            name: "test not failing device"
+          },
+          %{
+            dev_eui: "e222222222222222",
+            app_eui: "e222222222222222",
+            app_key: "e2222222222222222222222222222222",
+            config_profile_id: not_my_config_profile.id,
+            name: "test failing device 2"
+          }
+        ]})
+      results = json_response(resp_conn, 200)
+      assert length(results["success"]) == 1 # one should succeed to be created
+      assert length(results["failure"]) == 2 # two should fail to be created_device
+    end
   end
 end
