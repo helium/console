@@ -109,7 +109,7 @@ export default ({ devices, labels, functions, channels }) => {
       }
       return (
         <div>
-          {renderInput("integration")}
+          {renderInput()}
           {
             nodesToDisplay.map(n => (
               <div
@@ -123,7 +123,7 @@ export default ({ devices, labels, functions, channels }) => {
             ))
           }
           {
-            nodesToDisplay.length == 0 && <div style={{ height: 12 }} />
+            nodesToDisplay.length == 0 && <div style={{ height: 10 }} />
           }
         </div>
       )
@@ -134,13 +134,13 @@ export default ({ devices, labels, functions, channels }) => {
     }
   }
 
-  const renderInput = (type) => (
+  const renderInput = () => (
     <Input
-      placeholder={`Filter ${type} name`}
+      placeholder={`Filter by name`}
       size="small"
       allowClear
       onChange={e => setFilterText(e.target.value)}
-      style={{ marginTop: 10 }}
+      style={{ marginTop: 10, marginBottom: 2 }}
     />
   )
 
