@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Typography } from "antd";
+import React, { useState, useEffect } from "react";
+import { Typography, Input } from "antd";
 import MinusOutlined from "@ant-design/icons/MinusOutlined";
 import PlusOutlined from "@ant-design/icons/PlusOutlined";
 import LabelNode from "./nodes/LabelNode";
@@ -21,6 +21,11 @@ const { Text } = Typography;
 export default ({ devices, labels, functions, channels }) => {
   const [showMenu, toggleMenu] = useState(false);
   const [tab, setTab] = useState("labels");
+  const [filterText, setFilterText] = useState("")
+
+  useEffect(() => {
+    setFilterText("")
+  }, [tab]);
 
   const onDragStart = (event, node) => {
     event.dataTransfer.setData("node/id", node.id);
@@ -73,80 +78,71 @@ export default ({ devices, labels, functions, channels }) => {
     event.dataTransfer.effectAllowed = "move";
   };
 
-  const renderChannels = () =>
-    channels.length > 0 ? (
-      channels.map((node) => (
-        <div
-          style={{ margin: "12px 0px 12px 0px" }}
-          key={node.id}
-          draggable
-          onDragStart={(event) => onDragStart(event, node)}
-        >
-          <ChannelNode data={node.data} fromSidebar={true} />
-        </div>
-      ))
-    ) : (
-      <p>No Integrations</p>
-    );
+  const renderNodes = (type) => {
+    const typeMap = {
+      device: {
+        nodes: devices,
+        render: n => <DeviceNode data={n.data} fromSidebar={true} />
+      },
+      label: {
+        nodes: labels,
+        render: n => <LabelNode data={n.data} fromSidebar={true} />
+      },
+      function: {
+        nodes: functions,
+        render: n => <FunctionNode data={n.data} fromSidebar={true} />
+      },
+      integration: {
+        nodes: channels,
+        render: n => <ChannelNode data={n.data} fromSidebar={true} />
+      }
+    }
 
-  const renderFunctions = () =>
-    functions.length > 0 ? (
-      functions.map((node) => (
-        <div
-          style={{ margin: "12px 0px 12px 0px" }}
-          key={node.id}
-          draggable
-          onDragStart={(event) => onDragStart(event, node)}
-        >
-          <FunctionNode data={node.data} fromSidebar={true} />
-        </div>
-      ))
-    ) : (
-      <p>No Functions</p>
-    );
+    const { nodes } = typeMap[type]
 
-  const renderLabels = () =>
-    labels.length > 0 ? (
-      labels.map((node) => (
-        <div
-          style={{ margin: "12px 0px 12px 0px" }}
-          key={node.id}
-          draggable
-          onDragStart={(event) => onDragStart(event, node)}
-        >
-          <LabelNode data={node.data} fromSidebar={true} />
+    if (nodes.length > 0) {
+      let nodesToDisplay = nodes
+      if (filterText.length > 1) {
+        nodesToDisplay = nodes.filter(n => {
+          return n.data.label.toLowerCase().includes(filterText.toLowerCase())
+        })
+      }
+      return (
+        <div>
+          {renderInput()}
+          {
+            nodesToDisplay.map(n => (
+              <div
+                style={{ margin: "12px 0px 12px 0px" }}
+                key={n.id}
+                draggable
+                onDragStart={(event) => onDragStart(event, n)}
+              >
+                {typeMap[type].render(n)}
+              </div>
+            ))
+          }
+          {
+            nodesToDisplay.length == 0 && <div style={{ height: 10 }} />
+          }
         </div>
-      ))
-    ) : (
-      <p>No Labels</p>
-    );
+      )
+    } else {
+      return (
+        <p style={{ marginTop: 10 }}>No Integrations</p>
+      )
+    }
+  }
 
-  const renderDevices = () =>
-    devices.length > 0 ? (
-      devices.map((node) => (
-        <div
-          style={{ margin: "12px 0px 12px 0px" }}
-          key={node.id}
-          draggable
-          onDragStart={(event) => onDragStart(event, node)}
-        >
-          <DeviceNode data={node.data} fromSidebar={true} />
-        </div>
-      ))
-    ) : (
-      <p>No Devices</p>
-    );
-
-  const renderUtilities = () =>
-    [{ id: "none" }].map((node) => (
-      <div
-        style={{ marginBottom: 12 }}
-        key={node.id}
-        onDragStart={(event) => onDragStart(event, node)}
-      >
-        <p>No Utilities</p>
-      </div>
-    ));
+  const renderInput = () => (
+    <Input
+      placeholder={`Filter by name`}
+      size="small"
+      allowClear
+      onChange={e => setFilterText(e.target.value)}
+      style={{ marginTop: 10, marginBottom: 2 }}
+    />
+  )
 
   return (
     <div
@@ -405,11 +401,10 @@ export default ({ devices, labels, functions, channels }) => {
             overflowY: "scroll",
           }}
         >
-          {tab === "labels" && renderLabels()}
-          {tab === "devices" && renderDevices()}
-          {tab === "functions" && renderFunctions()}
-          {tab === "utilities" && renderUtilities()}
-          {tab === "channels" && renderChannels()}
+          {tab === "labels" && renderNodes("label")}
+          {tab === "devices" && renderNodes("device")}
+          {tab === "functions" && renderNodes("function")}
+          {tab === "channels" && renderNodes("integration")}
         </div>
       )}
     </div>
