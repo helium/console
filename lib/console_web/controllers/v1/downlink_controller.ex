@@ -3,6 +3,7 @@ defmodule ConsoleWeb.V1.DownlinkController do
   alias Console.Channels
   alias Console.Labels
   alias Console.Flows
+  alias Console.CommunityChannels
 
   action_fallback(ConsoleWeb.FallbackController)
 
@@ -36,6 +37,8 @@ defmodule ConsoleWeb.V1.DownlinkController do
     case channel do
       nil -> {:error, :bad_request, "Integration not found"}
       _ ->
+        channel = CommunityChannels.inject_credentials(channel, true)
+        
         if channel.type == "http" and token == Map.get(channel, :downlink_token) do
           flows = Flows.get_flows_with_channel_id(channel.organization_id, channel.id)
           labels_attached = Enum.filter(flows, fn f -> f.label_id != nil end) |> Enum.map(fn f -> f.label_id end)
