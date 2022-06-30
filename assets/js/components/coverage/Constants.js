@@ -293,7 +293,6 @@ export const ActionButton = ({
         } else if (e.key === "prefer") {
           preferHotspots(selectedAddresses, true);
         } else {
-          console.log(preferredHotspotAddresses);
           if (
             warnUnfollow &&
             preferredHotspotAddresses.length > 0 &&
