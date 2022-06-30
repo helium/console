@@ -80,6 +80,11 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 - Set `USER_INVTE_ONLY` to true in your .env file
 - Add approved users to your db `INSERT INTO users (id, email, password_hash, inserted_at, updated_at) values (1, 'email@provider.com', 'hash', NOW(), NOW());`
 
+## Customizing your Console branding
+
+- See steps under Customize Console Branding (https://docs.helium.com/use-the-network/run-a-network-server/run-console/#customize-console-environment)
+- If you choose to customize your version of Console, you must build your own console image (option 2 above). You cannot use the prebuilt quay image or the customizations will be overwritten.
+
 ## Running Console Development Environment without Router
 
 - Install homebrew (https://brew.sh/)
