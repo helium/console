@@ -106,8 +106,7 @@ config :console,
 config :console,
   recaptcha_secret_key: System.get_env("RECAPTCHA_SECRET_KEY")
 
-# config :prometheus, App.PrometheusExporter,
-#   path: "/metrics",
-#   format: :auto,
-#   registry: :default,
-#   auth: {:basic, System.get_env("PROMETHEUS_USERNAME"), System.get_env("PROMETHEUS_PASSWORD")}
+config :console,
+  unsupported_countries: System.get_env("UNSUPPORTED_COUNTRIES") || "",
+  unsupported_cities: System.get_env("UNSUPPORTED_CITIES") || "",
+  unsupported_ukr_subdivisions:  System.get_env("UNSUPPORTED_UKR_SUBDIVISIONS") || ""

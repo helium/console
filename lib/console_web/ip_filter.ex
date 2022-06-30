@@ -1,8 +1,4 @@
 defmodule ConsoleWeb.IPFilter do
-  @unsupported_countries ["CU", "IR", "KP", "SY", "RU"]
-  @unsupported_cities ["Luhansk", "Donetsk"]
-  @unsupported_ukr_subdivisions ["43", "40"]
-
   def get_ip(conn) do
     forwarded_for = List.first(Plug.Conn.get_req_header(conn, "x-forwarded-for"))
 
@@ -16,6 +12,13 @@ defmodule ConsoleWeb.IPFilter do
   end
 
   def check_ip_restriction(ip) do
+    unsupported_countries =
+      Application.get_env(:console, :unsupported_countries) |> String.trim(",") |> String.replace(" ", "") |> String.split(",")
+    unsupported_cities =
+      Application.get_env(:console, :unsupported_cities) |> String.trim(",") |> String.replace(" ", "") |> String.split(",")
+    unsupported_ukr_subdivisions =
+      Application.get_env(:console, :unsupported_ukr_subdivisions) |> String.trim(",") |> String.replace(" ", "") |> String.split(",")
+
     ip_location = Geolix.lookup(ip, where: :geolite2_city)
 
     if is_nil(ip_location) do # in case of failing db, ip not found
@@ -23,11 +26,11 @@ defmodule ConsoleWeb.IPFilter do
       false
     else
       cond do
-        ip_location.country.iso_code in @unsupported_countries ->
+        ip_location.country.iso_code in unsupported_countries ->
           true
-        ip_location.country.iso_code == "UA" and List.first(ip_location.subdivisions).iso_code in @unsupported_ukr_subdivisions ->
+        ip_location.country.iso_code == "UA" and List.first(ip_location.subdivisions).iso_code in unsupported_ukr_subdivisions ->
           true
-        ip_location.city.name in @unsupported_cities ->
+        ip_location.city.name in unsupported_cities ->
           true
         true -> false
       end

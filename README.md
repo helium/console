@@ -60,6 +60,30 @@ cp templates/docker-compose-local.yaml docker-compose.yaml
 
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
+## Opt in to use an IP Filter for Stripe Transactions
+
+In the event that Stripe requires you to restrict credit card payments to certain countries or cities, you may opt in to use the IP filter implemented in the `ConsoleWeb.IPFilter` module.
+
+To do so, please obtain a MaxMind key and download the database onto the host machine:
+(https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-City&suffix=tar.gz&license_key=${MAXMIND_KEY})
+
+Please note you'll have to regularly update this database.
+
+In your `docker-compose` file under `console`, add the following:
+
+```
+volumes:
+  - "/host/path/to/GeoLite2-City.mmdb:/app/GeoLite2-City.mmdb"
+```
+
+Then, you may set the following variables in your `.env` file.
+
+```
+UNSUPPORTED_COUNTRIES=CU,IR,KP,SY,RU # or a comma-separated list of the ISO Alpha-2 codes of countries to be restricted
+UNSUPPORTED_CITIES=Luhansk,Donetsk # or a comma-separated list of the names of cities to be restricted
+UNSUPPORTED_UKR_SUBDIVISIONS=43,40 # or a comma-separated list of the ISO codes for Ukranian subdivisions to be restricted
+```
+
 ## Upgrading your open source Console+Router (Applies to Option 1 only)
 
 - Bring down your server with `docker-compose down`
