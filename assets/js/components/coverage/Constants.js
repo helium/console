@@ -91,7 +91,8 @@ export const getColumns = (
               } else {
                 if (
                   warnUnfollow &&
-                  !!hotspot_claimed &&
+                  hotspot_preferred &&
+                  props.preferredHotspotAddresses.length > 0 &&
                   props.preferredHotspotAddresses.filter(
                     (pha) => pha !== record.hotspot_address
                   ).length === 0
@@ -294,6 +295,7 @@ export const ActionButton = ({
         } else {
           if (
             warnUnfollow &&
+            preferredHotspotAddresses.length > 0 &&
             preferredHotspotAddresses.filter(
               (pha) => !selectedAddresses.includes(pha)
             ).length === 0
