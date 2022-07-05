@@ -174,27 +174,32 @@ defmodule Console.Jobs do
       end
 
     Enum.each(devices, fn device ->
-      if device.active and device.last_connected != nil and Timex.compare(device.last_connected, starting_from) == -1 do
-        event = Events.get_device_last_event(device.id)
-        { _, last_connected_time } = Timex.format(device.last_connected, "%m/%d/%y %H:%M:%S UTC", :strftime)
-        details = %{
-          device_name: device.name,
-          device_id: device.id,
-          time: last_connected_time,
-          hotspot: case event != nil and event.data["hotspot"] != nil do
-            false -> nil
-            true -> event.data["hotspot"]
-          end,
-          buffer: buffer
-        }
+      if is_nil(device) do
+        # device no longer exists and the alert node is no longer valid
+        Alerts.delete_alert_nodes(device.id, "device")
+      else
+        if device.active and device.last_connected != nil and Timex.compare(device.last_connected, starting_from) == -1 do
+          event = Events.get_device_last_event(device.id)
+          { _, last_connected_time } = Timex.format(device.last_connected, "%m/%d/%y %H:%M:%S UTC", :strftime)
+          details = %{
+            device_name: device.name,
+            device_id: device.id,
+            time: last_connected_time,
+            hotspot: case event != nil and event.data["hotspot"] != nil do
+              false -> nil
+              true -> event.data["hotspot"]
+            end,
+            buffer: buffer
+          }
 
-        limit = %{ time_buffer: Timex.shift(Timex.now, hours: -24) }
+          limit = %{ time_buffer: Timex.shift(Timex.now, hours: -24) }
 
-        case node_type do
-          "device" ->
-            AlertEvents.notify_alert_event(device.id, "device", "device_stops_transmitting", details, nil, limit)
-          "label" ->
-            AlertEvents.notify_alert_event(device.id, "device", "device_stops_transmitting", details, [node_id], limit)
+          case node_type do
+            "device" ->
+              AlertEvents.notify_alert_event(device.id, "device", "device_stops_transmitting", details, nil, limit)
+            "label" ->
+              AlertEvents.notify_alert_event(device.id, "device", "device_stops_transmitting", details, [node_id], limit)
+          end
         end
       end
     end)
