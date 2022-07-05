@@ -44,7 +44,7 @@ defmodule ConsoleWeb.OrganizationController do
 
       Task.Supervisor.async_nolink(ConsoleWeb.TaskSupervisor, fn ->
         OrgIps.create_org_ip(%{
-          "address" => Helpers.get_ip(conn),
+          "address" => ConsoleWeb.IPFilter.get_ip(conn),
           "email" => membership.email,
           "organization_id" => organization.id,
           "organization_name" => organization.name,
