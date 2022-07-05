@@ -91,7 +91,7 @@ export const getColumns = (
               } else {
                 if (
                   warnUnfollow &&
-                  !!hotspot_claimed &&
+                  hotspot_preferred &&
                   props.preferredHotspotAddresses.length > 0 &&
                   props.preferredHotspotAddresses.filter(
                     (pha) => pha !== record.hotspot_address
