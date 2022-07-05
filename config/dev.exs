@@ -114,8 +114,7 @@ config :console,
 
 config :logger, level: :debug
 
-# config :prometheus, App.PrometheusExporter,
-#   path: "/metrics",
-#   format: :auto,
-#   registry: :default,
-#   auth: {:basic, "username", "password"}
+config :console,
+  unsupported_countries: "",
+  unsupported_cities: "",
+  unsupported_ukr_subdivisions: ""

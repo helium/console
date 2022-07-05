@@ -116,3 +116,8 @@ config :console, Console.Mailer,
   api_key: System.get_env("MAILGUN_API_KEY"),
   domain: System.get_env("SITE_DOMAIN_MAILGUN"),
   base_uri: System.get_env("MAILGUN_URL") || "https://api.mailgun.net/v3"
+
+config :console,
+  unsupported_countries: System.get_env("UNSUPPORTED_COUNTRIES") || "",
+  unsupported_cities: System.get_env("UNSUPPORTED_CITIES") || "",
+  unsupported_ukr_subdivisions:  System.get_env("UNSUPPORTED_UKR_SUBDIVISIONS") || ""

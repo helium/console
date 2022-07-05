@@ -15,111 +15,134 @@ defmodule ConsoleWeb.DataCreditController do
 
   def create_customer_id_and_charge(conn, params = %{ "amountUSD" => amountUSD }) do
     { amount, _ } = Float.parse(amountUSD)
-    if amount < Application.get_env(:console, :stripe_minimum_purchase) do
-      {:error, :bad_request, "Credit card charges cannot be less than $#{Application.get_env(:console, :stripe_minimum_purchase)}"}
-    else
-      current_organization = conn.assigns.current_organization
+    ip_restricted = ConsoleWeb.IPFilter.check_ip_restriction(ConsoleWeb.IPFilter.get_ip(conn))
 
-      request_body = URI.encode_query(%{
-        "name" => current_organization.name,
-        "description" => current_organization.id,
-      })
-      headers = [
-        {"Authorization", "Bearer #{Application.get_env(:console, :stripe_secret_key)}"},
-        {"Content-Type", "application/x-www-form-urlencoded"}
-      ]
-      # create a customer id in stripe
-      with {:ok, stripe_response} <- HTTPoison.post("#{@stripe_api_url}/v1/customers", request_body, headers) do
-         with 200 <- stripe_response.status_code do
-           customer = Poison.decode!(stripe_response.body)
-           with {:ok, %Organization{} = organization} <- Organizations.update_organization(current_organization, %{ "stripe_customer_id" => customer["id"]}) do
-             # create a payment intent in stripe
-             description = if not is_nil(params["description"]) and params["description"] != "", do: " - " <> params["description"], else: ""
-             request_body = URI.encode_query(%{
-                "customer" => organization.stripe_customer_id,
-                "amount" => Float.round(amount * 100) |> trunc(),
-                "currency" => "usd",
-                "receipt_email" => conn.assigns.current_user.email,
-                "description" => "Data Credits" <> description
-             })
-              
+    cond do
+      amount < Application.get_env(:console, :stripe_minimum_purchase) ->
+        {:error, :bad_request, "Credit card charges cannot be less than $#{Application.get_env(:console, :stripe_minimum_purchase)}"}
+      ip_restricted ->
+        {:error, :forbidden, "Our payment processor doesn't currently support transactions in your area."}
+      true ->
+        current_organization = conn.assigns.current_organization
 
-             with {:ok, stripe_response} <- HTTPoison.post("#{@stripe_api_url}/v1/payment_intents", request_body, headers) do
-               with 200 <- stripe_response.status_code do
-                 payment_intent = Poison.decode!(stripe_response.body)
-                 conn |> send_resp(:ok, Poison.encode!(%{ payment_intent_secret: payment_intent["client_secret"] }))
-               end
-             end
-           end
-         end
-      end
+        request_body = URI.encode_query(%{
+          "name" => current_organization.name,
+          "description" => current_organization.id,
+        })
+        headers = [
+          {"Authorization", "Bearer #{Application.get_env(:console, :stripe_secret_key)}"},
+          {"Content-Type", "application/x-www-form-urlencoded"}
+        ]
+        # create a customer id in stripe
+        with {:ok, stripe_response} <- HTTPoison.post("#{@stripe_api_url}/v1/customers", request_body, headers) do
+          with 200 <- stripe_response.status_code do
+            customer = Poison.decode!(stripe_response.body)
+            with {:ok, %Organization{} = organization} <- Organizations.update_organization(current_organization, %{ "stripe_customer_id" => customer["id"]}) do
+              # create a payment intent in stripe
+              description = if not is_nil(params["description"]) and params["description"] != "", do: " - " <> params["description"], else: ""
+              request_body = URI.encode_query(%{
+                  "customer" => organization.stripe_customer_id,
+                  "amount" => Float.round(amount * 100) |> trunc(),
+                  "currency" => "usd",
+                  "receipt_email" => conn.assigns.current_user.email,
+                  "description" => "Data Credits" <> description
+              })
+                
+
+              with {:ok, stripe_response} <- HTTPoison.post("#{@stripe_api_url}/v1/payment_intents", request_body, headers) do
+                with 200 <- stripe_response.status_code do
+                  payment_intent = Poison.decode!(stripe_response.body)
+                  conn |> send_resp(:ok, Poison.encode!(%{ payment_intent_secret: payment_intent["client_secret"] }))
+                end
+              end
+            end
+          end
+        end
     end
+        
   end
 
   def create_charge(conn, params = %{ "amountUSD" => amountUSD }) do
     { amount, _ } = Float.parse(amountUSD)
+    ip_restricted = ConsoleWeb.IPFilter.check_ip_restriction(ConsoleWeb.IPFilter.get_ip(conn))
 
-    if amount < Application.get_env(:console, :stripe_minimum_purchase) do
-      {:error, :bad_request, "Credit card charges cannot be less than $#{Application.get_env(:console, :stripe_minimum_purchase)}"}
+    cond do
+      amount < Application.get_env(:console, :stripe_minimum_purchase) ->
+        {:error, :bad_request, "Credit card charges cannot be less than $#{Application.get_env(:console, :stripe_minimum_purchase)}"}
+      ip_restricted ->
+        {:error, :forbidden, "Our payment processor doesn't currently support transactions in your area."}
+      true ->
+        current_organization = conn.assigns.current_organization
+        description = if not is_nil(params["description"]) and params["description"] != "", do: " - " <> params["description"], else: ""
+        request_body = URI.encode_query(%{
+          "customer" => current_organization.stripe_customer_id,
+          "amount" => Float.round(amount * 100) |> trunc(),
+          "currency" => "usd",
+          "receipt_email" => conn.assigns.current_user.email,
+          "description" => "Data Credits" <> description
+        })
+        headers = [
+          {"Authorization", "Bearer #{Application.get_env(:console, :stripe_secret_key)}"},
+          {"Content-Type", "application/x-www-form-urlencoded"}
+        ]
+
+        with {:ok, stripe_response} <- HTTPoison.post("#{@stripe_api_url}/v1/payment_intents", request_body, headers) do
+          with 200 <- stripe_response.status_code do
+            payment_intent = Poison.decode!(stripe_response.body)
+            conn |> send_resp(:ok, Poison.encode!(%{ payment_intent_secret: payment_intent["client_secret"] }))
+          end
+        end
+    end
+    
+  end
+
+  def get_payment_methods(conn, _) do
+    ip_restricted = ConsoleWeb.IPFilter.check_ip_restriction(ConsoleWeb.IPFilter.get_ip(conn))
+
+    if ip_restricted do
+      {:error, :forbidden, "Our payment processor doesn't currently support transactions in your area."}
     else
       current_organization = conn.assigns.current_organization
-      description = if not is_nil(params["description"]) and params["description"] != "", do: " - " <> params["description"], else: ""
-      request_body = URI.encode_query(%{
-        "customer" => current_organization.stripe_customer_id,
-        "amount" => Float.round(amount * 100) |> trunc(),
-        "currency" => "usd",
-        "receipt_email" => conn.assigns.current_user.email,
-        "description" => "Data Credits" <> description
-      })
       headers = [
         {"Authorization", "Bearer #{Application.get_env(:console, :stripe_secret_key)}"},
         {"Content-Type", "application/x-www-form-urlencoded"}
       ]
 
-      with {:ok, stripe_response} <- HTTPoison.post("#{@stripe_api_url}/v1/payment_intents", request_body, headers) do
+      with {:ok, stripe_response} <- HTTPoison.get("#{@stripe_api_url}/v1/payment_methods?customer=#{current_organization.stripe_customer_id}&type=card", headers) do
         with 200 <- stripe_response.status_code do
-          payment_intent = Poison.decode!(stripe_response.body)
-          conn |> send_resp(:ok, Poison.encode!(%{ payment_intent_secret: payment_intent["client_secret"] }))
+          conn |> send_resp(:ok, stripe_response.body)
         end
       end
     end
   end
 
-  def get_payment_methods(conn, _) do
-    current_organization = conn.assigns.current_organization
-    headers = [
-      {"Authorization", "Bearer #{Application.get_env(:console, :stripe_secret_key)}"},
-      {"Content-Type", "application/x-www-form-urlencoded"}
-    ]
-
-    with {:ok, stripe_response} <- HTTPoison.get("#{@stripe_api_url}/v1/payment_methods?customer=#{current_organization.stripe_customer_id}&type=card", headers) do
-      with 200 <- stripe_response.status_code do
-        conn |> send_resp(:ok, stripe_response.body)
-      end
-    end
-  end
-
   def get_setup_payment_method(conn, _) do
-    current_organization = conn.assigns.current_organization
+    ip_restricted = ConsoleWeb.IPFilter.check_ip_restriction(ConsoleWeb.IPFilter.get_ip(conn))
 
-    request_body = URI.encode_query(%{
-      "customer" => current_organization.stripe_customer_id,
-    })
-    headers = [
-      {"Authorization", "Bearer #{Application.get_env(:console, :stripe_secret_key)}"},
-      {"Content-Type", "application/x-www-form-urlencoded"}
-    ]
+    if ip_restricted do
+      {:error, :forbidden, "Our payment processor doesn't currently support transactions in your area."}
+    else
+      current_organization = conn.assigns.current_organization
 
-    with {:ok, stripe_response} <- HTTPoison.post("#{@stripe_api_url}/v1/setup_intents", request_body, headers) do
-      with 200 <- stripe_response.status_code do
-        setup_intent = Poison.decode!(stripe_response.body)
-        # Send email about payment method added
-        Organizations.get_administrators(current_organization)
-        |> Enum.each(fn administrator ->
-          conn.assigns.current_user
-          |> Email.payment_method_updated_email(current_organization, administrator.email, "added") |> Mailer.deliver_later()
-        end)
-        conn |> send_resp(:ok, Poison.encode!(%{ setup_intent_secret: setup_intent["client_secret"] }))
+      request_body = URI.encode_query(%{
+        "customer" => current_organization.stripe_customer_id,
+      })
+      headers = [
+        {"Authorization", "Bearer #{Application.get_env(:console, :stripe_secret_key)}"},
+        {"Content-Type", "application/x-www-form-urlencoded"}
+      ]
+
+      with {:ok, stripe_response} <- HTTPoison.post("#{@stripe_api_url}/v1/setup_intents", request_body, headers) do
+        with 200 <- stripe_response.status_code do
+          setup_intent = Poison.decode!(stripe_response.body)
+          # Send email about payment method added
+          Organizations.get_administrators(current_organization)
+          |> Enum.each(fn administrator ->
+            conn.assigns.current_user
+            |> Email.payment_method_updated_email(current_organization, administrator.email, "added") |> Mailer.deliver_later()
+          end)
+          conn |> send_resp(:ok, Poison.encode!(%{ setup_intent_secret: setup_intent["client_secret"] }))
+        end
       end
     end
   end
@@ -185,50 +208,56 @@ defmodule ConsoleWeb.DataCreditController do
   end
 
   def create_dc_purchase(conn, params = %{"cost" => cost, "cardType" => card_type, "last4" => last_4, "paymentId" => payment_id}) do
-    current_organization = conn.assigns.current_organization
-    current_user = conn.assigns.current_user
-    # Refactor out conversion rates between USD, DC, Bytes later
-    description = if not is_nil(params["description"]) and params["description"] != "", do: " - " <> params["description"], else: ""
-    attrs = %{
-      "dc_purchased" => round(cost / Application.get_env(:console, :dc_cost_multiplier) * 1000),
-      "cost" => cost,
-      "card_type" => card_type,
-      "last_4" => last_4,
-      "user_id" => current_user.id,
-      "organization_id" => current_organization.id,
-      "payment_id" => payment_id,
-      "description" => "Data Credits" <> description
-    }
+    ip_restricted = ConsoleWeb.IPFilter.check_ip_restriction(ConsoleWeb.IPFilter.get_ip(conn))
 
-    headers = [
-      {"Authorization", "Bearer #{Application.get_env(:console, :stripe_secret_key)}"},
-      {"Content-Type", "application/x-www-form-urlencoded"}
-    ]
+    if ip_restricted do
+      {:error, :forbidden, "Our payment processor doesn't currently support transactions in your area."}
+    else
+      current_organization = conn.assigns.current_organization
+      current_user = conn.assigns.current_user
+      # Refactor out conversion rates between USD, DC, Bytes later
+      description = if not is_nil(params["description"]) and params["description"] != "", do: " - " <> params["description"], else: ""
+      attrs = %{
+        "dc_purchased" => round(cost / Application.get_env(:console, :dc_cost_multiplier) * 1000),
+        "cost" => cost,
+        "card_type" => card_type,
+        "last_4" => last_4,
+        "user_id" => current_user.id,
+        "organization_id" => current_organization.id,
+        "payment_id" => payment_id,
+        "description" => "Data Credits" <> description
+      }
 
-    with nil <- DcPurchases.get_by_payment_id(payment_id),
-      {:ok, stripe_response} <- HTTPoison.get("#{@stripe_api_url}/v1/payment_intents/#{payment_id}", headers),
-      200 <- stripe_response.status_code do
-        payment_intent = Poison.decode!(stripe_response.body)
+      headers = [
+        {"Authorization", "Bearer #{Application.get_env(:console, :stripe_secret_key)}"},
+        {"Content-Type", "application/x-www-form-urlencoded"}
+      ]
 
-        with "succeeded" <- payment_intent["status"],
-          {:ok, %DcPurchase{} = dc_purchase } <- DcPurchases.create_dc_purchase_update_org(attrs, current_organization) do
-            current_organization = Organizations.get_organization!(current_organization.id)
-            Organizations.update_organization(current_organization, %{ "received_free_dc" => false })
+      with nil <- DcPurchases.get_by_payment_id(payment_id),
+        {:ok, stripe_response} <- HTTPoison.get("#{@stripe_api_url}/v1/payment_intents/#{payment_id}", headers),
+        200 <- stripe_response.status_code do
+          payment_intent = Poison.decode!(stripe_response.body)
 
-            ConsoleWeb.Endpoint.broadcast("graphql:dc_purchases_table", "graphql:dc_purchases_table:#{current_organization.id}:update_dc_table", %{})
-            ConsoleWeb.Endpoint.broadcast("graphql:dc_index", "graphql:dc_index:#{current_organization.id}:update_dc", %{})
-            broadcast_router_refill_dc_balance(current_organization)
+          with "succeeded" <- payment_intent["status"],
+            {:ok, %DcPurchase{} = dc_purchase } <- DcPurchases.create_dc_purchase_update_org(attrs, current_organization) do
+              current_organization = Organizations.get_organization!(current_organization.id)
+              Organizations.update_organization(current_organization, %{ "received_free_dc" => false })
 
-            # send transaction emails
-            Organizations.get_administrators(current_organization)
-            |> Enum.each(fn admin ->
-              Email.data_credit_purchase_email(dc_purchase, current_user, current_organization, admin.email) |> Mailer.deliver_later()
-            end)
+              ConsoleWeb.Endpoint.broadcast("graphql:dc_purchases_table", "graphql:dc_purchases_table:#{current_organization.id}:update_dc_table", %{})
+              ConsoleWeb.Endpoint.broadcast("graphql:dc_index", "graphql:dc_index:#{current_organization.id}:update_dc", %{})
+              broadcast_router_refill_dc_balance(current_organization)
 
-            conn
-            |> put_resp_header("message", "Payment successful, your Data Credits balance has been refreshed.")
-            |> send_resp(:no_content, "")
-        end
+              # send transaction emails
+              Organizations.get_administrators(current_organization)
+              |> Enum.each(fn admin ->
+                Email.data_credit_purchase_email(dc_purchase, current_user, current_organization, admin.email) |> Mailer.deliver_later()
+              end)
+
+              conn
+              |> put_resp_header("message", "Payment successful, your Data Credits balance has been refreshed.")
+              |> send_resp(:no_content, "")
+          end
+      end
     end
   end
 
