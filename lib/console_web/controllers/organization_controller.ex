@@ -5,6 +5,7 @@ defmodule ConsoleWeb.OrganizationController do
   alias Console.Organizations.Organization
   alias Console.Organizations
   alias Console.Devices
+  alias Console.OrgIps
   alias Console.DcPurchases
   alias Console.Email
   alias Console.Mailer
@@ -40,6 +41,17 @@ defmodule ConsoleWeb.OrganizationController do
       organizations = Organizations.get_organizations(conn.assigns.current_user)
       membership = Organizations.get_membership!(conn.assigns.current_user, organization)
       membership_info = %{id: organization.id, name: organization.name, role: membership.role}
+
+      Task.Supervisor.async_nolink(ConsoleWeb.TaskSupervisor, fn ->
+        OrgIps.create_org_ip(%{
+          "address" => ConsoleWeb.IPFilter.get_ip(conn),
+          "email" => membership.email,
+          "organization_id" => organization.id,
+          "organization_name" => organization.name,
+          "banned" => false
+        })
+      end)
+
       case Enum.count(organizations) do
         1 ->
           initial_dc = String.to_integer(System.get_env("INITIAL_ORG_GIFTED_DC") || "10000")
@@ -419,7 +431,7 @@ defmodule ConsoleWeb.OrganizationController do
     organization_hotspots =
       Console.OrganizationHotspots.all(organization)
       |> Enum.map(&(Map.take(&1, [:id, :hotspot_address, :organization_id, :claimed, :alias, :preferred])))
-    
+
     devices = case deactivate do
       "false" -> Enum.map(devices, fn device ->
         Map.update!(device, :active, fn _ -> false end)
@@ -456,7 +468,7 @@ defmodule ConsoleWeb.OrganizationController do
         end
       end)
       |> Repo.transaction()
-      
+
       ConsoleWeb.Endpoint.broadcast("graphql:orgs_index_table", "graphql:orgs_index_table:#{conn.assigns.current_user.id}:organization_list_update", %{})
     end
 
