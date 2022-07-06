@@ -383,111 +383,69 @@ defmodule Console.Search do
     %{}
   end
 
-  def run_for_hotspots(query, page, page_size, column, order) when byte_size(query) < 3 do
-    order_by = case [column, order] do
-      [nil, nil] -> [desc: :score]
-      _ -> [{String.to_existing_atom(Helpers.order_with_nulls(order)), String.to_existing_atom(column)}, {:desc, :score}, ]
-    end
-
-    current_unix = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
-    unix1d = current_unix - 86400000
-    unix2d = current_unix - 86400000 * 2
-
-    sub_query_1 = from h in Hotspot,
-      where: ilike(h.name, ^"%#{query}%") or ilike(h.long_city, ^"%#{query}%"),
-      select: %{
-        hotspot_address: h.address,
-        hotspot_name: h.name,
-        long_city: h.long_city,
-        short_state: h.short_state,
-        short_country: h.short_country,
-        status: h.status,
-        longitude: h.lng,
-        latitude: h.lat,
-        score: 1.0,
-        packet_count: fragment("SELECT COUNT(*) FROM hotspot_stats WHERE hotspot_address = ? AND reported_at_epoch > ?", h.address, ^unix1d),
-        packet_count_2d: fragment("SELECT COUNT(*) FROM hotspot_stats WHERE hotspot_address = ? AND reported_at_epoch < ? AND reported_at_epoch > ?", h.address, ^unix1d, ^unix2d),
-        device_count: fragment("SELECT COUNT(DISTINCT(device_id)) FROM hotspot_stats WHERE hotspot_address = ? AND reported_at_epoch > ?", h.address, ^unix1d),
-        device_count_2d: fragment("SELECT COUNT(DISTINCT(device_id)) FROM hotspot_stats WHERE hotspot_address = ? AND reported_at_epoch < ? AND reported_at_epoch > ?", h.address, ^unix1d, ^unix2d)
-      }
-
-    sub_query_2 = from h in Hotspot,
-      where: ilike(h.name, ^"%#{query}%") or ilike(h.long_city, ^"%#{query}%"),
-      select: %{
-        hotspot_address: h.address,
-        hotspot_name: h.name,
-        long_city: h.long_city,
-        short_state: h.short_state,
-        short_country: h.short_country,
-        status: h.status,
-        longitude: h.lng,
-        latitude: h.lat,
-        score: 0.5,
-        packet_count: fragment("SELECT COUNT(*) FROM hotspot_stats WHERE hotspot_address = ? AND reported_at_epoch > ?", h.address, ^unix1d),
-        packet_count_2d: fragment("SELECT COUNT(*) FROM hotspot_stats WHERE hotspot_address = ? AND reported_at_epoch < ? AND reported_at_epoch > ?", h.address, ^unix1d, ^unix2d),
-        device_count: fragment("SELECT COUNT(DISTINCT(device_id)) FROM hotspot_stats WHERE hotspot_address = ? AND reported_at_epoch > ?", h.address, ^unix1d),
-        device_count_2d: fragment("SELECT COUNT(DISTINCT(device_id)) FROM hotspot_stats WHERE hotspot_address = ? AND reported_at_epoch < ? AND reported_at_epoch > ?", h.address, ^unix1d, ^unix2d)
-      }
-
-    main_subquery = from q in subquery(union(sub_query_1, ^sub_query_2)), distinct: q.hotspot_address, order_by: [desc: q.hotspot_address, desc: q.score]
-    
-    query = from h in subquery(main_subquery), order_by: ^order_by
-    
-    query |> Repo.paginate(page: page, page_size: page_size)
-  end
-
   def run_for_hotspots(query, page, page_size, column, order) when byte_size(query) >= 3 do
-    order_by = case [column, order] do
-      [nil, nil] -> [desc: :score]
-      _ -> [{String.to_existing_atom(Helpers.order_with_nulls(order)), String.to_existing_atom(column)}, {:desc, :score}]
+    if String.match?(query, ~r/^[1-9A-HJ-NP-Za-km-z]{51,52}$/) do # running for owner wallet address search
+      order_by = case [column, order] do
+        [nil, nil] -> [desc: :name]
+        _ -> [String.to_existing_atom(Helpers.order_with_nulls(order)), String.to_existing_atom(column)]
+      end
+
+      query = from h in Hotspot,
+        select: %{
+          hotspot_address: h.address,
+          hotspot_name: h.name,
+          long_city: h.long_city,
+          short_state: h.short_state,
+          short_country: h.short_country,
+          status: h.status,
+          longitude: h.lng,
+          latitude: h.lat
+        },
+        where: h.owner == ^query,
+        order_by: ^order_by
+
+      query |> Repo.paginate(page: page, page_size: page_size)
+    else
+      order_by = case [column, order] do
+        [nil, nil] -> [desc: :score]
+        _ -> [{String.to_existing_atom(Helpers.order_with_nulls(order)), String.to_existing_atom(column)}, {:desc, :score}]
+      end
+
+      sub_query = from h in Hotspot,
+        select: %{
+          hotspot_address: h.address,
+          hotspot_name: h.name,
+          long_city: h.long_city,
+          short_state: h.short_state,
+          short_country: h.short_country,
+          status: h.status,
+          longitude: h.lng,
+          latitude: h.lat,
+          score: fragment("CASE WHEN SIMILARITY(? || ' ', ?) > SIMILARITY(? || ' ', ?) THEN SIMILARITY(? || ' ', ?) ELSE SIMILARITY(? || ' ', ?) END",
+            h.name, ^query,
+            h.long_city, ^query,
+            h.name, ^query,
+            h.long_city, ^query
+          ),
+          owner: h.owner
+        }
+
+      query = from d in subquery(sub_query), select: %{
+        hotspot_address: d.hotspot_address,
+        hotspot_name: d.hotspot_name,
+        long_city: d.long_city,
+        short_state: d.short_state,
+        short_country: d.short_country,
+        status: d.status,
+        score: d.score,
+        longitude: d.longitude,
+        latitude: d.latitude
+      },
+      where: d.score > @sim_limit,
+      order_by: ^order_by
+
+      query |> Repo.paginate(page: page, page_size: page_size)
     end
-
-    current_unix = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
-    unix1d = current_unix - 86400000
-    unix2d = current_unix - 86400000 * 2
-
-    sub_query = from h in Hotspot,
-      select: %{
-        hotspot_address: h.address,
-        hotspot_name: h.name,
-        long_city: h.long_city,
-        short_state: h.short_state,
-        short_country: h.short_country,
-        status: h.status,
-        longitude: h.lng,
-        latitude: h.lat,
-        score: fragment("CASE WHEN SIMILARITY(? || ' ', ?) > SIMILARITY(? || ' ', ?) THEN SIMILARITY(? || ' ', ?) ELSE SIMILARITY(? || ' ', ?) END",
-          h.name, ^query,
-          h.long_city, ^query,
-          h.name, ^query,
-          h.long_city, ^query
-        ),
-        owner: h.owner,
-        packet_count: fragment("SELECT COUNT(*) FROM hotspot_stats WHERE hotspot_address = ? AND reported_at_epoch > ?", h.address, ^unix1d),
-        packet_count_2d: fragment("SELECT COUNT(*) FROM hotspot_stats WHERE hotspot_address = ? AND reported_at_epoch < ? AND reported_at_epoch > ?", h.address, ^unix1d, ^unix2d),
-        device_count: fragment("SELECT COUNT(DISTINCT(device_id)) FROM hotspot_stats WHERE hotspot_address = ? AND reported_at_epoch > ?", h.address, ^unix1d),
-        device_count_2d: fragment("SELECT COUNT(DISTINCT(device_id)) FROM hotspot_stats WHERE hotspot_address = ? AND reported_at_epoch < ? AND reported_at_epoch > ?", h.address, ^unix1d, ^unix2d)
-      }
-    
-    query = from d in subquery(sub_query), select: %{
-      hotspot_address: d.hotspot_address,
-      hotspot_name: d.hotspot_name,
-      long_city: d.long_city,
-      short_state: d.short_state,
-      short_country: d.short_country,
-      status: d.status,
-      score: d.score,
-      longitude: d.longitude,
-      latitude: d.latitude,
-      packet_count: d.packet_count,
-      packet_count_2d: d.packet_count_2d,
-      device_count: d.device_count,
-      device_count_2d: d.device_count_2d
-    },
-    where: d.score > @sim_limit or d.owner == ^query,
-    order_by: ^order_by
-
-    query |> Repo.paginate(page: page, page_size: page_size)
   end
 
   def run_for_channels_mobile(query, %Organization{id: _organization_id}) when byte_size(query) == 0 do

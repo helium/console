@@ -168,6 +168,13 @@ export default ({ searchHotspots, data, error, loading, ...props }) => {
             value={term}
           />
         </div>
+        {
+          term.length > 0 && term.length < 3 && (
+            <div style={{ marginTop: 4, marginLeft: 15 }}>
+              <Text style={{ color: '#F5222D'}}>Search term must be 3 or more characters</Text>
+            </div>
+          )
+        }
 
         {searchTerm.length === 0 && (
           <Row gutter={24} style={{ marginTop: 20 }}>
@@ -264,7 +271,7 @@ export default ({ searchHotspots, data, error, loading, ...props }) => {
             hotspots={
               data
                 ? data.searchHotspots
-                : { entries: [], pageSize: 10, page: 1, totalEntries: 0 }
+                : { entries: [], pageSize, page: 1, totalEntries: 0 }
             }
             handleChangePageSize={handleChangePageSize}
             handleSortChange={handleSortChange}
