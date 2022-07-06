@@ -27,7 +27,7 @@
     "lodash": "^4.17.21",
     "magic-sdk": "^8.1.0",
     "mapbox-gl": "^2.8.0",
-    "moment": "^2.29.2",
+    "moment": "^2.29.4",
     "mustache": "^4.2.0",
     "node-polyfill-webpack-plugin": "^1.1.4",
     "npm": "^8.11.0",
