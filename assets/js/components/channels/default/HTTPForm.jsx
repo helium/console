@@ -247,7 +247,7 @@ class HTTPForm extends Component {
                 padding: 20,
               }}
             >
-              <Text strong>HTTP Headers (Optional)</Text>
+              <Text strong>HTTP Headers (Optional usage for payload interpolation)</Text>
               <br />
               {this.state.headers.map((obj, i) => (
                 <Row gutter={16} style={{ marginBottom: 16 }} key={`${i}-key`}>
@@ -394,7 +394,7 @@ class HTTPForm extends Component {
                 marginTop: 20,
               }}
             >
-              <Text strong>HTTP Headers (Optional)</Text>
+              <Text strong>HTTP Headers (Optional usage for payload interpolation)</Text>
 
               {this.state.headers.map((obj, i) => (
                 <span key={`${i}-header`}>
