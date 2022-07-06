@@ -1,4 +1,4 @@
-import FilledFunctionIcon from "../../img/filled-function-node-icon.svg";
+import FilledFunctionIcon from "../../img//functions/community/default.svg";
 
 export const getAllowedFunctions = () => {
   const convertToList = (str) => {
