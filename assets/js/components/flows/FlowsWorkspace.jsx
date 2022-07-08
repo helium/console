@@ -27,6 +27,8 @@ import RocketFilled from "@ant-design/icons/RocketFilled";
 import analyticsLogger from "../../util/analyticsLogger";
 import UserCan, { userCan } from "../common/UserCan";
 import debounce from "lodash/debounce";
+import { Tooltip } from "antd";
+import QuestionCircleFilled from "@ant-design/icons/QuestionCircleFilled";
 
 const nodeTypes = {
   labelNode: LabelNode,
@@ -199,12 +201,18 @@ export default ({
 
     if (type === "labelNode") {
       data = Object.assign({}, data, {
-        deviceCount: parseInt(event.dataTransfer.getData("node/label_device_count")),
+        deviceCount: parseInt(
+          event.dataTransfer.getData("node/label_device_count")
+        ),
         hasAlerts: event.dataTransfer.getData("node/has_alerts") === "true",
         packet_config_id:
-          event.dataTransfer.getData("node/packet_config_id") !== "null" ? event.dataTransfer.getData("node/packet_config_id") : null,
+          event.dataTransfer.getData("node/packet_config_id") !== "null"
+            ? event.dataTransfer.getData("node/packet_config_id")
+            : null,
         config_profile_id:
-          event.dataTransfer.getData("node/config_profile_id") !== "null" ? event.dataTransfer.getData("node/config_profile_id") : null,
+          event.dataTransfer.getData("node/config_profile_id") !== "null"
+            ? event.dataTransfer.getData("node/config_profile_id")
+            : null,
         devicesNotInFilter:
           event.dataTransfer.getData("node/devices_not_in_filter") === "true",
       });
@@ -214,9 +222,13 @@ export default ({
       data = Object.assign({}, data, {
         hasAlerts: event.dataTransfer.getData("node/has_alerts") === "true",
         packet_config_id:
-          event.dataTransfer.getData("node/packet_config_id") !== "null" ? event.dataTransfer.getData("node/packet_config_id") : null,
+          event.dataTransfer.getData("node/packet_config_id") !== "null"
+            ? event.dataTransfer.getData("node/packet_config_id")
+            : null,
         config_profile_id:
-          event.dataTransfer.getData("node/config_profile_id") !== "null" ? event.dataTransfer.getData("node/config_profile_id") : null,
+          event.dataTransfer.getData("node/config_profile_id") !== "null"
+            ? event.dataTransfer.getData("node/config_profile_id")
+            : null,
         inXORFilter:
           event.dataTransfer.getData("node/in_xor_filter") === "true",
       });
@@ -298,13 +310,12 @@ export default ({
             if (elements && elements.length === 1) {
               setShowInfoSidebar(true);
               setSelectedNodeId(elements[0].id);
-            } else if (!elements) {
+            } else if (!elements || elements.length > 1) {
               setShowInfoSidebar(false);
             }
           }}
           selectNodesOnDrag={false}
           multiSelectionKeyCode={null}
-          selectionKeyCode={null}
           nodesDraggable={userCan({ role: currentRole })}
           nodesConnectable={userCan({ role: currentRole })}
           deleteKeyCode={"keyboard delete not allowed"}
@@ -316,6 +327,29 @@ export default ({
             channels={channels}
             devices={devices}
           />
+          <div
+            style={{
+              position: "absolute",
+              top: 20,
+              left: 320,
+              zIndex: 1000,
+              cursor: "help",
+            }}
+          >
+            <Tooltip
+              title="Press SHIFT and select an area to multiselect nodes for repositioning."
+              placement="right"
+            >
+              <QuestionCircleFilled
+                style={{
+                  fontSize: 20,
+                  color: "grey",
+                  marginLeft: 5,
+                  position: "relative",
+                }}
+              />
+            </Tooltip>
+          </div>
           <FlowsSaveBar hasChanges={hasChanges} />
         </UserCan>
       </div>
