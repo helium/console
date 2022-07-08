@@ -75,7 +75,7 @@ class TopBar extends Component {
   componentDidUpdate(prevProps) {
     const { organization } = this.props.orgShowQuery
     if (
-      !process.env.SELF_HOSTED && !prevProps.orgShowQuery.organization && organization &&
+      false && !process.env.SELF_HOSTED && !prevProps.orgShowQuery.organization && organization &&
       organization.received_free_dc && !organization.survey_token_sent_at &&
       moment(organization.inserted_at).add(30, "days").isAfter(moment())
     ) {
@@ -244,7 +244,7 @@ class TopBar extends Component {
             />
           </MediaQuery>
           {
-            !process.env.SELF_HOSTED && organization && organization.received_free_dc &&
+            false && !process.env.SELF_HOSTED && organization && organization.received_free_dc &&
             !organization.survey_token_sent_at && moment(organization.inserted_at).add(30, "days").isAfter(moment()) &&
             (
               <MediaQuery minWidth={720}>
@@ -438,7 +438,7 @@ class TopBar extends Component {
             pathname={this.props.pathname}
           />
         )}
-        {this.props.showSurveyNotification && (
+        {false && this.props.showSurveyNotification && (
           <SurveyNotification
             toggleSurveyNotification={this.props.toggleSurveyNotification}
             organization={organization}

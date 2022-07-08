@@ -35,7 +35,7 @@ defmodule ConsoleWeb.OrganizationController do
     |> render("index.json", organizations: organizations)
   end
 
-  def create(conn, %{"organization" => %{ "name" => organization_name } }) do
+  def create(conn, %{"organization" => %{ "name" => organization_name, "from" => _ } }) do
     with {:ok, %Organization{} = organization} <-
       Organizations.create_organization(conn.assigns.current_user, %{ "name" => organization_name }) do
       organizations = Organizations.get_organizations(conn.assigns.current_user)
