@@ -53,7 +53,6 @@ export const createOrganization = (name, noOtherOrg = false) => {
       .post("/api/organizations", {
         organization: {
           name: sanitizeHtml(name),
-          from: "browser"
         },
       })
       .then((response) => {
