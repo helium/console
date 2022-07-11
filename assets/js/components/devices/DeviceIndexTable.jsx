@@ -396,6 +396,7 @@ class DeviceIndexTable extends Component {
               <Option value={10}>10</Option>
               <Option value={25}>25</Option>
               <Option value={100}>100</Option>
+              <Option value={250}>250</Option>
             </Select>
             <Pagination
               current={devices.pageNumber}
