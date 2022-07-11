@@ -16,7 +16,8 @@ defmodule Console.Auth do
   end
 
   def get_user_by_id_and_email(user_id, email) do
-    vetted = get_user_by_email(email).vetted
+    user = get_user_by_email(email)
+    vetted = if is_nil(user) do nil else user.vetted end
     case get_user_by_id(user_id) do
       %{super: is_super} -> get_user_data_map(user_id, email, vetted, is_super)
       _ -> get_user_data_map(user_id, email, vetted)

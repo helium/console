@@ -152,6 +152,10 @@ defmodule ConsoleWeb.Schema do
     field :labels, list_of(:label)
   end
 
+  object :vetted_user_status do
+    field :vetted, :boolean
+  end
+
   object :group do
     field :id, :id
     field :name, :string
@@ -606,6 +610,11 @@ defmodule ConsoleWeb.Schema do
 
     paginated field :dc_purchases, :paginated_dc_purchases do
       resolve(&Console.DcPurchases.DcPurchaseResolver.paginate/2)
+    end
+
+    field :vetted_user_status, :vetted_user_status do
+      arg :email, :string
+      resolve &Console.Users.UserResolver.get_vetted_user_status/2
     end
   end
 end
