@@ -32,8 +32,10 @@ const { Text } = Typography;
 const { Option } = Select;
 const DEFAULT_COLUMN = "name";
 const DEFAULT_ORDER = "asc";
+const PAGE_SIZE_KEY = "devicePageSize";
 import DeviceNotInFilterTableBadge from "../common/DeviceNotInFilterTableBadge";
 import ErrorMessage from "../common/ErrorMessage";
+let startPageSize = parseInt(localStorage.getItem(PAGE_SIZE_KEY)) || 10;
 
 const columnKeyNameText = {
   dev_eui: "Device EUI",
@@ -49,7 +51,7 @@ const columnKeyNameText = {
 class LabelShowTable extends Component {
   state = {
     page: 1,
-    pageSize: 10,
+    pageSize: startPageSize,
     selectedRows: [],
     column: DEFAULT_COLUMN,
     order: DEFAULT_ORDER,
@@ -123,6 +125,13 @@ class LabelShowTable extends Component {
     this.setState({ page });
 
     const { pageSize, column, order } = this.state;
+    this.refetchPaginatedEntries(page, pageSize, column, order);
+  };
+
+  handleChangePageSize = (pageSize) => {
+    this.setState({ pageSize });
+    localStorage.setItem(PAGE_SIZE_KEY, pageSize);
+    const { page, column, order } = this.state;
     this.refetchPaginatedEntries(page, pageSize, column, order);
   };
 
@@ -436,8 +445,20 @@ class LabelShowTable extends Component {
             justifyContent: "flex-end",
             paddingBottom: 0,
             minWidth,
+            flexDirection: "row",
+            alignItems: "center",
           }}
         >
+          <Select
+            value={`${devices_by_label.pageSize} results`}
+            onSelect={this.handleChangePageSize}
+            style={{ marginRight: 40, paddingTop: 2 }}
+          >
+            <Option value={10}>10</Option>
+            <Option value={25}>25</Option>
+            <Option value={100}>100</Option>
+            <Option value={250}>250</Option>
+          </Select>
           <Pagination
             current={devices_by_label.pageNumber}
             pageSize={devices_by_label.pageSize}
@@ -480,7 +501,7 @@ export default connect(
     fetchPolicy: "cache-first",
     variables: {
       page: 1,
-      pageSize: 10,
+      pageSize: startPageSize,
       labelId: props.labelId,
       column: DEFAULT_COLUMN,
       order: DEFAULT_ORDER,
