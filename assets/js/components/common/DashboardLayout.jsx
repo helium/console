@@ -87,7 +87,7 @@ class DashboardLayout extends Component {
                   href="https://engineering.helium.com/2022/07/28/console-updates-2.2.17.html"
                   target="_blank"
                 >
-                  v2.2.18
+                  v2.2.19
                 </Button>
               )}
             </Sider>
@@ -124,9 +124,7 @@ class DashboardLayout extends Component {
                   </SurveyNotificationContext.Provider>
                 </ContentLayout>
               )}
-              {!noFooter && (
-                <Footer />
-              )}
+              {!noFooter && <Footer />}
             </Content>
             {!noAddButton && <AddResourceButton />}
           </Layout>
