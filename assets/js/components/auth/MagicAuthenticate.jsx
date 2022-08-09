@@ -120,6 +120,9 @@ const MagicAuthenticate = () => {
               <Text style={{ display: 'block' }}>
                 Submit your email address to receive a login link and learn about the network (10 device limit).
               </Text>
+              <Text italic style={{ display: 'block', marginTop: 4, fontSize: 14 }}>
+              IMPORTANT: Migration to another Console provider (to support 10+ devices) requires devices to rejoin (power cycle or restart).
+              </Text>
               <Text style={{ display: 'block', marginTop: 4 }}>
                 For larger deployments,{' '}
                 <a target="_blank" href="https://docs.helium.com/use-the-network/console/hosting-providers/">
