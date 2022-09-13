@@ -87,7 +87,7 @@ class DashboardLayout extends Component {
                   href="https://engineering.helium.com/2022/08/04/console-updates-2.2.20.html"
                   target="_blank"
                 >
-                  v2.2.22
+                  v2.2.23
                 </Button>
               )}
             </Sider>
