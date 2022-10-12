@@ -1232,7 +1232,7 @@
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
 
-"@magic-ext/oauth@^2.1.0":
+"@magic-ext/oauth@^2.1.1":
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/@magic-ext/oauth/-/oauth-2.1.1.tgz#6591bca1c17a220372f67579240efac26a9a7bdc"
   integrity sha512-JyHy8kUVFO8i5bN81MGf6wlrQ7jVC4sd890xeS3zj2QF/A4eTJxaxVOV68D+Yqr4r8xv1dq0dJknTA0WsHzATg==
@@ -4290,7 +4290,7 @@ lru-cache@^7.4.4, lru-cache@^7.5.1, lru-cache@^7.7.1:
   resolved "https://registry.yarnpkg.com/lru-cache/-/lru-cache-7.10.1.tgz#db577f42a94c168f676b638d15da8fb073448cab"
   integrity sha512-BQuhQxPuRl79J5zSXRP+uNzPOyZw2oFI9JLRQ80XswSvg21KMKNtQza9eF42rfI/3Z40RvzBdXgziEkudzjo8A==
 
-magic-sdk@^8.1.0:
+magic-sdk@^8.1.1:
   version "8.1.1"
   resolved "https://registry.yarnpkg.com/magic-sdk/-/magic-sdk-8.1.1.tgz#e2b31d492e1f574137953acaeb237558537a57d0"
   integrity sha512-BLyAufrVM/6F7Q9rKIz1r0UZnYG4SOnr650lVsJGa5V1pc4FOWBfxr7UaxhHoP6zJ7faUvY7K/x1VWDQbmYUzw==

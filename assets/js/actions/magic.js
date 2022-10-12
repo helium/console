@@ -42,7 +42,7 @@ export const checkUser = async () => {
 
 export const loginUser = async (email) => {
   try {
-    await magic.auth.loginWithMagicLink({ email });
+    await magic.auth.loginWithMagicLink({ email, redirectURI: new URL("/callback?from-gauth=false", window.location.origin).href });
     const user = await magic.user.getMetadata();
     let needRegistration = false;
     if (
