@@ -44,6 +44,23 @@ defmodule ConsoleWeb.DeviceControllerTest do
       assert device2.hotspot_address == nil # device not created through discover endpoint should not have hotspot_address
     end
 
+    test "creates device with max length of 52 in name properly", %{conn: conn} do
+      resp_conn = post conn, device_path(conn, :create), %{
+        "device" => %{ "name" => "1234567890123456789012345678901234567890123456789012", "dev_eui" => "aaaaaaaaaaaaaaaa", "app_eui" => "bbbbbbbbbbbbbbbb", "app_key" => "cccccccccccccccccccccccccccccccc" },
+        "label" => nil
+      }
+      device = json_response(resp_conn, 201)
+      device = Devices.get_device!(device["id"])
+      assert device.oui != nil
+      assert device.organization_id == conn |> get_req_header("organization") |> List.first()
+
+      resp_conn = post conn, device_path(conn, :create), %{
+        "device" => %{ "name" => "12345678901234567890123456789012345678901234567890123", "dev_eui" => "aaaaaaaaaaaaaaab", "app_eui" => "bbbbbbbbbbbbbbbc", "app_key" => "cccccccccccccccccccccccccccccccd" },
+        "label" => nil
+      }
+      assert json_response(resp_conn, 422) == %{"errors" => %{"name" => ["Name cannot be longer than 52 characters"]}}
+    end
+
     test "create devices with label linked properly", %{conn: conn} do
       # device is still created even if label does not parse by design
       resp_conn = post conn, device_path(conn, :create), %{
