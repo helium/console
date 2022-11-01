@@ -63,7 +63,7 @@ defmodule Console.Devices.Device do
       |> cast(attrs, [:name, :dev_eui, :app_eui, :app_key, :active, :packet_config_id, :config_profile_id, :in_xor_filter])
       |> check_attrs_format()
       |> validate_required([:name, :dev_eui, :app_eui, :app_key, :oui, :organization_id])
-      |> validate_length(:name, max: 50)
+      |> validate_length(:name, max: 52)
       |> unique_constraint(:dev_eui, name: :devices_dev_eui_app_eui_app_key_index, message: "An unexpected error has occurred, please try again")
       |> unique_constraint(:hotspot_address, name: :devices_hotspot_address_index, message: "This hotspot address is already used")
   end
