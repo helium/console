@@ -163,7 +163,7 @@ export default (props) => {
           addonBefore='Name'
           ref={nameInputRef}
           autoFocus
-          suffix={`${name.length}/50`}
+          suffix={`${name.length}/52`}
           maxLength={52}
         />
 

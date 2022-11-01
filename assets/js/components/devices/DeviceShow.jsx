@@ -398,7 +398,7 @@ export default (props) => {
                                     marginRight: 5,
                                     verticalAlign: 'middle',
                                   }}
-                                  suffix={`${name.length}/50`}
+                                  suffix={`${name.length}/52`}
                                   maxLength={52}
                                 />
                                 <Button
