@@ -47,7 +47,7 @@ defmodule Console.Devices.Device do
       |> check_attrs_format()
       |> validate_required([:name], message: "Name cannot be blank")
       |> validate_required([:dev_eui, :app_eui, :app_key, :organization_id], message: "Device Credentials cannot be blank")
-      |> validate_length(:name, max: 50, message: "Name cannot be longer than 50 characters")
+      |> validate_length(:name, max: 52, message: "Name cannot be longer than 52 characters")
       |> unique_constraint(:dev_eui, name: :devices_dev_eui_app_eui_app_key_index, message: "An unexpected error has occurred, please try again")
       |> unique_constraint(:hotspot_address, name: :devices_hotspot_address_index, message: "This hotspot address is already used")
       |> check_constraint(:dev_eui, name: :dev_eui_must_be_16_chars)

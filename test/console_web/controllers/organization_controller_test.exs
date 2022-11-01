@@ -9,7 +9,7 @@ defmodule ConsoleWeb.OrganizationControllerTest do
     setup [:authenticate_user]
 
     test "create organization properly", %{conn: conn} do
-      resp_conn = post conn, organization_path(conn, :create), %{ "organization" => %{ "name" => "yes org" }}
+      resp_conn = post conn, organization_path(conn, :create), %{ "organization" => %{ "name" => "yes org", "from" => "test" }}
       organization = json_response(resp_conn, 201)
 
       current_user = resp_conn.assigns.current_user
@@ -17,7 +17,7 @@ defmodule ConsoleWeb.OrganizationControllerTest do
     end
 
     test "delete organization properly", %{conn: conn} do
-      resp_conn = post conn, organization_path(conn, :create), %{ "organization" => %{ "name" => "yes org" }}
+      resp_conn = post conn, organization_path(conn, :create), %{ "organization" => %{ "name" => "yes org", "from" => "test" }}
       organization = json_response(resp_conn, 201)
       current_user = resp_conn.assigns.current_user
 
@@ -35,12 +35,12 @@ defmodule ConsoleWeb.OrganizationControllerTest do
     end
 
     test "cannot create organization with discovery mode org name", %{conn: conn} do
-      resp_conn = post conn, organization_path(conn, :create), %{ "organization" => %{ "name" => "Discovery Mode (Helium)" }}
+      resp_conn = post conn, organization_path(conn, :create), %{ "organization" => %{ "name" => "Discovery Mode (Helium)", "from" => "test" }}
       assert response(resp_conn, 422)
     end
 
     test "rename organization properly", %{conn: conn} do
-      resp_conn = post conn, organization_path(conn, :create), %{ "organization" => %{ "name" => "yay" }}
+      resp_conn = post conn, organization_path(conn, :create), %{ "organization" => %{ "name" => "yay", "from" => "test" }}
       organization = json_response(resp_conn, 201)
 
       resp_conn = put conn, organization_path(conn, :update, organization["id"], %{ "name" => "nay" })
