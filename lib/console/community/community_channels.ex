@@ -53,6 +53,11 @@ defmodule Console.CommunityChannels do
         |> Map.put(:endpoint, "https://dataplugin.ubidots.com/api/web-hook/#{channel.credentials["webhook_token"]}")
         |> Map.put(:method, "post")
         |> Map.put(:headers, Jason.encode!(%{}))
+      "qubitro" ->
+          channel
+          |> Map.put(:endpoint, "https://webhook.qubitro.com/integrations/helium")
+          |> Map.put(:method, "post")
+          |> Map.put(:headers, Jason.encode!(%{ "webhookSigningKey" => channel.credentials["qubitro_webhook_key"], "projectId" => channel.credentails["qubitro_projectId"] }))
       _ ->
         channel
     end
@@ -141,6 +146,15 @@ defmodule Console.CommunityChannels do
           "url_params" => %{}
         })
         |> Map.put(:type, (if show_underlying_type, do: "http", else: channel.type))
+      "qubitro" ->
+          channel
+          |> Map.put(:credentials, %{
+            "endpoint" => "https://webhook.qubitro.com/integrations/helium",
+            "headers" => %{ "webhookSigningKey" => channel.credentials["qubitro_webhook_key"], "projectId" => channel.credentails["qubitro_projectId"] },
+            "method" => "post",
+            "url_params" => %{}
+          })
+          |> Map.put(:type, (if show_underlying_type, do: "http", else: channel.type))
       _ ->
         channel
     end

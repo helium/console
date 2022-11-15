@@ -31,12 +31,16 @@ import TagoDark from "../../img/channels/community/flows/tago-dark.png";
 import Ubidots from "../../img/channels/community/ubidots.png";
 import UbidotsDark from "../../img/channels/community/flows/ubidots-dark.png";
 import UbidotsIntro from "../../img/channels/community/intro_screens/ubidots.png";
+import Qubitro from "../../img/channels/community/qubitro.png";
+import QubitroDark from "../../img/channels/community/flows/qubitro-dark.png"
+import QubitroIntro from "../../img/channels/community/intro_screens/qubitro.png";
 
 export const integrationImgMap = {
   adafruit: AdafruitDark,
   aws: AwsDark,
   azure: AzureDark,
   iot_central: IotCentralDark,
+  qubitro: QubitroDark,
   cargo: CargoDark,
   my_devices: MyDevicesDark,
   datacake: DatacakeDark,
@@ -49,7 +53,7 @@ export const integrationImgMap = {
   akenza: AkenzaDark,
 };
 
-export const http_integrations = ["http", "cargo", "my_devices", "akenza", "datacake", "microshare", "tago", "ubidots", "google_sheets"]
+export const http_integrations = ["http", "cargo", "my_devices", "akenza", "datacake", "microshare", "tago", "ubidots", "google_sheets", "qubitro"]
 export const mqtt_integrations = ["mqtt", "adafruit"]
 
 export const getAllowedIntegrations = () => {
@@ -230,5 +234,17 @@ export const COMMUNITY_INTEGRATION_TYPES = [
       externalLink: "https://ubidots.com/docs/"
     },
     introImg: `${UbidotsIntro}`
+  },
+  {
+    name: "Qubitro",
+    type: "qubitro",
+    img: `${Qubitro}`,
+    info: {
+      title: "The fastest way to ingest data from devices and transform them into actionable information.",
+      desc: "Qubitro is a device data platform that gives superpowers to innovators to build solutions powered by device data.",
+      docLink: "https://docs.qubitro.com/data-sources/lorawan/helium-console",
+      externalLink: "https://www.qubitro.com"
+    },
+    introImg: `${QubitroIntro}`
   },
 ];
