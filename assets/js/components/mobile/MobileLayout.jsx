@@ -114,7 +114,7 @@ class MobileLayout extends Component {
           )
         }
 
-        {this.state.showSurveyNotification && (
+        {false && this.state.showSurveyNotification && (
           <SurveyNotification
             toggleSurveyNotification={this.toggleSurveyNotification}
             organization={organization}
