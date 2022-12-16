@@ -262,7 +262,7 @@ defmodule ConsoleWeb.V1.DeviceController do
 
       case result do
         {:ok, %{ device: device }} ->
-          broadcast_router_update_device(device)
+          broadcast_router_add_device(device)
 
           device =
             Devices.get_device!(current_organization, device.id)
@@ -324,7 +324,7 @@ defmodule ConsoleWeb.V1.DeviceController do
                 })
                 |> Map.drop(["hotspot_address"]) # prevent accidental creation of discovery mode device
               end)
-            
+
             stream = Task.async_stream(device_attrs, fn d ->
               result =
                 Ecto.Multi.new()
@@ -382,7 +382,7 @@ defmodule ConsoleWeb.V1.DeviceController do
 
               case result do
                 {:ok, %{ device: device }} ->
-                  broadcast_router_update_device(device)
+                  broadcast_router_add_device(device)
 
                   device =
                     Devices.get_device!(current_organization, device.id)
@@ -439,7 +439,7 @@ defmodule ConsoleWeb.V1.DeviceController do
 
             render(conn, "results.json", results: results)
         end
-    end    
+    end
   end
 
   def set_devices_active(conn, %{"app_key" => app_key, "dev_eui" => dev_eui, "app_eui" => app_eui, "active" => active}) do
@@ -548,6 +548,10 @@ defmodule ConsoleWeb.V1.DeviceController do
           |> send_resp(:ok, "Device broadcasted to router")
       end
     end
+  end
+
+  defp broadcast_router_add_device(%Device{} = device) do
+    ConsoleWeb.Endpoint.broadcast("device:all", "device:all:add:devices", %{ "devices" => [device.id] })
   end
 
   defp broadcast_router_update_device(%Device{} = device) do

@@ -42,7 +42,8 @@ defmodule ConsoleWeb.DeviceController do
 
         ConsoleWeb.Endpoint.broadcast("graphql:devices_index_table", "graphql:devices_index_table:#{current_organization.id}:device_list_update", %{})
         ConsoleWeb.Endpoint.broadcast("graphql:devices_header_count", "graphql:devices_header_count:#{current_organization.id}:device_list_update", %{})
-        broadcast_router_update_devices([device.id])
+
+        broadcast_router_add_devices([device.id])
 
         AuditActions.create_audit_action(
           current_organization.id,
@@ -438,7 +439,7 @@ defmodule ConsoleWeb.DeviceController do
             type: successful_import.type,
             failed_devices: added_devices.failed_devices
           })
-          broadcast_router_update_devices(added_devices.device_ids)
+          broadcast_router_add_devices(added_devices.device_ids)
         end
       rescue
         _ ->
@@ -468,7 +469,7 @@ defmodule ConsoleWeb.DeviceController do
     {:ok, device_import} = Devices.create_import(organization, user_id, "ttn")
     ConsoleWeb.Endpoint.broadcast("graphql:device_import_update", "graphql:device_import_update:#{organization.id}:import_list_updated", %{})
     try do
-      device_count = Enum.reduce(applications, 0, fn app, acc ->
+      all_added_device_list = Enum.reduce(applications, [], fn app, acc ->
         case HTTPoison.request!(
             :get,
             "#{@ttn_url}/devices",
@@ -509,17 +510,21 @@ defmodule ConsoleWeb.DeviceController do
                   [{"authorization", "Bearer #{token}"}]
                 )
               end
-              acc + Enum.count(added_device_list)
+              acc + added_device_list
             _ ->
               # Failure to fetch the devices for the app from The Things Network.
               acc
         end
       end)
+
+      added_device_ids = all_added_device_list |> Enum.map(fn d -> d.id end)
+      broadcast_router_add_devices(added_device_ids)
+
       {:ok, successful_import} = Devices.update_import(
         device_import,
         %{
           status: "successful",
-          successful_devices: device_count
+          successful_devices: length(added_device_ids)
         }
       )
       ConsoleWeb.Endpoint.broadcast("graphql:device_import_update", "graphql:device_import_update:#{organization.id}:import_list_updated", %{
@@ -555,6 +560,10 @@ defmodule ConsoleWeb.DeviceController do
         _ -> acc
       end
     end)
+  end
+
+  defp broadcast_router_add_devices(device_ids) do
+    ConsoleWeb.Endpoint.broadcast("device:all", "device:all:add:devices", %{ "devices" => device_ids })
   end
 
   defp broadcast_router_update_devices(device_ids) do
