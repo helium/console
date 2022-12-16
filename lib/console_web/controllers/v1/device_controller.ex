@@ -163,7 +163,7 @@ defmodule ConsoleWeb.V1.DeviceController do
           deleted_device = %{ device_id: id, labels: Enum.map(device.labels, fn l -> l.id end), device_name: device.name }
 
           with {:ok, _} <- Devices.delete_device(device) do
-            broadcast_router_update_device(device)
+            broadcast_router_delete_device(device)
 
             { _, time } = Timex.format(Timex.now, "%H:%M:%S UTC", :strftime)
             details = %{
@@ -552,6 +552,10 @@ defmodule ConsoleWeb.V1.DeviceController do
 
   defp broadcast_router_add_device(%Device{} = device) do
     ConsoleWeb.Endpoint.broadcast("device:all", "device:all:add:devices", %{ "devices" => [device.id] })
+  end
+
+  defp broadcast_router_delete_device(%Device{} = device) do
+    ConsoleWeb.Endpoint.broadcast("device:all", "device:all:delete:devices", %{ "devices" => [device.id] })
   end
 
   defp broadcast_router_update_device(%Device{} = device) do

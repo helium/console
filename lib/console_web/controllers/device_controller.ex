@@ -117,7 +117,7 @@ defmodule ConsoleWeb.DeviceController do
       ConsoleWeb.Endpoint.broadcast("graphql:devices_header_count", "graphql:devices_header_count:#{current_organization.id}:device_list_update", %{})
       ConsoleWeb.Endpoint.broadcast("graphql:devices_in_labels_update", "graphql:devices_in_labels_update:#{current_organization.id}:organization_devices_in_labels_update", %{})
       ConsoleWeb.Endpoint.broadcast("graphql:flows_nodes_menu", "graphql:flows_nodes_menu:#{current_organization.id}:all_resources_update", %{})
-      broadcast_router_update_devices([id])
+      broadcast_router_delete_devices([id])
 
       { _, time } = Timex.format(Timex.now, "%H:%M:%S UTC", :strftime)
       details = %{
@@ -159,7 +159,7 @@ defmodule ConsoleWeb.DeviceController do
       ConsoleWeb.Endpoint.broadcast("graphql:device_index_labels_bar", "graphql:device_index_labels_bar:#{current_organization.id}:label_list_update", %{})
       ConsoleWeb.Endpoint.broadcast("graphql:devices_header_count", "graphql:devices_header_count:#{current_organization.id}:device_list_update", %{})
       ConsoleWeb.Endpoint.broadcast("graphql:flows_nodes_menu", "graphql:flows_nodes_menu:#{current_organization.id}:all_resources_update", %{})
-      broadcast_router_update_devices(devices)
+      broadcast_router_delete_devices(devices)
 
       if label_id != "none" do
         label = Labels.get_label(current_organization, label_id)
@@ -208,7 +208,7 @@ defmodule ConsoleWeb.DeviceController do
     ConsoleWeb.Endpoint.broadcast("graphql:devices_header_count", "graphql:devices_header_count:#{organization_id}:device_list_update", %{})
     ConsoleWeb.Endpoint.broadcast("graphql:devices_in_labels_update", "graphql:devices_in_labels_update:#{organization_id}:organization_devices_in_labels_update", %{})
     ConsoleWeb.Endpoint.broadcast("graphql:flows_nodes_menu", "graphql:flows_nodes_menu:#{organization_id}:all_resources_update", %{})
-    broadcast_router_update_devices(all_devices |> Enum.map(fn d -> d.id end))
+    broadcast_router_delete_devices(all_devices |> Enum.map(fn d -> d.id end))
 
     # now that devices have been deleted, send notification if applicable
     { _, time } = Timex.format(Timex.now, "%H:%M:%S UTC", :strftime)
@@ -564,6 +564,10 @@ defmodule ConsoleWeb.DeviceController do
 
   defp broadcast_router_add_devices(device_ids) do
     ConsoleWeb.Endpoint.broadcast("device:all", "device:all:add:devices", %{ "devices" => device_ids })
+  end
+
+  defp broadcast_router_delete_devices(device_ids) do
+    ConsoleWeb.Endpoint.broadcast("device:all", "device:all:delete:devices", %{ "devices" => device_ids })
   end
 
   defp broadcast_router_update_devices(device_ids) do
