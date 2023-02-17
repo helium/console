@@ -5,7 +5,7 @@ defmodule Console.Functions.Function do
   alias Console.Organizations.Organization
   alias Console.Helpers
 
-  @all_formats ["custom", "cayenne", "browan_object_locator"]
+  @all_formats ["custom", "cayenne", "browan_object_locator", "nanothings"]
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
