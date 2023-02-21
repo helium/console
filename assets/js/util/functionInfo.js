@@ -38,6 +38,11 @@ export const COMMUNITY_FUNCTION_FORMATS = [
     name: "Browan Object Locator",
     format: "browan_object_locator",
     img: `${FilledFunctionIcon}`,
+  },
+  {
+    name: "Nanothings",
+    format: "nanothings",
+    img: `${FilledFunctionIcon}`,
   }
 ];
 

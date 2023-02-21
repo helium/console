@@ -1,0 +1,198 @@
+function Decoder(bytes, port, uplink_info) {
+  /* Example values for testing
+   *
+   * Boot message
+   * 474B0CB2
+   * Port 1
+   *
+   * Health message
+   * 474B0CB2
+   * Port 13
+   *
+   * Device Status Response
+   * 0CC0000000A862C4753A
+   * Port 21
+   *
+   * Configuration Acknowledgement
+   * 01000F003C00
+   * Port 25
+   *
+   * Report Frame
+   * 00011E971E911E91
+   * Port 26
+   *
+   * Report Frame (0 padding test)
+   * 00291E011D84 (00 29 1E 01 1D 84)
+   * Port 26
+   *
+   * Recover Response
+   * 002A1E971E911E91
+   * Port 27
+   *
+   * Low Voltage Warning
+   * 0959
+   * Port 31
+   *
+   * Device Shutdown Acknowledgement
+   * 0B59
+   * Port 32
+   */
+
+  // Reconstruct original hex payload for further processing
+  const hexBytes = bytes.map((byte) => {
+    return byte.toString(16).padStart(2, "0");
+  });
+
+  switch (port) {
+    case 1:
+      decoded.uplinkType = "boot_message";
+      decoded.voltageMv = parseInt(hexBytes.slice(2, 4).join(""), 16);
+      decoded.batteryStatus = getSimpleBatteryStatus(decoded.voltageMv);
+      firstByte = hexBytes[0].toUpperCase();
+      if (firstByte === "FC") {
+        decoded.error = errors.temperatureSensor.communicationError
+      }
+      if (firstByte === "FF") {
+        decoded.error = errors.temperatureSensor.outOfRangeBootHealth
+      }
+      break;
+    case 13:
+      decoded.uplinkType = "health_message";
+      decoded.voltageMv = parseInt(hexBytes.slice(2, 4).join(""), 16);
+      decoded.batteryStatus = getSimpleBatteryStatus(decoded.voltageMv);
+      firstByte = hexBytes[0].toUpperCase();
+      if (firstByte === "FC") {
+        decoded.error = errors.temperatureSensor.communicationError
+      }
+      if (firstByte === "FF") {
+        decoded.error = errors.temperatureSensor.outOfRangeBootHealth
+      }
+      break;
+    case 21:
+      decoded.uplinkType = "device_status_response";
+      decoded.voltageMv = parseInt(hexBytes.slice(0, 2).join(""), 16);
+      decoded.batteryStatus = getSimpleBatteryStatus(decoded.voltageMv);
+      break;
+    case 25:
+      decoded.uplinkType = "configuration_acknowledgement";
+      decoded.confirmedRecordPeriod = parseInt(hexBytes.slice(1, 3).join(""), 16);
+      decoded.confirmedReportPeriod = parseInt(hexBytes.slice(3, 5).join(""), 16);
+      decoded.confirmedConfigurationUnit = parseInt(hexBytes[5], 16);
+      decoded.confirmedConfigurationUnitText = decoded.confirmedConfigurationUnit ? "seconds" : "minutes";
+      break;
+    case 26:
+      decoded.uplinkType = "report_frame";
+      decoded.frameId = parseInt(hexBytes.slice(0, 2).join(""), 16);
+      decoded.temperatures = getTemperaturesFromFrame(hexBytes);
+      break;
+    case 27:
+      decoded.uplinkType = "recover_response";
+      decoded.frameId = parseInt(hexBytes.slice(0, 2).join(""), 16);
+      decoded.temperatures = getTemperaturesFromFrame(hexBytes);
+      break;
+    case 28:
+      decoded.uplinkType = "configuration_request";
+      break;
+    case 31:
+      decoded.uplinkType = "low_voltage_warning";
+      decoded.voltageMv = parseInt(hexBytes.join(""), 16);
+      decoded.batteryStatus = getSimpleBatteryStatus(decoded.voltageMv);
+      break;
+    case 32:
+      decoded.uplinkType = "device_shutdown_acknowledgement";
+      decoded.voltageMv = parseInt(hexBytes.join(""), 16);
+      decoded.batteryStatus = getSimpleBatteryStatus(decoded.voltageMv);
+      break;
+  }
+  if (uplink_info && uplink_info.hotspots && port != 27) {
+    const strongestSignalHotspot = getStrongestSignalHotspot(uplink_info.hotspots);
+    decoded.estimatedLocation = {
+      lat: strongestSignalHotspot.lat,
+      long: strongestSignalHotspot.long,
+      googleMapsLink: `https://www.google.com/maps/search/?api=1&query=${strongestSignalHotspot.lat},${strongestSignalHotspot.long}`,
+      hotspotCount: uplink_info.hotspots.length
+    }
+  }
+  return decoded;
+}
+
+// Split reconstructed payload into processable segments
+function combineBytePairs(arr) {
+  let offset = 0;
+  const bytePairs = [];
+  while (offset < arr.length) {
+    bytePairs.push(arr.slice(offset, (offset += 2)));
+  }
+  return bytePairs;
+}
+
+// Return simplified battery status
+function getSimpleBatteryStatus(voltageMv) {
+  if (voltageMv > 2850) {
+    return "Excellent";
+  } else if (voltageMv > 2750) {
+    return "Good";
+  } else if (voltageMv > 2650) {
+    return "Low";
+  } else if (voltageMv <= 2650) {
+    return "Critical";
+  }
+}
+
+function getTemperaturesFromFrame(hexBytes) {
+  const temperatureFrame = hexBytes.slice(2);
+  const combinedHexValues = combineBytePairs(temperatureFrame).map(function(e) {
+    return e.join("");
+  });
+  return combinedHexValues.map((value) => {
+    if (value.toUpperCase() === "FFFF") {
+      decoded.error = errors.temperatureSensor.outOfRangeTemperatureFrame;
+      return { temperatureCelsius: null, temperatureFahrenheit: null };
+    }
+    const parsedValue = parseInt(value, 16);
+    const temperatureCelsius = (parsedValue - 5000) / 100;
+    const temperatureFahrenheit = +(temperatureCelsius * 9 / 5 + 32).toFixed(2);
+    return {
+      temperatureCelsius,
+      temperatureFahrenheit
+    };
+  });
+}
+
+// Determine the hotspot with the best signal strength
+function getStrongestSignalHotspot(hotspots) {
+  const hotspotInfo = hotspots.map((hotspot) => {
+    return {
+      rssi: hotspot.rssi,
+      snr: hotspot.snr,
+      lat: hotspot.lat,
+      long: hotspot.long
+    }
+  })
+  let strongestSignalHotspot = hotspotInfo[0];
+  for (let i = 1; i < hotspotInfo.length; i++) {
+    if (hotspotInfo[i].rssi > strongestSignalHotspot.rssi || (hotspotInfo[i].rssi === strongestSignalHotspot.rssi && hotspotInfo[i].snr > strongestSignalHotspot.snr)) {
+      strongestSignalHotspot = hotspotInfo[i];
+    }
+  }
+  return strongestSignalHotspot
+}
+
+const decoded = {};
+
+const errors = {
+  temperatureSensor: {
+    communicationError: {
+      errorCode: "FC",
+      errorMessage: "Unable to communicate with temperature sensor. NanoTag should be considered unreliable"
+    },
+    outOfRangeBootHealth: {
+      errorCode: "FF",
+      errorMessage: "Collected temperature sample is out of operating range"
+    },
+    outOfRangeTemperatureFrame: {
+      errorCode: "FFFF",
+      errorMessage: "One or more collected temperature samples are out of operating range"
+    }
+  }
+};

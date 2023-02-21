@@ -1,6 +1,7 @@
 defmodule Console.CommunityFunctions do
   @browan_object_locator_body File.read!("community_functions/browan_object_locator.txt")
   @cayenne_lpp_body File.read!("community_functions/cayenne.txt")
+  @nanothings_body File.read!("community_functions/nanothings.txt")
 
   def inject_body(function, show_underlying_format \\ true) do
     case function.format do
@@ -11,6 +12,10 @@ defmodule Console.CommunityFunctions do
       "browan_object_locator" ->
         function
         |> Map.put(:body, @browan_object_locator_body)
+        |> Map.put(:format, (if show_underlying_format, do: function.format, else: "custom"))
+      "nanothings" ->
+        function
+        |> Map.put(:body, @nanothings_body)
         |> Map.put(:format, (if show_underlying_format, do: function.format, else: "custom"))
       _ ->
         function
