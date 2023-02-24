@@ -38,10 +38,49 @@ function Decoder(bytes, port, uplink_info) {
    * Port 32
    */
 
+  const decoded = {};
+
+  const errors = {
+    temperatureSensor: {
+      communicationError: {
+        errorCode: "FC",
+        errorMessage: "Unable to communicate with temperature sensor. NanoTag should be considered unreliable"
+      },
+      outOfRangeBootHealth: {
+        errorCode: "FF",
+        errorMessage: "Collected temperature sample is out of operating range"
+      },
+      outOfRangeTemperatureFrame: {
+        errorCode: "FFFF",
+        errorMessage: "One or more collected temperature samples are out of operating range"
+      }
+    }
+  };
+
   // Reconstruct original hex payload for further processing
   const hexBytes = bytes.map((byte) => {
     return byte.toString(16).padStart(2, "0");
   });
+
+  function getTemperaturesFromFrame(hexBytes) {
+    const temperatureFrame = hexBytes.slice(2);
+    const combinedHexValues = combineBytePairs(temperatureFrame).map(function(e) {
+      return e.join("");
+    });
+    return combinedHexValues.map((value) => {
+      if (value.toUpperCase() === "FFFF") {
+        decoded.error = errors.temperatureSensor.outOfRangeTemperatureFrame;
+        return { temperatureCelsius: null, temperatureFahrenheit: null };
+      }
+      const parsedValue = parseInt(value, 16);
+      const temperatureCelsius = (parsedValue - 5000) / 100;
+      const temperatureFahrenheit = +(temperatureCelsius * 9 / 5 + 32).toFixed(2);
+      return {
+        temperatureCelsius,
+        temperatureFahrenheit
+      };
+    });
+  }
 
   switch (port) {
     case 1:
@@ -104,7 +143,7 @@ function Decoder(bytes, port, uplink_info) {
       decoded.batteryStatus = getSimpleBatteryStatus(decoded.voltageMv);
       break;
   }
-  if (uplink_info && uplink_info.hotspots && port != 27) {
+  if (uplink_info && uplink_info.hotspots && port !== 27) {
     const strongestSignalHotspot = getStrongestSignalHotspot(uplink_info.hotspots);
     decoded.estimatedLocation = {
       lat: strongestSignalHotspot.lat,
@@ -139,26 +178,6 @@ function getSimpleBatteryStatus(voltageMv) {
   }
 }
 
-function getTemperaturesFromFrame(hexBytes) {
-  const temperatureFrame = hexBytes.slice(2);
-  const combinedHexValues = combineBytePairs(temperatureFrame).map(function(e) {
-    return e.join("");
-  });
-  return combinedHexValues.map((value) => {
-    if (value.toUpperCase() === "FFFF") {
-      decoded.error = errors.temperatureSensor.outOfRangeTemperatureFrame;
-      return { temperatureCelsius: null, temperatureFahrenheit: null };
-    }
-    const parsedValue = parseInt(value, 16);
-    const temperatureCelsius = (parsedValue - 5000) / 100;
-    const temperatureFahrenheit = +(temperatureCelsius * 9 / 5 + 32).toFixed(2);
-    return {
-      temperatureCelsius,
-      temperatureFahrenheit
-    };
-  });
-}
-
 // Determine the hotspot with the best signal strength
 function getStrongestSignalHotspot(hotspots) {
   const hotspotInfo = hotspots.map((hotspot) => {
@@ -175,24 +194,5 @@ function getStrongestSignalHotspot(hotspots) {
       strongestSignalHotspot = hotspotInfo[i];
     }
   }
-  return strongestSignalHotspot
+  return strongestSignalHotspot;
 }
-
-const decoded = {};
-
-const errors = {
-  temperatureSensor: {
-    communicationError: {
-      errorCode: "FC",
-      errorMessage: "Unable to communicate with temperature sensor. NanoTag should be considered unreliable"
-    },
-    outOfRangeBootHealth: {
-      errorCode: "FF",
-      errorMessage: "Collected temperature sample is out of operating range"
-    },
-    outOfRangeTemperatureFrame: {
-      errorCode: "FFFF",
-      errorMessage: "One or more collected temperature samples are out of operating range"
-    }
-  }
-};
