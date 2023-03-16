@@ -112,9 +112,8 @@ class BlockbaxForm extends Component {
             channelName={this.state.channelName}
             onInputUpdate={this.handleNameInput}
             validInput={this.state.validInput}
-            submit={() => {}}
+            submit={this.onSubmit}
             mobile={this.props.mobile}
-            noSubmit
           />
         )}
 
