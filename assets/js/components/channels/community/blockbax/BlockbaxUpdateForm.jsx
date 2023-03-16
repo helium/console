@@ -14,13 +14,13 @@ class BlockbaxUpdateForm extends Component {
 
       if (blockbaxAccessToken.length > 0 && blockbaxInbdoundConnectorEndpoint.length > 0) {
         this.props.onValidInput({
-          blockbaxAccessToken: blockbaxAccessToken,
-          blockbaxInbdoundConnectorEndpoint: blockbaxInbdoundConnectorEndpoint
+          blockbaxAccessToken,
+          blockbaxInbdoundConnectorEndpoint
         }, true)
       } else {
         this.props.onValidInput({
-          accessToken: "",
-          inboundConnectorEndpoint: "",
+            blockbaxAccessToken: "",
+            blockbaxInbdoundConnectorEndpoint: "",
         }, false)
       }
     })
@@ -30,12 +30,12 @@ class BlockbaxUpdateForm extends Component {
     return (
       <>
         <Text>
-          {`Enter your Adafruit IO Connection Details`}
+          {`Enter your Blockbax Integration Details`}
         </Text>
 
         <Row gutter={16} style={{marginBottom: 16, marginTop: 20}}>
         <Col sm={12}>
-          <Text>Adafruit Username</Text>
+          <Text>Blockbax Access Token</Text>
           <Input
             placeholder="Blockbax Access Token"
             name="blockbaxAccessToken"
@@ -44,7 +44,7 @@ class BlockbaxUpdateForm extends Component {
           />
         </Col>
         <Col sm={12}>
-          <Text>Adafruit IO Key</Text>
+          <Text>Blockbax Inbound Connector Endpoint</Text>
           <Input
             placeholder="Blockbax Inbound Connector Endpoint"
             name="blockbaxInbdoundConnectorEndpoint"

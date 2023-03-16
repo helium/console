@@ -3,10 +3,10 @@ defmodule Console.CommunityChannels do
     case channel.type do
       "blockbax" ->
         channel
-        |> Map.put(:endpoint, "#{channel.credentials["inboundConnectorEndpoint"]}")
+        |> Map.put(:endpoint, "#{channel.credentials["blockbaxInbdoundConnectorEndpoint"]}")
         |> Map.put(:method, "post")
         |> Map.put(:headers, Jason.encode!(%{ "Content-Type" => "application/json" }))
-        |> Map.put(:headers, Jason.encode!(%{ "Authorization" => "ApiKey #{channel.credentials["accessToken"]}" }))
+        |> Map.put(:headers, Jason.encode!(%{ "Authorization" => "ApiKey #{channel.credentials["blockbaxAccessToken"]}" }))
       "cargo" ->
         channel
         |> Map.put(:endpoint, "https://cargo.helium.com/api/payloads")
