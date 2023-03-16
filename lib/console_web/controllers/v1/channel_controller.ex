@@ -82,7 +82,7 @@ defmodule ConsoleWeb.V1.ChannelController do
               "name" => name,
               "type" => type,
               "organization_id" => current_organization.id,
-              "credentials" -> %{
+              "credentials" => %{
                 "blockbaxAccessToken" => blockbaxAccessToken,
                 "blockbaxInbdoundConnectorEndpoint" => blockbaxInbdoundConnectorEndpoint,
               }
