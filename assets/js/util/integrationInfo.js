@@ -32,7 +32,7 @@ import Ubidots from "../../img/channels/community/ubidots.png";
 import UbidotsDark from "../../img/channels/community/flows/ubidots-dark.png";
 import UbidotsIntro from "../../img/channels/community/intro_screens/ubidots.png";
 import Blockbax from "../../img/channels/community/blockbax.png"
-import BlockbaxDark from "../../img/channels/community/blockbax-dark.png"
+import BlockbaxDark from "../../img/channels/community/flows/blockbax-dark.png"
 import BlockbaxIntro from "../../img/channels/community/intro_screens/blockbax.png"
 
 export const integrationImgMap = {
