@@ -1,6 +1,12 @@
 defmodule Console.CommunityChannels do
   def append_connection_details(channel) do
     case channel.type do
+      "blockbax" ->
+        channel
+        |> Map.put(:endpoint, "#{channel.credentials["inboundConnectorEndpoint"]}")
+        |> Map.put(:method, "post")
+        |> Map.put(:headers, Jason.encode!(%{ "Content-Type" => "application/json" }))
+        |> Map.put(:headers, Jason.encode!(%{ "Authorization" => "ApiKey #{channel.credentials["accessToken"]}" }))
       "cargo" ->
         channel
         |> Map.put(:endpoint, "https://cargo.helium.com/api/payloads")
@@ -60,6 +66,15 @@ defmodule Console.CommunityChannels do
 
   def inject_credentials(channel, show_underlying_type \\ true) do
     case channel.type do
+      "blockbax" ->
+        channel
+        |> Map.put(:credentials, %{
+          "endpoint" => "#{channel.credentials["inboundConnectorEndpoint"]}",
+          "headers" => %{ "Authorization" => "ApiKey #{channel.credentials["accessToken"]}" },
+          "method" => "post",
+          "url_params" => %{}
+        })
+        |> Map.put(:type, (if show_underlying_type, do: "http", else: channel.type))
       "cargo" ->
         channel
         |> Map.put(:credentials, %{

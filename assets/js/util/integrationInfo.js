@@ -31,8 +31,12 @@ import TagoDark from "../../img/channels/community/flows/tago-dark.png";
 import Ubidots from "../../img/channels/community/ubidots.png";
 import UbidotsDark from "../../img/channels/community/flows/ubidots-dark.png";
 import UbidotsIntro from "../../img/channels/community/intro_screens/ubidots.png";
+import Blockbax from "../../img/channels/community/blockbax.png"
+import BlockbaxDark from "../../img/channels/community/blockbax-dark.png"
+import BlockbaxIntro from "../../img/channels/community/intro_screens/blockbax.png"
 
 export const integrationImgMap = {
+  blockbax: BlockbaxDark,
   adafruit: AdafruitDark,
   aws: AwsDark,
   azure: AzureDark,
@@ -49,7 +53,7 @@ export const integrationImgMap = {
   akenza: AkenzaDark,
 };
 
-export const http_integrations = ["http", "cargo", "my_devices", "akenza", "datacake", "microshare", "tago", "ubidots", "google_sheets"]
+export const http_integrations = ["http", "blockbax", "cargo", "my_devices", "akenza", "datacake", "microshare", "tago", "ubidots", "google_sheets"]
 export const mqtt_integrations = ["mqtt", "adafruit"]
 
 export const getAllowedIntegrations = () => {
@@ -96,6 +100,18 @@ export const CORE_INTEGRATION_TYPES = [
 ];
 
 export const COMMUNITY_INTEGRATION_TYPES = [
+  {
+  name: "Blockbax",
+  type: "blockbax",
+  img: `${Blockbax}`,
+  info: {
+      title: "Blockbax Low-Code IoT Platform",
+      desc: "Join the future of smart operations, automate your business through sensor and machine data without coding.",
+      docLink: "https://blockbax.com/docs/integrations/helium/",
+      externalLink: "https://blockbax.com/"
+  },
+  introImg: `${BlockbaxIntro}`
+  },
   {
     name: "Helium Cargo",
     type: "cargo",

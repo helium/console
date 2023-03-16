@@ -27,6 +27,7 @@ import MobileLayout from "../mobile/MobileLayout";
 import ArrowLeftOutlined from "@ant-design/icons/ArrowLeftOutlined";
 import { CORE_INTEGRATION_TYPES, COMMUNITY_INTEGRATION_TYPES, getAllowedIntegrations } from "../../util/integrationInfo";
 import { isMobile } from "../../util/constants";
+import BlockbaxForm from "./community/blockbax/BlockbaxForm.jsx";
 
 @connect(null, mapDispatchToProps)
 class ChannelNew extends Component {
@@ -64,6 +65,8 @@ class ChannelNew extends Component {
     const { type } = this.state
 
     switch (type) {
+      case "blockbax":
+        return <BlockbaxForm mobile={mobile} type={type} reset={this.resetType} createChannel={this.props.createChannel} />
       case "cargo":
         return <CargoForm mobile={mobile} type={type} reset={this.resetType} createChannel={this.props.createChannel} />
       case "my_devices":
