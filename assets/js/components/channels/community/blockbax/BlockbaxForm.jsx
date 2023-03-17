@@ -1,64 +1,74 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import { IntegrationTypeTileSimple } from "../../IntegrationTypeTileSimple";
 import { Link } from "react-router-dom";
 import ChannelNameForm from "../../default/ChannelNameForm.jsx";
 import analyticsLogger from "../../../../util/analyticsLogger";
-import { Card, Typography, Input, Button, Row, Col } from 'antd';
-const { Text } = Typography
+import { Card, Typography, Input, Button, Row, Col } from "antd";
+const { Text } = Typography;
 
 class BlockbaxForm extends Component {
   state = {
+    showNextSteps: false,
     blockbaxAccessToken: "",
-    blockbaxInbdoundConnectorEndpoint: "",
+    blockbaxInboundConnectorEndpoint: "",
     validInput: true,
     channelName: "",
-  }
+  };
 
   handleInputUpdate = (e) => {
     this.setState({ [e.target.name]: e.target.value }, () => {
-      const { blockbaxAccessToken, blockbaxInbdoundConnectorEndpoint } = this.state;
+      const { blockbaxAccessToken, blockbaxInboundConnectorEndpoint } =
+        this.state;
 
-      if (blockbaxAccessToken.length > 0 && blockbaxInbdoundConnectorEndpoint.length > 0) {
+      if (
+        blockbaxAccessToken.length > 0 &&
+        blockbaxInboundConnectorEndpoint.length > 0
+      ) {
         this.setState({
           showNextSteps: true,
-          validInput: true
-        })
+          validInput: true,
+        });
       } else {
         this.setState({
-          validInput: false
-        })
+          validInput: false,
+        });
       }
-    })
-  }
+    });
+  };
 
   handleNameInput = (e) => {
     this.setState({ channelName: e.target.value });
   };
 
   onSubmit = () => {
-    const { blockbaxAccessToken, blockbaxInbdoundConnectorEndpoint, channelName } = this.state
+    const {
+      blockbaxAccessToken,
+      blockbaxInboundConnectorEndpoint,
+      channelName,
+    } = this.state;
 
-    let payload = {
+    const payload = {
       channel: {
         name: channelName,
         type: this.props.type,
+        blockbaxInboundConnectorEndpoint,
         credentials: {
           blockbaxAccessToken,
-          blockbaxInbdoundConnectorEndpoint
         },
       },
     };
 
     this.props.createChannel(payload);
 
-    analyticsLogger.logEvent(
-      this.props.mobile ? "ACTION_CREATE_CHANNEL_MOBILE" : "ACTION_CREATE_CHANNEL",
-      {
-        name: channelName,
-        type: this.props.type,
-      }
-    )
-  }
+    const topic = this.props.mobile
+      ? "ACTION_CREATE_CHANNEL_MOBILE"
+      : "ACTION_CREATE_CHANNEL";
+
+    analyticsLogger.logEvent(topic, {
+      name: channelName,
+      type: this.props.type,
+    });
+  };
 
   render() {
     const { type } = this.props;
@@ -72,7 +82,7 @@ class BlockbaxForm extends Component {
               to="#"
               onClick={(e) => {
                 e.preventDefault();
-                this.props.reset()
+                this.props.reset();
               }}
             >
               <Button style={{ marginTop: 15 }}>Change</Button>
@@ -85,25 +95,25 @@ class BlockbaxForm extends Component {
             {`${type === "update" ? "Update" : "Enter"} your Blockbax details`}
           </Text>
 
-          <Row gutter={16} style={{marginBottom: 16, marginTop: 20}}>
-          <Col sm={12}>
-            <Text>Blockbax Access Token</Text>
-            <Input
-              placeholder="Blockbax Access Token"
-              name="blockbaxAccessToken"
-              value={this.state.blockbaxAccessToken}
-              onChange={this.handleInputUpdate}
-            />
-          </Col>
-          <Col sm={12}>
-            <Text>Blockbax Inbdound Connector Endpoint</Text>
-            <Input
-              placeholder="Blockbax Inbound Connector Endpoint"
-              name="blockbaxInbdoundConnectorEndpoint"
-              value={this.state.blockbaxInbdoundConnectorEndpoint}
-              onChange={this.handleInputUpdate}
-            />
-          </Col>
+          <Row gutter={16} style={{ marginBottom: 16, marginTop: 20 }}>
+            <Col sm={12}>
+              <Text>Blockbax Access Token</Text>
+              <Input
+                placeholder="Blockbax Access Token"
+                name="blockbaxAccessToken"
+                value={this.state.blockbaxAccessToken}
+                onChange={this.handleInputUpdate}
+              />
+            </Col>
+            <Col sm={12}>
+              <Text>Blockbax Inbdound Connector Endpoint</Text>
+              <Input
+                placeholder="Blockbax Inbound Connector Endpoint"
+                name="blockbaxInboundConnectorEndpoint"
+                value={this.state.blockbaxInboundConnectorEndpoint}
+                onChange={this.handleInputUpdate}
+              />
+            </Col>
           </Row>
         </Card>
 
@@ -116,7 +126,6 @@ class BlockbaxForm extends Component {
             mobile={this.props.mobile}
           />
         )}
-
       </>
     );
   }

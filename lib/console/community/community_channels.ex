@@ -3,7 +3,7 @@ defmodule Console.CommunityChannels do
     case channel.type do
       "blockbax" ->
         channel
-        |> Map.put(:endpoint, "#{channel.credentials["blockbaxInbdoundConnectorEndpoint"]}")
+        |> Map.put(:endpoint, "#{channel.credentials["blockbaxInboundConnectorEndpoint"]}")
         |> Map.put(:method, "post")
         |> Map.put(:headers, Jason.encode!(%{ "Content-Type" => "application/json" }))
         |> Map.put(:headers, Jason.encode!(%{ "Authorization" => "ApiKey #{channel.credentials["blockbaxAccessToken"]}" }))
