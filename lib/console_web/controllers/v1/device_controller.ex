@@ -70,7 +70,7 @@ defmodule ConsoleWeb.V1.DeviceController do
     request_id = for _ <- 1..10, into: "", do: <<Enum.random('0123456789abcdef')>>
     :persistent_term.put(request_id, self())
     ids = Enum.map(current_organization.devices, fn device -> device.id end)
-    ConsoleWeb.Endpoint.broadcast("device:all", "device:all:skf", %{"devices" => [ids], "request_id" => request_id})
+    ConsoleWeb.Endpoint.broadcast("device:all", "device:all:skf", %{"devices" => ids, "request_id" => request_id})
 
     parsed_devices =
       current_organization.devices
