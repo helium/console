@@ -66,25 +66,65 @@ defmodule ConsoleWeb.V1.DeviceController do
     current_organization =
       conn.assigns.current_organization |> Organizations.fetch_assoc([:devices])
 
+
+    request_id = for _ <- 1..10, into: "", do: <<Enum.random('0123456789abcdef')>>
+    :persistent_term.put(request_id, self())
+    ids = Enum.map(parsed_devices, fn device -> device.id end)
+    ConsoleWeb.Endpoint.broadcast("device:all", "device:all:skf", %{"devices" => [ids], "request_id" => request_id})
+
     parsed_devices =
       current_organization.devices
       |> Repo.preload([[labels: :config_profile], :config_profile])
       |> Enum.map(fn d -> put_config_settings_on_device(d) end)
 
-    render(conn, "index.json", devices: parsed_devices)
+    receive do
+      {:skf, request_id, skfs} ->
+        :persistent_term.erase(request_id)
+        update_fun = fn device ->
+          case Map.get(skfs, device.id, :nil) do
+            :nil ->
+              device
+            skf ->
+              Map.merge(device, skf)
+          end
+        end
+        render(conn, "index.json", devices: Enum.map(parsed_devices, update_fun))
+    after
+      2_000 ->
+        :persistent_term.erase(request_id)
+        render(conn, "index.json", devices: parsed_devices)
+    end
   end
 
   def show(conn, %{ "id" => id }) do
     with {:ok, _id} <- Ecto.UUID.dump(id) do
       current_organization = conn.assigns.current_organization
 
+      request_id = for _ <- 1..10, into: "", do: <<Enum.random('0123456789abcdef')>>
+      :persistent_term.put(request_id, self())
+      ConsoleWeb.Endpoint.broadcast("device:all", "device:all:skf", %{"devices" => [id], "request_id" => request_id})
+
       case Devices.get_device(current_organization, id)
         |> Repo.preload([[labels: :config_profile], :config_profile])
       do
         nil ->
+          :persistent_term.erase(request_id)
           {:error, :not_found, "Device not found"}
         %Device{} = device ->
-          render(conn, "show.json", device: put_config_settings_on_device(device))
+          receive do
+            {:skf, request_id, skfs} ->
+              :persistent_term.erase(request_id)
+              case Map.get(skfs, id, :nil) do
+                :nil ->
+                  render(conn, "show.json", device: put_config_settings_on_device(device))
+                skf ->
+                  render(conn, "show.json", device: put_config_settings_on_device(Map.merge(device, skf)))
+              end
+          after
+            2_000 ->
+              :persistent_term.erase(request_id)
+              render(conn, "show.json", device: put_config_settings_on_device(device))
+          end
       end
     else
       :error ->
