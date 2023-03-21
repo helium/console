@@ -85,7 +85,7 @@ defmodule ConsoleWeb.V1.DeviceController do
             :nil ->
               device
             skf ->
-              Map.merge(device, skf)
+              Map.merge(device, skf|> Map.new(fn {k, v} -> {String.to_atom(k), v} end))
           end
         end
         render(conn, "index.json", devices: Enum.map(parsed_devices, update_fun))
@@ -118,7 +118,7 @@ defmodule ConsoleWeb.V1.DeviceController do
                 :nil ->
                   render(conn, "show.json", device: put_config_settings_on_device(device))
                 skf ->
-                  render(conn, "show.json", device: put_config_settings_on_device(Map.merge(device, skf)))
+                  render(conn, "show.json", device: put_config_settings_on_device(Map.merge(device, skf |> Map.new(fn {k, v} -> {String.to_atom(k), v} end))))
               end
           after
             2_000 ->

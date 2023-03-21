@@ -12,7 +12,7 @@ defmodule ConsoleWeb.DeviceChannel do
   end
 
   def handle_in("device:all:skf", %{"skfs" => skfs, "request_id" => request_id}, socket) do
-    case :persistent_term.get(request_id, self(), :nil) do
+    case :persistent_term.get(request_id, :nil) do
       :nil ->
         "maybe log the error here"
       pid ->
