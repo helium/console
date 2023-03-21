@@ -29,7 +29,10 @@ defmodule ConsoleWeb.V1.DeviceView do
       total_packets: device.total_packets,
       last_connected: device.last_connected,
       config_profile_id: device.config_profile_id,
-      active: device.active
+      active: device.active,
+      region: Map.get(device, :region, nil),
+      devaddr: Map.get(device, :devaddr, nil),
+      nwk_s_key: Map.get(device, :nwk_s_key, nil)
     }
 
     if Ecto.assoc_loaded?(device.labels) do
