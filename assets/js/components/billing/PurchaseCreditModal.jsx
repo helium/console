@@ -614,19 +614,6 @@ class PurchaseCreditModal extends Component {
         Cancel
       </Button>,
       <Button
-        key="submit2"
-        type="primary"
-        onClick={this.showQRCode}
-        disabled={
-          !this.state.countUSD ||
-          this.state.countUSD == 0 ||
-          this.state.gettingPrice
-        }
-        style={{ marginTop: this.props.mobile ? 6 : 0 }}
-      >
-        Burn HNT to DC
-      </Button>,
-      <Button
         key="submit"
         type="primary"
         onClick={this.showCreditCard}
