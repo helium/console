@@ -94,7 +94,7 @@ config :console,
   stripe_secret_key: System.get_env("STRIPE_SECRET_KEY")
 
 config :console,
-  stripe_minimum_purchase: String.to_integer(System.get_env("STRIPE_MINIMUM_PURCHASE") || "10")
+  stripe_minimum_purchase: String.to_float(System.get_env("STRIPE_MINIMUM_PURCHASE") || "10")
 
 config :console,
   dc_cost_multiplier: String.to_integer(System.get_env("DC_COST_MULTIPLIER") || "1")

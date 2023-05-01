@@ -74,7 +74,7 @@ config :console,
   stripe_secret_key: "sk_test_Lvy2r3SRCzwjfh3tvZsOBTrG00Cm8M7v1q"
 
 config :console,
-  stripe_minimum_purchase: 10
+  stripe_minimum_purchase: 0.5
 
 config :console,
   dc_cost_multiplier: 1

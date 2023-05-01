@@ -602,7 +602,7 @@ class PurchaseCreditModal extends Component {
       ];
 
     const stripe_min_purchase = window.stripe_minimum_purchase
-      ? parseInt(window.stripe_minimum_purchase)
+      ? parseFloat(window.stripe_minimum_purchase)
       : 10;
     const allButtons = [
       <Button
