@@ -75,7 +75,36 @@ export default ({ user }) => {
       {invitationsLoading ? (
         <Spin size="large" />
       ) : (
-        <Card
+        true ? <Card
+          style={{
+            padding: 30,
+            paddingTop: 20,
+            borderRadius: 20,
+            boxShadow: "0 52px 64px -50px #001529",
+          }}
+        >
+          <div style={{ textAlign: "center", marginBottom: 30 }}>
+            <Title>{ appName || "Helium Console" }</Title>
+            <Text
+              style={{
+                color: primaryBlue,
+                fontSize: 18,
+                fontWeight: 300,
+              }}
+            >
+              Console Closed for Signups
+            </Text>
+          </div>
+          <Text style={{ display: "block", marginBottom: 10 }}>
+            New organizations can no longer be created. Please read <a href="https://engineering.helium.com" target="_blank">our announcement</a> for more info.
+          </Text>
+          <Button
+            onClick={() => dispatch(logOut())}
+            style={{ width: "100%", marginBottom: 4 }}
+          >
+            Logout
+          </Button>
+        </Card>: <Card
           style={{
             padding: 30,
             paddingTop: 20,

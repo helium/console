@@ -103,7 +103,7 @@ class OrganizationIndex extends Component {
                   <Text style={{ fontSize: 22, fontWeight: 600 }}>
                     All Organizations
                   </Text>
-                  {process.env.IMPOSE_HARD_CAP !== 'true' && (
+                  {process.env.IMPOSE_HARD_CAP !== 'true' && false && (
                     <UserCan noManager>
                       <Button
                         icon={<PlusOutlined />}
