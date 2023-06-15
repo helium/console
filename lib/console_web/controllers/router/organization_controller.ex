@@ -38,6 +38,13 @@ defmodule ConsoleWeb.Router.OrganizationController do
     render(conn, "show.json", organization: organization)
   end
 
+  def zero_dc(conn, _) do
+    org_ids = Organizations.list_organizations_zero_balance() |> Enum.map(&(&1.id))
+
+    conn
+    |> send_resp(:ok, Poison.encode!(%{ data: org_ids }))
+  end
+
   def burned_dc(conn, %{"memo" => memo_number, "dc_amount" => amount, "hnt_amount" => cost}) do
     memo_txt = memo_number |> :binary.encode_unsigned(:little) |> :base64.encode()
 

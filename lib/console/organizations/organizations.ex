@@ -38,6 +38,13 @@ defmodule Console.Organizations do
     Repo.all(query)
   end
 
+  def list_organizations_zero_balance do
+    query = from o in Organization,
+      where: o.dc_balance == 0,
+      select: %{id: o.id}
+    Repo.all(query)
+  end
+
   def get_organizations(%{} = current_user) do
     query = from o in Organization,
       join: m in Membership, on: m.organization_id == o.id,

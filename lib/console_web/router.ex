@@ -130,6 +130,7 @@ defmodule ConsoleWeb.Router do
     end
     post "/devices/update_in_xor_filter", DeviceController, :update_devices_in_xor_filter
     resources "/organizations", OrganizationController, only: [:index, :show]
+    get "/organizations/zero_dc", OrganizationController, :zero_dc
     post "/organizations/burned", OrganizationController, :burned_dc
     post "/organizations/manual_update_router_dc", OrganizationController, :manual_update_router_dc
   end
