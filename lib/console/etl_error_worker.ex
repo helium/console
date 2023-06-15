@@ -125,6 +125,10 @@ defmodule Console.EtlErrorWorker do
                 ConsoleWeb.Router.DeviceController.check_org_dc_balance(updated_org, organization.dc_balance)
               end
 
+              if updated_org.dc_balance <= 0 do
+                ConsoleWeb.Router.DeviceController.broadcast_router_org_zero_balance(updated_org)
+              end
+
               if device.last_connected == nil do
                 { _, time } = Timex.format(Timex.now, "%H:%M:%S UTC", :strftime)
                 details = %{

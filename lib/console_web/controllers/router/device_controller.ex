@@ -12,6 +12,7 @@ defmodule ConsoleWeb.Router.DeviceController do
   alias Console.CommunityChannels
   alias Console.CommunityFunctions
   alias Console.Organizations
+  alias Console.Organizations.Organization
   alias Console.DeviceStats
   alias Console.HotspotStats
   alias Console.Events
@@ -476,6 +477,10 @@ defmodule ConsoleWeb.Router.DeviceController do
             check_org_dc_balance(organization, prev_dc_balance)
           end
 
+          if organization.dc_balance <= 0 do
+            broadcast_router_org_zero_balance(organization)
+          end
+
           if event_device.last_connected == nil do
             { _, time } = Timex.format(Timex.now, "%H:%M:%S UTC", :strftime)
             details = %{
@@ -732,5 +737,11 @@ defmodule ConsoleWeb.Router.DeviceController do
           Channels.update_channel(event_integration, %{ last_errored: true })
       end
     end
+  end
+
+  def broadcast_router_org_zero_balance(%Organization{} = organization) do
+    ConsoleWeb.Endpoint.broadcast("organization:all", "organization:all:zeroed:dc_balance", %{
+      "id" => organization.id, "dc_balance" => organization.dc_balance
+    })
   end
 end

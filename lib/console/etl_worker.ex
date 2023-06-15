@@ -260,6 +260,12 @@ defmodule Console.EtlWorker do
       |> Enum.zip(organizations_to_update)
 
     Enum.each(zipped_orgs_before_after, fn tuple ->
+      updated_org = elem(tuple, 0)
+
+      if updated_org.dc_balance <= 0 do
+        ConsoleWeb.Router.DeviceController.broadcast_router_org_zero_balance(updated_org)
+      end
+
       ConsoleWeb.Router.DeviceController.check_org_dc_balance(elem(tuple, 0), elem(tuple, 1).dc_balance)
     end)
   end
