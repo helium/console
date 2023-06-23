@@ -206,6 +206,7 @@ defmodule ConsoleWeb.OrganizationController do
         end
 
         admins = Organizations.get_administrators(organization)
+        device_ids = Devices.get_devices(organization.id) |> Enum.map(&(&1.id))
 
         with {:ok, _} <- Organizations.delete_organization(organization) do
           Enum.each(admins, fn administrator ->
@@ -215,6 +216,7 @@ defmodule ConsoleWeb.OrganizationController do
 
           ConsoleWeb.Endpoint.broadcast("graphql:topbar_orgs", "graphql:topbar_orgs:#{conn.assigns.current_user.id}:organization_list_update", %{})
           ConsoleWeb.Endpoint.broadcast("graphql:orgs_index_table", "graphql:orgs_index_table:#{conn.assigns.current_user.id}:organization_list_update", %{})
+          ConsoleWeb.Endpoint.broadcast("device:all", "device:all:delete:devices", %{ "devices" => device_ids })
 
           AuditActions.create_audit_action(
             organization.id,
