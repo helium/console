@@ -1,3 +1,6 @@
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import { logOut } from "../../actions/auth";
 import React, { Component } from "react";
 import TopBar from "./TopBar";
 import NavDrawer from "./NavDrawer";
@@ -5,6 +8,7 @@ import ContentLayout from "./ContentLayout";
 import AuthLayout from "./AuthLayout";
 import AddResourceButton from "./AddResourceButton";
 import Footer from "./Footer";
+import Logo from "../../../img/symbol.svg";
 import { Layout, Popover, Button, Card, Row, Col, Form, Typography } from "antd";
 import ToolOutlined from "@ant-design/icons/ToolOutlined";
 const { Header, Sider, Content } = Layout;
@@ -29,7 +33,7 @@ class DashboardLayout extends Component {
 
   handleSubmit = (e) => {
     e.preventDefault();
-    
+
   };
 
   render() {
@@ -46,9 +50,12 @@ class DashboardLayout extends Component {
       noAddButton,
       full,
       underTitle,
+      termsLink,
+      mainLogo,
+      logOut
     } = this.props;
 
-    const latestTermsVersion = window.latest_terms_version || process.env.LATEST_TERMS_VERSION || null
+    const latestTermsVersion = window.latest_terms_version || process.env.LATEST_TERMS_VERSION || true
 
     if (latestTermsVersion) {
       return (
@@ -61,6 +68,15 @@ class DashboardLayout extends Component {
               boxShadow: "0 52px 64px -50px #001529",
             }}
           >
+          <img
+            src={mainLogo || Logo}
+            style={{
+              width: 70,
+              display: "block",
+              margin: "0 auto",
+              marginBottom: 20,
+            }}
+          />
             <>
               <div style={{ textAlign: "center", marginBottom: 30 }}>
                 <Title>Helium Console</Title>
@@ -77,8 +93,8 @@ class DashboardLayout extends Component {
               <Text style={{ display: "block" }}>
                 I have read and agree to the <a target="_blank" href={termsLink || "/terms"}> terms and conditions</a>
               </Text>
-  
-              <Form onSubmit={handleSubmit}>
+
+              <Form onSubmit={this.handleSubmit}>
                 <Row
                   gutter={16}
                   style={{
@@ -90,16 +106,16 @@ class DashboardLayout extends Component {
                   <Col sm={12}>
                     <Button
                       type="primary"
-                      onClick={handleSubmit}
+                      onClick={this.handleSubmit}
                       style={{ width: "100%", marginBottom: 4 }}
                     >
                       Accept Terms
                     </Button>
                   </Col>
-  
+
                   <Col sm={12}>
                     <Button
-                      onClick={() => dispatch(logOut())}
+                      onClick={logOut}
                       style={{ width: "100%", marginBottom: 4 }}
                     >
                       Logout
@@ -206,4 +222,21 @@ class DashboardLayout extends Component {
   }
 }
 
-export default DashboardLayout;
+function mapStateToProps(state, ownProps) {
+  return {
+    termsLink: state.appConfig.termsLink,
+    mainLogo: state.appConfig.mainLogo,
+    config: state.appConfig
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators(
+    {
+      logOut
+    },
+    dispatch
+  );
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(DashboardLayout);
