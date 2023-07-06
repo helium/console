@@ -127,7 +127,8 @@ module.exports = function (env) {
         "ALLOWED_INTEGRATIONS",
         "ALLOWED_FUNCTIONS",
         "RECAPTCHA_SITE_KEY",
-        "USE_RECAPTCHA_FOR_AUTH"
+        "USE_RECAPTCHA_FOR_AUTH",
+        "LATEST_TERMS_VERSION"
       ]),
       new NodePolyfillPlugin()
     ],

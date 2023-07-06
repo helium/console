@@ -2,11 +2,13 @@ import React, { Component } from "react";
 import TopBar from "./TopBar";
 import NavDrawer from "./NavDrawer";
 import ContentLayout from "./ContentLayout";
+import AuthLayout from "./AuthLayout";
 import AddResourceButton from "./AddResourceButton";
 import Footer from "./Footer";
-import { Layout, Popover, Button } from "antd";
+import { Layout, Popover, Button, Card, Row, Col, Form, Typography } from "antd";
 import ToolOutlined from "@ant-design/icons/ToolOutlined";
 const { Header, Sider, Content } = Layout;
+const { Text, Title } = Typography;
 
 export const SurveyNotificationContext = React.createContext();
 
@@ -25,6 +27,11 @@ class DashboardLayout extends Component {
     });
   };
 
+  handleSubmit = (e) => {
+    e.preventDefault();
+    
+  };
+
   render() {
     const {
       classes,
@@ -40,6 +47,71 @@ class DashboardLayout extends Component {
       full,
       underTitle,
     } = this.props;
+
+    const latestTermsVersion = window.latest_terms_version || process.env.LATEST_TERMS_VERSION || null
+
+    if (latestTermsVersion) {
+      return (
+        <AuthLayout noSideNav>
+          <Card
+            style={{
+              padding: 30,
+              paddingTop: 20,
+              borderRadius: 20,
+              boxShadow: "0 52px 64px -50px #001529",
+            }}
+          >
+            <>
+              <div style={{ textAlign: "center", marginBottom: 30 }}>
+                <Title>Helium Console</Title>
+                <Text
+                  style={{
+                    color: '#38A2FF',
+                    fontSize: 18,
+                    fontWeight: 300,
+                  }}
+                >
+                  Terms of Service
+                </Text>
+              </div>
+              <Text style={{ display: "block" }}>
+                I have read and agree to the <a target="_blank" href={termsLink || "/terms"}> terms and conditions</a>
+              </Text>
+  
+              <Form onSubmit={handleSubmit}>
+                <Row
+                  gutter={16}
+                  style={{
+                    marginTop: 10,
+                    display: "flex",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Col sm={12}>
+                    <Button
+                      type="primary"
+                      onClick={handleSubmit}
+                      style={{ width: "100%", marginBottom: 4 }}
+                    >
+                      Accept Terms
+                    </Button>
+                  </Col>
+  
+                  <Col sm={12}>
+                    <Button
+                      onClick={() => dispatch(logOut())}
+                      style={{ width: "100%", marginBottom: 4 }}
+                    >
+                      Logout
+                    </Button>
+                  </Col>
+                </Row>
+              </Form>
+            </>
+          </Card>
+        </AuthLayout>
+      )
+    }
 
     return (
       <Layout style={{ height: "100%", width: "100%" }}>

@@ -33,6 +33,7 @@
       window.dc_cost_multiplier = "<%= Application.get_env(:console, :dc_cost_multiplier) %>"
       window.allowed_integrations = "<%= Application.get_env(:console, :allowed_integrations) %>"
       window.allowed_functions = "<%= Application.get_env(:console, :allowed_functions) %>"
+      window.latest_terms_version = "<%= Application.get_env(:console, :latest_terms_version) %>"
     </script>
     <div class="mainContainer">
       <main role="main">
