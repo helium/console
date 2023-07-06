@@ -118,3 +118,6 @@ config :console,
   unsupported_countries: "",
   unsupported_cities: "",
   unsupported_ukr_subdivisions: ""
+
+config :console,
+  latest_terms_version: "v2"

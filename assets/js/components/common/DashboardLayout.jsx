@@ -1,6 +1,7 @@
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { logOut } from "../../actions/auth";
+import { createAcceptedTerm, fetchAcceptedTerm, setAcceptedTermsTrue } from "../../actions/acceptedTerms";
 import React, { Component } from "react";
 import TopBar from "./TopBar";
 import NavDrawer from "./NavDrawer";
@@ -9,7 +10,7 @@ import AuthLayout from "./AuthLayout";
 import AddResourceButton from "./AddResourceButton";
 import Footer from "./Footer";
 import Logo from "../../../img/symbol.svg";
-import { Layout, Popover, Button, Card, Row, Col, Form, Typography } from "antd";
+import { Layout, Popover, Button, Card, Row, Col, Form, Typography, Spin } from "antd";
 import ToolOutlined from "@ant-design/icons/ToolOutlined";
 const { Header, Sider, Content } = Layout;
 const { Text, Title } = Typography;
@@ -20,6 +21,7 @@ class DashboardLayout extends Component {
   state = {
     showNav: true,
     showSurveyNotification: false,
+    loading: this.props.acceptedTerms ? false : true
   };
 
   toggleNav = () => {
@@ -34,7 +36,23 @@ class DashboardLayout extends Component {
   handleSubmit = (e) => {
     e.preventDefault();
 
+    createAcceptedTerm(this.props.user.email)
   };
+
+  componentDidMount() {
+    if (!this.props.acceptedTerms) {
+      fetchAcceptedTerm(this.props.user.email)
+      .then(response => {
+        const acceptedTermsInDb = response.data.accepted
+
+        if (acceptedTermsInDb) {
+          this.props.setAcceptedTermsTrue()
+        }
+
+        this.setState({ loading: false })
+      })
+    }
+  }
 
   render() {
     const {
@@ -55,9 +73,21 @@ class DashboardLayout extends Component {
       logOut
     } = this.props;
 
-    const latestTermsVersion = window.latest_terms_version || process.env.LATEST_TERMS_VERSION || true
+    const latestTermsVersion = window.latest_terms_version || process.env.LATEST_TERMS_VERSION
 
-    if (latestTermsVersion) {
+    if (this.state.loading) return (
+        <div style={{
+          height: "100%",
+          width: "100%",
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center'
+        }}>
+          <Spin size="large" />
+        </div>
+    )
+
+    if (latestTermsVersion && !this.props.acceptedTerms) {
       return (
         <AuthLayout noSideNav>
           <Card
@@ -87,7 +117,7 @@ class DashboardLayout extends Component {
                     fontWeight: 300,
                   }}
                 >
-                  Terms of Service
+                  We have updated our Terms of Service
                 </Text>
               </div>
               <Text style={{ display: "block" }}>
@@ -226,14 +256,15 @@ function mapStateToProps(state, ownProps) {
   return {
     termsLink: state.appConfig.termsLink,
     mainLogo: state.appConfig.mainLogo,
-    config: state.appConfig
+    config: state.appConfig,
+    acceptedTerms: state.acceptedTerms
   };
 }
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
-      logOut
+      logOut, setAcceptedTermsTrue
     },
     dispatch
   );
