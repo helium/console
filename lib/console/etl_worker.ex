@@ -47,6 +47,8 @@ defmodule Console.EtlWorker do
 
           device_and_hotspot_stats = generate_device_and_hotspot_stats(events_to_run_stats, devices_to_update)
 
+          organizations_to_zero = generate_organizations_with_insufficient_dc_event(parsed_events)
+
           result =
             Ecto.Multi.new()
             |> Ecto.Multi.run(:device_updates, fn _repo, _ ->
@@ -87,6 +89,13 @@ defmodule Console.EtlWorker do
               end)
               {:ok, "success"}
             end)
+            |> Ecto.Multi.run(:organization_zeroing_updates, fn _repo, _ ->
+              Enum.each(organizations_to_zero, fn org ->
+                Organizations.update_organization!(org, %{"dc_balance" => 0})
+              end)
+
+              {:ok, "success"}
+            end)
             |> Ecto.Multi.run(:device_stats, fn _repo, _ ->
               device_stats =
                 device_and_hotspot_stats
@@ -112,6 +121,7 @@ defmodule Console.EtlWorker do
 
             Task.Supervisor.async_nolink(ConsoleWeb.TaskSupervisor, fn ->
               check_updated_orgs_dc_balance(organizations_to_update)
+              check_updated_orgs_dc_balance(organizations_to_zero)
               alert_newly_connected_devices(devices_to_update, parsed_events)
               run_other_event_alerts(parsed_events)
             end) # run in separate task so that failures here do not get caught and sent to rescue block, which will double ack messages
@@ -201,6 +211,26 @@ defmodule Console.EtlWorker do
         acc
       end
     end)
+  end
+
+  defp generate_organizations_with_insufficient_dc_event(parsed_events) do
+    devices =
+      parsed_events
+      |> Enum.reduce([], fn event, acc ->
+        if event["sub_category"] == "uplink_dropped_not_enough_dc" do
+          [event["device_id"] | acc]
+        else
+          acc
+        end
+      end)
+      |> Devices.get_devices_in_list()
+
+    organizations =
+      devices
+      |> Enum.map(fn device -> device.organization_id end)
+      |> Organizations.get_organizations_in_list()
+
+    organizations
   end
 
   defp generate_device_updates_map(parsed_events) do

@@ -452,20 +452,23 @@ defmodule ConsoleWeb.Router.DeviceController do
             end
           end)
           |> Ecto.Multi.run(:organization, fn _repo, %{ event: created_event } ->
-            if event["sub_category"] in ["uplink_confirmed", "uplink_unconfirmed"] or event["category"] == "join_request" do
-              cond do
-                organization.dc_balance_nonce == event["data"]["dc"]["nonce"] ->
-                  Organizations.update_organization(organization, %{ "dc_balance" => event["data"]["dc"]["balance"] })
-                organization.dc_balance_nonce - 1 == event["data"]["dc"]["nonce"] ->
-                  {:ok, updated_org} = Organizations.update_organization(organization, %{ "dc_balance" => organization.dc_balance - created_event.data["dc"]["used"] })
-                  ConsoleWeb.DataCreditController.broadcast_router_refill_dc_balance(updated_org)
+            cond do
+              event["sub_category"] in ["uplink_confirmed", "uplink_unconfirmed"] or event["category"] == "join_request" ->
+                cond do
+                  organization.dc_balance_nonce == event["data"]["dc"]["nonce"] ->
+                    Organizations.update_organization(organization, %{ "dc_balance" => event["data"]["dc"]["balance"] })
+                  organization.dc_balance_nonce - 1 == event["data"]["dc"]["nonce"] ->
+                    {:ok, updated_org} = Organizations.update_organization(organization, %{ "dc_balance" => organization.dc_balance - created_event.data["dc"]["used"] })
+                    ConsoleWeb.DataCreditController.broadcast_router_refill_dc_balance(updated_org)
 
-                  {:ok, updated_org}
-                true ->
-                  {:error, "DC balance nonce inconsistent between router: #{event["data"]["dc"]["nonce"]} and console: #{organization.dc_balance_nonce}"}
-              end
-            else
-              {:ok, organization}
+                    {:ok, updated_org}
+                  true ->
+                    {:error, "DC balance nonce inconsistent between router: #{event["data"]["dc"]["nonce"]} and console: #{organization.dc_balance_nonce}"}
+                end
+              event["sub_category"] == "uplink_dropped_not_enough_dc" ->
+                Organizations.update_organization(organization, %{ "dc_balance" => 0 })
+              true ->
+                {:ok, organization}
             end
           end)
           |> Repo.transaction()
