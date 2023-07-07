@@ -91,28 +91,33 @@ defmodule Console.EtlErrorWorker do
               end
             end)
             |> Ecto.Multi.run(:organization, fn _repo, _ ->
-              if parsed_event.sub_category in ["uplink_confirmed", "uplink_unconfirmed"] or parsed_event.category == "join_request" do
-                org_attrs =
-                  if is_nil(organization.first_packet_received_at) do
-                    %{
-                      "dc_balance" => Enum.max([organization.dc_balance - parsed_event.data["dc"]["used"], 0]),
-                      "first_packet_received_at" => NaiveDateTime.utc_now()
-                    }
-                  else
-                    %{
-                      "dc_balance" => Enum.max([organization.dc_balance - parsed_event.data["dc"]["used"], 0]),
-                    }
+              cond do
+                parsed_event.sub_category in ["uplink_confirmed", "uplink_unconfirmed"] or parsed_event.category == "join_request" ->
+                  org_attrs =
+                    if is_nil(organization.first_packet_received_at) do
+                      %{
+                        "dc_balance" => Enum.max([organization.dc_balance - parsed_event.data["dc"]["used"], 0]),
+                        "first_packet_received_at" => NaiveDateTime.utc_now()
+                      }
+                    else
+                      %{
+                        "dc_balance" => Enum.max([organization.dc_balance - parsed_event.data["dc"]["used"], 0]),
+                      }
+                    end
+
+                  if organization.dc_balance_nonce != parsed_event.data["dc"]["used"] do
+                    ConsoleWeb.DataCreditController.broadcast_router_refill_dc_balance(
+                      Map.put(organization, :dc_balance, org_attrs["dc_balance"])
+                    )
                   end
 
-                if organization.dc_balance_nonce != parsed_event.data["dc"]["used"] do
-                  ConsoleWeb.DataCreditController.broadcast_router_refill_dc_balance(
-                    Map.put(organization, :dc_balance, org_attrs["dc_balance"])
-                  )
-                end
+                  Organizations.update_organization(organization, org_attrs)
 
-                Organizations.update_organization(organization, org_attrs)
-              else
-                {:ok, organization}
+                parsed_event.sub_category == "uplink_dropped_not_enough_dc" ->
+                  Organizations.update_organization(organization, %{ "dc_balance" => 0 })
+
+                true ->
+                  {:ok, organization}
               end
             end)
             |> Repo.transaction()
