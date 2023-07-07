@@ -119,5 +119,6 @@ config :console,
   unsupported_cities: "",
   unsupported_ukr_subdivisions: ""
 
-config :console,
-  latest_terms_version: "v2"
+# uncomment for local testing of terms gate
+# config :console,
+#   latest_terms_version: "v1.0.0"

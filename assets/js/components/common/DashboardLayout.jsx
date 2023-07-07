@@ -40,7 +40,9 @@ class DashboardLayout extends Component {
   };
 
   componentDidMount() {
-    if (!this.props.acceptedTerms) {
+    const termsGateActive = !!(window.latest_terms_version || process.env.LATEST_TERMS_VERSION)
+
+    if (termsGateActive && !this.props.acceptedTerms) {
       fetchAcceptedTerm(this.props.user.email)
       .then(response => {
         const acceptedTermsInDb = response.data.accepted
@@ -51,6 +53,9 @@ class DashboardLayout extends Component {
 
         this.setState({ loading: false })
       })
+    } else {
+      this.props.setAcceptedTermsTrue()
+      this.setState({ loading: false })
     }
   }
 
