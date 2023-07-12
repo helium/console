@@ -4,6 +4,7 @@ import devices from './device';
 import display from './display';
 import magicUser from './magicUser'
 import appConfig from './appConfig'
+import acceptedTerms from './acceptedTerms'
 
 const reducers = {
   organization,
@@ -12,6 +13,7 @@ const reducers = {
   devices,
   display,
   appConfig,
+  acceptedTerms
 };
 
 export default reducers;

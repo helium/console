@@ -121,3 +121,6 @@ config :console,
   unsupported_countries: System.get_env("UNSUPPORTED_COUNTRIES") || "",
   unsupported_cities: System.get_env("UNSUPPORTED_CITIES") || "",
   unsupported_ukr_subdivisions:  System.get_env("UNSUPPORTED_UKR_SUBDIVISIONS") || ""
+
+config :console,
+  latest_terms_version: System.get_env("LATEST_TERMS_VERSION")

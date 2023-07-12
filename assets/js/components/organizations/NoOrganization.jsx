@@ -20,8 +20,7 @@ import {
   Col,
   Form,
   Spin,
-  Alert,
-  Checkbox
+  Alert
 } from "antd";
 import LoadingOutlined from "@ant-design/icons/LoadingOutlined";
 const { Text, Title } = Typography;
@@ -30,9 +29,6 @@ export default ({ user }) => {
   const dispatch = useDispatch();
   const mainLogo = useSelector((state) => state.appConfig.mainLogo);
   const appName = useSelector((state) => state.appConfig.appName);
-  const termsLink = useSelector((state) => state.appConfig.termsLink);
-  const useAppDefaults = useSelector((state) => state.appConfig.useDefaults);
-  const initialTermsAcceptedState = useAppDefaults ? false : !termsLink
 
   const [name, setName] = useState("");
   const [invitationsLoading, setInvitationsLoading] = useState(true);
@@ -41,7 +37,6 @@ export default ({ user }) => {
   const [showImportOrg, setShowImportOrg] = useState(false);
   const [importing, setImporting] = useState(false);
   const [importFailed, setImportFailed] = useState(false);
-  const [termsAccepted, setTermsAccepted] = useState(initialTermsAcceptedState);
 
   const fetchInvitations = async () => {
     getInvitations(user.email)
@@ -161,14 +156,6 @@ export default ({ user }) => {
                 (usually your company name). This Organization name is used when
                 inviting other users to your Console.
               </Text>
-              {
-                (useAppDefaults || termsLink) && (
-                  <Checkbox style={{ marginTop: 3 }} onChange={e => setTermsAccepted(e.target.checked)}>
-                    I have read and agree to the
-                    <a target="_blank" href={termsLink || "/terms"}> terms and conditions</a>
-                  </Checkbox>
-                )
-              }
               <div style={{ textAlign: "center" }}>
                 <Input
                   placeholder="New Organization Name"
@@ -176,7 +163,6 @@ export default ({ user }) => {
                   value={name}
                   onChange={handleInputUpdate}
                   style={{ marginTop: 20 }}
-                  disabled={!termsAccepted}
                 />
               </div>
               <Form onSubmit={handleSubmit}>
@@ -193,7 +179,6 @@ export default ({ user }) => {
                       type="primary"
                       onClick={handleSubmit}
                       style={{ width: "100%", marginBottom: 4 }}
-                      disabled={!termsAccepted}
                     >
                       Add Organization
                     </Button>
@@ -292,7 +277,6 @@ export default ({ user }) => {
           <Button
             onClick={() => setShowImportOrg(!showImportOrg)}
             style={{ width: "100%", marginTop: 20 }}
-            disabled={!termsAccepted}
           >
             {showImportOrg
               ? "Take me back"
