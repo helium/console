@@ -120,5 +120,5 @@ config :console,
   unsupported_ukr_subdivisions: ""
 
 # uncomment for local testing of terms gate
-# config :console,
-#   latest_terms_version: "v1.0.0"
+config :console,
+  latest_terms_version: "v1.0.0"

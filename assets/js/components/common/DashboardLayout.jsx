@@ -79,6 +79,7 @@ class DashboardLayout extends Component {
     } = this.props;
 
     const latestTermsVersion = window.latest_terms_version || process.env.LATEST_TERMS_VERSION
+    const consoleDefaultTermsLink = process.env.SHOW_VIP_TERMS !== 'true' ? "/terms-vip" : "/terms"
 
     if (this.state.loading) return (
         <div style={{
@@ -126,7 +127,7 @@ class DashboardLayout extends Component {
                 </Text>
               </div>
               <Text style={{ display: "block" }}>
-                I have read and agree to the <a target="_blank" href={termsLink || "/terms"}> terms and conditions</a>
+                I have read and agree to the <a target="_blank" href={termsLink || consoleDefaultTermsLink}> terms and conditions</a>
               </Text>
 
               <Form onSubmit={this.handleSubmit}>
@@ -144,7 +145,7 @@ class DashboardLayout extends Component {
                       onClick={this.handleSubmit}
                       style={{ width: "100%", marginBottom: 4 }}
                     >
-                      Accept Terms
+                      I Agree
                     </Button>
                   </Col>
 

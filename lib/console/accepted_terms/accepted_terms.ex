@@ -4,6 +4,10 @@ defmodule Console.AcceptedTerms do
 
   alias Console.AcceptedTerms.AcceptedTerm
 
+  def get_accepted_term(_email, nil) do
+    nil
+  end
+  
   def get_accepted_term(email, version) do
     Repo.get_by(AcceptedTerm, [email: email, version: version])
   end
