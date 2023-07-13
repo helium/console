@@ -27,6 +27,7 @@ import MobileLayout from "../mobile/MobileLayout";
 import ArrowLeftOutlined from "@ant-design/icons/ArrowLeftOutlined";
 import { CORE_INTEGRATION_TYPES, COMMUNITY_INTEGRATION_TYPES, getAllowedIntegrations } from "../../util/integrationInfo";
 import { isMobile } from "../../util/constants";
+import QubitroForm from "./community/qubitro/QubitroForm";
 
 @connect(null, mapDispatchToProps)
 class ChannelNew extends Component {
@@ -42,7 +43,7 @@ class ChannelNew extends Component {
     const allowedIntegrations = getAllowedIntegrations()
     const { search } = this.props.history.location
     const searchParams = search.split("?type=")
-    if ( searchParams[1] && find(COMMUNITY_INTEGRATION_TYPES.filter(i => allowedIntegrations[i.type]), {type: searchParams[1]}) ) {
+    if (searchParams[1] && find(COMMUNITY_INTEGRATION_TYPES.filter(i => allowedIntegrations[i.type]), { type: searchParams[1] })) {
       this.setState({ type: searchParams[1] })
     }
   }
@@ -82,6 +83,8 @@ class ChannelNew extends Component {
         return <GoogleSheetForm from="ChannelNew" mobile={mobile} type={type} reset={this.resetType} createChannel={this.props.createChannel} />
       case "microshare":
         return <MicroshareForm mobile={mobile} type={type} reset={this.resetType} createChannel={this.props.createChannel} />
+      case "qubitro":
+        return <QubitroForm mobile={mobile} type={type} reset={this.resetType} createChannel={this.props.createChannel} />
       default:
         return <CommonForm mobile={mobile} type={type} reset={this.resetType} createChannel={this.props.createChannel} />
     }

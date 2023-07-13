@@ -6,7 +6,7 @@ defmodule Console.Channels.Channel do
   alias Console.Organizations.Organization
   alias Console.Channels.Channel
 
-  @http_types ~w(http cargo my_devices akenza datacake microshare tago ubidots google_sheets)
+  @http_types ~w(http cargo my_devices akenza datacake microshare tago ubidots google_sheets qubitro)
   @long_type_names %{
     "aws" => "AWS IoT",
     "azure" => "Azure IoT Hub",
@@ -23,6 +23,7 @@ defmodule Console.Channels.Channel do
     "ubidots" => "Ubidots",
     "google_sheets" => "Google Sheets",
     "adafruit" => "Adafruit IO",
+    "qubitro" => "Qubitro",
   }
 
   @primary_key {:id, :binary_id, autogenerate: true}

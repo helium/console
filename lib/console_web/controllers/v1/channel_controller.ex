@@ -285,6 +285,46 @@ defmodule ConsoleWeb.V1.ChannelController do
     end
   end
 
+  def create(conn, %{ "name" => name, "type" => "qubitro", "qubitro_webhook_key" => qubitro_webhook_key, "qubitro_projectId" => qubitro_projectId, "qubitro_app_name" => qubitro_app_name } = attrs) do
+    current_organization = conn.assigns.current_organization
+    allowed_types = Channel.get_allowed_integration_types()
+
+    if "qubitro" in allowed_types do
+      channel_params =
+        %{
+          "credentials" => %{
+            "qubitro_webhook_key" => qubitro_webhook_key,
+            "qubitro_projectId" => qubitro_projectId,
+            "qubitro_app_name" => qubitro_app_name
+          },
+          "name" => name,
+          "type" => "qubitro",
+          "organization_id" => current_organization.id
+        }
+
+      with {:ok, %Channel{} = channel} <- Channels.create_channel(current_organization, channel_params) do
+        channel =
+          channel
+          |> Map.put(:devices, [])
+          |> Map.put(:labels, [])
+
+        AuditActions.create_audit_action(
+          current_organization.id,
+          "v1_api",
+          "channel_controller_create",
+          channel.id,
+          attrs
+        )
+
+        conn
+        |> put_status(:created)
+        |> render("show.json", channel: channel)
+      end
+    else
+      {:error, :bad_request, "This integration type is not allowed on this Console" }
+    end
+  end
+
   def create(conn, %{ "name" => name, "type" => "mqtt", "endpoint" => endpoint, "uplink_topic" => uplink_topic, "downlink_topic" => downlink_topic } = attrs) do
     current_organization = conn.assigns.current_organization
     allowed_types = Channel.get_allowed_integration_types()
