@@ -61,6 +61,14 @@ defmodule ConsoleWeb.DeviceControllerTest do
       assert json_response(resp_conn, 422) == %{"errors" => %{"name" => ["Name cannot be longer than 52 characters"]}}
     end
 
+    test "does not create device with dev_eui 0000000000000000", %{conn: conn} do
+      resp_conn = post conn, device_path(conn, :create), %{
+        "device" => %{ "name" => "testing_bad_eui", "dev_eui" => "0000000000000000", "app_eui" => "bbbbbbbbbbbbbbbb", "app_key" => "cccccccccccccccccccccccccccccccc" },
+        "label" => nil
+      }
+      assert json_response(resp_conn, 422) == %{"errors" => %{"message" => ["Dev EUI must be exactly 8 bytes long, and only contain characters 0-9 A-F"]}}
+    end
+
     test "create devices with label linked properly", %{conn: conn} do
       # device is still created even if label does not parse by design
       resp_conn = post conn, device_path(conn, :create), %{
@@ -120,6 +128,11 @@ defmodule ConsoleWeb.DeviceControllerTest do
       resp_conn = put conn, device_path(conn, :update, device["id"]), %{ "device" => %{ "organization_id" => not_my_org.id }}
       device = json_response(resp_conn, 200)
       assert device["organization_id"] == conn |> get_req_header("organization") |> List.first()
+    end
+
+    test "does not update device with dev_eui 0000000000000000", %{conn: conn} do
+      resp_conn = post conn, device_path(conn, :update), %{ "device" => %{ "app_eui" => "0000000000000000" }}
+      assert json_response(resp_conn, 422) == %{"errors" => %{"message" => ["Dev EUI must be exactly 8 bytes long, and only contain characters 0-9 A-F"]}}
     end
 
     test "delete devices properly with single id route", %{conn: conn} do
