@@ -94,7 +94,7 @@ defmodule Console.Devices.Device do
   defp check_attrs_format(changeset) do
     case changeset do
       %Ecto.Changeset{valid?: true, changes: changes} ->
-        dev_eui_valid = Map.get(changes, :dev_eui) == nil or (String.match?(changes.dev_eui, ~r/[0-9a-fA-F]{16}/) and not String.match?(changes.dev_eui, ~r/[^0]/))
+        dev_eui_valid = Map.get(changes, :dev_eui) == nil or (String.match?(changes.dev_eui, ~r/[0-9a-fA-F]{16}/) and String.match?(changes.dev_eui, ~r/[^0]/))
         app_eui_valid = Map.get(changes, :app_eui) == nil or String.match?(changes.app_eui, ~r/[0-9a-fA-F]{16}/)
         app_key_valid = Map.get(changes, :app_key) == nil or String.match?(changes.app_key, ~r/[0-9a-fA-F]{32}/)
 
