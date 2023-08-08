@@ -79,7 +79,7 @@ class DashboardLayout extends Component {
     } = this.props;
 
     const latestTermsVersion = window.latest_terms_version || process.env.LATEST_TERMS_VERSION
-    const consoleDefaultTermsLink = process.env.ENV_DOMAIN === 'console-vip.helium.com' ? "/terms-vip" : "/terms"
+    const consoleDefaultTermsLink = process.env.ENV_DOMAIN === 'console-vip.helium.com' ? "https://1663.io/terms" : "/terms"
 
     if (this.state.loading) return (
         <div style={{

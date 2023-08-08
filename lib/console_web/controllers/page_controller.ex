@@ -9,7 +9,6 @@ defmodule ConsoleWeb.PageController do
       [
         "join_organization",
         "terms",
-        "terms-vip",
         "welcome",
         "devices",
         "labels",
