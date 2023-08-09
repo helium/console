@@ -29,7 +29,6 @@ import MagicApp from './MagicApp.jsx';
 import MagicSocialCallback from './components/auth/MagicSocialCallback';
 import { Auth0Provider } from './components/auth/Auth0Provider';
 import Terms from './components/auth/Terms';
-import VIPTerms from './components/auth/VIPTerms';
 import { history, store } from './store/configureStore'
 import { config } from './config/auth0'
 import { config as magicConfig } from './config/magic'
@@ -49,7 +48,6 @@ if (magicConfig.useMagicAuth) {
     <Router history={history}>
       <Switch>
         <Route exact path="/terms"><Terms/></Route>
-        <Route exact path="/terms-vip"><VIPTerms/></Route>
         <Route path="/callback" component={MagicSocialCallback} />
         <Provider store={store}>
           {
@@ -65,7 +63,6 @@ if (magicConfig.useMagicAuth) {
     <Router history={history}>
       <Switch>
         <Route exact path="/terms"><Terms/></Route>
-        <Route exact path="/terms-vip"><VIPTerms/></Route>
         <Route>
           <Auth0Provider
             domain={config.domain}
