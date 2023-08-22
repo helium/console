@@ -455,7 +455,8 @@ defmodule ConsoleWeb.Router.DeviceController do
             cond do
               event["sub_category"] in ["uplink_confirmed", "uplink_unconfirmed"] or event["category"] == "join_request" ->
                 cond do
-                  organization.dc_balance_nonce == event["data"]["dc"]["nonce"] ->
+                  organization.dc_balance_nonce == event["data"]["dc"]["nonce"]
+                    and event["data"]["dc"]["used"] > 0 ->
                     Organizations.update_organization(organization, %{ "dc_balance" => event["data"]["dc"]["balance"] })
                   organization.dc_balance_nonce - 1 == event["data"]["dc"]["nonce"] ->
                     {:ok, updated_org} = Organizations.update_organization(organization, %{ "dc_balance" => organization.dc_balance - created_event.data["dc"]["used"] })
