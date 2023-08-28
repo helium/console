@@ -117,10 +117,6 @@ class PurchaseCreditModal extends Component {
   componentDidUpdate(prevProps) {
     if (!prevProps.open && this.props.open) {
       analyticsLogger.logEvent("ACTION_OPEN_PURCHASE_DC_MODAL");
-      if (this.state.countDC) {
-        this.setState({ gettingPrice: true, hntToBurn: null });
-        this.getOraclePrice();
-      }
     }
 
     if (prevProps.open && !this.props.open) {
@@ -157,9 +153,7 @@ class PurchaseCreditModal extends Component {
         countDC: e.target.value,
         countUSD: (e.target.value / 100000) * costMultiplier,
         countB: e.target.value * 24,
-        gettingPrice: true,
       });
-      this.getOraclePrice();
     }
     if (e.target.value == "") {
       this.setState({
@@ -230,21 +224,30 @@ class PurchaseCreditModal extends Component {
     }
   };
 
+  showRedeemTransaction = () => {
+    this.setState({
+      showPage: "redeemTransaction",
+      memo: null,
+    });
+  };
+
+  showDCPortal = () => {
+    analyticsLogger.logEvent("ACTION_OPEN_PURCHASE_DC_MODAL_QR_CODE");
+
+    this.props.generateMemo().then(({ data }) => {
+      this.setState({
+        showPage: "dcPortal",
+        memo: data.memo,
+      });
+    });
+  };
+
   showQRCode = () => {
     analyticsLogger.logEvent("ACTION_OPEN_PURCHASE_DC_MODAL_QR_CODE");
-    if (this.state.routerAddress === "") {
-      this.props.getRouterAddress().then(({ data }) => {
-        if (typeof data.address === "string") {
-          this.setState({ routerAddress: data.address });
-        }
-      });
-    }
 
     this.props.generateMemo().then(({ data }) => {
       const qr = {
         type: "dc_burn",
-        address: this.state.routerAddress,
-        amount: this.state.hntToBurn,
         memo: data.memo,
       };
 
@@ -371,13 +374,6 @@ class PurchaseCreditModal extends Component {
         <Text>{`1 DC = 24 Byte Packet = $${
           0.00001 * costMultiplier
         } USD`}</Text>
-        {!process.env.SELF_HOSTED ||
-          (window.stripe_public_key && (
-            <Text>
-              (Credit Card purchases: minimum $
-              {window.stripe_minimum_purchase || 10})
-            </Text>
-          ))}
         <br />
         <Text
           strong
@@ -390,63 +386,6 @@ class PurchaseCreditModal extends Component {
           Data Credits purchased on Console can only be used for device packet
           transfer and are non-transferrable.
         </Text>
-        <div
-          style={
-            this.props.mobile ? styles.countBlueBoxMobile : styles.countBlueBox
-          }
-        >
-          <div>
-            <Input
-              placeholder="Enter Quantity"
-              name="countDC"
-              value={this.state.countDC}
-              onChange={this.handleCountInputUpdate}
-              type="number"
-              suffix={
-                <span style={{ paddingRight: 10 }}>
-                  <Text>DC</Text>
-                </span>
-              }
-              style={{ paddingLeft: 10, paddingRight: 10 }}
-            />
-          </div>
-          {this.state.countUSD > 0 && (
-            <div style={styles.costContainer}>
-              <Text style={{ color: "#4091F7", marginTop: -5 }}>Cost:</Text>
-              <Text style={styles.costNumber}>
-                ${countUSD && parseFloat(countUSD).toFixed(2)}
-              </Text>
-            </div>
-          )}
-        </div>
-        <div style={{ padding: "20px 0", width: "75%" }}>
-          <Input
-            name="description"
-            value={this.state.description}
-            onChange={(e) => {
-              this.setState({ description: e.target.value });
-            }}
-            addonBefore={
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
-              >
-                Memo
-                <Popover
-                  content="For Stripe payments only, you may use this field to add info (e.g. VAT number) so it shows on the emailed receipt."
-                  placement="bottom"
-                >
-                  <InfoCircleOutlined
-                    style={{ fontSize: 16, marginLeft: 10 }}
-                  />
-                </Popover>
-              </div>
-            }
-          />
-        </div>
       </div>
     );
   };
@@ -495,6 +434,65 @@ class PurchaseCreditModal extends Component {
     );
   };
 
+  renderRedeemTransaction = () => {
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          marginTop: 0,
+        }}
+      >
+        <div>
+          <Input
+            name="transactionID"
+            placeholder="Transaction ID"
+            style={{
+              width: 300,
+              marginRight: 5,
+              verticalAlign: "middle",
+            }}
+          />
+          <Button type="primary" onClick={() => {}}>
+            Redeem
+          </Button>
+        </div>
+      </div>
+    );
+  };
+
+  renderDCPortal = () => {
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          marginTop: -30,
+        }}
+      >
+        <Text
+          style={{
+            textAlign: "center",
+            display: "block",
+          }}
+        >
+          To purchase DC, click <a target="_blank" href={`https://dc-portal.helium.com/?memo=${this.state.memo}&oui=1`}>this link</a> to visit the DC Portal. Once your purchase is paid for and confirmed, you will receive a transaction ID.
+        </Text>
+        <Text
+          style={{
+            textAlign: "center",
+            display: "block",
+            marginTop: 12
+          }}
+        >
+          You can then redeem your purchased DC to your organization by clicking Redeem Transaction.
+        </Text>
+      </div>
+    );
+  };
+
   renderQRCode = () => {
     return (
       <div
@@ -505,69 +503,38 @@ class PurchaseCreditModal extends Component {
           marginTop: -30,
         }}
       >
-        <div
+        <Text
           style={{
-            height: 30,
-            width: "100%",
-            paddingLeft: this.props.mobile ? 15 : 50,
-            paddingRight: this.props.mobile ? 15 : 50,
-            marginBottom: 60,
+            textAlign: "center",
+            display: "block",
           }}
         >
-          {this.state.hntToBurn && (
-            <BurnHNTPillbox
-              hntToBurn={this.state.hntToBurn}
-              nextTimeStamp={this.state.nextTimeStamp}
-              onComplete={this.getOraclePrice}
-            />
-          )}
-        </div>
-        {this.state.routerAddress === "" && (
-          <div>
+          Scan the QR Code to initiate a DC burn transaction in your Helium App. Submit the transaction to receive a confirmed transaction ID.
+        </Text>
+        {this.state.qrContent ? (
+          <div style={{ textAlign: "center", marginTop: 6 }}>
+            <QRCode value={this.state.qrContent} size={160} />
             <Text
               style={{
                 textAlign: "center",
-                color: "#FF4D4F",
                 display: "block",
+                marginTop: 12
               }}
             >
-              Router address for burning HNT unavailable
-            </Text>
-            <Text
-              style={{
-                textAlign: "center",
-                color: "#FF4D4F",
-                display: "block",
-              }}
-            >
-              {process.env.SELF_HOSTED
-                ? "Please make sure your Router is connected to Console through websockets"
-                : "Please contact support to enable burn"}
+              You can then redeem your purchased DC to your organization by clicking Redeem Transaction.
             </Text>
           </div>
+        ) : (
+          <Text
+            style={{
+              textAlign: "center",
+              color: "#FF4D4F",
+              display: "block",
+            }}
+          >
+            Could not generate valid QR Code, please try again.
+          </Text>
         )}
-        {this.state.routerAddress !== "" &&
-          this.state.qrContent &&
-          !this.state.manualQREntry && (
-            <QRCode value={this.state.qrContent} size={220} />
-          )}
-        {this.state.manualQREntry && (
-          <BurnManualEntry
-            hntToBurn={this.state.hntToBurn}
-            memo={this.state.memo}
-            address={this.state.routerAddress}
-          />
-        )}
-        <div style={{ marginTop: 20 }}>
-          <Link to="#" onClick={this.toggleQREntry}>
-            <Text style={{ textDecoration: "underline", color: "#4091F7" }}>
-              Use{" "}
-              {!this.state.manualQREntry
-                ? "Helium Wallet CLI Tool"
-                : "Helium App"}
-            </Text>
-          </Link>
-        </div>
       </div>
     );
   };
@@ -591,7 +558,25 @@ class PurchaseCreditModal extends Component {
           Make Payment
         </Button>,
       ];
+    if (this.state.showPage == "dcPortal")
+      return [
+        <Button key="back" onClick={this.handleBack}>
+          Back
+        </Button>,
+        <Button key="submit" type="primary" onClick={this.showRedeemTransaction}>
+          Redeem Transaction
+        </Button>,
+      ];
     if (this.state.showPage == "qrCode")
+      return [
+        <Button key="back" onClick={this.handleBack}>
+          Back
+        </Button>,
+        <Button key="submit" type="primary" onClick={this.showRedeemTransaction}>
+          Redeem Transaction
+        </Button>,
+      ];
+    if (this.state.showPage == "redeemTransaction")
       return [
         <Button key="back" onClick={this.handleBack}>
           Back
@@ -606,27 +591,28 @@ class PurchaseCreditModal extends Component {
       : 10;
     const allButtons = [
       <Button
-        key="back"
-        onClick={this.handleClose}
-        disabled={this.state.loading}
-        style={{ marginTop: this.props.mobile ? 6 : 0 }}
+        key="dcPortal"
+        type="primary"
+        onClick={this.showDCPortal}
+        style={{ marginTop: 6 }}
       >
-        Cancel
+        Purchase with DC Portal
       </Button>,
       <Button
-        key="submit"
+        key="qrCode"
         type="primary"
-        onClick={this.showCreditCard}
-        disabled={
-          !this.state.countUSD ||
-          this.state.countUSD == 0 ||
-          this.state.loading ||
-          this.state.gettingPrice ||
-          this.state.countUSD < stripe_min_purchase
-        }
-        style={{ marginTop: this.props.mobile ? 6 : 0 }}
+        onClick={this.showQRCode}
+        style={{ marginTop: 6 }}
       >
-        Purchase with Credit Card
+        Delegate from Helium Wallet
+      </Button>,
+      <Button
+        key="redeemTransaction"
+        type="primary"
+        onClick={this.showRedeemTransaction}
+        style={{ marginTop: 12 }}
+      >
+        Redeem Transaction
       </Button>,
     ];
 
@@ -651,25 +637,18 @@ class PurchaseCreditModal extends Component {
     let title = "How many Data Credits do you wish to purchase?";
     if (this.state.showPage == "creditcard")
       title = "Purchase DC with Credit Card";
-    if (this.state.showPage == "qrCode" && !this.state.manualQREntry)
-      title = "Use Helium App to Burn HNT using this QR";
-    if (this.state.showPage == "qrCode" && this.state.manualQREntry)
-      title = "Transaction Details for Wallet CLI Tool";
+    if (this.state.showPage == "dcPortal")
+      title = "Purchase through the DC portal";
+    if (this.state.showPage == "qrCode")
+      title = "Use Helium App to Burn HNT";
+    if (this.state.showPage == "redeemTransaction")
+      title = "Redeem purchased DC";
 
     return (
       <Modal
         title={
           <div>
             {title}
-            {this.state.showPage == "qrCode" && !this.state.manualQREntry && (
-              <Popover
-                content="On the Helium App, tap Send and open the QR code scanner located on the top left of the screen."
-                placement="bottom"
-                overlayStyle={{ width: 220 }}
-              >
-                <InfoCircleOutlined style={{ fontSize: 24, marginLeft: 10 }} />
-              </Popover>
-            )}
           </div>
         }
         visible={open}
@@ -684,6 +663,8 @@ class PurchaseCreditModal extends Component {
         {this.state.showPage == "default" && this.renderCountSelection()}
         {this.state.showPage == "creditcard" && this.renderPayment()}
         {this.state.showPage == "qrCode" && this.renderQRCode()}
+        {this.state.showPage == "dcPortal" && this.renderDCPortal()}
+        {this.state.showPage == "redeemTransaction" && this.renderRedeemTransaction()}
       </Modal>
     );
   }

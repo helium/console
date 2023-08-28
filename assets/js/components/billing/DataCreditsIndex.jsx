@@ -386,20 +386,6 @@ class DataCreditsIndex extends Component {
                                 Transfer DC to Org
                               </Button>
                             )}
-                            <Button
-                              icon={<SyncOutlined />}
-                              onClick={() =>
-                                this.openModal("showAutomaticRenewalModal")
-                              }
-                              style={{
-                                borderRadius: 4,
-                                marginRight: 20,
-                                display: !process.env.SELF_HOSTED || window.stripe_public_key ? "inline" : "none",
-                              }}
-                            >
-                              Automatic Renewals{" "}
-                              {organization.automatic_charge_amount ? "On" : "Off"}
-                            </Button>
                             {
                               (!process.env.SELF_HOSTED || window.stripe_public_key || window.disable_user_burn !== 'true') && (
                                 <Button
