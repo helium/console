@@ -28,13 +28,6 @@ defmodule Console.EtlErrorWorker do
     end
   end
 
-  def event_dc_used(event) do
-    case event do
-      %{data: %{dc: %{used: used}}} -> used
-      _ -> 0
-    end
-  end
-
   def handle_info(:run_events_error_etl, state) do
     events = ConsoleWeb.Monitor.get_events_error_state()
 
@@ -53,7 +46,7 @@ defmodule Console.EtlErrorWorker do
             Ecto.Multi.new()
             |> Ecto.Multi.run(:device, fn _repo, _ ->
               dc_used = case event_uses_dc(parsed_event) do
-                          true -> event_dc_used(parsed_event)
+                          true -> parsed_event.data["dc"]["used"]
                           false -> 0
                         end
 
@@ -79,7 +72,7 @@ defmodule Console.EtlErrorWorker do
                 DeviceStats.create_stat(%{
                   "router_uuid" => parsed_event.router_uuid,
                   "payload_size" => parsed_event.data["payload_size"],
-                  "dc_used" => event_dc_used(parsed_event),
+                  "dc_used" => parsed_event.data["dc"]["used"],
                   "reported_at_epoch" => parsed_event.reported_at_epoch,
                   "device_id" => device.id,
                   "organization_id" => device.organization_id
@@ -113,12 +106,12 @@ defmodule Console.EtlErrorWorker do
                   org_attrs =
                     if is_nil(organization.first_packet_received_at) do
                       %{
-                        "dc_balance" => Enum.max([organization.dc_balance - event_dc_used(parsed_event), 0]),
+                        "dc_balance" => Enum.max([organization.dc_balance - parsed_event.data["dc"]["used"], 0]),
                         "first_packet_received_at" => NaiveDateTime.utc_now()
                       }
                     else
                       %{
-                        "dc_balance" => Enum.max([organization.dc_balance - event_dc_used(parsed_event), 0]),
+                        "dc_balance" => Enum.max([organization.dc_balance - parsed_event.data["dc"]["used"], 0]),
                       }
                     end
 

@@ -42,7 +42,7 @@ defmodule Console.EtlWorker do
           events_to_run_stats =
             parsed_events
             |> Enum.filter(fn event ->
-              event["sub_category"] in ["uplink_confirmed", "uplink_unconfirmed"] or event["category"] == "join_request"
+              event["sub_category"] in ["uplink_confirmed", "uplink_unconfirmed", "uplink_dropped_late"] or event["category"] == "join_request"
             end)
 
           device_and_hotspot_stats = generate_device_and_hotspot_stats(events_to_run_stats, devices_to_update)
@@ -237,13 +237,13 @@ defmodule Console.EtlWorker do
     parsed_events
     |> Enum.reduce(%{}, fn event, acc ->
       dc_used =
-        case event["sub_category"] in ["uplink_confirmed", "uplink_unconfirmed"] or event["category"] == "join_request" do
+        case event["sub_category"] in ["uplink_confirmed", "uplink_unconfirmed", "uplink_dropped_late"] or event["category"] == "join_request" do
           true -> event["data"]["dc"]["used"]
           false -> 0
         end
       packet_count = if dc_used == 0, do: 0, else: 1
       nonce =
-        case event["sub_category"] in ["uplink_confirmed", "uplink_unconfirmed"] or event["category"] == "join_request" do
+        case event["sub_category"] in ["uplink_confirmed", "uplink_unconfirmed", "uplink_dropped_late"] or event["category"] == "join_request" do
           true -> event["data"]["dc"]["nonce"]
           false -> 0
         end
