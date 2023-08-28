@@ -95,18 +95,6 @@ const MobileDataCreditsIndex = ({
                   </Button>
                 )
               }
-              <Button
-                onClick={() => setShowAutomaticRenewalModal(true)}
-                size="large"
-                style={{
-                  borderRadius: 4,
-                  marginRight: 8,
-                  display: !process.env.SELF_HOSTED || window.stripe_public_key ? "inline" : "none",
-                }}
-              >
-                Automatic Renewals{" "}
-                {organization.automatic_charge_amount ? "On" : "Off"}
-              </Button>
               {(!organization.received_free_dc ||
                 organization.dc_balance > 10000) && (
                 <Button

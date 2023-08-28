@@ -47,7 +47,7 @@ defmodule ConsoleWeb.DataCreditController do
                   "receipt_email" => conn.assigns.current_user.email,
                   "description" => "Data Credits" <> description
               })
-                
+
 
               with {:ok, stripe_response} <- HTTPoison.post("#{@stripe_api_url}/v1/payment_intents", request_body, headers) do
                 with 200 <- stripe_response.status_code do
@@ -59,7 +59,7 @@ defmodule ConsoleWeb.DataCreditController do
           end
         end
     end
-        
+
   end
 
   def create_charge(conn, params = %{ "amountUSD" => amountUSD }) do
@@ -93,7 +93,7 @@ defmodule ConsoleWeb.DataCreditController do
           end
         end
     end
-    
+
   end
 
   def get_payment_methods(conn, _) do
@@ -350,7 +350,7 @@ defmodule ConsoleWeb.DataCreditController do
   def generate_memo(conn, _) do
     current_organization = conn.assigns.current_organization
 
-    number = :rand.uniform(round(:math.pow(2,64))) - 1
+    number = :rand.uniform(round(:math.pow(2,48))) - 1
     number_bin = :binary.encode_unsigned(number, :little)
     memo_params = %{ "memo" => :base64.encode(number_bin), "organization_id" => current_organization.id }
 
