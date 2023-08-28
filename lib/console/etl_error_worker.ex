@@ -18,6 +18,16 @@ defmodule Console.EtlErrorWorker do
     {:ok, %{}}
   end
 
+  def event_uses_dc(%{ category: category, sub_category: sub_category }) do
+    case {category, sub_category} do
+      {"join_request", _} -> true
+      {_, "uplink_confirmed"} -> true
+      {_, "uplink_unconfirmed"} -> true
+      {_, "uplink_dropped_late"} -> true
+      _ -> false
+    end
+  end
+
   def handle_info(:run_events_error_etl, state) do
     events = ConsoleWeb.Monitor.get_events_error_state()
 
@@ -35,11 +45,11 @@ defmodule Console.EtlErrorWorker do
           result =
             Ecto.Multi.new()
             |> Ecto.Multi.run(:device, fn _repo, _ ->
-              dc_used =
-                case parsed_event.sub_category in ["uplink_confirmed", "uplink_unconfirmed"] or parsed_event.category == "join_request" do
-                  true -> parsed_event.data["dc"]["used"]
-                  false -> 0
-                end
+              dc_used = case event_uses_dc(parsed_event) do
+                          true -> parsed_event.data["dc"]["used"]
+                          false -> 0
+                        end
+
               packet_count = if dc_used == 0, do: 0, else: 1
 
               device_updates = %{
@@ -58,7 +68,7 @@ defmodule Console.EtlErrorWorker do
               Devices.update_device(device, device_updates, "router")
             end)
             |> Ecto.Multi.run(:device_stat, fn _repo, %{ device: device } ->
-              if parsed_event.sub_category in ["uplink_confirmed", "uplink_unconfirmed"] or parsed_event.category == "join_request" do
+              if event_uses_dc(parsed_event) do
                 DeviceStats.create_stat(%{
                   "router_uuid" => parsed_event.router_uuid,
                   "payload_size" => parsed_event.data["payload_size"],
@@ -72,7 +82,7 @@ defmodule Console.EtlErrorWorker do
               end
             end)
             |> Ecto.Multi.run(:hotspot_stat, fn _repo, %{ device: device } ->
-              if parsed_event.sub_category in ["uplink_confirmed", "uplink_unconfirmed"] or parsed_event.category == "join_request" do
+              if event_uses_dc(parsed_event) do
                 HotspotStats.create_stat(%{
                   "router_uuid" => parsed_event.router_uuid,
                   "hotspot_address" => parsed_event.data["hotspot"]["id"],
@@ -92,7 +102,7 @@ defmodule Console.EtlErrorWorker do
             end)
             |> Ecto.Multi.run(:organization, fn _repo, _ ->
               cond do
-                parsed_event.sub_category in ["uplink_confirmed", "uplink_unconfirmed"] or parsed_event.category == "join_request" ->
+                event_uses_dc(parsed_event) ->
                   org_attrs =
                     if is_nil(organization.first_packet_received_at) do
                       %{
@@ -105,7 +115,7 @@ defmodule Console.EtlErrorWorker do
                       }
                     end
 
-                  if organization.dc_balance_nonce != parsed_event.data["dc"]["used"] do
+                  if organization.dc_balance_nonce != parsed_event.data["dc"]["nonce"] do
                     ConsoleWeb.DataCreditController.broadcast_router_refill_dc_balance(
                       Map.put(organization, :dc_balance, org_attrs["dc_balance"])
                     )
@@ -126,7 +136,7 @@ defmodule Console.EtlErrorWorker do
             ConsoleWeb.Monitor.remove_from_events_error_state()
 
             Task.Supervisor.async_nolink(ConsoleWeb.TaskSupervisor, fn ->
-              if parsed_event.sub_category in ["uplink_confirmed", "uplink_unconfirmed"] or parsed_event.category == "join_request" do
+              if event_uses_dc(parsed_event) do
                 ConsoleWeb.Router.DeviceController.check_org_dc_balance(updated_org, organization.dc_balance)
               end
 
