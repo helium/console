@@ -2,6 +2,7 @@ defmodule ConsoleWeb.DataCreditController do
   use ConsoleWeb, :controller
   alias Console.Email
   alias Console.Memos
+  alias Console.Memos.Memo
   alias Console.Organizations
   alias Console.DcPurchases
   alias Console.DcPurchases.DcPurchase
@@ -358,6 +359,105 @@ defmodule ConsoleWeb.DataCreditController do
       Memos.delete_old_memos(current_organization)
 
       conn |> send_resp(:ok, Poison.encode!(%{ memo: memo.memo }))
+    end
+  end
+
+  def redeem_transaction(conn, %{ "transactionId" => transactionId }) do
+    quiknode_url = Application.get_env(:console, :quiknode_api)
+
+    request_body = %{
+      "jsonrpc" => "2.0",
+      "id" => "foundation_console",
+      "method" => "getTransaction",
+      "params" => [transactionId, %{ "encoding" => "jsonParsed", "maxSupportedTransactionVersion" => 0 }],
+    } |> Poison.encode!
+
+    with {:ok, %HTTPoison.Response{body: body, status_code: 200}} <- HTTPoison.post(quiknode_url, request_body, [{"content-type", "application/json"}]),
+        {:ok, payload} <- Poison.decode(body),
+        result when not is_nil(result) <- Map.get(payload, "result", nil) do
+
+        memo_program =
+          result
+          |> Map.get("transaction", %{})
+          |> Map.get("message", %{})
+          |> Map.get("instructions", [])
+          |> Enum.find(fn program ->
+            Map.get(program, "programId") =~ "Memo" and Map.get(program, "program") == "spl-memo"
+          end)
+
+        memo =
+          case memo_program do
+            nil ->
+              nil
+            _ ->
+              Map.get(memo_program, "parsed", nil)
+          end
+
+        dc_transfer =
+          case memo do
+            nil ->
+              %{}
+            _ ->
+              result
+              |> Map.get("meta", %{})
+              |> Map.get("innerInstructions", [])
+              |> Enum.reduce(%{}, fn instrs, acc ->
+                  result =
+                    instrs
+                    |> Map.get("instructions", [])
+                    |> Enum.find(fn instr ->
+                      instr["program"] == "spl-token"
+                      and instr["programId"] == "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+                      and instr["parsed"]["type"] == "transfer"
+                      and instr["parsed"]["info"]["destination"] == "CMd6j8wMebTNfExJdsgb5JJ1pkvQBXqntpokujn6XMQb"
+                    end)
+
+                  if not is_nil(result) do
+                    acc
+                    |> Map.put("destination", result["parsed"]["info"]["destination"])
+                    |> Map.put("amount", result["parsed"]["info"]["amount"] |> String.to_integer())
+                  else
+                    acc
+                  end
+              end)
+          end
+
+        dc_transfer_valid =
+          not is_nil(memo) and not is_nil(Map.get(dc_transfer, "amount")) and
+          Map.get(dc_transfer, "destination") == "CMd6j8wMebTNfExJdsgb5JJ1pkvQBXqntpokujn6XMQb"
+
+        with true <- dc_transfer_valid,
+          %Memo{ organization_id: organization_id } <- Memos.get_memo(memo),
+          nil <- DcPurchases.get_by_payment_id(memo) do
+
+          organization = Organizations.get_organization!(organization_id)
+
+          {:ok, _} = DcPurchases.create_dc_purchase_update_org(%{
+            "dc_purchased" => dc_transfer["amount"],
+            "cost" => 0,
+            "card_type" => "delegate",
+            "last_4" => "delegate",
+            "user_id" => "DC Delegate",
+            "organization_id" => organization_id,
+            "payment_id" => memo,
+          }, organization)
+
+          ConsoleWeb.Endpoint.broadcast("graphql:dc_purchases_table", "graphql:dc_purchases_table:#{organization.id}:update_dc_table", %{})
+          ConsoleWeb.Endpoint.broadcast("graphql:dc_index", "graphql:dc_index:#{organization.id}:update_dc", %{})
+          broadcast_router_refill_dc_balance(organization)
+
+          send_resp(conn, :ok, "DC successfully redeemed to organization")
+        else
+          %DcPurchase{} ->
+            send_resp(conn, :bad_request, Poison.encode!(%{ errors: ["DC has already been redeemed for this transaction"] }))
+          _ ->
+            send_resp(conn, :bad_request, Poison.encode!(%{ errors: ["Invalid transaction for redeeming DC, please check your transaction ID"] }))
+        end
+    else
+      nil ->
+        send_resp(conn, :not_found, Poison.encode!(%{ errors: ["Transaction not found, please check your transaction ID"] }))
+      _ ->
+        send_resp(conn, :internal_server_error, "")
     end
   end
 

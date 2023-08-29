@@ -1,4 +1,6 @@
 import * as rest from "../util/rest";
+import { replace } from 'connected-react-router';
+import { displayInfo} from '../util/messages';
 
 export const createCustomerIdAndCharge = (amountUSD, description) => () =>
   rest
@@ -62,6 +64,15 @@ export const transferDC = (countDC, orgId) => () =>
 
 export const generateMemo = () => () =>
   rest.get("/api/data_credits/generate_memo");
+
+export const redeemTransaction = (transactionId) => (dispatch) =>
+  rest
+    .post("/api/data_credits/redeem_transaction", {
+      transactionId
+    })
+    .then(response => {
+      displayInfo("Redeemed DC to organization successfully")
+    })
 
 export const getRouterAddress = () => () =>
   rest.get("/api/data_credits/router_address");

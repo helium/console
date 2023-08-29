@@ -122,3 +122,7 @@ config :console,
 # uncomment for local testing of terms gate
 config :console,
   latest_terms_version: "v1.0.0"
+
+# need to add API key to end of url below for it to work in dev
+config :console,
+  quiknode_api: "https://serene-tiniest-lake.solana-mainnet.quiknode.pro"

@@ -113,3 +113,6 @@ config :console,
 
 config :console,
   latest_terms_version: System.get_env("LATEST_TERMS_VERSION")
+
+config :console,
+  quiknode_api: System.get_env("QUIKNODE_API")

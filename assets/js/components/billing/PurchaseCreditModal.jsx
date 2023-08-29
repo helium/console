@@ -20,6 +20,7 @@ import {
   createDCPurchase,
   setAutomaticPayments,
   generateMemo,
+  redeemTransaction,
   getRouterAddress,
 } from "../../actions/dataCredits";
 import { Modal, Button, Typography, Input, Popover } from "antd";
@@ -89,6 +90,7 @@ class PurchaseCreditModal extends Component {
     manualQREntry: false,
     routerAddress: "",
     description: null,
+    transactionId: ""
   };
 
   componentDidMount() {
@@ -162,6 +164,12 @@ class PurchaseCreditModal extends Component {
         countB: undefined,
       });
     }
+  };
+
+  handleTransactionIdUpdate = (e) => {
+    this.setState({
+      transactionId: e.target.value
+    })
   };
 
   showCreditCard = async () => {
@@ -264,6 +272,10 @@ class PurchaseCreditModal extends Component {
   handleBack = () => {
     this.setState({ showPage: "default" });
   };
+
+  handleRedeemTransaction = (transactionId) => {
+    this.props.redeemTransaction(transactionId)
+  }
 
   handleSubmit = (e, card) => {
     e.preventDefault();
@@ -450,13 +462,14 @@ class PurchaseCreditModal extends Component {
           <Input
             name="transactionID"
             placeholder="Transaction ID"
+            onChange={this.handleTransactionIdUpdate}
             style={{
               width: 300,
               marginRight: 5,
               verticalAlign: "middle",
             }}
           />
-          <Button type="primary" onClick={() => {}}>
+          <Button type="primary" disabled={this.state.transactionId.length < 20} onClick={() => this.handleRedeemTransaction(this.state.transactionId)}>
             Redeem
           </Button>
         </div>
@@ -681,6 +694,7 @@ function mapDispatchToProps(dispatch) {
       createDCPurchase,
       setAutomaticPayments,
       generateMemo,
+      redeemTransaction,
       getRouterAddress,
     },
     dispatch
