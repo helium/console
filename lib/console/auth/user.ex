@@ -13,6 +13,7 @@ defmodule Console.Auth.User do
     field :confirmed_at, :naive_datetime
     field :last_2fa_skipped_at, :naive_datetime
     field :super, :boolean
+    field :vetted, :boolean
 
     has_many :memberships, Console.Organizations.Membership
     has_many :api_keys, Console.ApiKeys.ApiKey

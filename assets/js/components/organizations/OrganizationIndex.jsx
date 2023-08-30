@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import DashboardLayout from "../common/DashboardLayout";
 import { MobileDisplay, DesktopDisplay } from "../mobile/MediaQuery";
 import MobileLayout from "../mobile/MobileLayout";
@@ -14,103 +14,104 @@ import { Button, Typography } from "antd";
 import PlusOutlined from "@ant-design/icons/PlusOutlined";
 const { Text } = Typography;
 import { isMobile } from "../../util/constants";
+import { useQuery } from "@apollo/client";
+import { GET_VETTED_USER_STATUS } from "../../graphql/users";
 
-class OrganizationIndex extends Component {
-  state = {
-    showOrganizationModal: false,
-    showDeleteOrganizationModal: false,
-    selectedOrg: null,
-    showEditOrganizationModal: false,
-  };
+export default ({ user }) => {
+  const { data } = useQuery(GET_VETTED_USER_STATUS, {
+    variables: { email: user.email },
+    skip: !(
+      window.user_invite_only === "true" ||
+      process.env.USER_INVITE_ONLY === "true"
+    ),
+  });
 
-  componentDidMount() {
+  const [showOrganizationModal, setShowOrganizationModal] = useState(false);
+  const [showDeleteOrganizationModal, setShowDeleteOrganizationModal] =
+    useState(false);
+  const [selectedOrg, setSelectedOrg] = useState(null);
+  const [showEditOrganizationModal, setShowEditOrganizationModal] =
+    useState(false);
+
+  useEffect(() => {
     analyticsLogger.logEvent(
       isMobile ? "ACTION_NAV_DASHBOARD_MOBILE" : "ACTION_NAV_DASHBOARD"
     );
-  }
+  }, []);
 
-  openOrganizationModal = () => {
-    this.setState({ showOrganizationModal: true });
+  const openOrganizationModal = () => {
+    setShowOrganizationModal(true);
   };
 
-  closeOrganizationModal = () => {
-    this.setState({ showOrganizationModal: false });
+  const closeOrganizationModal = () => {
+    setShowOrganizationModal(false);
   };
 
-  openDeleteOrganizationModal = (selectedOrg) => {
-    this.setState({ showDeleteOrganizationModal: true, selectedOrg });
+  const openDeleteOrganizationModal = (selectedOrg) => {
+    setShowDeleteOrganizationModal(true);
+    setSelectedOrg(selectedOrg);
   };
 
-  closeDeleteOrganizationModal = () => {
-    this.setState({
-      showDeleteOrganizationModal: false,
-      selectedOrg: null,
-    });
+  const closeDeleteOrganizationModal = () => {
+    setShowDeleteOrganizationModal(false);
+    setSelectedOrg(null);
   };
 
-  openEditOrganizationModal = (selectedOrg) => {
-    this.setState({ showEditOrganizationModal: true, selectedOrg });
+  const openEditOrganizationModal = (selectedOrg) => {
+    setShowEditOrganizationModal(true);
+    setSelectedOrg(selectedOrg);
   };
 
-  closeEditOrganizationModal = () => {
-    this.setState({
-      showEditOrganizationModal: false,
-      selectedOrg: null,
-    });
+  const closeEditOrganizationModal = () => {
+    setShowEditOrganizationModal(false);
+    setSelectedOrg(null);
   };
 
-  render() {
-    const {
-      showOrganizationModal,
-      showDeleteOrganizationModal,
-      selectedOrg,
-      showEditOrganizationModal,
-    } = this.state;
-    return (
-      <>
-        <MobileDisplay>
-          <MobileLayout>
-            <MobileOrganizationIndex user={this.props.user} />
-          </MobileLayout>
-        </MobileDisplay>
+  return (
+    <>
+      <MobileDisplay>
+        <MobileLayout>
+          <MobileOrganizationIndex user={user} />
+        </MobileLayout>
+      </MobileDisplay>
 
-        <DesktopDisplay>
-          <DashboardLayout
-            title="Organizations"
-            user={this.props.user}
-            noAddButton
+      <DesktopDisplay>
+        <DashboardLayout title="Organizations" user={user} noAddButton>
+          <div
+            style={{
+              height: "100%",
+              width: "100%",
+              backgroundColor: "#ffffff",
+              borderRadius: 6,
+              overflow: "hidden",
+              boxShadow: "0px 20px 20px -7px rgba(17, 24, 31, 0.19)",
+            }}
           >
-            <div
-              style={{
-                height: "100%",
-                width: "100%",
-                backgroundColor: "#ffffff",
-                borderRadius: 6,
-                overflow: "hidden",
-                boxShadow: "0px 20px 20px -7px rgba(17, 24, 31, 0.19)",
-              }}
-            >
-              <div style={{ overflowX: "scroll" }} className="no-scroll-bar">
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    padding: "30px 20px 20px 30px",
-                    minWidth,
-                  }}
-                >
-                  <Text style={{ fontSize: 22, fontWeight: 600 }}>
-                    All Organizations
-                  </Text>
-                  {process.env.IMPOSE_HARD_CAP !== 'true' && (
+            <div style={{ overflowX: "scroll" }} className="no-scroll-bar">
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  padding: "30px 20px 20px 30px",
+                  minWidth,
+                }}
+              >
+                <Text style={{ fontSize: 22, fontWeight: 600 }}>
+                  All Organizations
+                </Text>
+                {process.env.IMPOSE_HARD_CAP !== "true" &&
+                  (window.user_invite_only === "true" ||
+                  process.env.USER_INVITE_ONLY === "true"
+                    ? data?.vettedUserStatus.vetted === true
+                    : true) && (
                     <UserCan noManager>
                       <Button
                         icon={<PlusOutlined />}
                         style={{ borderRadius: 4 }}
                         onClick={() => {
                           analyticsLogger.logEvent("ACTION_NEW_ORG");
-                          this.openOrganizationModal();
+                          openOrganizationModal();
                         }}
                         type="primary"
                       >
@@ -118,35 +119,32 @@ class OrganizationIndex extends Component {
                       </Button>
                     </UserCan>
                   )}
-                </div>
-                <OrganizationsTable
-                  openDeleteOrganizationModal={this.openDeleteOrganizationModal}
-                  openEditOrganizationModal={this.openEditOrganizationModal}
-                  user={this.props.user}
-                />
               </div>
+              <OrganizationsTable
+                openDeleteOrganizationModal={openDeleteOrganizationModal}
+                openEditOrganizationModal={openEditOrganizationModal}
+                user={user}
+              />
             </div>
+          </div>
 
-            <NewOrganizationModal
-              open={showOrganizationModal}
-              onClose={this.closeOrganizationModal}
-            />
+          <NewOrganizationModal
+            open={showOrganizationModal}
+            onClose={closeOrganizationModal}
+          />
 
-            <DeleteOrganizationModal
-              open={showDeleteOrganizationModal}
-              onClose={this.closeDeleteOrganizationModal}
-              selectedOrgId={selectedOrg && selectedOrg.id}
-            />
-            <EditOrganizationModal
-              open={showEditOrganizationModal}
-              onClose={this.closeEditOrganizationModal}
-              selectedOrg={selectedOrg}
-            />
-          </DashboardLayout>
-        </DesktopDisplay>
-      </>
-    );
-  }
-}
-
-export default OrganizationIndex;
+          <DeleteOrganizationModal
+            open={showDeleteOrganizationModal}
+            onClose={closeDeleteOrganizationModal}
+            selectedOrgId={selectedOrg && selectedOrg.id}
+          />
+          <EditOrganizationModal
+            open={showEditOrganizationModal}
+            onClose={closeEditOrganizationModal}
+            selectedOrg={selectedOrg}
+          />
+        </DashboardLayout>
+      </DesktopDisplay>
+    </>
+  );
+};
