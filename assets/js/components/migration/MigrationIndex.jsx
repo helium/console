@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { DesktopDisplay } from "../mobile/MediaQuery";
 import DashboardLayout from "../common/DashboardLayout";
 import MigrationSelectLabel from "./MigrationSelectLabel";
+import MigrationDeviceTable from "./MigrationDeviceTable";
 
 class MigrationIndex extends Component {
   state = {
@@ -40,6 +41,11 @@ class MigrationIndex extends Component {
                 label={this.state.label}
                 handleUpdate={this.handleUpdate}
                 handleSelect={this.handleSelect}
+                updateShowStep={this.updateShowStep}
+              />
+          )}
+          {this.state.showStep == 2 && (
+              <MigrationDeviceTable
                 updateShowStep={this.updateShowStep}
               />
           )}

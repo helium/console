@@ -60,6 +60,14 @@ const MigrationSelectLabel = ({ apiKey, tenantId, application, label, handleUpda
               placeholder="Please enter your tenant-id"
               onChange={handleUpdate}
             />
+            <Button
+              style={{ marginLeft: 10 }}
+              type="primary"
+              disabled={!apiKey || !tenantId}
+              onClick={() => {}}
+            >
+              Fetch
+            </Button>
           </div>
           <div style={{ display: "flex", flexDirection: "row", alignItems: 'center', marginBottom: 20 }}>
             <div style={{ width: 150, display: "flex", justifyContent: 'flex-end' }}>
