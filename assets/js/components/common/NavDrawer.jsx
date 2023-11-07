@@ -254,6 +254,23 @@ class NavDrawer extends Component {
             />
           )}
         </div>
+        <div style={{ position: "relative" }}>
+          <NavLink
+            draggable="false"
+            to={"/migration"}
+            activeClassName="is-active"
+            className="menu-link"
+          >
+            Migration
+          </NavLink>
+          {history.location.pathname === "/migration" && (
+            <img
+              draggable="false"
+              src={Caret}
+              style={{ right: -16, position: "absolute", top: 8, height: 12 }}
+            />
+          )}
+        </div>
       </div>
     );
   }

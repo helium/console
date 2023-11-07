@@ -23,7 +23,8 @@ defmodule ConsoleWeb.PageController do
         "profile",
         "coverage",
         "config_profiles",
-        "callback"
+        "callback",
+        "migration"
       ]
 
     if conn.request_path == "/" or Enum.member?(valid_page_paths, main_path) do

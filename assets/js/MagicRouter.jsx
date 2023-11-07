@@ -15,6 +15,7 @@ import { Route, Switch } from "react-router-dom";
 import JoinOrganizationPrompt from "./components/auth/JoinOrganizationPrompt.jsx";
 import Profile from "./components/profile/Profile.jsx";
 import DeviceIndex from "./components/devices/DeviceIndex";
+import MigrationIndex from "./components/migration/MigrationIndex";
 import DeviceHome from "./components/devices/DeviceHome";
 import DeviceShow from "./components/devices/DeviceShow";
 import LabelNew from "./components/labels/LabelNew";
@@ -277,6 +278,11 @@ const MagicRouter = (props) => {
                   component={(props) => (
                     <ConfigProfilesIndex user={user} {...props} />
                   )}
+                />
+                <Route
+                  exact
+                  path="/migration"
+                  component={(props) => <MigrationIndex user={user} {...props} />}
                 />
               </Switch>
             </ApolloProvider>
