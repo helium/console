@@ -70,46 +70,50 @@ const MigrationSelectLabel = ({ apiKey, tenantId, application, label, allLabels,
               Fetch
             </Button>
           </div>
-          <div style={{ display: "flex", flexDirection: "row", alignItems: 'center', marginBottom: 20 }}>
-            <div style={{ width: 150, display: "flex", justifyContent: 'flex-end' }}>
-              <Text>Application: </Text>
-            </div>
-            <Select
-              value={application}
-              placeholder="Select an application"
-              style={{ width: 200, marginLeft: 10 }}
-              onChange={val => handleSelect("application", val)}
-              options={allApplications.map(a => {
-                return { value: a.id, label: a.name }
-              })}
-            />
-          </div>
-          <div style={{ display: "flex", flexDirection: "row", alignItems: 'center', marginBottom: 20 }}>
-            <div style={{ width: 150, display: "flex", justifyContent: 'flex-end' }}>
-              <Text>Label: </Text>
-            </div>
-            <Select
-              name="label"
-              value={label}
-              placeholder="Select a label"
-              style={{ width: 200, marginLeft: 10 }}
-              onChange={val => handleSelect("label", val)}
-              options={allLabels.map(l => {
-                return { value: l.id, label: l.name }
-              })}
-            />
-          </div>
-          <div style={{ display: "flex", flexDirection: "row", alignItems: 'center' }}>
-            <div style={{ width: 150, display: "flex", justifyContent: 'flex-end' }} />
-            <Button
-              style={{ marginLeft: 10 }}
-              type="primary"
-              disabled={!application || !label || !apiKey || !tenantId}
-              onClick={() => updateShowStep(2)}
-            >
-              Next: Select Devices to Migrate
-            </Button>
-          </div>
+          { allApplications.length > 0 && (
+            <>
+              <div style={{ display: "flex", flexDirection: "row", alignItems: 'center', marginBottom: 20 }}>
+                <div style={{ width: 150, display: "flex", justifyContent: 'flex-end' }}>
+                  <Text>Application: </Text>
+                </div>
+                <Select
+                  value={application}
+                  placeholder="Select an application"
+                  style={{ width: 200, marginLeft: 10 }}
+                  onChange={val => handleSelect("application", val)}
+                  options={allApplications.map(a => {
+                    return { value: a.id, label: a.name }
+                  })}
+                />
+              </div>
+              <div style={{ display: "flex", flexDirection: "row", alignItems: 'center', marginBottom: 20 }}>
+                <div style={{ width: 150, display: "flex", justifyContent: 'flex-end' }}>
+                  <Text>Label: </Text>
+                </div>
+                <Select
+                  name="label"
+                  value={label}
+                  placeholder="Select a label"
+                  style={{ width: 200, marginLeft: 10 }}
+                  onChange={val => handleSelect("label", val)}
+                  options={allLabels.map(l => {
+                    return { value: l.id, label: l.name }
+                  })}
+                />
+              </div>
+              <div style={{ display: "flex", flexDirection: "row", alignItems: 'center' }}>
+                <div style={{ width: 150, display: "flex", justifyContent: 'flex-end' }} />
+                <Button
+                  style={{ marginLeft: 10 }}
+                  type="primary"
+                  disabled={!application || !label}
+                  onClick={() => updateShowStep(2)}
+                >
+                  Next: Select Devices to Migrate
+                </Button>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>

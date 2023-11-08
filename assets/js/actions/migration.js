@@ -7,3 +7,10 @@ export const getApplications = (api_key, tenant_id) =>
       api_key, tenant_id
     })
     .then(({ data }) => data);
+
+export const getDevices = (label_id) =>
+  rest
+    .post("/api/migration/devices", {
+      label_id
+    })
+    .then(({ data }) => data);

@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { getApplications } from '../../actions/migration'
+import { displayError } from '../../util/messages'
 import { DesktopDisplay } from "../mobile/MediaQuery";
 import DashboardLayout from "../common/DashboardLayout";
 import MigrationSelectLabel from "./MigrationSelectLabel";
@@ -37,7 +38,7 @@ class MigrationIndex extends Component {
     .then(data => {
       this.setState({ allLabels: data.labels, allApplications: data.applications })
     })
-    .catch(err => console.log(err))
+    .catch(err => displayError("Could not fetch applications, check your credentials and try again."))
   }
 
   render() {
@@ -61,6 +62,7 @@ class MigrationIndex extends Component {
           {this.state.showStep == 2 && (
               <MigrationDeviceTable
                 updateShowStep={this.updateShowStep}
+                label={this.state.label}
               />
           )}
         </DashboardLayout>

@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
+import { displayError } from '../../util/messages'
+import { getDevices } from '../../actions/migration'
 import { Link } from "react-router-dom";
 import { Typography, Input, Select, Button, Table, Pagination, Popover } from "antd"
 import { ReloadOutlined, QuestionCircleOutlined } from '@ant-design/icons';
@@ -33,7 +35,7 @@ const columns = [
         </div>
       )
     },
-    dataIndex: "Region"
+    dataIndex: "region"
   },
   {
     title: () => {
@@ -50,19 +52,80 @@ const columns = [
         </div>
       )
     },
-    dataIndex: "Live Migratable",
+    dataIndex: "live_migratable",
+    render: (text, record) => <Text code>{record.live_migratable ? "true" : "false"}</Text>,
   },
   {
     title: "Migration Status",
-    dataIndex: "Migration Status",
+    dataIndex: "migration_status",
+    render: (text, record) => <Text code>{record.migration_status ? "migrated" : "not migrated"}</Text>,
   }
 ]
 
-const MigrationDeviceTable = ({ updateShowStep }) => {
-  const rowSelection = {
-    onChange: (keys, selectedRows) => {},
-    onSelectAll: () => {},
-  };
+const MigrationDeviceTable = ({ updateShowStep, label }) => {
+  const [devices, setDevices] = useState([])
+  const [visibleDevices, setVisibleDevices] = useState([])
+  const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState(10)
+  const [filter, setFilter] = useState("")
+
+  const rowSelection = useMemo(() => {
+    return {
+      onChange: (keys, selectedRows) => {},
+      onSelectAll: () => {}
+    }
+  }, [])
+
+  const fetchData = useCallback(async () => {
+    const data = await getDevices(label)
+    setDevices(data)
+  }, [label])
+
+  const getPaginationTotal = useCallback(() => {
+    if (filter == "unknown_region") {
+      return devices.filter(d => !d.region).length
+    } else if (filter == "not_live_migratable") {
+      return devices.filter(d => d.live_migratable).length
+    } else if (filter == "not_migrated") {
+      return devices.filter(d => !d.migration_status).length
+    } else {
+      return devices.length
+    }
+  }, [filter, devices])
+
+  useEffect(() => {
+    // only refetch when devices get cleared or when empty from mount
+    if (devices.length == 0) {
+      fetchData()
+        .catch(err => displayError("Could not fetch devices from label, please try again."))
+    }
+  }, [fetchData, devices])
+
+  useEffect(() => {
+    if (devices.length > 0) {
+      if (filter == "unknown_region") {
+        setVisibleDevices(
+          devices
+          .filter(d => !d.region)
+          .slice((page - 1) * pageSize, (page - 1) * pageSize + pageSize)
+        )
+      } else if (filter == "not_live_migratable") {
+        setVisibleDevices(
+          devices
+          .filter(d => d.live_migratable)
+          .slice((page - 1) * pageSize, (page - 1) * pageSize + pageSize)
+        )
+      } else if (filter == "not_migrated") {
+        setVisibleDevices(
+          devices
+          .filter(d => !d.migration_status)
+          .slice((page - 1) * pageSize, (page - 1) * pageSize + pageSize)
+        )
+      } else {
+        setVisibleDevices(devices.slice((page - 1) * pageSize, (page - 1) * pageSize + pageSize))
+      }
+    }
+  }, [page, pageSize, devices, filter])
 
   return (
     <>
@@ -87,20 +150,36 @@ const MigrationDeviceTable = ({ updateShowStep }) => {
           >
             <div style={{ display: "flex", flexDirection: "row", alignItems: 'center' }}>
               <Text style={{ fontSize: 16, fontWeight: 600 }}>Select Devices to Migrate</Text>
-              <Button type="primary" icon={<ReloadOutlined />} shape="circle" style={{ marginLeft: 10 }} size="small" />
+              <Button
+                type="primary"
+                icon={<ReloadOutlined />}
+                shape="circle"
+                style={{ marginLeft: 10 }}
+                size="small"
+                onClick={() => {
+                  setDevices([])
+                  setVisibleDevices([])
+                }}
+              />
             </div>
             <UserCan>
               <div style={{ display: "flex", flexDirection: "row", alignItems: 'center' }}>
                 <Select
                   placeholder="Filter devices"
                   style={{ width: 180, marginRight: 10 }}
-                  onSelect={() => {}}
+                  onSelect={(val) => {
+                    setFilter(val)
+                    setPage(1)
+                  }}
                 >
-                  <Option value="Unknown Region">
+                  <Option value="unknown_region">
                     Unknown Region
                   </Option>
-                  <Option value="Live Migratable">
+                  <Option value="not_live_migratable">
                     Live Migratable
+                  </Option>
+                  <Option value="not_migrated">
+                    Not Migrated
                   </Option>
                 </Select>
 
@@ -127,11 +206,10 @@ const MigrationDeviceTable = ({ updateShowStep }) => {
             showSorterTooltip={false}
             sortDirections={['descend', 'ascend', 'descend']}
             columns={columns}
-            dataSource={[]}
+            dataSource={visibleDevices}
             rowKey={(record) => record.id}
             pagination={false}
             rowSelection={rowSelection}
-            onChange={() => {}}
             style={{ overflowX: "scroll", overflowY: "hidden" }}
           />
           <div
@@ -144,8 +222,11 @@ const MigrationDeviceTable = ({ updateShowStep }) => {
             }}
           >
             <Select
-              value={'100 results'}
-              onSelect={() => {}}
+              value={pageSize}
+              onSelect={(ps) => {
+                setPageSize(ps)
+                setPage(1)
+              }}
               style={{ marginRight: 40, paddingTop: 2 }}
             >
               <Option value={10}>10</Option>
@@ -154,10 +235,10 @@ const MigrationDeviceTable = ({ updateShowStep }) => {
               <Option value={250}>250</Option>
             </Select>
             <Pagination
-              current={0}
-              pageSize={100}
-              total={1000}
-              onChange={() => {}}
+              current={page}
+              pageSize={pageSize}
+              total={getPaginationTotal()}
+              onChange={(p) => setPage(p)}
               style={{ marginBottom: 20 }}
               showSizeChanger={false}
             />
