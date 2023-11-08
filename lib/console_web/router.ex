@@ -114,6 +114,10 @@ defmodule ConsoleWeb.Router do
 
     get "/terms", AcceptedTermsController, :get_by_email
     post "/terms", AcceptedTermsController, :create
+
+    # Get chirpstack application and console labels
+    post "/migration/applications", MigrationController, :get_applications
+    post "/migration/devices", MigrationController, :get_devices
   end
 
   scope "/api/router", ConsoleWeb.Router do

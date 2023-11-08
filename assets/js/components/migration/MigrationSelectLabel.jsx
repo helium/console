@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { getApplications } from '../../actions/migration'
 import { Link } from "react-router-dom";
 import { Typography, Input, Select, Button } from "antd"
 const { Text } = Typography;
 import { primaryBlue } from "../../util/colors";
 
-const MigrationSelectLabel = ({ apiKey, tenantId, application, label, handleUpdate, handleSelect, updateShowStep }) => {
+const MigrationSelectLabel = ({ apiKey, tenantId, application, label, allLabels, allApplications, handleUpdate, handleSelect, updateShowStep, fetchApplications }) => {
   return (
     <div
       style={{
@@ -64,7 +65,7 @@ const MigrationSelectLabel = ({ apiKey, tenantId, application, label, handleUpda
               style={{ marginLeft: 10 }}
               type="primary"
               disabled={!apiKey || !tenantId}
-              onClick={() => {}}
+              onClick={() => fetchApplications(apiKey, tenantId)}
             >
               Fetch
             </Button>
@@ -78,12 +79,9 @@ const MigrationSelectLabel = ({ apiKey, tenantId, application, label, handleUpda
               placeholder="Select an application"
               style={{ width: 200, marginLeft: 10 }}
               onChange={val => handleSelect("application", val)}
-              options={[
-                { value: 'jack', label: 'Jack' },
-                { value: 'lucy', label: 'Lucy' },
-                { value: 'Yiminghe', label: 'yiminghe' },
-                { value: 'disabled', label: 'Disabled', disabled: true },
-              ]}
+              options={allApplications.map(a => {
+                return { value: a.id, label: a.name }
+              })}
             />
           </div>
           <div style={{ display: "flex", flexDirection: "row", alignItems: 'center', marginBottom: 20 }}>
@@ -96,12 +94,9 @@ const MigrationSelectLabel = ({ apiKey, tenantId, application, label, handleUpda
               placeholder="Select a label"
               style={{ width: 200, marginLeft: 10 }}
               onChange={val => handleSelect("label", val)}
-              options={[
-                { value: 'jack', label: 'Jack' },
-                { value: 'lucy', label: 'Lucy' },
-                { value: 'Yiminghe', label: 'yiminghe' },
-                { value: 'disabled', label: 'Disabled', disabled: true },
-              ]}
+              options={allLabels.map(l => {
+                return { value: l.id, label: l.name }
+              })}
             />
           </div>
           <div style={{ display: "flex", flexDirection: "row", alignItems: 'center' }}>

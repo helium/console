@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { getApplications } from '../../actions/migration'
 import { DesktopDisplay } from "../mobile/MediaQuery";
 import DashboardLayout from "../common/DashboardLayout";
 import MigrationSelectLabel from "./MigrationSelectLabel";
@@ -10,7 +11,9 @@ class MigrationIndex extends Component {
       apiKey: "",
       tenantId: "",
       application: "",
-      label: ""
+      label: "",
+      allLabels: [],
+      allApplications: []
   }
 
   updateShowStep = (step) => {
@@ -29,6 +32,14 @@ class MigrationIndex extends Component {
     })
   }
 
+  fetchApplications = (apiKey, tenantId) => {
+    getApplications(apiKey, tenantId)
+    .then(data => {
+      this.setState({ allLabels: data.labels, allApplications: data.applications })
+    })
+    .catch(err => console.log(err))
+  }
+
   render() {
     return (
       <DesktopDisplay>
@@ -39,9 +50,12 @@ class MigrationIndex extends Component {
                 tenantId={this.state.tenantId}
                 application={this.state.application}
                 label={this.state.label}
+                allLabels={this.state.allLabels}
+                allApplications={this.state.allApplications}
                 handleUpdate={this.handleUpdate}
                 handleSelect={this.handleSelect}
                 updateShowStep={this.updateShowStep}
+                fetchApplications={this.fetchApplications}
               />
           )}
           {this.state.showStep == 2 && (
