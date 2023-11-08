@@ -36,40 +36,41 @@ defmodule ConsoleWeb.OrganizationController do
   end
 
   def create(conn, %{"organization" => %{ "name" => organization_name, "from" => _ } }) do
-    with {:ok, %Organization{} = organization} <-
-      Organizations.create_organization(conn.assigns.current_user, %{ "name" => organization_name }) do
-      organizations = Organizations.get_organizations(conn.assigns.current_user)
-      membership = Organizations.get_membership!(conn.assigns.current_user, organization)
-      membership_info = %{id: organization.id, name: organization.name, role: membership.role}
+    # with {:ok, %Organization{} = organization} <-
+    #   Organizations.create_organization(conn.assigns.current_user, %{ "name" => organization_name }) do
+    #   organizations = Organizations.get_organizations(conn.assigns.current_user)
+    #   membership = Organizations.get_membership!(conn.assigns.current_user, organization)
+    #   membership_info = %{id: organization.id, name: organization.name, role: membership.role}
 
-      Task.Supervisor.async_nolink(ConsoleWeb.TaskSupervisor, fn ->
-        OrgIps.create_org_ip(%{
-          "address" => ConsoleWeb.IPFilter.get_ip(conn),
-          "email" => membership.email,
-          "organization_id" => organization.id,
-          "organization_name" => organization.name,
-          "banned" => false
-        })
-      end)
+    #   Task.Supervisor.async_nolink(ConsoleWeb.TaskSupervisor, fn ->
+    #     OrgIps.create_org_ip(%{
+    #       "address" => ConsoleWeb.IPFilter.get_ip(conn),
+    #       "email" => membership.email,
+    #       "organization_id" => organization.id,
+    #       "organization_name" => organization.name,
+    #       "banned" => false
+    #     })
+    #   end)
 
-      case Enum.count(organizations) do
-        1 ->
-          initial_dc = String.to_integer(System.get_env("INITIAL_ORG_GIFTED_DC") || "10000")
-          if initial_dc > 0 do
-            Organizations.update_organization(organization, %{ "dc_balance" => initial_dc, "dc_balance_nonce" => 1, "received_free_dc" => true })
-          end
+    #   case Enum.count(organizations) do
+    #     1 ->
+    #       initial_dc = String.to_integer(System.get_env("INITIAL_ORG_GIFTED_DC") || "10000")
+    #       if initial_dc > 0 do
+    #         Organizations.update_organization(organization, %{ "dc_balance" => initial_dc, "dc_balance_nonce" => 1, "received_free_dc" => true })
+    #       end
 
-          render(conn, "show.json", organization: membership_info)
-        _ ->
-          ConsoleWeb.Endpoint.broadcast("graphql:topbar_orgs", "graphql:topbar_orgs:#{conn.assigns.current_user.id}:organization_list_update", %{})
-          ConsoleWeb.Endpoint.broadcast("graphql:orgs_index_table", "graphql:orgs_index_table:#{conn.assigns.current_user.id}:organization_list_update", %{})
+    #       render(conn, "show.json", organization: membership_info)
+    #     _ ->
+    #       ConsoleWeb.Endpoint.broadcast("graphql:topbar_orgs", "graphql:topbar_orgs:#{conn.assigns.current_user.id}:organization_list_update", %{})
+    #       ConsoleWeb.Endpoint.broadcast("graphql:orgs_index_table", "graphql:orgs_index_table:#{conn.assigns.current_user.id}:organization_list_update", %{})
 
-          conn
-          |> put_status(:created)
-          |> put_resp_header("message",  "Organization #{organization.name} added successfully")
-          |> render("show.json", organization: membership_info)
-      end
-    end
+    #       conn
+    #       |> put_status(:created)
+    #       |> put_resp_header("message",  "Organization #{organization.name} added successfully")
+    #       |> render("show.json", organization: membership_info)
+    #   end
+    # end
+    conn |> send_resp(400, "")
   end
 
   def update(conn, %{"id" => id, "active" => active} = attrs) do
