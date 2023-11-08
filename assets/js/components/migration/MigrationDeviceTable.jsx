@@ -53,12 +53,49 @@ const columns = [
       )
     },
     dataIndex: "live_migratable",
-    render: (text, record) => <Text code>{record.live_migratable ? "true" : "false"}</Text>,
+    render: (text, record) => (
+      <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+        <div
+          style={{
+            display: "inline-block",
+            height: "6px",
+            width: "6px",
+            borderRadius: "50px",
+            marginRight: "4px",
+            backgroundColor: record.live_migratable ? '#52c41a' : '#F5222D'
+          }}
+        />
+        <Text>{record.live_migratable ? "Yes" : "No"}</Text>
+      </div>
+    )
   },
   {
     title: "Migration Status",
     dataIndex: "migration_status",
-    render: (text, record) => <Text code>{record.migration_status ? "migrated" : "not migrated"}</Text>,
+    render: (_text, record) => {
+      let text = record.migration_status ? "Migrated" : "Ready to Migrate"
+      let color = record.migration_status ? '#52c41a' : '#38A2FF'
+      if (!record.region && !record.migration_status) {
+        text = "No Region Selected"
+        color = '#F5222D'
+      }
+
+      return (
+        <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+          <div
+            style={{
+              display: "inline-block",
+              height: "6px",
+              width: "6px",
+              borderRadius: "50px",
+              marginRight: "4px",
+              backgroundColor: color
+            }}
+          />
+          <Text>{text}</Text>
+        </div>
+      )
+    }
   }
 ]
 
