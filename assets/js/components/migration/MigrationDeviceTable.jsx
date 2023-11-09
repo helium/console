@@ -8,79 +8,86 @@ const { Text } = Typography;
 const { Option } = Select;
 import { primaryBlue } from "../../util/colors";
 import UserCan, { userCan } from "../common/UserCan";
+import find from 'lodash/find'
 
 const regions = ["EU868", "US915", "AS923", "AS923_2", "AS923_3", "AS923_4", "CN470", "CN779", "AU915", "IN865", "KR920", "RU864"]
 
-const columns = [
-  {
-    title: "Device Name",
-    dataIndex: "name"
-  },
-  {
-    title: "Device EUI",
-    dataIndex: "dev_eui",
-  },
-  {
-    title: () => {
-      return (
-        <div>
-          Region
-          <Popover
-            content="Please select a region for the device or the device will not work on 1663 Console."
-            placement="bottom"
-            overlayStyle={{ width: 250 }}
-          >
-            <QuestionCircleOutlined style={{ fontSize: 12, marginLeft: 5 }} />
-          </Popover>
-        </div>
-      )
-    },
-    dataIndex: "region"
-  },
-  {
-    title: () => {
-      return (
-        <div>
-          Live Migratable
-          <Popover
-            content="Devices that are Live Migratable do not require a reset. If your device is not Live Migratable, please rejoin it manually to complete the migration to 1663 Console. Note: You can migrate it to 1663 Console first, then rejoin it."
-            placement="bottom"
-            overlayStyle={{ width: 350 }}
-          >
-            <QuestionCircleOutlined style={{ fontSize: 12, marginLeft: 5 }} />
-          </Popover>
-        </div>
-      )
-    },
-    dataIndex: "live_migratable",
-    render: (text, record) => (
-      <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
-        <div
-          style={{
-            display: "inline-block",
-            height: "6px",
-            width: "6px",
-            borderRadius: "50px",
-            marginRight: "4px",
-            backgroundColor: record.live_migratable ? '#52c41a' : '#F5222D'
-          }}
-        />
-        <Text>{record.live_migratable ? "Yes" : "No"}</Text>
-      </div>
-    )
-  },
-  {
-    title: "Migration Status",
-    dataIndex: "migration_status",
-    render: (_text, record) => {
-      let text = record.migration_status ? "Migrated" : "Ready to Migrate"
-      let color = record.migration_status ? '#52c41a' : '#38A2FF'
-      if (!record.region && !record.migration_status) {
-        text = "No Region Selected"
-        color = '#F5222D'
-      }
+const MigrationDeviceTable = ({ updateShowStep, label }) => {
+  const [devices, setDevices] = useState([])
+  const [visibleDevices, setVisibleDevices] = useState([])
+  const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState(10)
+  const [filter, setFilter] = useState("")
 
-      return (
+  const columns = [
+    {
+      title: "Device Name",
+      dataIndex: "name"
+    },
+    {
+      title: "Device EUI",
+      dataIndex: "dev_eui",
+    },
+    {
+      title: () => {
+        return (
+          <div>
+            Region
+            <Popover
+              content="Please select a region for the device or the device will not work on 1663 Console."
+              placement="bottom"
+              overlayStyle={{ width: 250 }}
+            >
+              <QuestionCircleOutlined style={{ fontSize: 12, marginLeft: 5 }} />
+            </Popover>
+          </div>
+        )
+      },
+      dataIndex: "region",
+      render: (text, record) => (
+        <Select
+          placeholder="Unknown"
+          style={{ width: 180, marginRight: 10 }}
+          onSelect={(region) => {
+            let foundDevice = find(devices, (d) => d.id == record.id)
+            foundDevice = Object.assign({}, foundDevice, { region })
+
+            const updatedDevices = devices.map(d => {
+              if (d.id == foundDevice.id) return foundDevice
+              return d
+            })
+
+            setDevices(updatedDevices)
+          }}
+          value={record.region}
+        >
+          {
+            regions.map(r => (
+              <Option key={r} value={r}>
+                {r}
+              </Option>
+            ))
+          }
+        </Select>
+      )
+    },
+    {
+      title: () => {
+        return (
+          <div>
+            Live Migratable
+            <Popover
+              content="Devices that are Live Migratable do not require a reset. If your device is not Live Migratable, please rejoin it manually to complete the migration to 1663 Console. Note: You can migrate it to 1663 Console first, then rejoin it."
+              placement="bottom"
+              overlayStyle={{ width: 350 }}
+            >
+              <QuestionCircleOutlined style={{ fontSize: 12, marginLeft: 5 }} />
+            </Popover>
+          </div>
+        )
+      },
+      dataIndex: "live_migratable",
+      render: (text, record) => (
         <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
           <div
             style={{
@@ -89,22 +96,42 @@ const columns = [
               width: "6px",
               borderRadius: "50px",
               marginRight: "4px",
-              backgroundColor: color
+              backgroundColor: record.live_migratable ? '#52c41a' : '#F5222D'
             }}
           />
-          <Text>{text}</Text>
+          <Text>{record.live_migratable ? "Yes" : "No"}</Text>
         </div>
       )
-    }
-  }
-]
+    },
+    {
+      title: "Migration Status",
+      dataIndex: "migration_status",
+      render: (_text, record) => {
+        let text = record.migration_status ? "Migrated" : "Ready to Migrate"
+        let color = record.migration_status ? '#52c41a' : '#38A2FF'
+        if (!record.region && !record.migration_status) {
+          text = "No Region Selected"
+          color = '#F5222D'
+        }
 
-const MigrationDeviceTable = ({ updateShowStep, label }) => {
-  const [devices, setDevices] = useState([])
-  const [visibleDevices, setVisibleDevices] = useState([])
-  const [page, setPage] = useState(1)
-  const [pageSize, setPageSize] = useState(10)
-  const [filter, setFilter] = useState("")
+        return (
+          <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+            <div
+              style={{
+                display: "inline-block",
+                height: "6px",
+                width: "6px",
+                borderRadius: "50px",
+                marginRight: "4px",
+                backgroundColor: color
+              }}
+            />
+            <Text>{text}</Text>
+          </div>
+        )
+      }
+    }
+  ]
 
   const rowSelection = useMemo(() => {
     return {
@@ -217,6 +244,9 @@ const MigrationDeviceTable = ({ updateShowStep, label }) => {
                   </Option>
                   <Option value="not_migrated">
                     Not Migrated
+                  </Option>
+                  <Option value="">
+                    No Filter
                   </Option>
                 </Select>
 
