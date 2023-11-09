@@ -18,6 +18,8 @@ const MigrationDeviceTable = ({ updateShowStep, label }) => {
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(10)
   const [filter, setFilter] = useState("")
+  const [selectedRows, setSelectedRows] = useState([])
+  const [allSelected, setAllSelected] = useState(false)
 
   const columns = [
     {
@@ -49,11 +51,8 @@ const MigrationDeviceTable = ({ updateShowStep, label }) => {
           placeholder="Unknown"
           style={{ width: 180, marginRight: 10 }}
           onSelect={(region) => {
-            let foundDevice = find(devices, (d) => d.id == record.id)
-            foundDevice = Object.assign({}, foundDevice, { region })
-
             const updatedDevices = devices.map(d => {
-              if (d.id == foundDevice.id) return foundDevice
+              if (d.id == record.id) return Object.assign({}, d, { region })
               return d
             })
 
@@ -135,8 +134,12 @@ const MigrationDeviceTable = ({ updateShowStep, label }) => {
 
   const rowSelection = useMemo(() => {
     return {
-      onChange: (keys, selectedRows) => {},
-      onSelectAll: () => {}
+      onChange: (keys, selectedRows) => {
+        setSelectedRows(selectedRows)
+      },
+      onSelectAll: () => {
+        setAllSelected(state => !state)
+      }
     }
   }, [])
 
@@ -190,6 +193,8 @@ const MigrationDeviceTable = ({ updateShowStep, label }) => {
       }
     }
   }, [page, pageSize, devices, filter])
+
+  console.log(selectedRows)
 
   return (
     <>
@@ -254,6 +259,7 @@ const MigrationDeviceTable = ({ updateShowStep, label }) => {
                   placeholder="Set Regions to..."
                   style={{ width: 180, marginRight: 10 }}
                   onSelect={() => {}}
+                  value={null}
                 >
                   {
                     regions.map(r => (
