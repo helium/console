@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { displayError } from '../../util/messages'
 import { getDevices } from '../../actions/migration'
 import { Link } from "react-router-dom";
@@ -13,10 +13,11 @@ import find from 'lodash/find'
 const regions = ["EU868", "US915", "AS923", "AS923_2", "AS923_3", "AS923_4", "CN470", "CN779", "AU915", "IN865", "KR920", "RU864"]
 
 const MigrationDeviceTable = ({ updateShowStep, label }) => {
+  const mountedRef = useRef(true)
   const [devices, setDevices] = useState([])
   const [visibleDevices, setVisibleDevices] = useState([])
   const [page, setPage] = useState(1)
-  const [pageSize, setPageSize] = useState(10)
+  const [pageSize, setPageSize] = useState(25)
   const [filter, setFilter] = useState("")
   const [selectedRows, setSelectedRows] = useState([])
   const [allSelected, setAllSelected] = useState(false)
@@ -145,7 +146,7 @@ const MigrationDeviceTable = ({ updateShowStep, label }) => {
 
   const fetchData = useCallback(async () => {
     const data = await getDevices(label)
-    setDevices(data)
+    if (mountedRef.current) setDevices(data)
   }, [label])
 
   const getPaginationTotal = useCallback(() => {
@@ -159,6 +160,12 @@ const MigrationDeviceTable = ({ updateShowStep, label }) => {
       return devices.length
     }
   }, [filter, devices])
+
+  useEffect(() => {
+    return () => {
+      mountedRef.current = false
+    }
+  }, [])
 
   useEffect(() => {
     // only refetch when devices get cleared or when empty from mount
@@ -194,8 +201,6 @@ const MigrationDeviceTable = ({ updateShowStep, label }) => {
     }
   }, [page, pageSize, devices, filter])
 
-  console.log(selectedRows)
-
   return (
     <>
       <div
@@ -226,6 +231,7 @@ const MigrationDeviceTable = ({ updateShowStep, label }) => {
                 style={{ marginLeft: 10 }}
                 size="small"
                 onClick={() => {
+                  setFilter("")
                   setDevices([])
                   setVisibleDevices([])
                 }}
@@ -240,6 +246,7 @@ const MigrationDeviceTable = ({ updateShowStep, label }) => {
                     setFilter(val)
                     setPage(1)
                   }}
+                  value={filter}
                 >
                   <Option value="unknown_region">
                     Unknown Region
@@ -258,7 +265,17 @@ const MigrationDeviceTable = ({ updateShowStep, label }) => {
                 <Select
                   placeholder="Set Regions to..."
                   style={{ width: 180, marginRight: 10 }}
-                  onSelect={() => {}}
+                  onSelect={(region) => {
+                    const selectedIds = {}
+                    selectedRows.forEach(r => selectedIds[r.id] = true)
+
+                    const updatedDevices = devices.map(d => {
+                      if (selectedIds[d.id]) return Object.assign({}, d, { region })
+                      return d
+                    })
+
+                    setDevices(updatedDevices)
+                  }}
                   value={null}
                 >
                   {
@@ -302,7 +319,6 @@ const MigrationDeviceTable = ({ updateShowStep, label }) => {
               }}
               style={{ marginRight: 40, paddingTop: 2 }}
             >
-              <Option value={10}>10</Option>
               <Option value={25}>25</Option>
               <Option value={100}>100</Option>
               <Option value={250}>250</Option>
@@ -343,7 +359,7 @@ const MigrationDeviceTable = ({ updateShowStep, label }) => {
             <Button
               style={{ marginLeft: 10 }}
               type="primary"
-              disabled={true}
+              disabled={selectedRows.length == 0}
               onClick={() => {}}
             >
               Next: Start Device Migration

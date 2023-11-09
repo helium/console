@@ -91,9 +91,15 @@ const MigrationSelectLabel = ({ apiKey, tenantId, application, label, allLabels,
                   <Text>Label: </Text>
                 </div>
                 <Select
+                  showSearch
+                  optionFilterProp="children"
+                  filterOption={(input, option) => (option?.label ?? '').includes(input)}
+                  filterSort={(optionA, optionB) =>
+                    (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+                  }
                   name="label"
                   value={label}
-                  placeholder="Select a label"
+                  placeholder="Search a Label"
                   style={{ width: 200, marginLeft: 10 }}
                   onChange={val => handleSelect("label", val)}
                   options={allLabels.map(l => {
