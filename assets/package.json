@@ -14,7 +14,7 @@
     "@typeform/embed-react": "^1.14.0",
     "amplitude-js": "^8.18.1",
     "antd": "^4.19.5",
-    "axios": "^0.26.1",
+    "axios": "^1.6.0",
     "chart.js": "^3.7.0",
     "cheerio": "^1.0.0-rc.10",
     "connected-react-router": "^6.9.2",
