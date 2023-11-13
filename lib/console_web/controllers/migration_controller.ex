@@ -6,6 +6,7 @@ defmodule ConsoleWeb.MigrationController do
   alias Console.Labels
   alias Console.Devices.Device
   alias Console.Labels
+  alias Console.Migrations
 
   plug ConsoleWeb.Plug.AuthorizeAction
 
@@ -22,15 +23,11 @@ defmodule ConsoleWeb.MigrationController do
         }
       end)
 
+    applications = Migrations.get_applications(api_key, tenant_id)
+
     response = %{
       labels: labels,
-      applications: [%{
-        name: "app1",
-        id: "app1"
-      },%{
-        name: "app2",
-        id: "app2"
-      }]
+      applications: applications
     }
 
     conn |> send_resp(200, Poison.encode!(response))

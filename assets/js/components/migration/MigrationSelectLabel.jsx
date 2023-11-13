@@ -45,6 +45,7 @@ const MigrationSelectLabel = ({ apiKey, tenantId, application, label, allLabels,
               style={{ width: 350, marginLeft: 10 }}
               placeholder="E.g. biubcuiwfvwu98T97Tg8ygi"
               onChange={handleUpdate}
+              value={apiKey}
             />
           </div>
           <div style={{ display: "flex", flexDirection: "row", alignItems: 'center', marginBottom: 20 }}>
@@ -60,6 +61,7 @@ const MigrationSelectLabel = ({ apiKey, tenantId, application, label, allLabels,
               style={{ width: 350, marginLeft: 10 }}
               placeholder="Please enter your tenant-id"
               onChange={handleUpdate}
+              value={tenantId}
             />
             <Button
               style={{ marginLeft: 10 }}
