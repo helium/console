@@ -60,6 +60,7 @@ const MigrationDeviceTable = ({ updateShowStep, label, apiKey, tenantId }) => {
             setDevices(updatedDevices)
           }}
           value={record.region}
+          status={record.region ? undefined : "error"}
         >
           {
             regions.map(r => (
@@ -223,19 +224,23 @@ const MigrationDeviceTable = ({ updateShowStep, label, apiKey, tenantId }) => {
             }}
           >
             <div style={{ display: "flex", flexDirection: "row", alignItems: 'center' }}>
-              <Text style={{ fontSize: 16, fontWeight: 600 }}>Select Devices to Migrate</Text>
-              <Button
-                type="primary"
-                icon={<ReloadOutlined />}
-                shape="circle"
-                style={{ marginLeft: 10 }}
-                size="small"
-                onClick={() => {
-                  setFilter("")
-                  setDevices([])
-                  setVisibleDevices([])
-                }}
-              />
+              <Text style={{ fontSize: 16, fontWeight: 600 }}>{devices.length == 0 ? "Please wait while we load your devices..." : "Select Devices to Migrate"}</Text>
+              {
+                devices.length > 0 && (
+                  <Button
+                    type="primary"
+                    icon={<ReloadOutlined />}
+                    shape="circle"
+                    style={{ marginLeft: 10 }}
+                    size="small"
+                    onClick={() => {
+                      setFilter("")
+                      setDevices([])
+                      setVisibleDevices([])
+                    }}
+                  />
+                )
+              }
             </div>
             <UserCan>
               <div style={{ display: "flex", flexDirection: "row", alignItems: 'center' }}>
