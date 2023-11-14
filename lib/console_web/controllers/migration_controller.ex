@@ -23,12 +23,17 @@ defmodule ConsoleWeb.MigrationController do
 
     applications = Migrations.get_applications(api_key, tenant_id)
 
-    response = %{
-      labels: labels,
-      applications: applications
-    }
+    case applications do
+      nil ->
+        conn |> send_resp(400, Poison.encode!(%{ errors: %{ error: "Could not fetch applications, please check your credentials and try again" }}))
+      _ ->
+        response = %{
+          labels: labels,
+          applications: applications
+        }
 
-    conn |> send_resp(200, Poison.encode!(response))
+        conn |> send_resp(200, Poison.encode!(response))
+    end
   end
 
   def get_devices(conn, %{"label_id" => label_id, "api_key" => api_key, "tenant_id" => tenant_id}) do

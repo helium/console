@@ -34,11 +34,12 @@ class MigrationIndex extends Component {
   }
 
   fetchApplications = (apiKey, tenantId) => {
+    this.setState({ allLabels: [], allApplications: [] })
     getApplications(apiKey, tenantId)
     .then(data => {
       this.setState({ allLabels: data.labels, allApplications: data.applications })
     })
-    .catch(err => displayError("Could not fetch applications, check your credentials and try again."))
+    .catch(err => {})
   }
 
   render() {
