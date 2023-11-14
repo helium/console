@@ -14,6 +14,7 @@ const regions = ["EU868", "US915", "AS923", "AS923_2", "AS923_3", "AS923_4", "CN
 
 const MigrationDeviceTable = ({ updateShowStep, label, apiKey, tenantId }) => {
   const mountedRef = useRef(true)
+  const [loading, setLoading] = useState(true)
   const [devices, setDevices] = useState([])
   const [visibleDevices, setVisibleDevices] = useState([])
   const [page, setPage] = useState(1)
@@ -146,8 +147,12 @@ const MigrationDeviceTable = ({ updateShowStep, label, apiKey, tenantId }) => {
   }, [])
 
   const fetchData = useCallback(async () => {
+    setLoading(true)
     const data = await getDevices(label, apiKey, tenantId)
-    if (mountedRef.current) setDevices(data)
+    if (mountedRef.current) {
+      setDevices(data)
+      setLoading(false)
+    }
   }, [label])
 
   const getPaginationTotal = useCallback(() => {
@@ -172,7 +177,10 @@ const MigrationDeviceTable = ({ updateShowStep, label, apiKey, tenantId }) => {
     // only refetch when devices get cleared or when empty from mount
     if (devices.length == 0) {
       fetchData()
-        .catch(err => displayError("Could not fetch devices from label, please try again."))
+        .catch(err => {
+          displayError("Could not fetch devices from label.")
+          setLoading(false)
+        })
     }
   }, [fetchData, devices])
 
@@ -224,9 +232,9 @@ const MigrationDeviceTable = ({ updateShowStep, label, apiKey, tenantId }) => {
             }}
           >
             <div style={{ display: "flex", flexDirection: "row", alignItems: 'center' }}>
-              <Text style={{ fontSize: 16, fontWeight: 600 }}>{devices.length == 0 ? "Please wait while we load your devices..." : "Select Devices to Migrate"}</Text>
+              <Text style={{ fontSize: 16, fontWeight: 600 }}>{loading ? "Please wait while we load your devices..." : "Select Devices to Migrate"}</Text>
               {
-                devices.length > 0 && (
+                !loading && (
                   <Button
                     type="primary"
                     icon={<ReloadOutlined />}

@@ -54,15 +54,50 @@ defmodule ConsoleWeb.MigrationController do
             Map.put(acc, "#{device["devEui"]}-#{chirpstack_device["device"]["joinEui"]}", true)
           end)
 
-        devices =
-          Devices.get_devices_for_label(label.id)
-          |> Enum.map(fn device ->
-            migration_status = Map.get(chirpstack_devices_map, String.downcase("#{device.dev_eui}-#{device.app_eui}"), false)
-            Map.merge(device, %{ region: nil, live_migratable: true, migration_status: migration_status })
-          end)
-          |> Enum.sort(&(Map.get(&1, :name) < Map.get(&2, :name)))
+        console_devices = Devices.get_devices_for_label(label.id)
 
-        conn |> send_resp(200, Poison.encode!(devices))
+        request_id = for _ <- 1..10, into: "", do: <<Enum.random('0123456789abcdef')>>
+        :persistent_term.put(request_id, self())
+        ids = Enum.map(console_devices, fn device -> device.id end)
+        ConsoleWeb.Endpoint.broadcast("device:all", "device:all:skf", %{"devices" => ids, "request_id" => request_id})
+
+        receive do
+          {:skf, request_id, skfs} ->
+            :persistent_term.erase(request_id)
+
+            IO.inspect skfs
+            IO.inspect console_devices
+
+            devices =
+              console_devices
+              |> Enum.map(fn device ->
+                migration_status = Map.get(chirpstack_devices_map, String.downcase("#{device.dev_eui}-#{device.app_eui}"), false)
+
+                device_skf = Map.get(skfs, device.id, %{})
+                region = Map.get(device_skf, :region, nil)
+                devaddr = Map.get(device_skf, :devaddr, nil)
+                nwk_s_key = Map.get(device_skf, :nwk_s_key, nil)
+                app_s_key = Map.get(device_skf, :app_s_key, nil)
+                live_migratable = not is_nil(region) and not is_nil(devaddr) and not is_nil(nwk_s_key) and not is_nil(app_s_key)
+
+                Map.merge(device, %{
+                  region: region,
+                  devaddr: devaddr,
+                  nwk_s_key: nwk_s_key,
+                  app_s_key: app_s_key,
+                  live_migratable: live_migratable,
+                  migration_status: migration_status
+                })
+              end)
+              |> Enum.sort(&(Map.get(&1, :name) < Map.get(&2, :name)))
+
+            conn |> send_resp(200, Poison.encode!(devices))
+        after
+          3_000 ->
+            :persistent_term.erase(request_id)
+
+            {:error, :internal_server_error, "Could not fetch SKFs"}
+        end
     end
   end
 end
