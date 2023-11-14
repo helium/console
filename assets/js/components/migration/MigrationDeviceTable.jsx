@@ -12,7 +12,7 @@ import find from 'lodash/find'
 
 const regions = ["EU868", "US915", "AS923", "AS923_2", "AS923_3", "AS923_4", "CN470", "CN779", "AU915", "IN865", "KR920", "RU864"]
 
-const MigrationDeviceTable = ({ updateShowStep, label }) => {
+const MigrationDeviceTable = ({ updateShowStep, label, apiKey, tenantId }) => {
   const mountedRef = useRef(true)
   const [devices, setDevices] = useState([])
   const [visibleDevices, setVisibleDevices] = useState([])
@@ -145,7 +145,7 @@ const MigrationDeviceTable = ({ updateShowStep, label }) => {
   }, [])
 
   const fetchData = useCallback(async () => {
-    const data = await getDevices(label)
+    const data = await getDevices(label, apiKey, tenantId)
     if (mountedRef.current) setDevices(data)
   }, [label])
 
@@ -321,7 +321,7 @@ const MigrationDeviceTable = ({ updateShowStep, label }) => {
             >
               <Option value={25}>25</Option>
               <Option value={100}>100</Option>
-              <Option value={250}>250</Option>
+              <Option value={500}>500</Option>
             </Select>
             <Pagination
               current={page}

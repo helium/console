@@ -8,9 +8,9 @@ export const getApplications = (api_key, tenant_id) =>
     })
     .then(({ data }) => data);
 
-export const getDevices = (label_id) =>
+export const getDevices = (label_id, api_key, tenant_id) =>
   rest
     .post("/api/migration/devices", {
-      label_id
+      label_id, api_key, tenant_id
     })
     .then(({ data }) => data);

@@ -9,8 +9,8 @@ import MigrationDeviceTable from "./MigrationDeviceTable";
 class MigrationIndex extends Component {
   state = {
       showStep: 1,
-      apiKey: "",
-      tenantId: "",
+      apiKey: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjaGlycHN0YWNrIiwiaXNzIjoiY2hpcnBzdGFjayIsInN1YiI6Ijc1MjM3ZjNkLTg2MGItNGEwOS1iN2ExLWVlYTQwMWIzMmQ3MSIsInR5cCI6ImtleSJ9.NkuVuqBwiirsnOMCl0M_wSMX0GLA86HS5pOV2GWJxUA",
+      tenantId: "52f14cd4-c6f1-4fbd-8f87-4025e1d49242",
       application: "",
       label: "",
       allLabels: [],
@@ -63,6 +63,8 @@ class MigrationIndex extends Component {
               <MigrationDeviceTable
                 updateShowStep={this.updateShowStep}
                 label={this.state.label}
+                apiKey={this.state.apiKey}
+                tenantId={this.state.tenantId}
               />
           )}
         </DashboardLayout>
