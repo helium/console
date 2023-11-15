@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo, useRef } from "react"
 import { displayError } from '../../util/messages'
 import { getDevices } from '../../actions/migration'
 import { Link } from "react-router-dom";
+import MigrationProgressModal from './MigrationProgressModal'
 import { Typography, Input, Select, Button, Table, Pagination, Popover } from "antd"
 import { ReloadOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 const { Text } = Typography;
@@ -12,7 +13,7 @@ import find from 'lodash/find'
 
 const regions = ["EU868", "US915", "AS923", "AS923_2", "AS923_3", "AS923_4", "CN470", "CN779", "AU915", "IN865", "KR920", "RU864"]
 
-const MigrationDeviceTable = ({ updateShowStep, label, apiKey, tenantId }) => {
+const MigrationDeviceTable = ({ updateShowStep, label, apiKey, tenantId, applicationId }) => {
   const mountedRef = useRef(true)
   const [loading, setLoading] = useState(true)
   const [devices, setDevices] = useState([])
@@ -22,6 +23,7 @@ const MigrationDeviceTable = ({ updateShowStep, label, apiKey, tenantId }) => {
   const [filter, setFilter] = useState("")
   const [selectedRows, setSelectedRows] = useState([])
   const [allSelected, setAllSelected] = useState(false)
+  const [showModal, setShowModal] = useState(false)
 
   const columns = [
     {
@@ -373,13 +375,22 @@ const MigrationDeviceTable = ({ updateShowStep, label, apiKey, tenantId }) => {
               style={{ marginLeft: 10 }}
               type="primary"
               disabled={selectedRows.length == 0}
-              onClick={() => {}}
+              onClick={() => setShowModal(true)}
             >
               Next: Start Device Migration
             </Button>
           </UserCan>
         </div>
       </div>
+
+      <MigrationProgressModal
+        open={showModal}
+        close={() => setShowModal(false)}
+        rows={selectedRows}
+        apiKey={apiKey}
+        tenantId={tenantId} 
+        applicationId={applicationId}
+      />
     </>
   )
 }

@@ -66,6 +66,7 @@ class MigrationIndex extends Component {
                 label={this.state.label}
                 apiKey={this.state.apiKey}
                 tenantId={this.state.tenantId}
+                applicationId={this.state.application}
               />
           )}
         </DashboardLayout>

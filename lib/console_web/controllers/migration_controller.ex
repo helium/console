@@ -66,13 +66,13 @@ defmodule ConsoleWeb.MigrationController do
         ids = Enum.map(console_devices, fn device -> device.id end)
         ConsoleWeb.Endpoint.broadcast("device:all", "device:all:skf", %{"devices" => ids, "request_id" => request_id})
 
-        receive do
-          {:skf, request_id, skfs} ->
-            :persistent_term.erase(request_id)
-
-            IO.inspect skfs
-            IO.inspect console_devices
-
+        # receive do
+        #   {:skf, request_id, skfs} ->
+        #     :persistent_term.erase(request_id)
+        #
+        #     IO.inspect skfs
+        #     IO.inspect console_devices
+        skfs = %{}
             devices =
               console_devices
               |> Enum.map(fn device ->
@@ -97,12 +97,35 @@ defmodule ConsoleWeb.MigrationController do
               |> Enum.sort(&(Map.get(&1, :name) < Map.get(&2, :name)))
 
             conn |> send_resp(200, Poison.encode!(devices))
-        after
-          3_000 ->
-            :persistent_term.erase(request_id)
-
-            {:error, :internal_server_error, "Could not fetch SKFs"}
-        end
+        # after
+        #   3_000 ->
+        #     :persistent_term.erase(request_id)
+        #
+        #     {:error, :internal_server_error, "Could not fetch SKFs"}
+        # end
     end
+  end
+
+  def create_device(conn, %{
+    "device_id" => device_id,
+    "api_key" => api_key,
+    "tenant_id" => tenant_id,
+    "application_id" => application_id,
+    "region" => region,
+    "devaddr" => devaddr,
+    "nwk_s_key" => nwk_s_key,
+    "app_s_key" => app_s_key}) do
+
+      IO.inspect device_id
+      IO.inspect api_key
+      IO.inspect tenant_id
+      IO.inspect application_id
+      IO.inspect region
+      IO.inspect devaddr
+      IO.inspect nwk_s_key
+      IO.inspect app_s_key
+      IO.inspect "?>>>>>>>>"
+
+      conn |> send_resp(500, "")
   end
 end

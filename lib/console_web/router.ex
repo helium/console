@@ -118,6 +118,7 @@ defmodule ConsoleWeb.Router do
     # Get chirpstack application and console labels
     post "/migration/applications", MigrationController, :get_applications
     post "/migration/devices", MigrationController, :get_devices
+    post "/migration/devices/new", MigrationController, :create_device
   end
 
   scope "/api/router", ConsoleWeb.Router do
