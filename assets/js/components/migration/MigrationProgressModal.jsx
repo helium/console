@@ -7,13 +7,15 @@ export default ({ open, close, rows, apiKey, tenantId, applicationId }) => {
   const [status, setStatus] = useState("initial")
   const [count, setCount] = useState({ success: 0, failure: 0 })
 
+  const allDevicesHaveRegions = rows.every(r => !!r.region)
+
   const startMigration = async () => {
     setStatus("started")
     setCount({ success: 0, failure: 0 })
 
     for (const r of rows) {
       try {
-          const data = await createDevice(r.id, apiKey, applicationId, tenantId, r.region, r.devaddr, r.nwk_s_key, r.app_s_key)
+          const data = await createDevice(r.id, apiKey, applicationId, tenantId, r.region, r.devaddr, r.nwk_s_key, r.app_s_key, r.migration_status)
           setCount(c => ({ ...c, success: c.success + 1 }))
       } catch (error) {
           setCount(c => ({ ...c, failure: c.failure + 1 }))
@@ -41,7 +43,7 @@ export default ({ open, close, rows, apiKey, tenantId, applicationId }) => {
         }}>
           Cancel
         </Button>,
-        <Button key="submit" type="primary" onClick={startMigration}>
+        <Button key="submit" type="primary" onClick={startMigration} disabled={!allDevicesHaveRegions}>
           OK
         </Button>,
       ]
@@ -74,9 +76,15 @@ export default ({ open, close, rows, apiKey, tenantId, applicationId }) => {
     >
       <div style={{ textAlign: "center" }}>
         {
-          status == "initial" && (
+          status == "initial" && rows.length && (
             <Text>
-              You've requested to migrate {rows.length} devices. Please press OK to proceed.
+              {
+                allDevicesHaveRegions ? (
+                  `You've requested to migrate ${rows.length} devices. Please press OK to proceed.`
+                ) : (
+                  "All selected devices must have a region selected to continue."
+                )
+              }
             </Text>
           )
         }

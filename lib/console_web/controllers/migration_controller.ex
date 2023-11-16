@@ -72,17 +72,30 @@ defmodule ConsoleWeb.MigrationController do
         #
         #     IO.inspect skfs
         #     IO.inspect console_devices
-        skfs = %{}
+        skfs = %{
+          "f54a370f-5792-4e74-ad1e-635b864c45af" => %{
+            "app_s_key" => "EF0DB9A1694449FD2CF760470DD5D491",
+            "devaddr" => "48000401",
+            "nwk_s_key" => "FC4066B2BC188396BC0229E2909AF74F",
+            "region" => "EU868"
+          },
+          "b4f10929-ed55-469d-bc6f-9b69f5d9eb07" => %{
+            "app_s_key" => "EF0DB9A1694449FD2CF760470DD5D492",
+            "devaddr" => "48000402",
+            "nwk_s_key" => "FC4066B2BC188396BC0229E2909AF742",
+            "region" => "US915"
+          },
+        }
             devices =
               console_devices
               |> Enum.map(fn device ->
                 migration_status = Map.get(chirpstack_devices_map, String.downcase("#{device.dev_eui}-#{device.app_eui}"), false)
 
                 device_skf = Map.get(skfs, device.id, %{})
-                region = Map.get(device_skf, :region, nil)
-                devaddr = Map.get(device_skf, :devaddr, nil)
-                nwk_s_key = Map.get(device_skf, :nwk_s_key, nil)
-                app_s_key = Map.get(device_skf, :app_s_key, nil)
+                region = Map.get(device_skf, "region", nil)
+                devaddr = Map.get(device_skf, "devaddr", nil)
+                nwk_s_key = Map.get(device_skf, "nwk_s_key", nil)
+                app_s_key = Map.get(device_skf, "app_s_key", nil)
                 live_migratable = not is_nil(region) and not is_nil(devaddr) and not is_nil(nwk_s_key) and not is_nil(app_s_key)
 
                 Map.merge(device, %{
@@ -107,25 +120,32 @@ defmodule ConsoleWeb.MigrationController do
   end
 
   def create_device(conn, %{
-    "device_id" => device_id,
-    "api_key" => api_key,
-    "tenant_id" => tenant_id,
-    "application_id" => application_id,
-    "region" => region,
-    "devaddr" => devaddr,
-    "nwk_s_key" => nwk_s_key,
-    "app_s_key" => app_s_key}) do
+      "device_id" => device_id,
+      "api_key" => api_key,
+      "tenant_id" => tenant_id,
+      "application_id" => application_id,
+      "migration_status" => migration_status,
+      "region" => region,
+      "devaddr" => devaddr,
+      "nwk_s_key" => nwk_s_key,
+      "app_s_key" => app_s_key})
+  do
+    current_organization = conn.assigns.current_organization
+    device = Devices.get_device!(current_organization, device_id)
 
-      IO.inspect device_id
-      IO.inspect api_key
-      IO.inspect tenant_id
-      IO.inspect application_id
-      IO.inspect region
-      IO.inspect devaddr
-      IO.inspect nwk_s_key
-      IO.inspect app_s_key
-      IO.inspect "?>>>>>>>>"
+    case migration_status do
+      true ->
+        conn |> send_resp(200, "")
 
-      conn |> send_resp(500, "")
+      _ ->
+        device_profile_id = Migrations.get_device_profile_by_region(api_key, tenant_id, region)
+
+        with :ok <- Migrations.create_device(api_key, device, application_id, device_profile_id) do
+          conn |> send_resp(200, "")
+        else
+          :error ->
+            conn |> send_resp(502, "")
+        end
+    end
   end
 end
