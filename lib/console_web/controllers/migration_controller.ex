@@ -85,6 +85,12 @@ defmodule ConsoleWeb.MigrationController do
             "nwk_s_key" => "FC4066B2BC188396BC0229E2909AF742",
             "region" => "US915"
           },
+          "7e762bef-eee4-4f39-b30d-e79707dabe34" => %{
+            "app_s_key" => "EF0DB9A1694449FD2CF760470DD5D493",
+            "devaddr" => "48000403",
+            "nwk_s_key" => "FC4066B2BC188396BC0229E2909AF743",
+            "region" => "US915"
+          },
         }
             devices =
               console_devices
@@ -140,10 +146,12 @@ defmodule ConsoleWeb.MigrationController do
       _ ->
         device_profile_id = Migrations.get_device_profile_by_region(api_key, tenant_id, region)
 
-        with :ok <- Migrations.create_device(api_key, device, application_id, device_profile_id) do
+        with :ok <- Migrations.create_device(api_key, device, application_id, device_profile_id),
+          :ok <- Migrations.activate_device(api_key, device, devaddr, nwk_s_key, app_s_key) do
+
           conn |> send_resp(200, "")
         else
-          :error ->
+          _ ->
             conn |> send_resp(502, "")
         end
     end

@@ -1,6 +1,5 @@
 defmodule Console.Migrations do
   import Ecto.Query, warn: false
-  alias Console.Repo
 
   def get_applications(api_key, tenant_id) do
     "http://router2.helium.wtf:8096/api/applications?tenantId=#{tenant_id}&limit=1000&offset=0"
@@ -85,6 +84,39 @@ defmodule Console.Migrations do
     case response.status_code do
       200 -> :ok
       _ -> :error
+    end
+  end
+
+  def activate_device(api_key, device, devaddr, nwk_s_key, app_s_key) do
+    frame_up = if is_nil(device.frame_up), do: 0, else: device.frame_up
+    frame_down = if is_nil(device.frame_down), do: 0, else: device.frame_down
+
+    body = %{
+      "deviceActivation" => %{
+        "aFCntDown" => frame_down,
+        "appSKey" => app_s_key,
+        "devAddr" => devaddr,
+        "fCntUp" => frame_up,
+        "fNwkSIntKey" => nwk_s_key,
+        "nFCntDown" => frame_down,
+        "nwkSEncKey" => nwk_s_key,
+        "sNwkSIntKey" => nwk_s_key
+      }
+    }
+
+    encoded_body = body |> Poison.encode!()
+
+    case body["deviceActivation"] |> Map.values() |> Enum.find_index(fn val -> is_nil(val) end) do
+      nil ->
+        response = "http://router2.helium.wtf:8096/api/devices/#{device.dev_eui}/activate"
+          |> HTTPoison.post!(encoded_body, [{"Authorization", "Bearer #{api_key}"}, {"content-type", "application/json"}])
+
+        case response.status_code do
+          200 -> :ok
+          _ -> :error
+        end
+      _ ->
+        :ok
     end
   end
 end
