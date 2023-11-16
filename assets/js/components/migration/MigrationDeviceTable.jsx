@@ -139,8 +139,8 @@ const MigrationDeviceTable = ({ updateShowStep, label, apiKey, tenantId, applica
 
   const rowSelection = useMemo(() => {
     return {
-      onChange: (keys, selectedRows) => {
-        setSelectedRows(selectedRows)
+      onChange: (keys) => {
+        setSelectedRows(keys)
       },
       onSelectAll: () => {
         setAllSelected(state => !state)
@@ -212,6 +212,11 @@ const MigrationDeviceTable = ({ updateShowStep, label, apiKey, tenantId, applica
     }
   }, [page, pageSize, devices, filter])
 
+  const selectedRowsMap = selectedRows.reduce((acc, curr) => {
+    acc[curr] = true
+    return acc
+  }, {})
+
   return (
     <>
       <div
@@ -281,11 +286,8 @@ const MigrationDeviceTable = ({ updateShowStep, label, apiKey, tenantId, applica
                   placeholder="Set Regions to..."
                   style={{ width: 180, marginRight: 10 }}
                   onSelect={(region) => {
-                    const selectedIds = {}
-                    selectedRows.forEach(r => selectedIds[r.id] = true)
-
                     const updatedDevices = devices.map(d => {
-                      if (selectedIds[d.id]) return Object.assign({}, d, { region })
+                      if (selectedRowsMap[d.id]) return Object.assign({}, d, { region })
                       return d
                     })
 
@@ -374,7 +376,7 @@ const MigrationDeviceTable = ({ updateShowStep, label, apiKey, tenantId, applica
             <Button
               style={{ marginLeft: 10 }}
               type="primary"
-              disabled={selectedRows.length == 0}
+              disabled={visibleDevices.filter(d => selectedRowsMap[d.id]) == 0}
               onClick={() => setShowModal(true)}
             >
               Next: Start Device Migration
@@ -386,9 +388,9 @@ const MigrationDeviceTable = ({ updateShowStep, label, apiKey, tenantId, applica
       <MigrationProgressModal
         open={showModal}
         close={() => setShowModal(false)}
-        rows={selectedRows}
+        rows={visibleDevices.filter(d => selectedRowsMap[d.id])}
         apiKey={apiKey}
-        tenantId={tenantId} 
+        tenantId={tenantId}
         applicationId={applicationId}
       />
     </>
