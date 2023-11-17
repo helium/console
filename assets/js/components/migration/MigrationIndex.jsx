@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { getApplications } from '../../actions/migration'
-import { displayError } from '../../util/messages'
 import { DesktopDisplay } from "../mobile/MediaQuery";
 import DashboardLayout from "../common/DashboardLayout";
 import MigrationSelectLabel from "./MigrationSelectLabel";
@@ -9,8 +8,8 @@ import MigrationDeviceTable from "./MigrationDeviceTable";
 class MigrationIndex extends Component {
   state = {
       showStep: 1,
-      apiKey: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjaGlycHN0YWNrIiwiaXNzIjoiY2hpcnBzdGFjayIsInN1YiI6Ijc1MjM3ZjNkLTg2MGItNGEwOS1iN2ExLWVlYTQwMWIzMmQ3MSIsInR5cCI6ImtleSJ9.NkuVuqBwiirsnOMCl0M_wSMX0GLA86HS5pOV2GWJxUA",
-      tenantId: "52f14cd4-c6f1-4fbd-8f87-4025e1d49242",
+      apiKey: "",
+      tenantId: "",
       application: "",
       label: "",
       allLabels: [],
