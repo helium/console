@@ -137,22 +137,21 @@ const MigrationDeviceTable = ({ updateShowStep, label, apiKey, tenantId, applica
     }
   ]
 
-  const rowSelection = useMemo(() => {
-    return {
-      onChange: (keys) => {
-        setSelectedRows(keys)
-      },
-      onSelectAll: () => {
-        setAllSelected(state => !state)
-      }
+  const rowSelection = {
+    selectedRowKeys: selectedRows,
+    onChange: (keys) => {
+      setSelectedRows(keys)
+    },
+    onSelectAll: () => {
+      setAllSelected(state => !state)
     }
-  }, [])
+  }
 
   const fetchData = useCallback(async () => {
     setLoading(true)
     const data = await getDevices(label, apiKey, tenantId)
     if (mountedRef.current) {
-      setDevices(data)
+      if (data.length > 0) setDevices(data)
       setLoading(false)
     }
   }, [label])
@@ -252,6 +251,7 @@ const MigrationDeviceTable = ({ updateShowStep, label, apiKey, tenantId, applica
                       setFilter("")
                       setDevices([])
                       setVisibleDevices([])
+                      setSelectedRows([])
                     }}
                   />
                 )
@@ -392,6 +392,11 @@ const MigrationDeviceTable = ({ updateShowStep, label, apiKey, tenantId, applica
         apiKey={apiKey}
         tenantId={tenantId}
         applicationId={applicationId}
+        refetchDevices={() => {
+          setDevices([])
+          setVisibleDevices([])
+          setSelectedRows([])
+        }}
       />
     </>
   )

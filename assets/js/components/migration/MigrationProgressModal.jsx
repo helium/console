@@ -3,7 +3,7 @@ import { Modal, Button, Typography, Progress } from "antd";
 import { createDevice } from '../../actions/migration'
 const { Text } = Typography;
 
-export default ({ open, close, rows, apiKey, tenantId, applicationId }) => {
+export default ({ open, close, rows, apiKey, tenantId, applicationId, refetchDevices }) => {
   const [status, setStatus] = useState("initial")
   const [count, setCount] = useState({ success: 0, failure: 0 })
 
@@ -48,15 +48,17 @@ export default ({ open, close, rows, apiKey, tenantId, applicationId }) => {
         </Button>,
       ]
     if (status == "started") return []
-      return [
-        <Button key="submit" type="primary" onClick={() => {
-          setCount({ success: 0, failure: 0 })
-          setStatus("initial")
-          close()
-        }}>
-          OK
-        </Button>,
-      ]
+
+    return [
+      <Button key="submit" type="primary" onClick={() => {
+        setCount({ success: 0, failure: 0 })
+        setStatus("initial")
+        refetchDevices()
+        close()
+      }}>
+        OK
+      </Button>,
+    ]
   }
 
   return (
@@ -80,7 +82,7 @@ export default ({ open, close, rows, apiKey, tenantId, applicationId }) => {
             <Text>
               {
                 allDevicesHaveRegions ? (
-                  `You've requested to migrate ${rows.length} devices. Please press OK to proceed.`
+                  `You've requested to migrate ${rows.length} devices. Any selected devices that have already been migrated will be skipped. Please press OK to proceed. `
                 ) : (
                   "All selected devices must have a region selected to continue."
                 )
