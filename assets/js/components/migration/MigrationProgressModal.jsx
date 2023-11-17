@@ -69,6 +69,8 @@ export default ({ open, close, rows, apiKey, tenantId, applicationId, refetchDev
         if (status !== "started") {
           setCount({ success: 0, failure: 0 })
           setStatus("initial")
+
+          if (status == "complete") refetchDevices()
           close()
         }
       }}
