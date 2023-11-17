@@ -76,7 +76,8 @@ defmodule ConsoleWeb.MigrationController do
                 migration_status = Map.get(chirpstack_devices_map, String.downcase("#{device.dev_eui}-#{device.app_eui}"), false)
 
                 device_skf = Map.get(skfs, device.id, %{})
-                region = if Map.get(device_skf, "region", nil) == "undefined" do nil else region end
+                region = Map.get(device_skf, "region", nil)
+                region = if region == "undefined" do nil else region end
                 devaddr = Map.get(device_skf, "devaddr", nil)
                 nwk_s_key = Map.get(device_skf, "nwk_s_key", nil)
                 app_s_key = Map.get(device_skf, "app_s_key", nil)
