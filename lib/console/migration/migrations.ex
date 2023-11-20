@@ -71,7 +71,7 @@ defmodule Console.Migrations do
         "deviceProfileId" => device_profile_id,
         "devEui" => device.dev_eui,
         "joinEui" => device.app_eui,
-        "isDisabled" => device.active,
+        "isDisabled" => not device.active,
         "name" => device.name,
         "skipFcntCheck" => true,
         "description" => "Console Device ID: #{device.id}"
@@ -117,6 +117,25 @@ defmodule Console.Migrations do
         end
       _ ->
         :ok
+    end
+  end
+
+  def create_device_keys(api_key, device) do
+    body = %{
+      "deviceKeys" => %{
+        "appKey" => "",
+        "nwkKey" => device.app_key
+      }
+    }
+
+    encoded_body = body |> Poison.encode!()
+
+    response = "http://router2.helium.wtf:8096/api/devices/#{device.dev_eui}/keys"
+      |> HTTPoison.post!(encoded_body, [{"Authorization", "Bearer #{api_key}"}, {"content-type", "application/json"}])
+
+    case response.status_code do
+      200 -> :ok
+      _ -> :error
     end
   end
 end

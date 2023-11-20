@@ -66,9 +66,30 @@ defmodule ConsoleWeb.MigrationController do
         ids = Enum.map(console_devices, fn device -> device.id end)
         ConsoleWeb.Endpoint.broadcast("device:all", "device:all:skf", %{"devices" => ids, "request_id" => request_id})
 
-        receive do
-          {:skf, request_id, skfs} ->
-            :persistent_term.erase(request_id)
+        # receive do
+        #   {:skf, request_id, skfs} ->
+        #     :persistent_term.erase(request_id)
+        skfs = %{
+          "f54a370f-5792-4e74-ad1e-635b864c45af" => %{
+            "app_s_key" => "EF0DB9A1694449FD2CF760470DD5D491",
+            "devaddr" => "48000401",
+            "nwk_s_key" => "FC4066B2BC188396BC0229E2909AF74F",
+            "region" => "EU868"
+          },
+          "b4f10929-ed55-469d-bc6f-9b69f5d9eb07" => %{
+            "app_s_key" => "EF0DB9A1694449FD2CF760470DD5D492",
+            "devaddr" => "48000402",
+            "nwk_s_key" => "FC4066B2BC188396BC0229E2909AF742",
+            "region" => "US915"
+          },
+          "7e762bef-eee4-4f39-b30d-e79707dabe34" => %{
+            "app_s_key" => "EF0DB9A1694449FD2CF760470DD5D493",
+            "devaddr" => "48000403",
+            "nwk_s_key" => "FC4066B2BC188396BC0229E2909AF743",
+            "region" => "US915"
+          },
+        }
+
 
             devices =
               console_devices
@@ -95,12 +116,12 @@ defmodule ConsoleWeb.MigrationController do
               |> Enum.sort(&(Map.get(&1, :name) < Map.get(&2, :name)))
 
             conn |> send_resp(200, Poison.encode!(devices))
-        after
-          3_000 ->
-            :persistent_term.erase(request_id)
-
-            {:error, :internal_server_error, "Could not fetch SKFs"}
-        end
+        # after
+        #   3_000 ->
+        #     :persistent_term.erase(request_id)
+        #
+        #     {:error, :internal_server_error, "Could not fetch SKFs"}
+        # end
     end
   end
 
@@ -125,8 +146,12 @@ defmodule ConsoleWeb.MigrationController do
       _ ->
         device_profile_id = Migrations.get_device_profile_by_region(api_key, tenant_id, region)
 
-        with :ok <- Migrations.create_device(api_key, device, application_id, device_profile_id),
-          :ok <- Migrations.activate_device(api_key, device, devaddr, nwk_s_key, app_s_key) do
+        with {:ok, _} <- Devices.update_device(device, %{ active: false }),
+          :ok <- Migrations.create_device(api_key, device, application_id, device_profile_id),
+          :ok <- Migrations.activate_device(api_key, device, devaddr, nwk_s_key, app_s_key),
+          :ok <- Migrations.create_device_keys(api_key, device) do
+
+          ConsoleWeb.Endpoint.broadcast("device:all", "device:all:refetch:devices", %{ "devices" => [device.id] })
 
           conn |> send_resp(200, "")
         else
