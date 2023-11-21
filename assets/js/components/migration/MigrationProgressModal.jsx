@@ -3,7 +3,7 @@ import { Modal, Button, Typography, Progress } from "antd";
 import { createDevice } from '../../actions/migration'
 const { Text } = Typography;
 
-export default ({ open, close, rows, apiKey, tenantId, applicationId, refetchDevices }) => {
+export default ({ open, close, rows, apiKey, tenantId, applicationId, refetchDevices, labelId }) => {
   const [status, setStatus] = useState("initial")
   const [count, setCount] = useState({ success: 0, failure: 0 })
 
@@ -15,7 +15,7 @@ export default ({ open, close, rows, apiKey, tenantId, applicationId, refetchDev
 
     for (const r of rows) {
       try {
-          const data = await createDevice(r.id, apiKey, applicationId, tenantId, r.region, r.devaddr, r.nwk_s_key, r.app_s_key, r.migration_status)
+          const data = await createDevice(r.id, apiKey, applicationId, tenantId, labelId, r.region, r.devaddr, r.nwk_s_key, r.app_s_key, r.migration_status)
           setCount(c => ({ ...c, success: c.success + 1 }))
       } catch (error) {
           setCount(c => ({ ...c, failure: c.failure + 1 }))

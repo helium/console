@@ -392,6 +392,7 @@ const MigrationDeviceTable = ({ updateShowStep, label, apiKey, tenantId, applica
         apiKey={apiKey}
         tenantId={tenantId}
         applicationId={applicationId}
+        labelId={label}
         refetchDevices={() => {
           setDevices([])
           setVisibleDevices([])

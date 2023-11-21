@@ -3,7 +3,6 @@ defmodule ConsoleWeb.MigrationController do
 
   alias Console.Devices
   alias Console.Labels
-  alias Console.Labels
   alias Console.Migrations
 
   plug ConsoleWeb.Plug.AuthorizeAction
@@ -127,6 +126,7 @@ defmodule ConsoleWeb.MigrationController do
 
   def create_device(conn, %{
       "device_id" => device_id,
+      "label_id" => label_id,
       "api_key" => api_key,
       "tenant_id" => tenant_id,
       "application_id" => application_id,
@@ -138,16 +138,19 @@ defmodule ConsoleWeb.MigrationController do
   do
     current_organization = conn.assigns.current_organization
     device = Devices.get_device!(current_organization, device_id)
+    label = Labels.get_label!(current_organization, label_id)
+    device_profile_name = "#{label.name}_#{region}"
 
     case migration_status do
       true ->
         conn |> send_resp(200, "")
 
       _ ->
-        device_profile_id = Migrations.get_device_profile_by_region(api_key, tenant_id, region)
+        device_profile_id = Migrations.get_device_profile_by_region(api_key, tenant_id, region, device_profile_name)
+        active = device.active
 
         with {:ok, _} <- Devices.update_device(device, %{ active: false }),
-          :ok <- Migrations.create_device(api_key, device, application_id, device_profile_id),
+          :ok <- Migrations.create_device(api_key, device, application_id, device_profile_id, active),
           :ok <- Migrations.activate_device(api_key, device, devaddr, nwk_s_key, app_s_key),
           :ok <- Migrations.create_device_keys(api_key, device) do
 

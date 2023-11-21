@@ -30,7 +30,7 @@ defmodule Console.Migrations do
       |> Poison.decode!()
   end
 
-  def get_device_profile_by_region(api_key, tenant_id, region) do
+  def get_device_profile_by_region(api_key, tenant_id, region, device_profile_name) do
     device_profiles =
       "http://router2.helium.wtf:8096/api/device-profiles?tenantId=#{tenant_id}&limit=1000&offset=0"
         |> HTTPoison.get!([{"Authorization", "Bearer #{api_key}"}])
@@ -38,15 +38,15 @@ defmodule Console.Migrations do
         |> Poison.decode!()
         |> Map.get("result")
 
-    case Enum.find(device_profiles, fn dp -> dp["region"] == region end) do
+    case Enum.find(device_profiles, fn dp -> dp["name"] == device_profile_name end) do
       nil ->
         body = %{
           "device_profile" => %{
             "id" => Ecto.UUID.generate(),
             "region" => region,
             "tenant_id" => tenant_id,
-            "name" => region,
-            "description" => "Generated device profile for #{region}",
+            "name" => device_profile_name,
+            "description" => "Generated device profile for #{device_profile_name}",
             "adr_algorithm_id" => "default",
             "supports_otaa" => true
           }
@@ -64,14 +64,14 @@ defmodule Console.Migrations do
     end
   end
 
-  def create_device(api_key, device, application_id, device_profile_id) do
+  def create_device(api_key, device, application_id, device_profile_id, active) do
     body = %{
       "device" => %{
         "applicationId" => application_id,
         "deviceProfileId" => device_profile_id,
         "devEui" => device.dev_eui,
         "joinEui" => device.app_eui,
-        "isDisabled" => not device.active,
+        "isDisabled" => not active,
         "name" => device.name,
         "skipFcntCheck" => true,
         "description" => "Console Device ID: #{device.id}"
