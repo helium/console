@@ -95,7 +95,7 @@ defmodule ConsoleWeb.MigrationController do
 
             conn |> send_resp(200, Poison.encode!(devices))
         after
-          3_000 ->
+          15_000 ->
             :persistent_term.erase(request_id)
 
             {:error, :internal_server_error, "Could not fetch SKFs"}
