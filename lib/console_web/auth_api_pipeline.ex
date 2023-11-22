@@ -1,7 +1,7 @@
 defmodule ConsoleWeb.AuthApiPipeline do
   use Plug.Builder
 
-  plug ConsoleWeb.Plug.RateLimit, ["internal_api_actions", 90]
+  plug ConsoleWeb.Plug.RateLimit, ["internal_api_actions", 600]
   plug ConsoleWeb.Plug.CheckDomain
   plug ConsoleWeb.Plug.VerifyRemoteIpRange
   plug ConsoleWeb.Plug.VerifyAccessToken
