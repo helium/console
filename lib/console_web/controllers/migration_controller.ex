@@ -51,11 +51,7 @@ defmodule ConsoleWeb.MigrationController do
             acc ++ Migrations.get_all_devices(api_key, app_id, 0, [])
           end)
           |> Enum.reduce(%{}, fn device, acc ->
-            chirpstack_device =
-              Migrations.get_device_details(api_key, device["devEui"])
-              |> Map.merge(device)
-
-            Map.put(acc, "#{device["devEui"]}-#{chirpstack_device["device"]["joinEui"]}", true)
+            Map.put(acc, device["description"], true)
           end)
 
         console_devices = Devices.get_devices_for_label(label.id)
@@ -72,7 +68,7 @@ defmodule ConsoleWeb.MigrationController do
             devices =
               console_devices
               |> Enum.map(fn device ->
-                migration_status = Map.get(chirpstack_devices_map, String.downcase("#{device.dev_eui}-#{device.app_eui}"), false)
+                migration_status = Map.get(chirpstack_devices_map, "Console Device ID: #{device.id}", false)
 
                 device_skf = Map.get(skfs, device.id, %{})
                 region = Map.get(device_skf, "region", nil)
