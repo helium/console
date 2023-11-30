@@ -44,11 +44,12 @@ defmodule Console.Migrations do
           "device_profile" => %{
             "id" => Ecto.UUID.generate(),
             "region" => region,
-            "tenant_id" => tenant_id,
+            "tenantId" => tenant_id,
             "name" => device_profile_name,
             "description" => "Generated device profile for #{device_profile_name}",
-            "adr_algorithm_id" => "default",
-            "supports_otaa" => true
+            "adrAlgorithmId" => "default",
+            "supportsOtaa" => true,
+            "uplinkInterval" => 86400
           }
         } |> Poison.encode!()
 
