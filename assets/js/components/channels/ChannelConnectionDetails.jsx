@@ -15,6 +15,7 @@ import GoogleSheetForm from "./community/google_sheets/GoogleSheetUpdateForm.jsx
 import MicroshareForm from "./community/microshare/MicroshareUpdateForm.jsx";
 import TagoForm from "./community/tago/TagoUpdateForm.jsx";
 import UbidotsForm from "./community/ubidots/UbidotsUpdateForm.jsx";
+import BlockbaxForm from "./community/blockbax/BlockbaxUpdateForm";
 const { Panel } = Collapse
 
 function DetailsUpdateWrapper({ handleUpdateDetailsChange, validInput, children, mobile }) {
@@ -62,6 +63,17 @@ function DetailsUpdateWrapper({ handleUpdateDetailsChange, validInput, children,
 
 export default ({ channel, handleUpdateDetailsInput, handleUpdateDetailsChange, validInput, mobile}) => {
   switch (channel.type) {
+    case "blockbax":
+        return (
+          <DetailsUpdateWrapper handleUpdateDetailsChange={handleUpdateDetailsChange} validInput={validInput} mobile={mobile}>
+            <BlockbaxForm
+                onValidInput={handleUpdateDetailsInput}
+                type="update"
+                channel={channel}
+                mobile={mobile}
+            />
+          </DetailsUpdateWrapper>
+        )
     case "aws":
       return (
         <DetailsUpdateWrapper handleUpdateDetailsChange={handleUpdateDetailsChange} validInput={validInput} mobile={mobile}>
