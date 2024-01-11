@@ -4,7 +4,7 @@ defmodule Console.Migrations do
   @migration_url Application.compile_env!(:console, :migration_url)
 
   def get_applications(api_key, tenant_id) do
-    "http://#{@migration_url}/api/applications?tenantId=#{tenant_id}&limit=1000&offset=0"
+    "#{@migration_url}/api/applications?tenantId=#{tenant_id}&limit=1000&offset=0"
       |> HTTPoison.get!([{"Authorization", "Bearer #{api_key}"}])
       |> Map.get(:body)
       |> Poison.decode!()
