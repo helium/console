@@ -237,160 +237,161 @@ defmodule ConsoleWeb.OrganizationController do
   end
 
   def import(conn, attrs) do
-    try do
-      result =
-        Ecto.Multi.new()
-        |> Ecto.Multi.run(:organization, fn _repo, _ ->
-          organization =
-            %Console.Organizations.Organization{}
-            |> Ecto.Changeset.cast(attrs["organization"], [:id, :name, :flow])
-            |> Console.Organizations.Organization.put_webhook_key()
-            |> Console.Organizations.Organization.put_default_app_eui()
-            |> Console.Repo.insert!()
+    # try do
+    #   result =
+    #     Ecto.Multi.new()
+    #     |> Ecto.Multi.run(:organization, fn _repo, _ ->
+    #       organization =
+    #         %Console.Organizations.Organization{}
+    #         |> Ecto.Changeset.cast(attrs["organization"], [:id, :name, :flow])
+    #         |> Console.Organizations.Organization.put_webhook_key()
+    #         |> Console.Organizations.Organization.put_default_app_eui()
+    #         |> Console.Repo.insert!()
 
-          {:ok, organization}
-        end)
-        |> Ecto.Multi.run(:alerts, fn _repo, _ ->
-          Enum.each(attrs["alerts"], fn alert ->
-            %Console.Alerts.Alert{}
-            |> Ecto.Changeset.cast(alert, [:id, :name, :node_type, :config, :organization_id])
-            |> Console.Repo.insert!()
-          end)
+    #       {:ok, organization}
+    #     end)
+    #     |> Ecto.Multi.run(:alerts, fn _repo, _ ->
+    #       Enum.each(attrs["alerts"], fn alert ->
+    #         %Console.Alerts.Alert{}
+    #         |> Ecto.Changeset.cast(alert, [:id, :name, :node_type, :config, :organization_id])
+    #         |> Console.Repo.insert!()
+    #       end)
 
-          {:ok, "success"}
-        end)
-        |> Ecto.Multi.run(:packet_configs, fn _repo, _ ->
-          Enum.each(attrs["packet_configs"], fn mb ->
-            %Console.PacketConfigs.PacketConfig{}
-            |> Ecto.Changeset.cast(mb, [:id, :name, :multi_buy_value, :multi_active, :preferred_active, :organization_id])
-            |> Console.Repo.insert!()
-          end)
+    #       {:ok, "success"}
+    #     end)
+    #     |> Ecto.Multi.run(:packet_configs, fn _repo, _ ->
+    #       Enum.each(attrs["packet_configs"], fn mb ->
+    #         %Console.PacketConfigs.PacketConfig{}
+    #         |> Ecto.Changeset.cast(mb, [:id, :name, :multi_buy_value, :multi_active, :preferred_active, :organization_id])
+    #         |> Console.Repo.insert!()
+    #       end)
 
-          {:ok, "success"}
-        end)
-        |> Ecto.Multi.run(:config_profiles, fn _repo, _ ->
-          Enum.each(attrs["config_profiles"], fn cp ->
-            %Console.ConfigProfiles.ConfigProfile{}
-            |> Ecto.Changeset.cast(cp, [:id, :name, :adr_allowed, :cf_list_enabled, :rx_delay, :organization_id])
-            |> Console.Repo.insert!()
-          end)
+    #       {:ok, "success"}
+    #     end)
+    #     |> Ecto.Multi.run(:config_profiles, fn _repo, _ ->
+    #       Enum.each(attrs["config_profiles"], fn cp ->
+    #         %Console.ConfigProfiles.ConfigProfile{}
+    #         |> Ecto.Changeset.cast(cp, [:id, :name, :adr_allowed, :cf_list_enabled, :rx_delay, :organization_id])
+    #         |> Console.Repo.insert!()
+    #       end)
 
-          {:ok, "success"}
-        end)
-        |> Ecto.Multi.run(:devices, fn _repo, _ ->
-          Enum.each(attrs["devices"], fn device ->
-            %Console.Devices.Device{}
-            |> Ecto.Changeset.cast(device, [:id, :name, :oui, :dev_eui, :app_eui, :app_key, :packet_config_id, :config_profile_id, :organization_id])
-            |> Console.Repo.insert!()
-          end)
+    #       {:ok, "success"}
+    #     end)
+    #     |> Ecto.Multi.run(:devices, fn _repo, _ ->
+    #       Enum.each(attrs["devices"], fn device ->
+    #         %Console.Devices.Device{}
+    #         |> Ecto.Changeset.cast(device, [:id, :name, :oui, :dev_eui, :app_eui, :app_key, :packet_config_id, :config_profile_id, :organization_id])
+    #         |> Console.Repo.insert!()
+    #       end)
 
-          {:ok, "success"}
-        end)
-        |> Ecto.Multi.run(:functions, fn _repo, _ ->
-          Enum.each(attrs["functions"], fn function ->
-            %Console.Functions.Function{}
-            |> Ecto.Changeset.cast(function, [:id, :name, :body, :type, :format, :organization_id])
-            |> Console.Repo.insert!()
-          end)
+    #       {:ok, "success"}
+    #     end)
+    #     |> Ecto.Multi.run(:functions, fn _repo, _ ->
+    #       Enum.each(attrs["functions"], fn function ->
+    #         %Console.Functions.Function{}
+    #         |> Ecto.Changeset.cast(function, [:id, :name, :body, :type, :format, :organization_id])
+    #         |> Console.Repo.insert!()
+    #       end)
 
-          {:ok, "success"}
-        end)
-        |> Ecto.Multi.run(:channels, fn _repo, _ ->
-          Enum.each(attrs["channels"], fn channel ->
-            %Console.Channels.Channel{}
-            |> Ecto.Changeset.cast(channel, [:id, :name, :type, :type_name, :payload_template, :receive_joins, :credentials, :organization_id])
-            |> Console.Channels.Channel.put_downlink_token()
-            |> Console.Repo.insert!()
-          end)
+    #       {:ok, "success"}
+    #     end)
+    #     |> Ecto.Multi.run(:channels, fn _repo, _ ->
+    #       Enum.each(attrs["channels"], fn channel ->
+    #         %Console.Channels.Channel{}
+    #         |> Ecto.Changeset.cast(channel, [:id, :name, :type, :type_name, :payload_template, :receive_joins, :credentials, :organization_id])
+    #         |> Console.Channels.Channel.put_downlink_token()
+    #         |> Console.Repo.insert!()
+    #       end)
 
-          {:ok, "success"}
-        end)
-        |> Ecto.Multi.run(:labels, fn _repo, _ ->
-          Enum.each(attrs["labels"], fn label ->
-            %Console.Labels.Label{}
-            |> Ecto.Changeset.cast(label, [:id, :name, :creator, :packet_config_id, :config_profile_id, :organization_id])
-            |> Console.Repo.insert!()
-          end)
+    #       {:ok, "success"}
+    #     end)
+    #     |> Ecto.Multi.run(:labels, fn _repo, _ ->
+    #       Enum.each(attrs["labels"], fn label ->
+    #         %Console.Labels.Label{}
+    #         |> Ecto.Changeset.cast(label, [:id, :name, :creator, :packet_config_id, :config_profile_id, :organization_id])
+    #         |> Console.Repo.insert!()
+    #       end)
 
-          {:ok, "success"}
-        end)
-        |> Ecto.Multi.run(:groups, fn _repo, _ ->
-          Enum.each(attrs["groups"], fn group ->
-            %Console.Groups.Group{}
-            |> Ecto.Changeset.cast(group, [:id, :name, :organization_id])
-            |> Console.Repo.insert!()
-          end)
+    #       {:ok, "success"}
+    #     end)
+    #     |> Ecto.Multi.run(:groups, fn _repo, _ ->
+    #       Enum.each(attrs["groups"], fn group ->
+    #         %Console.Groups.Group{}
+    #         |> Ecto.Changeset.cast(group, [:id, :name, :organization_id])
+    #         |> Console.Repo.insert!()
+    #       end)
 
-          {:ok, "success"}
-        end)
-        |> Ecto.Multi.run(:alert_nodes, fn _repo, _ ->
-          Enum.each(attrs["alert_nodes"], fn node ->
-            %Console.Alerts.AlertNode{}
-            |> Ecto.Changeset.cast(node, [:id, :alert_id, :node_id, :node_type])
-            |> Console.Repo.insert!()
-          end)
+    #       {:ok, "success"}
+    #     end)
+    #     |> Ecto.Multi.run(:alert_nodes, fn _repo, _ ->
+    #       Enum.each(attrs["alert_nodes"], fn node ->
+    #         %Console.Alerts.AlertNode{}
+    #         |> Ecto.Changeset.cast(node, [:id, :alert_id, :node_id, :node_type])
+    #         |> Console.Repo.insert!()
+    #       end)
 
-          {:ok, "success"}
-        end)
-        |> Ecto.Multi.run(:devices_labels, fn _repo, _ ->
-          Enum.each(attrs["devices_labels"], fn dl ->
-            %Console.Labels.DevicesLabels{}
-            |> Ecto.Changeset.cast(dl, [:id, :device_id, :label_id])
-            |> Console.Repo.insert!()
-          end)
+    #       {:ok, "success"}
+    #     end)
+    #     |> Ecto.Multi.run(:devices_labels, fn _repo, _ ->
+    #       Enum.each(attrs["devices_labels"], fn dl ->
+    #         %Console.Labels.DevicesLabels{}
+    #         |> Ecto.Changeset.cast(dl, [:id, :device_id, :label_id])
+    #         |> Console.Repo.insert!()
+    #       end)
 
-          {:ok, "success"}
-        end)
-        |> Ecto.Multi.run(:flows, fn _repo, _ ->
-          Enum.each(attrs["flows"], fn flow ->
-            %Console.Flows.Flow{}
-            |> Ecto.Changeset.cast(flow, [:id, :organization_id, :device_id, :label_id, :function_id, :channel_id])
-            |> Console.Repo.insert!()
-          end)
+    #       {:ok, "success"}
+    #     end)
+    #     |> Ecto.Multi.run(:flows, fn _repo, _ ->
+    #       Enum.each(attrs["flows"], fn flow ->
+    #         %Console.Flows.Flow{}
+    #         |> Ecto.Changeset.cast(flow, [:id, :organization_id, :device_id, :label_id, :function_id, :channel_id])
+    #         |> Console.Repo.insert!()
+    #       end)
 
-          {:ok, "success"}
-        end)
-        |> Ecto.Multi.run(:organization_hotspots, fn _repo, _ ->
-          Enum.each(attrs["organization_hotspots"], fn oh ->
-            %Console.OrganizationHotspots.OrganizationHotspot{}
-            |> Ecto.Changeset.cast(oh, [:id, :hotspot_address, :organization_id, :claimed, :alias, :preferred])
-            |> Console.Repo.insert!()
-          end)
+    #       {:ok, "success"}
+    #     end)
+    #     |> Ecto.Multi.run(:organization_hotspots, fn _repo, _ ->
+    #       Enum.each(attrs["organization_hotspots"], fn oh ->
+    #         %Console.OrganizationHotspots.OrganizationHotspot{}
+    #         |> Ecto.Changeset.cast(oh, [:id, :hotspot_address, :organization_id, :claimed, :alias, :preferred])
+    #         |> Console.Repo.insert!()
+    #       end)
 
-          {:ok, "success"}
-        end)
-        |> Ecto.Multi.run(:membership, fn _repo, %{ organization: organization } ->
-          %Console.Organizations.Membership{}
-          |> Ecto.Changeset.cast(
-            %{
-              "role" => "admin",
-              "user_id" => conn.assigns.current_user.id,
-              "email" => conn.assigns.current_user.email,
-              "organization_id" => organization.id
-            },
-            [:role, :user_id, :organization_id, :email]
-          )
-          |> Console.Repo.insert!()
+    #       {:ok, "success"}
+    #     end)
+    #     |> Ecto.Multi.run(:membership, fn _repo, %{ organization: organization } ->
+    #       %Console.Organizations.Membership{}
+    #       |> Ecto.Changeset.cast(
+    #         %{
+    #           "role" => "admin",
+    #           "user_id" => conn.assigns.current_user.id,
+    #           "email" => conn.assigns.current_user.email,
+    #           "organization_id" => organization.id
+    #         },
+    #         [:role, :user_id, :organization_id, :email]
+    #       )
+    #       |> Console.Repo.insert!()
 
-          {:ok, "success"}
-        end)
-        |> Console.Repo.transaction()
+    #       {:ok, "success"}
+    #     end)
+    #     |> Console.Repo.transaction()
 
-      with {:ok, _} <- result do
-        conn
-        |> send_resp(:ok, "Import successful")
-      end
-    rescue
-      error ->
-        case error do
-          %Ecto.ConstraintError{ constraint: constraint } ->
-            Appsignal.send_error(error, "Failed to import organization", __STACKTRACE__)
-            {:error, :unprocessable_entity, "Could not import due to violation of constraint #{constraint}"}
-          _ ->
-            Appsignal.send_error(error, "Failed to import organization", __STACKTRACE__)
-            error
-        end
-    end
+    #   with {:ok, _} <- result do
+    #     conn
+    #     |> send_resp(:ok, "Import successful")
+    #   end
+    # rescue
+    #   error ->
+    #     case error do
+    #       %Ecto.ConstraintError{ constraint: constraint } ->
+    #         Appsignal.send_error(error, "Failed to import organization", __STACKTRACE__)
+    #         {:error, :unprocessable_entity, "Could not import due to violation of constraint #{constraint}"}
+    #       _ ->
+    #         Appsignal.send_error(error, "Failed to import organization", __STACKTRACE__)
+    #         error
+    #     end
+    # end
+    conn |> send_resp(400, "")
   end
 
   def export(conn, %{ "deactivate" => deactivate }) do
