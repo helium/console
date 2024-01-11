@@ -10,23 +10,37 @@ const { Text, Title } = Typography
 const MagicRegisterPrompt = () => {
   const dispatch = useDispatch();
   const mainLogo = useSelector((state) => state.appConfig.mainLogo);
-  const appName =
-    process.env.SELF_HOSTED ? useSelector((state) => state.appConfig.appName) : "Helium Dedicated Console"
+  const appName = '1663 Console';
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    dispatch(logOut())
+    dispatch(logOut());
   };
 
   return (
     <AuthLayout>
-      <Card style={{padding: 30, borderRadius: 20, boxShadow: '0 52px 64px -50px #001529'}}>
-        <img src={mainLogo || Logo} style={{width: 70, display: "block", margin:'0 auto', marginBottom: 20}} />
-        <div style={{textAlign: 'center', marginBottom: 30}}>
-          <Title>
-            {appName}
-          </Title>
-          <Text>{appName} is by invite only. Please contact {process.env.SELF_HOSTED ? "the admin" : "our sales team"} to complete your registration.</Text>
+      <Card
+        style={{
+          padding: 30,
+          borderRadius: 20,
+          boxShadow: '0 52px 64px -50px #001529',
+        }}
+      >
+        <img
+          src={mainLogo || Logo}
+          style={{
+            width: 70,
+            display: 'block',
+            margin: '0 auto',
+            marginBottom: 20,
+          }}
+        />
+        <div style={{ textAlign: 'center', marginBottom: 30 }}>
+          <Title>{appName}</Title>
+          <Text>
+            {appName} is a paid product by Nova Labs. Please contact
+            sales@nova-labs.com to become a customer.
+          </Text>
         </div>
 
         <Button
@@ -39,7 +53,7 @@ const MagicRegisterPrompt = () => {
         </Button>
       </Card>
     </AuthLayout>
-  )
+  );
 };
 
 export default MagicRegisterPrompt;
