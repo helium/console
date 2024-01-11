@@ -45,6 +45,14 @@ config :console,
 config :console,
   auth0_baseurl: System.get_env("AUTH0_BASE_URL")
 
+migration_url = System.get_env("MIGRATION_URL") ||
+  raise """
+  environment variable MIGRATION_URL is missing.
+  """
+
+config :console,
+  migration_url: migration_url
+
 config :console,
   auth0_mfa_baseurl: System.get_env("AUTH0_MFA_BASE_URL")
 

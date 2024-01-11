@@ -61,6 +61,9 @@ config :console, :access_token_decoder, ConsoleWeb.AccessTokenDecoder.Auth0
 config :console,
   self_hosted: System.get_env("SELF_HOSTED")
 
+config :console,
+  migration_url: "http://router2.helium.wtf:8096"
+
 config :console, Console.Scheduler,
   jobs: [
     send_survey_tokens: [

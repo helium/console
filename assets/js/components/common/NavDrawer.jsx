@@ -261,7 +261,7 @@ class NavDrawer extends Component {
             activeClassName="is-active"
             className="menu-link"
           >
-            Migration
+            Migration (Beta)
           </NavLink>
           {history.location.pathname === "/migration" && (
             <img

@@ -73,6 +73,14 @@ config :console,
 config :console,
   amqp_url: System.get_env("AMQP_URL")
 
+  migration_url = System.get_env("MIGRATION_URL") ||
+  raise """
+  environment variable MIGRATION_URL is missing.
+  """
+
+config :console,
+  migration_url: migration_url
+
 config :console,
   allowed_ip_range: [
     "173.245.48.0",
