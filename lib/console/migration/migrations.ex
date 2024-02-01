@@ -1,10 +1,8 @@
 defmodule Console.Migrations do
   import Ecto.Query, warn: false
 
-  @migration_url Application.compile_env!(:console, :migration_url)
-
   def get_applications(api_key, tenant_id) do
-    "#{@migration_url}/api/applications?tenantId=#{tenant_id}&limit=1000&offset=0"
+    "#{get_migration_url()}/api/applications?tenantId=#{tenant_id}&limit=1000&offset=0"
       |> HTTPoison.get!([{"Authorization", "Bearer #{api_key}"}])
       |> Map.get(:body)
       |> Poison.decode!()
@@ -12,7 +10,7 @@ defmodule Console.Migrations do
   end
 
   def get_all_devices(api_key, application_id, offset, acc) do
-    result = "#{@migration_url}/api/devices?applicationId=#{application_id}&limit=1000&offset=#{offset}"
+    result = "#{get_migration_url()}/api/devices?applicationId=#{application_id}&limit=1000&offset=#{offset}"
       |> HTTPoison.get!([{"Authorization", "Bearer #{api_key}"}])
       |> Map.get(:body)
       |> Poison.decode!()
@@ -26,7 +24,7 @@ defmodule Console.Migrations do
   end
 
   def get_device_details(api_key, dev_eui) do
-    "#{@migration_url}/api/devices/#{dev_eui}"
+    "#{get_migration_url()}/api/devices/#{dev_eui}"
       |> HTTPoison.get!([{"Authorization", "Bearer #{api_key}"}])
       |> Map.get(:body)
       |> Poison.decode!()
@@ -34,7 +32,7 @@ defmodule Console.Migrations do
 
   def get_device_profile_by_region(api_key, tenant_id, region, device_profile_name) do
     device_profiles =
-      "#{@migration_url}/api/device-profiles?tenantId=#{tenant_id}&limit=1000&offset=0"
+      "#{get_migration_url()}/api/device-profiles?tenantId=#{tenant_id}&limit=1000&offset=0"
         |> HTTPoison.get!([{"Authorization", "Bearer #{api_key}"}])
         |> Map.get(:body)
         |> Poison.decode!()
@@ -55,7 +53,7 @@ defmodule Console.Migrations do
           }
         } |> Poison.encode!()
 
-        profile = "#{@migration_url}/api/device-profiles"
+        profile = "#{get_migration_url()}/api/device-profiles"
             |> HTTPoison.post!(body, [{"Authorization", "Bearer #{api_key}"}, {"content-type", "application/json"}])
             |> Map.get(:body)
             |> Poison.decode!()
@@ -81,7 +79,7 @@ defmodule Console.Migrations do
       }
     } |> Poison.encode!()
 
-    response = "#{@migration_url}/api/devices"
+    response = "#{get_migration_url()}/api/devices"
       |> HTTPoison.post!(body, [{"Authorization", "Bearer #{api_key}"}, {"content-type", "application/json"}])
 
     case response.status_code do
@@ -111,7 +109,7 @@ defmodule Console.Migrations do
 
     case body["deviceActivation"] |> Map.values() |> Enum.find_index(fn val -> is_nil(val) end) do
       nil ->
-        response = "#{@migration_url}/api/devices/#{device.dev_eui}/activate"
+        response = "#{get_migration_url()}/api/devices/#{device.dev_eui}/activate"
           |> HTTPoison.post!(encoded_body, [{"Authorization", "Bearer #{api_key}"}, {"content-type", "application/json"}])
 
         case response.status_code do
@@ -133,12 +131,16 @@ defmodule Console.Migrations do
 
     encoded_body = body |> Poison.encode!()
 
-    response = "#{@migration_url}/api/devices/#{device.dev_eui}/keys"
+    response = "#{get_migration_url()}/api/devices/#{device.dev_eui}/keys"
       |> HTTPoison.post!(encoded_body, [{"Authorization", "Bearer #{api_key}"}, {"content-type", "application/json"}])
 
     case response.status_code do
       200 -> :ok
       _ -> :error
     end
+  end
+
+  def get_migration_url() do
+    Application.get_env(:console, :migration_url)
   end
 end
