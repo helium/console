@@ -1,9 +1,8 @@
-import { Typography } from "antd";
 import React from "react";
 import { NavLink } from "react-router-dom";
 import Logo from "../../../img/mobile/logo.svg";
+import { ConsoleList } from "./ConsoleList";
 import styles from "./consoles.module.css";
-const { Text, Title } = Typography;
 
 export const Consoles = () => {
   return (
@@ -46,7 +45,9 @@ export const Consoles = () => {
           </p>
         </div>
       </div>
-      <div className={styles.consoles}></div>
+      <div className={styles.consoles}>
+        <ConsoleList />
+      </div>
     </div>
   );
 };
