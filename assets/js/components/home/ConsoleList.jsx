@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "./ConsoleList.module.css";
-import consoles from "./consoles.json";
+import { lns } from "./lns";
 
 const serverTypeToStyle = {
   Shared: styles.serverShared,
@@ -11,13 +11,15 @@ const serverTypeToStyle = {
 export const ConsoleList = () => {
   return (
     <div className={styles.wrapper}>
-      {consoles.map((console) => (
+      {lns.map((console) => (
         <a
           key={console.name}
           href={console.url}
           className={styles.consoleWrapper}
         >
-          <img src={console.logo} className={styles.logo}></img>
+          <div className={styles.logoWrapper}>
+            <img src={console.logo} className={styles.logo}></img>
+          </div>
           <div className={styles.servers}>
             <div>
               <h5 className={styles.header}>Service Region</h5>

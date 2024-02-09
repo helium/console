@@ -17,11 +17,22 @@
   padding: 24px;
   min-width: 320px;
   max-width: 320px;
+  color: black;
+}
+
+.logoWrapper {
+  display: flex;
+  align-items: center;
+  height: 50px;
+  width: 150px;
 }
 
 .logo {
-  height: 50px;
-  width: 150px;
+  display: block;
+  height: auto;
+  max-height: 50px;
+  max-width: 150px;
+  width: auto;
 }
 
 .header {

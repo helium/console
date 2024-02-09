@@ -100,7 +100,7 @@
 @media (min-width: 991px) {
   .wrapper {
     flex-direction: row;
-    height: 100vh;
+    min-height: 100vh;
   }
   .bodyWrapper {
     margin-right: 32px;
