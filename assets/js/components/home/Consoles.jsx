@@ -4,9 +4,9 @@ import Logo from "../../../img/mobile/logo.svg";
 import { ConsoleList } from "./ConsoleList";
 import styles from "./consoles.module.css";
 
-export const Consoles = () => {
-  return (
-    <div className={styles.wrapper}>
+export const Consoles = () => (
+  <div className={styles.wrapper}>
+    <div className={styles.bodyWrapper}>
       <div className={styles.body}>
         <div className={styles.nav}>
           <img className={styles.logo} src={Logo} />
@@ -45,9 +45,9 @@ export const Consoles = () => {
           </p>
         </div>
       </div>
-      <div className={styles.consoles}>
-        <ConsoleList />
-      </div>
     </div>
-  );
-};
+    <div className={styles.consoles}>
+      <ConsoleList />
+    </div>
+  </div>
+);

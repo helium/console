@@ -3,153 +3,117 @@
     "name": "1663 Console",
     "logo": "https://www.brdot.com.br/wp-content/uploads/2022/04/cropped-print_transparent.png",
     "url": "https://1663.io/",
-    "serviceRegion": ["Americas"],
+    "serviceRegion": ["Global"],
     "serverType": ["Shared", "Private"],
-    "serverLocation": ["USA", "Europe"],
+    "serverLocation": ["Europe", "USA"],
     "pricingModel": "Custom plans offering unlimited data, significant long-term discounts, and access to additional professional services."
   },
   {
-    "name": "1663 Console",
+    "name": "BrDot",
     "logo": "https://www.brdot.com.br/wp-content/uploads/2022/04/cropped-print_transparent.png",
-    "url": "https://1663.io/",
+    "url": "https://brdot.com.br/",
     "serviceRegion": ["Americas"],
     "serverType": ["Shared", "Private"],
-    "serverLocation": ["USA", "Europe"],
-    "pricingModel": "Custom plans offering unlimited data, significant long-term discounts, and access to additional professional services."
+    "serverLocation": ["Brazil"],
+    "pricingModel": "Fixed monthly for active devices plus message plan for public & private service."
   },
   {
-    "name": "1663 Console",
+    "name": "ChirpCloud by Trackpac",
     "logo": "https://www.brdot.com.br/wp-content/uploads/2022/04/cropped-print_transparent.png",
-    "url": "https://1663.io/",
-    "serviceRegion": ["Americas"],
-    "serverType": ["Shared", "Private"],
-    "serverLocation": ["USA", "Europe"],
-    "pricingModel": "Custom plans offering unlimited data, significant long-term discounts, and access to additional professional services."
+    "url": "https://chirpcloud.co.uk/",
+    "serviceRegion": ["Global"],
+    "serverType": ["Shared", "Private", "On Premise"],
+    "serverLocation": ["Europe"],
+    "pricingModel": "Per-device monthly infrastructure subscription + DC usage. Custom for Private SaaS & On-Premise."
   },
   {
-    "name": "1663 Console",
+    "name": "Heliotics & UPLINK Network",
     "logo": "https://www.brdot.com.br/wp-content/uploads/2022/04/cropped-print_transparent.png",
-    "url": "https://1663.io/",
-    "serviceRegion": ["Americas"],
-    "serverType": ["Shared", "Private"],
-    "serverLocation": ["USA", "Europe"],
-    "pricingModel": "Custom plans offering unlimited data, significant long-term discounts, and access to additional professional services."
+    "url": "https://heliotics.com/",
+    "serviceRegion": ["Global"],
+    "serverType": ["Shared", "Private", "On Premise"],
+    "serverLocation": ["Europe"],
+    "pricingModel": "Professional solutions for Private SaaS & On-Premise. Operated on own infrastructure, backed by a dedicated NOC"
   },
   {
-    "name": "1663 Console",
+    "name": "Helium IoT Europe (by Ingenious Things)",
     "logo": "https://www.brdot.com.br/wp-content/uploads/2022/04/cropped-print_transparent.png",
-    "url": "https://1663.io/",
-    "serviceRegion": ["Americas"],
+    "url": "https://www.helium-iot.eu/",
+    "serviceRegion": ["Global"],
     "serverType": ["Shared", "Private"],
-    "serverLocation": ["USA", "Europe"],
-    "pricingModel": "Custom plans offering unlimited data, significant long-term discounts, and access to additional professional services."
+    "serverLocation": ["Europe"],
+    "pricingModel": "Pay-per-message for public or pay-per-month for private and additional support."
   },
   {
-    "name": "1663 Console",
+    "name": "IOT Creators",
     "logo": "https://www.brdot.com.br/wp-content/uploads/2022/04/cropped-print_transparent.png",
-    "url": "https://1663.io/",
-    "serviceRegion": ["Americas"],
-    "serverType": ["Shared", "Private"],
-    "serverLocation": ["USA", "Europe"],
-    "pricingModel": "Custom plans offering unlimited data, significant long-term discounts, and access to additional professional services."
+    "url": "https://iotcreators.com/helium/",
+    "serviceRegion": ["Global"],
+    "serverType": ["Shared"],
+    "serverLocation": ["Europe"],
+    "pricingModel": "Per-device monthly"
   },
   {
-    "name": "1663 Console",
+    "name": "IOT LoRaWAN",
     "logo": "https://www.brdot.com.br/wp-content/uploads/2022/04/cropped-print_transparent.png",
-    "url": "https://1663.io/",
-    "serviceRegion": ["Americas"],
-    "serverType": ["Shared", "Private"],
-    "serverLocation": ["USA", "Europe"],
-    "pricingModel": "Custom plans offering unlimited data, significant long-term discounts, and access to additional professional services."
+    "url": "https://www.iot-lorawan.com/",
+    "serviceRegion": ["USA, Americas"],
+    "serverType": ["Public"],
+    "serverLocation": ["USA"],
+    "pricingModel": "Pay-per-message or contact us for other options."
   },
   {
-    "name": "1663 Console",
+    "name": "MeteoScientific",
     "logo": "https://www.brdot.com.br/wp-content/uploads/2022/04/cropped-print_transparent.png",
-    "url": "https://1663.io/",
-    "serviceRegion": ["Americas"],
-    "serverType": ["Shared", "Private"],
-    "serverLocation": ["USA", "Europe"],
-    "pricingModel": "Custom plans offering unlimited data, significant long-term discounts, and access to additional professional services."
+    "url": "https://console.meteoscientific.com/front/",
+    "serviceRegion": ["USA"],
+    "serverType": ["Public"],
+    "serverLocation": ["Europe"],
+    "pricingModel": "Pay-per-message for public use."
   },
   {
-    "name": "1663 Console",
+    "name": "Nebra Sense",
     "logo": "https://www.brdot.com.br/wp-content/uploads/2022/04/cropped-print_transparent.png",
-    "url": "https://1663.io/",
-    "serviceRegion": ["Americas"],
+    "url": "https://nebra.com/",
+    "serviceRegion": ["Global"],
     "serverType": ["Shared", "Private"],
-    "serverLocation": ["USA", "Europe"],
-    "pricingModel": "Custom plans offering unlimited data, significant long-term discounts, and access to additional professional services."
+    "serverLocation": ["Europe", "USA"],
+    "pricingModel": "Per-device monthly subscription cost, custom for private servers."
   },
   {
-    "name": "1663 Console",
+    "name": "Qnectd",
     "logo": "https://www.brdot.com.br/wp-content/uploads/2022/04/cropped-print_transparent.png",
-    "url": "https://1663.io/",
-    "serviceRegion": ["Americas"],
+    "url": "https://qnectd.com/",
+    "serviceRegion": ["Global"],
     "serverType": ["Shared", "Private"],
-    "serverLocation": ["USA", "Europe"],
-    "pricingModel": "Custom plans offering unlimited data, significant long-term discounts, and access to additional professional services."
+    "serverLocation": ["Eastern Europe"],
+    "pricingModel": "Per-device monthly subscription cost, custom for private servers."
   },
   {
-    "name": "1663 Console",
+    "name": "SkyNet IoT",
     "logo": "https://www.brdot.com.br/wp-content/uploads/2022/04/cropped-print_transparent.png",
-    "url": "https://1663.io/",
-    "serviceRegion": ["Americas"],
+    "url": "https://www.skynetiot.io/",
+    "serviceRegion": ["Global"],
     "serverType": ["Shared", "Private"],
-    "serverLocation": ["USA", "Europe"],
-    "pricingModel": "Custom plans offering unlimited data, significant long-term discounts, and access to additional professional services."
+    "serverLocation": ["Europe", "USA"],
+    "pricingModel": "Yearly subscription cost fixed bundles, custom for private servers."
   },
   {
-    "name": "1663 Console",
+    "name": "Yosensi",
     "logo": "https://www.brdot.com.br/wp-content/uploads/2022/04/cropped-print_transparent.png",
-    "url": "https://1663.io/",
-    "serviceRegion": ["Americas"],
-    "serverType": ["Shared", "Private"],
-    "serverLocation": ["USA", "Europe"],
-    "pricingModel": "Custom plans offering unlimited data, significant long-term discounts, and access to additional professional services."
+    "url": "https://yosensi.io/management_platform/",
+    "serviceRegion": ["Global"],
+    "serverType": ["Shared"],
+    "serverLocation": ["Europe"],
+    "pricingModel": "Pay-per-message"
   },
   {
-    "name": "1663 Console",
+    "name": "WDRIoT Australia",
     "logo": "https://www.brdot.com.br/wp-content/uploads/2022/04/cropped-print_transparent.png",
-    "url": "https://1663.io/",
-    "serviceRegion": ["Americas"],
+    "url": "https://www.wdriot.com/",
+    "serviceRegion": ["Global"],
     "serverType": ["Shared", "Private"],
-    "serverLocation": ["USA", "Europe"],
-    "pricingModel": "Custom plans offering unlimited data, significant long-term discounts, and access to additional professional services."
-  },
-  {
-    "name": "1663 Console",
-    "logo": "https://www.brdot.com.br/wp-content/uploads/2022/04/cropped-print_transparent.png",
-    "url": "https://1663.io/",
-    "serviceRegion": ["Americas"],
-    "serverType": ["Shared", "Private"],
-    "serverLocation": ["USA", "Europe"],
-    "pricingModel": "Custom plans offering unlimited data, significant long-term discounts, and access to additional professional services."
-  },
-  {
-    "name": "1663 Console",
-    "logo": "https://www.brdot.com.br/wp-content/uploads/2022/04/cropped-print_transparent.png",
-    "url": "https://1663.io/",
-    "serviceRegion": ["Americas"],
-    "serverType": ["Shared", "Private"],
-    "serverLocation": ["USA", "Europe"],
-    "pricingModel": "Custom plans offering unlimited data, significant long-term discounts, and access to additional professional services."
-  },
-  {
-    "name": "1663 Console",
-    "logo": "https://www.brdot.com.br/wp-content/uploads/2022/04/cropped-print_transparent.png",
-    "url": "https://1663.io/",
-    "serviceRegion": ["Americas"],
-    "serverType": ["Shared", "Private"],
-    "serverLocation": ["USA", "Europe"],
-    "pricingModel": "Custom plans offering unlimited data, significant long-term discounts, and access to additional professional services."
-  },
-  {
-    "name": "1663 Console",
-    "logo": "https://www.brdot.com.br/wp-content/uploads/2022/04/cropped-print_transparent.png",
-    "url": "https://1663.io/",
-    "serviceRegion": ["Americas"],
-    "serverType": ["Shared", "Private"],
-    "serverLocation": ["USA", "Europe"],
-    "pricingModel": "Custom plans offering unlimited data, significant long-term discounts, and access to additional professional services."
+    "serverLocation": ["Australia"],
+    "pricingModel": "Per-device monthly subscription cost, custom for private servers."
   }
 ]

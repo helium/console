@@ -1,17 +1,23 @@
 .wrapper {
   display: flex;
-  height: 100vh;
+  flex-direction: column;
   width: 100%;
+}
+
+.bodyWrapper {
+  position: relative;
+  display: flex;
+  flex: 1;
 }
 
 .body {
   display: flex;
+  position: relative;
   flex-direction: column;
   justify-content: space-between;
-  flex: 1;
-  padding-top: 16px;
-  padding-right: 16px;
-  padding-left: 32px;
+  padding: 16px;
+  gap: 16px;
+  width: 100%;
 }
 
 .nav {
@@ -89,4 +95,20 @@
   flex: 1;
   background-color: #f9fafb;
   padding: 16px 16px 32px;
+}
+
+@media (min-width: 991px) {
+  .wrapper {
+    flex-direction: row;
+    height: 100vh;
+  }
+  .bodyWrapper {
+    margin-right: 32px;
+  }
+  .body {
+    position: fixed;
+    height: 100vh;
+    width: 50%;
+    padding-left: 32px;
+  }
 }

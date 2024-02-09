@@ -9,13 +9,14 @@ const serverTypeToStyle = {
 };
 
 export const ConsoleList = () => {
-  console.log("Im in consoleList");
-  console.log(consoles);
-
   return (
     <div className={styles.wrapper}>
       {consoles.map((console) => (
-        <div key={console.name} className={styles.consoleWrapper}>
+        <a
+          key={console.name}
+          href={console.url}
+          className={styles.consoleWrapper}
+        >
           <img src={console.logo} className={styles.logo}></img>
           <div className={styles.servers}>
             <div>
@@ -35,7 +36,10 @@ export const ConsoleList = () => {
             <h5 className={styles.header}>Servers</h5>
             <div className={styles.serverTypes}>
               {console.serverType.map((type) => (
-                <div key={type} className={serverTypeToStyle[type]}>
+                <div
+                  key={type}
+                  className={serverTypeToStyle[type] || styles.serverPublic}
+                >
                   <p className={styles.serverTypeText}>{type}</p>
                 </div>
               ))}
@@ -45,7 +49,7 @@ export const ConsoleList = () => {
             <h5 className={styles.header}>PRICING MODEL</h5>
             <p className={styles.text}>{console.pricingModel}</p>
           </div>
-        </div>
+        </a>
       ))}
     </div>
   );
