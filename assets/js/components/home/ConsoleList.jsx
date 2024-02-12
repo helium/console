@@ -1,6 +1,7 @@
-import React from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { displayError } from "../../util/messages";
 import styles from "./ConsoleList.module.css";
-import { lns } from "./lns";
 
 const serverTypeToStyle = {
   Shared: styles.serverShared,
@@ -9,9 +10,24 @@ const serverTypeToStyle = {
 };
 
 export const ConsoleList = () => {
+  const [lnsList, setLnsList] = useState([]);
+  useEffect(() => {
+    const fetchLnsList = async () => {
+      try {
+        const list = await axios(
+          "https://raw.githubusercontent.com/helium/well-known/c387377af76fd7040dc0786f0aa9fa15054f8598/lists/consoles/consoles.json"
+        );
+        setLnsList(list.data);
+      } catch (error) {
+        displayError(error);
+      }
+    };
+    fetchLnsList();
+  }, []);
+
   return (
     <div className={styles.wrapper}>
-      {lns.map((console) => (
+      {lnsList.map((console) => (
         <a
           key={console.name}
           href={console.url}
