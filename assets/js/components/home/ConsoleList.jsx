@@ -27,33 +27,25 @@ export const ConsoleList = () => {
 
   return (
     <div className={styles.wrapper}>
-      {lnsList.map((console) => (
-        <a
-          key={console.name}
-          href={console.url}
-          className={styles.consoleWrapper}
-        >
+      {lnsList.map((lns) => (
+        <a key={lns.name} href={lns.url} className={styles.consoleWrapper}>
           <div className={styles.logoWrapper}>
-            <img src={console.logo} className={styles.logo}></img>
+            <img src={lns.logo} className={styles.logo}></img>
           </div>
           <div className={styles.servers}>
             <div>
               <h5 className={styles.header}>Service Region</h5>
-              <p className={styles.bigText}>
-                {console.serviceRegion.join(", ")}
-              </p>
+              <p className={styles.bigText}>{lns.serviceRegion.join(", ")}</p>
             </div>
             <div>
               <h5 className={styles.header}>PUBLIC SERVER LOC.</h5>
-              <p className={styles.bigText}>
-                {console.serverLocation.join(", ")}
-              </p>
+              <p className={styles.bigText}>{lns.serverLocation.join(", ")}</p>
             </div>
           </div>
           <div>
             <h5 className={styles.header}>Servers</h5>
             <div className={styles.serverTypes}>
-              {console.serverType.map((type) => (
+              {lns.serverType.map((type) => (
                 <div
                   key={type}
                   className={serverTypeToStyle[type] || styles.serverPublic}
@@ -65,7 +57,7 @@ export const ConsoleList = () => {
           </div>
           <div className={styles.pricing}>
             <h5 className={styles.header}>PRICING MODEL</h5>
-            <p className={styles.text}>{console.pricingModel}</p>
+            <p className={styles.text}>{lns.pricingModel}</p>
           </div>
         </a>
       ))}
