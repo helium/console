@@ -36,14 +36,18 @@ export const Consoles = () => (
           </div>
         </div>
 
-        <div className={styles.bottom}>
-          <p className={styles.text}>
-            Still testing things out? Try onboarding a device below:{" "}
-            <a className={styles.devicePortal} href="https://helium.com">
-              Onboard in Device Portal
-            </a>
-          </p>
-        </div>
+        {false && (
+          <div className={styles.bottom}>
+            <p className={styles.text}>
+              Still testing things out? Try onboarding a device below:{" "}
+              <a className={styles.devicePortal} href="https://helium.com">
+                Onboard in Device Portal
+              </a>
+            </p>
+          </div>
+        )}
+        {/* delete below when add device portal */}
+        <div></div>
       </div>
     </div>
     <div className={styles.consoles}>
