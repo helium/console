@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { displayError } from "../../util/messages";
-import styles from "./ConsoleList.module.css";
+import styles from "./ProviderList.module.css";
 
 const serverTypeToStyle = {
   Shared: styles.serverShared,
@@ -9,43 +9,54 @@ const serverTypeToStyle = {
   Public: styles.serverPublic,
 };
 
-export const ConsoleList = () => {
-  const [lnsList, setLnsList] = useState([]);
+export const ProviderList = () => {
+  const [lnsProviders, setLnsProviders] = useState([]);
   useEffect(() => {
-    const fetchLnsList = async () => {
+    const fetchLnsProviders = async () => {
       try {
         const list = await axios(
-          "https://raw.githubusercontent.com/helium/well-known/c387377af76fd7040dc0786f0aa9fa15054f8598/lists/consoles/consoles.json"
+          "https://raw.githubusercontent.com/helium/well-known/main/lists/lns-providers/providers.json"
         );
-        setLnsList(list.data);
+        setLnsProviders(list.data);
       } catch (error) {
         displayError(error);
       }
     };
-    fetchLnsList();
+    fetchLnsProviders();
   }, []);
 
   return (
     <div className={styles.wrapper}>
-      {lnsList.map((lns) => (
-        <a key={lns.name} href={lns.url} className={styles.consoleWrapper}>
+      {lnsProviders.map((provider) => (
+        <a
+          key={provider.name}
+          href={provider.url}
+          className={styles.providerWrapper}
+        >
           <div className={styles.logoWrapper}>
-            <img src={lns.logo} className={styles.logo}></img>
+            <img
+              src={provider.logoRaster || provider.logoVector}
+              className={styles.logo}
+            ></img>
           </div>
           <div className={styles.servers}>
             <div>
               <h5 className={styles.header}>Service Region</h5>
-              <p className={styles.bigText}>{lns.serviceRegion.join(", ")}</p>
+              <p className={styles.bigText}>
+                {provider.serviceRegion.join(", ")}
+              </p>
             </div>
             <div>
               <h5 className={styles.header}>PUBLIC SERVER LOC.</h5>
-              <p className={styles.bigText}>{lns.serverLocation.join(", ")}</p>
+              <p className={styles.bigText}>
+                {provider.serverLocation.join(", ")}
+              </p>
             </div>
           </div>
           <div>
             <h5 className={styles.header}>Servers</h5>
             <div className={styles.serverTypes}>
-              {lns.serverType.map((type) => (
+              {provider.serverType.map((type) => (
                 <div
                   key={type}
                   className={serverTypeToStyle[type] || styles.serverPublic}
@@ -57,7 +68,7 @@ export const ConsoleList = () => {
           </div>
           <div className={styles.pricing}>
             <h5 className={styles.header}>PRICING MODEL</h5>
-            <p className={styles.text}>{lns.pricingModel}</p>
+            <p className={styles.text}>{provider.pricingModel}</p>
           </div>
         </a>
       ))}

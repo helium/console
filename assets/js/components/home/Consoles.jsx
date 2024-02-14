@@ -1,7 +1,7 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import Logo from "../../../img/mobile/logo.svg";
-import { ConsoleList } from "./ConsoleList";
+import { ProviderList } from "./ProviderList";
 import styles from "./consoles.module.css";
 
 export const Consoles = () => (
@@ -51,7 +51,7 @@ export const Consoles = () => (
       </div>
     </div>
     <div className={styles.consoles}>
-      <ConsoleList />
+      <ProviderList />
     </div>
   </div>
 );
