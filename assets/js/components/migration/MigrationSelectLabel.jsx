@@ -24,7 +24,7 @@ const MigrationSelectLabel = ({ instanceRegion, apiKey, tenantId, application, l
       <div style={{ marginTop: 8 }}>
         <Text>
           For detailed tutorials, please consult our
-          <Link to={{ pathname: "https://1663.gitbook.io/1663-console/migration-guide/migrate-your-devices"}}target="_blank" onClick={e => e.preventDefault()}>
+          <Link to={{ pathname: "https://1663.gitbook.io/1663-console/migration-guide/migrate-your-devices"}}target="_blank">
             <Text style={{
               marginBottom: 0,
               color: primaryBlue,
