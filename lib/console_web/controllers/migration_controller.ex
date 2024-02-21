@@ -109,7 +109,7 @@ defmodule ConsoleWeb.MigrationController do
       "region" => region,
       "devaddr" => devaddr,
       "nwk_s_key" => nwk_s_key,
-      "app_s_key" => app_s_ke,
+      "app_s_key" => app_s_key,
       "instance_region" => instance_region})
   do
     current_organization = conn.assigns.current_organization
