@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { getApplications } from '../../actions/migration'
 import { Link } from "react-router-dom";
-import { Typography, Input, Select, Button } from "antd"
+import { Typography, Input, Select, Button, Radio } from "antd"
 const { Text } = Typography;
 import { primaryBlue } from "../../util/colors";
 
-const MigrationSelectLabel = ({ apiKey, tenantId, application, label, allLabels, allApplications, handleUpdate, handleSelect, updateShowStep, fetchApplications }) => {
+const MigrationSelectLabel = ({ instanceRegion, apiKey, tenantId, application, label, allLabels, allApplications, handleUpdate, handleInstanceUpdate, handleSelect, updateShowStep, fetchApplications }) => {
   return (
     <div
       style={{
@@ -36,6 +36,15 @@ const MigrationSelectLabel = ({ apiKey, tenantId, application, label, allLabels,
 
       <div style={{ marginTop: 20, display: "flex", justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
         <div style={{ width: 600 }}>
+        <div style={{ display: "flex", flexDirection: "row", alignItems: 'center' }}>
+          <div style={{ width: 150, display: "flex", justifyContent: 'flex-end' }}>
+            <Text>V2 Instance: </Text>
+          </div>
+          <Radio.Group onChange={handleInstanceUpdate} value={instanceRegion} name="instanceRegion">
+            <Radio value={"US"}>US</Radio>
+            <Radio value={"EU"}>EU</Radio>
+          </Radio.Group>
+        </div>
           <div style={{ display: "flex", flexDirection: "row", alignItems: 'center' }}>
             <div style={{ width: 150, display: "flex", justifyContent: 'flex-end' }}>
               <Text>V2 API Key: </Text>
@@ -66,8 +75,8 @@ const MigrationSelectLabel = ({ apiKey, tenantId, application, label, allLabels,
             <Button
               style={{ marginLeft: 10 }}
               type="primary"
-              disabled={!apiKey || !tenantId}
-              onClick={() => fetchApplications(apiKey, tenantId)}
+              disabled={!!instanceRegion || !apiKey || !tenantId}
+              onClick={() => fetchApplications(apiKey, tenantId, instanceRegion)}
             >
               Fetch
             </Button>

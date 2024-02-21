@@ -1,19 +1,16 @@
-import React, { useState, useEffect, useCallback, useMemo, useRef } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { displayError } from '../../util/messages'
 import { getDevices } from '../../actions/migration'
-import { Link } from "react-router-dom";
 import MigrationProgressModal from './MigrationProgressModal'
-import { Typography, Input, Select, Button, Table, Pagination, Popover } from "antd"
+import { Typography, Select, Button, Table, Pagination, Popover } from "antd"
 import { ReloadOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 const { Text } = Typography;
 const { Option } = Select;
-import { primaryBlue } from "../../util/colors";
-import UserCan, { userCan } from "../common/UserCan";
-import find from 'lodash/find'
+import UserCan from "../common/UserCan";
 
 const regions = ["EU868", "US915", "AS923", "AS923_2", "AS923_3", "AS923_4", "CN470", "CN779", "AU915", "IN865", "KR920", "RU864"]
 
-const MigrationDeviceTable = ({ updateShowStep, label, apiKey, tenantId, applicationId }) => {
+const MigrationDeviceTable = ({ updateShowStep, label, apiKey, tenantId, applicationId, instanceRegion }) => {
   const mountedRef = useRef(true)
   const [loading, setLoading] = useState(true)
   const [devices, setDevices] = useState([])
@@ -149,7 +146,7 @@ const MigrationDeviceTable = ({ updateShowStep, label, apiKey, tenantId, applica
 
   const fetchData = useCallback(async () => {
     setLoading(true)
-    const data = await getDevices(label, apiKey, tenantId)
+    const data = await getDevices(label, apiKey, tenantId, instanceRegion)
     if (mountedRef.current) {
       if (data.length > 0) setDevices(data)
       setLoading(false)
@@ -398,6 +395,7 @@ const MigrationDeviceTable = ({ updateShowStep, label, apiKey, tenantId, applica
           setVisibleDevices([])
           setSelectedRows([])
         }}
+        instanceRegion={instanceRegion}
       />
     </>
   )

@@ -13,7 +13,8 @@ class MigrationIndex extends Component {
       application: "",
       label: "",
       allLabels: [],
-      allApplications: []
+      allApplications: [],
+      instanceRegion: null
   }
 
   updateShowStep = (step) => {
@@ -26,19 +27,31 @@ class MigrationIndex extends Component {
     })
   }
 
+  handleInstanceUpdate = (e) => {
+    this.setState({
+      instanceRegion: e.target.value,
+      apiKey: "",
+      tenantId: "",
+      application: "",
+      label: "",
+      allLabels: [],
+      allApplications: []
+    })
+  }
+
   handleSelect = (key, value) => {
     this.setState({
       [key]: value
     })
   }
 
-  fetchApplications = (apiKey, tenantId) => {
+  fetchApplications = (apiKey, tenantId, instanceRegion) => {
     this.setState({ allLabels: [], allApplications: [] })
-    getApplications(apiKey, tenantId)
+    getApplications(apiKey, tenantId, instanceRegion)
     .then(data => {
       this.setState({ allLabels: data.labels, allApplications: data.applications })
     })
-    .catch(err => {})
+    .catch(_err => {})
   }
 
   render() {
@@ -47,6 +60,7 @@ class MigrationIndex extends Component {
         <DashboardLayout title="Console Migration Tool" {...this.props}>
           {this.state.showStep == 1 && (
               <MigrationSelectLabel
+                instanceRegion={this.state.instanceRegion}
                 apiKey={this.state.apiKey}
                 tenantId={this.state.tenantId}
                 application={this.state.application}
@@ -54,6 +68,7 @@ class MigrationIndex extends Component {
                 allLabels={this.state.allLabels}
                 allApplications={this.state.allApplications}
                 handleUpdate={this.handleUpdate}
+                handleInstanceUpdate={this.handleInstanceUpdate}
                 handleSelect={this.handleSelect}
                 updateShowStep={this.updateShowStep}
                 fetchApplications={this.fetchApplications}
@@ -62,6 +77,7 @@ class MigrationIndex extends Component {
           {this.state.showStep == 2 && (
               <MigrationDeviceTable
                 updateShowStep={this.updateShowStep}
+                instanceRegion={this.state.instanceRegion}
                 label={this.state.label}
                 apiKey={this.state.apiKey}
                 tenantId={this.state.tenantId}

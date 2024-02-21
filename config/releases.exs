@@ -50,8 +50,14 @@ migration_url = System.get_env("MIGRATION_URL") ||
   environment variable MIGRATION_URL is missing.
   """
 
+migration_url_eu = System.get_env("MIGRATION_URL_EU") ||
+  raise """
+  environment variable MIGRATION_URL_EU is missing.
+  """
+
 config :console,
-  migration_url: migration_url
+  migration_url: migration_url,
+  migration_url_eu: migration_url_eu
 
 config :console,
   auth0_mfa_baseurl: System.get_env("AUTH0_MFA_BASE_URL")

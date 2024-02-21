@@ -1,38 +1,38 @@
 defmodule Console.Migrations do
   import Ecto.Query, warn: false
 
-  def get_applications(api_key, tenant_id) do
-    "#{get_migration_url()}/api/applications?tenantId=#{tenant_id}&limit=1000&offset=0"
+  def get_applications(api_key, tenant_id, instance_region) do
+    "#{get_migration_url(instance_region)}/api/applications?tenantId=#{tenant_id}&limit=1000&offset=0"
       |> HTTPoison.get!([{"Authorization", "Bearer #{api_key}"}])
       |> Map.get(:body)
       |> Poison.decode!()
       |> Map.get("result")
   end
 
-  def get_all_devices(api_key, application_id, offset, acc) do
-    result = "#{get_migration_url()}/api/devices?applicationId=#{application_id}&limit=1000&offset=#{offset}"
+  def get_all_devices(api_key, application_id, offset, acc, instance_region) do
+    result = "#{get_migration_url(instance_region)}/api/devices?applicationId=#{application_id}&limit=1000&offset=#{offset}"
       |> HTTPoison.get!([{"Authorization", "Bearer #{api_key}"}])
       |> Map.get(:body)
       |> Poison.decode!()
       |> Map.get("result")
 
     if length(result) > 0 do
-      get_all_devices(api_key, application_id, offset + 1000, acc ++ result)
+      get_all_devices(api_key, application_id, offset + 1000, acc ++ result, instance_region)
     else
       acc
     end
   end
 
-  def get_device_details(api_key, dev_eui) do
-    "#{get_migration_url()}/api/devices/#{dev_eui}"
+  def get_device_details(api_key, dev_eui, instance_region) do
+    "#{get_migration_url(instance_region)}/api/devices/#{dev_eui}"
       |> HTTPoison.get!([{"Authorization", "Bearer #{api_key}"}])
       |> Map.get(:body)
       |> Poison.decode!()
   end
 
-  def get_device_profile_by_region(api_key, tenant_id, region, device_profile_name) do
+  def get_device_profile_by_region(api_key, tenant_id, region, device_profile_name, instance_region) do
     device_profiles =
-      "#{get_migration_url()}/api/device-profiles?tenantId=#{tenant_id}&limit=1000&offset=0"
+      "#{get_migration_url(instance_region)}/api/device-profiles?tenantId=#{tenant_id}&limit=1000&offset=0"
         |> HTTPoison.get!([{"Authorization", "Bearer #{api_key}"}])
         |> Map.get(:body)
         |> Poison.decode!()
@@ -53,7 +53,7 @@ defmodule Console.Migrations do
           }
         } |> Poison.encode!()
 
-        profile = "#{get_migration_url()}/api/device-profiles"
+        profile = "#{get_migration_url(instance_region)}/api/device-profiles"
             |> HTTPoison.post!(body, [{"Authorization", "Bearer #{api_key}"}, {"content-type", "application/json"}])
             |> Map.get(:body)
             |> Poison.decode!()
@@ -65,7 +65,7 @@ defmodule Console.Migrations do
     end
   end
 
-  def create_device(api_key, device, application_id, device_profile_id, active) do
+  def create_device(api_key, device, application_id, device_profile_id, active, instance_region) do
     body = %{
       "device" => %{
         "applicationId" => application_id,
@@ -74,12 +74,12 @@ defmodule Console.Migrations do
         "joinEui" => device.app_eui,
         "isDisabled" => not active,
         "name" => device.name,
-        "skipFcntCheck" => true,
+        "skipFcntCheck" => false,
         "description" => "Console Device ID: #{device.id}"
       }
     } |> Poison.encode!()
 
-    response = "#{get_migration_url()}/api/devices"
+    response = "#{get_migration_url(instance_region)}/api/devices"
       |> HTTPoison.post!(body, [{"Authorization", "Bearer #{api_key}"}, {"content-type", "application/json"}])
 
     case response.status_code do
@@ -88,7 +88,7 @@ defmodule Console.Migrations do
     end
   end
 
-  def activate_device(api_key, device, devaddr, nwk_s_key, app_s_key) do
+  def activate_device(api_key, device, devaddr, nwk_s_key, app_s_key, instance_region) do
     frame_up = if is_nil(device.frame_up), do: 0, else: device.frame_up
     frame_down = if is_nil(device.frame_down), do: 0, else: device.frame_down
 
@@ -109,7 +109,7 @@ defmodule Console.Migrations do
 
     case body["deviceActivation"] |> Map.values() |> Enum.find_index(fn val -> is_nil(val) end) do
       nil ->
-        response = "#{get_migration_url()}/api/devices/#{device.dev_eui}/activate"
+        response = "#{get_migration_url(instance_region)}/api/devices/#{device.dev_eui}/activate"
           |> HTTPoison.post!(encoded_body, [{"Authorization", "Bearer #{api_key}"}, {"content-type", "application/json"}])
 
         case response.status_code do
@@ -121,7 +121,7 @@ defmodule Console.Migrations do
     end
   end
 
-  def create_device_keys(api_key, device) do
+  def create_device_keys(api_key, device, instance_region) do
     body = %{
       "deviceKeys" => %{
         "appKey" => "",
@@ -131,7 +131,7 @@ defmodule Console.Migrations do
 
     encoded_body = body |> Poison.encode!()
 
-    response = "#{get_migration_url()}/api/devices/#{device.dev_eui}/keys"
+    response = "#{get_migration_url(instance_region)}/api/devices/#{device.dev_eui}/keys"
       |> HTTPoison.post!(encoded_body, [{"Authorization", "Bearer #{api_key}"}, {"content-type", "application/json"}])
 
     case response.status_code do
@@ -140,7 +140,10 @@ defmodule Console.Migrations do
     end
   end
 
-  def get_migration_url() do
-    Application.get_env(:console, :migration_url)
+  def get_migration_url(instance_region) do
+    case instance_region do
+      "US" -> Application.get_env(:console, :migration_url)
+      "EU" -> Application.get_env(:console, :migration_url_eu)
+    end
   end
 end

@@ -62,7 +62,8 @@ config :console,
   self_hosted: System.get_env("SELF_HOSTED")
 
 config :console,
-  migration_url: "http://router2.helium.wtf:8096"
+  migration_url: "http://router2.helium.wtf:8096",
+  migration_url_eu: "http://router2-eu.helium.wtf:8096"
 
 config :console, Console.Scheduler,
   jobs: [

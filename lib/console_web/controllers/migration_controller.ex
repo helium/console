@@ -9,7 +9,7 @@ defmodule ConsoleWeb.MigrationController do
 
   action_fallback(ConsoleWeb.FallbackController)
 
-  def get_applications(conn, %{"api_key" => api_key, "tenant_id" => tenant_id}) do
+  def get_applications(conn, %{"api_key" => api_key, "tenant_id" => tenant_id, "instance_region" => instance_region}) do
     current_organization = conn.assigns.current_organization
     labels =
       Labels.get_all_organization_labels(current_organization.id)
@@ -20,7 +20,7 @@ defmodule ConsoleWeb.MigrationController do
         }
       end)
 
-    applications = Migrations.get_applications(api_key, tenant_id)
+    applications = Migrations.get_applications(api_key, tenant_id, instance_region)
 
     case applications do
       nil ->
@@ -35,7 +35,7 @@ defmodule ConsoleWeb.MigrationController do
     end
   end
 
-  def get_devices(conn, %{"label_id" => label_id, "api_key" => api_key, "tenant_id" => tenant_id}) do
+  def get_devices(conn, %{"label_id" => label_id, "api_key" => api_key, "tenant_id" => tenant_id, "instance_region" => instance_region}) do
     current_organization = conn.assigns.current_organization
     label = Labels.get_label(current_organization, label_id)
     case label do
@@ -43,12 +43,12 @@ defmodule ConsoleWeb.MigrationController do
         conn |> send_resp(400, "")
       _ ->
         application_ids =
-          Migrations.get_applications(api_key, tenant_id)
+          Migrations.get_applications(api_key, tenant_id, instance_region)
           |> Enum.map(fn app -> app["id"] end)
 
         chirpstack_devices_map =
           Enum.reduce(application_ids, [], fn app_id, acc ->
-            acc ++ Migrations.get_all_devices(api_key, app_id, 0, [])
+            acc ++ Migrations.get_all_devices(api_key, app_id, 0, [], instance_region)
           end)
           |> Enum.reduce(%{}, fn device, acc ->
             Map.put(acc, device["description"], true)
@@ -109,7 +109,8 @@ defmodule ConsoleWeb.MigrationController do
       "region" => region,
       "devaddr" => devaddr,
       "nwk_s_key" => nwk_s_key,
-      "app_s_key" => app_s_key})
+      "app_s_key" => app_s_ke,
+      "instance_region" => instance_region})
   do
     current_organization = conn.assigns.current_organization
     device = Devices.get_device!(current_organization, device_id)
@@ -121,13 +122,13 @@ defmodule ConsoleWeb.MigrationController do
         conn |> send_resp(200, "")
 
       _ ->
-        device_profile_id = Migrations.get_device_profile_by_region(api_key, tenant_id, region, device_profile_name)
+        device_profile_id = Migrations.get_device_profile_by_region(api_key, tenant_id, region, device_profile_name, instance_region)
         active = device.active
 
         with {:ok, _} <- Devices.update_device(device, %{ active: false }),
-          :ok <- Migrations.create_device(api_key, device, application_id, device_profile_id, active),
-          :ok <- Migrations.activate_device(api_key, device, devaddr, nwk_s_key, app_s_key),
-          :ok <- Migrations.create_device_keys(api_key, device) do
+          :ok <- Migrations.create_device(api_key, device, application_id, device_profile_id, active, instance_region),
+          :ok <- Migrations.activate_device(api_key, device, devaddr, nwk_s_key, app_s_key, instance_region),
+          :ok <- Migrations.create_device_keys(api_key, device, instance_region) do
 
           ConsoleWeb.Endpoint.broadcast("device:all", "device:all:refetch:devices", %{ "devices" => [device.id] })
 
