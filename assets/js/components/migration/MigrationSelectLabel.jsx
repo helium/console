@@ -36,11 +36,11 @@ const MigrationSelectLabel = ({ instanceRegion, apiKey, tenantId, application, l
 
       <div style={{ marginTop: 20, display: "flex", justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
         <div style={{ width: 600 }}>
-        <div style={{ display: "flex", flexDirection: "row", alignItems: 'center' }}>
+        <div style={{ display: "flex", flexDirection: "row", alignItems: 'center', marginBottom: 20 }}>
           <div style={{ width: 150, display: "flex", justifyContent: 'flex-end' }}>
             <Text>V2 Instance: </Text>
           </div>
-          <Radio.Group onChange={handleInstanceUpdate} value={instanceRegion} name="instanceRegion">
+          <Radio.Group style={{ marginLeft: 10 }} onChange={handleInstanceUpdate} value={instanceRegion} name="instanceRegion">
             <Radio value={"US"}>US</Radio>
             <Radio value={"EU"}>EU</Radio>
           </Radio.Group>
@@ -75,7 +75,7 @@ const MigrationSelectLabel = ({ instanceRegion, apiKey, tenantId, application, l
             <Button
               style={{ marginLeft: 10 }}
               type="primary"
-              disabled={!!instanceRegion || !apiKey || !tenantId}
+              disabled={!instanceRegion || !apiKey || !tenantId}
               onClick={() => fetchApplications(apiKey, tenantId, instanceRegion)}
             >
               Fetch
