@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import { getApplications } from '../../actions/migration'
+import React from "react";
 import { Link } from "react-router-dom";
 import { Typography, Input, Select, Button, Radio } from "antd"
 const { Text } = Typography;
@@ -25,7 +24,7 @@ const MigrationSelectLabel = ({ instanceRegion, apiKey, tenantId, application, l
       <div style={{ marginTop: 8 }}>
         <Text>
           For detailed tutorials, please consult our
-          <Link to="#" onClick={e => e.preventDefault()}>
+          <Link to={{ pathname: "https://1663.gitbook.io/1663-console/migration-guide/migrate-your-devices"}}target="_blank" onClick={e => e.preventDefault()}>
             <Text style={{
               marginBottom: 0,
               color: primaryBlue,
