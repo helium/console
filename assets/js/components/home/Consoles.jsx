@@ -1,8 +1,8 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import Logo from "../../../img/mobile/logo.svg";
+import styles from "./Consoles.module.css";
 import { ProviderList } from "./ProviderList";
-import styles from "./consoles.module.css";
 
 export const Consoles = () => (
   <div className={styles.wrapper}>
