@@ -1,0 +1,114 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.bodyWrapper {
+  position: relative;
+  display: flex;
+  flex: 1;
+}
+
+.body {
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 16px;
+  gap: 16px;
+  width: 100%;
+}
+
+.nav {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.logo {
+  height: 48px;
+  width: 48px;
+}
+
+.legacyLink {
+  color: #9ca3af;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
+}
+
+.onboard {
+  margin: 0 16px;
+}
+
+.header {
+  font-size: 96px;
+  font-weight: 700;
+  line-height: 96px;
+  margin-bottom: 0;
+}
+
+.text,
+.buttonText {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  margin-bottom: 0;
+}
+
+.buttonWrapper {
+  display: flex;
+  gap: 8px;
+  margin-top: 24px;
+}
+
+.button {
+  align-items: center;
+  display: flex;
+  background-color: #2755f8;
+  border-radius: 8px;
+  color: white;
+  flex: 1;
+  height: 48px;
+  justify-content: center;
+}
+
+.buttonText {
+  font-weight: 600;
+}
+
+.bottom {
+  display: flex;
+  justify-content: center;
+  border-radius: 8px;
+  background-color: #f9fafb;
+  padding: 8px 16px;
+}
+
+.devicePortal {
+  color: black;
+  font-weight: 600;
+}
+
+.consoles {
+  flex: 1;
+  background-color: #f9fafb;
+  padding: 16px 16px 32px;
+}
+
+@media (min-width: 991px) {
+  .wrapper {
+    flex-direction: row;
+    min-height: 100vh;
+  }
+  .bodyWrapper {
+    margin-right: 32px;
+  }
+  .body {
+    position: fixed;
+    height: 100vh;
+    width: 50%;
+    padding-left: 32px;
+  }
+}
