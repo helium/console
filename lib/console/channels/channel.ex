@@ -6,8 +6,9 @@ defmodule Console.Channels.Channel do
   alias Console.Organizations.Organization
   alias Console.Channels.Channel
 
-  @http_types ~w(http cargo my_devices akenza datacake microshare tago ubidots google_sheets)
+  @http_types ~w(blockbax http cargo my_devices akenza datacake microshare tago ubidots google_sheets)
   @long_type_names %{
+    "blockbax" => "Blockbax",
     "aws" => "AWS IoT",
     "azure" => "Azure IoT Hub",
     "iot_central" => "Azure IoT Central",

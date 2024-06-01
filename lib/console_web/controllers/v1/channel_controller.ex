@@ -77,6 +77,15 @@ defmodule ConsoleWeb.V1.ChannelController do
     if type in allowed_types do
       channel_params =
         case type do
+          "blockbax" ->
+            %{
+              "name" => name,
+              "type" => type,
+              "organization_id" => current_organization.id,
+              "credentials" => %{
+                "blockbaxAccessToken" => token,
+              }
+            }
           "akenza" ->
             %{
               "credentials" => %{
