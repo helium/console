@@ -33,7 +33,9 @@ defmodule ConsoleWeb.V1.DeviceView do
       region: Map.get(device, :region, nil),
       devaddr: Map.get(device, :devaddr, nil),
       nwk_s_key: Map.get(device, :nwk_s_key, nil),
-      app_s_key: Map.get(device, :app_s_key, nil)
+      app_s_key: Map.get(device, :app_s_key, nil),
+      frame_up: device.frame_up,
+      frame_down: device.frame_down
     }
 
     if Ecto.assoc_loaded?(device.labels) do
