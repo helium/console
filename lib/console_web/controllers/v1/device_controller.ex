@@ -90,7 +90,7 @@ defmodule ConsoleWeb.V1.DeviceController do
         end
         render(conn, "index.json", devices: Enum.map(parsed_devices, update_fun))
     after
-      2_000 ->
+      60_000 ->
         :persistent_term.erase(request_id)
         render(conn, "index.json", devices: parsed_devices)
     end
